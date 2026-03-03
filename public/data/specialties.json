@@ -1,0 +1,450 @@
+{
+  "Sharpshooter": {
+    "Armor Kit": {
+      "title": "Emergency Cleanse",
+      "description": "Armor kits repair 100%, remove status effects and increase resistance to bleed, poison, and burn for 20s"
+    },
+    "Talents": [
+      {
+        "title": "Sharpshooter Tactical Link",
+        "description": "All group members that are closer to enemies than you get 10% headshot damage."
+      },
+      {
+        "title": "Round After Round",
+        "description": "After 20s in cover, you start generating 5 marksman and 5 rifle ammo, every 10s."
+      },
+      {
+        "title": "My Home is My Castle",
+        "description": "Extra armor gained while in cover."
+      }
+    ],
+    "Passives": [
+      {
+        "title": "One in the Head",
+        "description": "15% increased headshot damage with Rifles and Marksman Rifles"
+      },
+      {
+        "title": "Breath Control",
+        "description": "15% increased weapon stability, reduced recoil, and faster reacquisition of targets."
+      },
+      {
+        "title": "Vital Protection",
+        "description": "50% Pulse Resistance"
+      },
+      {
+        "title": "Signature Weapon Dmg",
+        "description": "40% Increased Signature Weapon damage."
+      },
+      {
+        "title": "E.M.I.",
+        "description": "15% Increased Assault Rifle Damage"
+      },
+      {
+        "title": "Onslaught",
+        "description": "15% LMG Damage"
+      },
+      {
+        "title": "Running the Gun",
+        "description": "15% Shotgun Damage"
+      },
+      {
+        "title": "Spray and Pray",
+        "description": "15% SMG Damage"
+      },
+      {
+        "title": "Gunslinger",
+        "description": "15% Pistol Damage"
+      },
+      {
+        "title": "Depleted Rounds",
+        "description": "15% Marksman Rifle Damage"
+      },
+      {
+        "title": "This is my Rifle",
+        "description": "15% Increased Rifle Damage"
+      }
+    ],
+    "Ammo Talents": [
+      {
+        "title": ".50 Caliber Ammo Acquisition",
+        "description": "Killing enemies with headshots adds 2 to your groups ammo bar."
+      },
+      {
+        "title": "Group Signature Ammo Supply",
+        "description": "Killing enemies with headshots adds 1 to your groups ammo bar."
+      }
+    ],
+    "Items and Skills": [
+      {
+        "title": "Tactician Drone",
+        "description": "Scouts and marks hostile targets"
+      },
+      {
+        "title": "Graphene Battery",
+        "description": "Mod to increase drone's duration (Req: Tactician Drone)"
+      },
+      {
+        "title": "Carbon Fiber Frame",
+        "description": "Mod to decrease drone's cooldown (Req: Graphene Battery)"
+      },
+      {
+        "title": "Digital Scope",
+        "description": "45% Headshot Damage / 5% decreased CHD"
+      },
+      {
+        "title": "Flashbang Grenade",
+        "description": "Applies blind to targets"
+      },
+      {
+        "title": "Sharpshooter's 93R",
+        "description": "3-round burst pistol (Perfect Unwavering)"
+      },
+      {
+        "title": "TAC-50 C Rifle",
+        "description": "Signature Weapon"
+      }
+    ]
+  },
+  "Survivalist": {
+    "Armor Kit": {
+      "title": "Disrupted Repair",
+      "description": "Repairs over 5 seconds; applies to group members within 20 meters"
+    },
+    "Talents": [
+      {
+        "title": "Survivalist Tactical Link",
+        "description": "Group members get 10% bonus damage to targets with status effects"
+      },
+      {
+        "title": "Scraping By",
+        "description": "Gain 5 ammo per second during cover-to-cover"
+      },
+      {
+        "title": "Crunch Time",
+        "description": "While in cover, gain 10% skill haste"
+      }
+    ],
+    "Passives": [
+      {
+        "title": "Triage Specialist",
+        "description": "15% Increased Outgoing Healing"
+      },
+      {
+        "title": "Elite Defense",
+        "description": "10% Increased Protection from Elites"
+      },
+      {
+        "title": "Vital Protection",
+        "description": "50% Pulse Resistance"
+      },
+      {
+        "title": "E.M.I.",
+        "description": "15% Increased Assault Rifle Damage"
+      },
+      {
+        "title": "Onslaught",
+        "description": "15% LMG Damage"
+      },
+      {
+        "title": "Running the Gun",
+        "description": "15% Shotgun Damage"
+      },
+      {
+        "title": "Spray and Pray",
+        "description": "15% SMG Damage"
+      },
+      {
+        "title": "Gunslinger",
+        "description": "15% Pistol Damage"
+      },
+      {
+        "title": "Depleted Rounds",
+        "description": "15% Marksman Rifle Damage"
+      },
+      {
+        "title": "This is my Rifle",
+        "description": "15% Increased Rifle Damage"
+      }
+    ],
+    "Ammo Talents": [
+      {
+        "title": "Explosive Bolt Acquisition",
+        "description": "Killing enemies with status effects adds 3 to ammo bar."
+      },
+      {
+        "title": "Group Signature Ammo Supply",
+        "description": "Killing enemies with status effects adds 3 to group ammo bar."
+      }
+    ],
+    "Items and Skills": [
+      {
+        "title": "Mender Seeker",
+        "description": "Follows allies, repairing armor"
+      },
+      {
+        "title": "Incendiary Grenade",
+        "description": "Applies burn"
+      },
+      {
+        "title": "Survivalist D50",
+        "description": "Precision pistol (Perfect Sadist)"
+      },
+      {
+        "title": "Crossbow",
+        "description": "Signature Weapon"
+      }
+    ]
+  },
+  "Technician": {
+    "Armor Kit": {
+      "title": "Emergency Patch",
+      "description": "Armor kit also applies to all friendly skill proxies within 10m"
+    },
+    "Talents": [
+      {
+        "title": "Faraday Field",
+        "description": "Allies within 5m of skills are immune to shock and disruption"
+      },
+      {
+        "title": "Technomancy",
+        "description": "Gain 15% bonus armor while aiming a skill"
+      }
+    ],
+    "Passives": [
+      {
+        "title": "Amped",
+        "description": "+1 Skill Tier"
+      },
+      {
+        "title": "Dismantling",
+        "description": "12% damage to drones, proxies, and robotics"
+      },
+      {
+        "title": "Overclocked CPU",
+        "description": "10% Skill Damage"
+      },
+      {
+        "title": "Enhanced Diagnostics",
+        "description": "10% Skill Healing"
+      }
+    ],
+    "Items and Skills": [
+      {
+        "title": "Artificer Hive",
+        "description": "Repairs and buffs skills"
+      },
+      {
+        "title": "P-017 Launcher",
+        "description": "Signature Weapon"
+      },
+      {
+        "title": "Linked Laser Pointer",
+        "description": "Pulses aimed targets"
+      }
+    ]
+  },
+  "Gunner": {
+    "Armor Kit": {
+      "title": "Hardened Armor Kits",
+      "description": "Repairs 100% and grants 30% bonus armor for 10s"
+    },
+    "Talents": [
+      {
+        "title": "Supply Line",
+        "description": "Generate 10% ammo every 60s; party 5%"
+      },
+      {
+        "title": "Emplacement",
+        "description": "10% weapon handling while motionless"
+      }
+    ],
+    "Passives": [
+      {
+        "title": "Barrage",
+        "description": "Rate of fire increases by 5% on kill for 5s"
+      },
+      {
+        "title": "Incessant",
+        "description": "Killing enemies grants 10% armor"
+      },
+      {
+        "title": "Coupler",
+        "description": "Every 3rd reload is 50% faster"
+      }
+    ],
+    "Items and Skills": [
+      {
+        "title": "Banshee Pulse",
+        "description": "Confuses enemies"
+      },
+      {
+        "title": "Minigun",
+        "description": "Signature Weapon"
+      },
+      {
+        "title": "Large Pouch",
+        "description": "50 additional rounds (LMG)"
+      }
+    ]
+  },
+  "Demolitionist": {
+    "Armor Kit": {
+      "title": "Stimulant Patch",
+      "description": "Armor kits repair 100% and boost weapon handling by 30% for 15s"
+    },
+    "Talents": [
+      {
+        "title": "Demolitionist Tactical Link",
+        "description": "Group members gain 5% damage to targets out of cover"
+      },
+      {
+        "title": "Braced for Impact",
+        "description": "Ignore explosions (Trigger once every 60s)"
+      },
+      {
+        "title": "Crisis Response",
+        "description": "When armor is reduced to zero, refills all main weapon ammo"
+      }
+    ],
+    "Passives": [
+      {
+        "title": "Explosive Ordnance",
+        "description": "10% increased explosives damage (Grenades, skills, effects)"
+      },
+      {
+        "title": "E.M.I.",
+        "description": "15% Increased Assault Rifle Damage"
+      },
+      {
+        "title": "Onslaught",
+        "description": "15% LMG Damage"
+      },
+      {
+        "title": "Running the Gun",
+        "description": "15% Shotgun Damage"
+      },
+      {
+        "title": "Spray and Pray",
+        "description": "15% SMG Damage"
+      },
+      {
+        "title": "Gunslinger",
+        "description": "15% Pistol Damage"
+      },
+      {
+        "title": "Depleted Rounds",
+        "description": "15% Marksman Rifle Damage"
+      },
+      {
+        "title": "This is my Rifle",
+        "description": "15% Increased Rifle Damage"
+      }
+    ],
+    "Items and Skills": [
+      {
+        "title": "Artillery Turret",
+        "description": "Mortar turret variant"
+      },
+      {
+        "title": "Frag Grenade",
+        "description": "Applies Bleed"
+      },
+      {
+        "title": "Diceros Special",
+        "description": "Pistol (Perfect Optimist)"
+      },
+      {
+        "title": "M32A1 Launcher",
+        "description": "Signature Weapon"
+      },
+      {
+        "title": "Small Laser Pointer",
+        "description": "7% Critical Hit Chance (SMG/AR)"
+      }
+    ]
+  },
+  "Firewall": {
+    "Armor Kit": {
+      "title": "Extracellular Matrix Mesh",
+      "description": "Armor kit recovers 200% armor and 200% health over 10s"
+    },
+    "Talents": [
+      {
+        "title": "Firewall Tactical Link",
+        "description": "Allies deal 10% more damage to enemies within 10m of you"
+      },
+      {
+        "title": "Fiery Response",
+        "description": "On armor break, apply burn to enemies within 5m"
+      },
+      {
+        "title": "Bull Rush",
+        "description": "30% Bonus Armor during cover-to-cover moves"
+      }
+    ],
+    "Passives": [
+      {
+        "title": "Incombustible",
+        "description": "20% increased burn resistance"
+      },
+      {
+        "title": "Enriched Magnesium Formula",
+        "description": "20% Burn Duration"
+      },
+      {
+        "title": "Frontline Recovery",
+        "description": "30% Health on Kill"
+      },
+      {
+        "title": "E.M.I.",
+        "description": "15% Increased Assault Rifle Damage"
+      },
+      {
+        "title": "Onslaught",
+        "description": "15% LMG Damage"
+      },
+      {
+        "title": "Running the Gun",
+        "description": "15% Shotgun Damage"
+      },
+      {
+        "title": "Spray and Pray",
+        "description": "15% SMG Damage"
+      },
+      {
+        "title": "Gunslinger",
+        "description": "15% Pistol Damage"
+      },
+      {
+        "title": "Depleted Rounds",
+        "description": "15% Marksman Rifle Damage"
+      },
+      {
+        "title": "This is my Rifle",
+        "description": "15% Increased Rifle Damage"
+      }
+    ],
+    "Items and Skills": [
+      {
+        "title": "Striker Shield",
+        "description": "Offensive shield variant"
+      },
+      {
+        "title": "Cluster Grenade",
+        "description": "Area of effect explosive"
+      },
+      {
+        "title": "Firestarter Shotgun",
+        "description": "Sawed-Off (Increased Target Flammability)"
+      },
+      {
+        "title": "Flamethrower",
+        "description": "Signature Weapon"
+      },
+      {
+        "title": "Tactical Short Grip",
+        "description": "10% Critical Hit Damage (Shotguns)"
+      }
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+Weapon,Attribute,Max
+Assault Rifle,Health Damage,21%
+LMG,DMG to target out of cover,12%
+SMG,Critical Hit Chance,21%
+Shotgun,Damage to Armor,12%
+Rifle,Critical Hit Damage,17%
+MMR,Headshot Damage,111%

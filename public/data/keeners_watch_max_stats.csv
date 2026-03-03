@@ -1,0 +1,17 @@
+Category,Attribute,Max Bonus
+Offensive,Weapon Damage,10%
+Offensive,Critical Hit Chance,10%
+Offensive,Critical Hit Damage,20%
+Offensive,Headshot Damage,20%
+Defensive,Total Armor,10%
+Defensive,Total Health,10%
+Defensive,Explosive Resistance,10%
+Defensive,Hazard Protection,10%
+Utility,Skill Damage,10%
+Utility,Skill Haste,10%
+Utility,Skill Duration,20%
+Utility,Skill Repair,10%
+Handling,Accuracy,10%
+Handling,Stability,10%
+Handling,Reload Speed,10%
+Handling,Ammo Capacity,20%
