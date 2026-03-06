@@ -15,6 +15,8 @@ import TacticalCard from './TacticalCard';
 import WeaponTacticalCard from './WeaponTacticalCard';
 import { BuildWeapon } from '../models/BuildWeapon';
 import BuildJsonModal from './BuildJsonModal';
+import KeenersWatch from './KeenersWatch';
+import { KeenersWatchStats } from '../models/KeenersWatchStats';
 
 function Build() {
   const [showOverlay, setShowOverlay] = useState(false);
@@ -723,6 +725,11 @@ function Build() {
             <span className="cell-value">{currentBuild.skill2 || 'Select...'}</span>
           </div>
         </div>
+
+        <KeenersWatch 
+          stats={currentBuild.watch}
+          onChange={(stats: KeenersWatchStats) => updateCurrentBuild({ watch: stats })}
+        />
       </div>
 
       {showOverlay && (

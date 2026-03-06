@@ -1,4 +1,5 @@
 import { CoreType } from './CoreValue';
+import { KeenersWatchStats } from './KeenersWatchStats';
 
 class LlmBuild {
   specialization: string;
@@ -13,7 +14,7 @@ class LlmBuild {
   kneepads: LlmGear | null;
   skill1: string;
   skill2: string;
-  watch: string | null;
+  watch: KeenersWatchStats | null;
 
   constructor({
     specialization = '',
@@ -42,7 +43,7 @@ class LlmBuild {
     kneepads?: LlmGear | null;
     skill1?: string;
     skill2?: string;
-    watch?: string | null;
+    watch?: KeenersWatchStats | null;
   } = {}) {
     this.specialization = specialization;
     this.primaryWeapon = primaryWeapon;

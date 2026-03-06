@@ -1,5 +1,6 @@
 import BuildGear from './BuildGear';
 import { BuildWeapon } from './BuildWeapon';
+import { KeenersWatchStats } from './KeenersWatchStats';
 
 class Build {
   id: string;
@@ -16,7 +17,7 @@ class Build {
   kneepads: BuildGear | null;
   skill1: any;
   skill2: any;
-  watch: any;
+  watch: KeenersWatchStats;
   createdAt: number;
   updatedAt: number;
 
@@ -71,7 +72,7 @@ class Build {
     this.kneepads = kneepads;
     this.skill1 = skill1;
     this.skill2 = skill2;
-    this.watch = watch;
+    this.watch = watch || null;
     this.createdAt = createdAt || Date.now();
     this.updatedAt = updatedAt || Date.now();
   }
