@@ -14,11 +14,13 @@ import { GearModValue } from '../models/GearMod';
 import TacticalCard from './TacticalCard';
 import WeaponTacticalCard from './WeaponTacticalCard';
 import { BuildWeapon } from '../models/BuildWeapon';
+import BuildJsonModal from './BuildJsonModal';
 
 function Build() {
   const [showOverlay, setShowOverlay] = useState(false);
   const [overlayType, setOverlayType] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [showJsonModal, setShowJsonModal] = useState(false);
   
   const currentBuild = useBuildStore(state => state.currentBuild);
   const updateCurrentBuild = useBuildStore(state => state.updateCurrentBuild);
@@ -323,8 +325,18 @@ function Build() {
   };
 
   const handleLoad = () => {
-    // TODO: Implement load modal
-    alert('Load functionality coming soon!');
+    setShowJsonModal(true);
+  };
+
+  const handleJsonSave = (jsonString: string) => {
+    try {
+      const parsed = JSON.parse(jsonString);
+      // Update the current build with the parsed data
+      updateCurrentBuild(parsed);
+      alert('Build updated successfully!');
+    } catch (error: any) {
+      alert(`Failed to update build: ${error.message}`);
+    }
   };
 
   const getFilteredItems = () => {
@@ -637,6 +649,13 @@ function Build() {
           </div>
         </div>
       )}
+
+      <BuildJsonModal
+        isOpen={showJsonModal}
+        onClose={() => setShowJsonModal(false)}
+        currentBuild={currentBuild}
+        onSave={handleJsonSave}
+      />
     </div>
   );
 }

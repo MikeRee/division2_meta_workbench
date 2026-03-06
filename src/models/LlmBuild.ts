@@ -1,8 +1,6 @@
 import { CoreType } from './CoreValue';
 
 class LlmBuild {
-  id: string;
-  name: string;
   specialization: string;
   primaryWeapon: LlmWeapon | null;
   secondaryWeapon: LlmWeapon | null;
@@ -16,12 +14,8 @@ class LlmBuild {
   skill1: string;
   skill2: string;
   watch: string | null;
-  createdAt: number;
-  updatedAt: number;
 
   constructor({
-    id = null,
-    name = '',
     specialization = '',
     primaryWeapon = null,
     secondaryWeapon = null,
@@ -35,11 +29,7 @@ class LlmBuild {
     skill1 = '',
     skill2 = '',
     watch = null,
-    createdAt = null,
-    updatedAt = null
   }: {
-    id?: string | null;
-    name?: string;
     specialization?: string;
     primaryWeapon?: LlmWeapon | null;
     secondaryWeapon?: LlmWeapon | null;
@@ -53,11 +43,7 @@ class LlmBuild {
     skill1?: string;
     skill2?: string;
     watch?: string | null;
-    createdAt?: number | null;
-    updatedAt?: number | null;
   } = {}) {
-    this.id = id || this.generateId();
-    this.name = name;
     this.specialization = specialization;
     this.primaryWeapon = primaryWeapon;
     this.secondaryWeapon = secondaryWeapon;
@@ -71,12 +57,6 @@ class LlmBuild {
     this.skill1 = skill1;
     this.skill2 = skill2;
     this.watch = watch;
-    this.createdAt = createdAt || Date.now();
-    this.updatedAt = updatedAt || Date.now();
-  }
-
-  private generateId(): string {
-    return `build_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 }
 
