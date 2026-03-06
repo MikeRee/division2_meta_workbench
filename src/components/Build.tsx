@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './Build.css';
-import { MdSave, MdFolderOpen } from 'react-icons/md';
+import { MdSave, MdFolderOpen, MdRefresh } from 'react-icons/md';
 import { useBuildStore } from '../stores/useBuildStore';
 import { useLookupStore } from '../stores/useLookupStore';
 import Weapon from '../models/Weapon';
@@ -25,6 +25,7 @@ function Build() {
   const currentBuild = useBuildStore(state => state.currentBuild);
   const updateCurrentBuild = useBuildStore(state => state.updateCurrentBuild);
   const saveCurrentBuild = useBuildStore(state => state.saveCurrentBuild);
+  const newBuild = useBuildStore(state => state.newBuild);
   
   const specializationsMap = useLookupStore(state => state.specializations);
   const weaponsMap = useLookupStore(state => state.weapons);
@@ -328,14 +329,125 @@ function Build() {
     setShowJsonModal(true);
   };
 
+  const handleReset = () => {
+    if (confirm('Are you sure you want to reset the build? This will clear all selections.')) {
+      newBuild();
+    }
+  };
+
   const handleJsonSave = (jsonString: string) => {
     try {
-      const parsed = JSON.parse(jsonString);
-      // Update the current build with the parsed data
-      updateCurrentBuild(parsed);
+      const llmBuild = JSON.parse(jsonString);
+      
+      // Reconstruct BuildWeapon instances by looking up weapons by name
+      const reconstructWeapon = (llmWeapon: any): BuildWeapon | null => {
+        if (!llmWeapon || !llmWeapon.name) return null;
+        
+        // Find the weapon by name
+        const weapon = (weapons as Weapon[]).find(w => w.name === llmWeapon.name);
+        if (!weapon) {
+          console.warn(`Weapon not found: ${llmWeapon.name}`);
+          return null;
+        }
+        
+        // Reconstruct mod slots
+        const configuredModSlots: Record<string, Record<string, number>> = {};
+        if (llmWeapon.muzzleIfOption) {
+          configuredModSlots.muzzle = { [llmWeapon.muzzleIfOption]: 0 };
+        }
+        if (llmWeapon.underbarrelIfOption) {
+          configuredModSlots.underbarrel = { [llmWeapon.underbarrelIfOption]: 0 };
+        }
+        if (llmWeapon.magazineIfOption) {
+          configuredModSlots.magazine = { [llmWeapon.magazineIfOption]: 0 };
+        }
+        if (llmWeapon.opticsIfOption) {
+          configuredModSlots.optics = { [llmWeapon.opticsIfOption]: 0 };
+        }
+        
+        return new BuildWeapon(weapon, configuredModSlots);
+      };
+      
+      // Reconstruct BuildGear instances by looking up gear by name
+      const reconstructGear = (llmGear: any, gearType: GearType): BuildGear | null => {
+        if (!llmGear || !llmGear.name) return null;
+        
+        // Find the gear in namedGear, gearsets, or brandsets
+        const namedGearItem = (namedGear as NamedGear[]).find(g => g.name === llmGear.name);
+        const gearsetItem = gearsets.find(g => g.name === llmGear.name);
+        const brandsetItem = brandsets.find(b => b.brand === llmGear.name);
+        
+        if (!namedGearItem && !gearsetItem && !brandsetItem) {
+          console.warn(`Gear not found: ${llmGear.name}`);
+          return null;
+        }
+        
+        // Get all possible gear mods
+        const allGearMods: Record<string, number> = {};
+        if (gearAttributesMap instanceof Map) {
+          for (const [key, gearMod] of gearAttributesMap.entries()) {
+            allGearMods[gearMod.attribute] = gearMod.max;
+          }
+        }
+        
+        // Create GearModValue instances for minors
+        const createMinor = (minorKey: string | null): GearModValue | null => {
+          if (!minorKey) return null;
+          
+          const missingMapping = useLookupStore.getState().getMissingMapping(minorKey);
+          const classification = missingMapping || useLookupStore.getState().gearAttributes?.getClassification(minorKey);
+          
+          return new GearModValue({ [minorKey]: allGearMods[minorKey] || 0 }, classification!, minorKey, allGearMods[minorKey] || 0);
+        };
+        
+        let source: GearSource;
+        let icon = '';
+        
+        if (namedGearItem) {
+          source = namedGearItem.isExotic ? GearSource.Exotic : GearSource.Named;
+          icon = namedGearItem.icon || '';
+        } else if (gearsetItem) {
+          source = GearSource.Gearset;
+          icon = gearsetItem.logo || '';
+        } else {
+          source = GearSource.Brandset;
+          icon = brandsetItem?.icon || '';
+        }
+        
+        return new BuildGear({
+          name: llmGear.name,
+          source,
+          type: gearType,
+          icon,
+          core: { type: llmGear.core, value: getDefaultCoreValue(llmGear.core) },
+          minor1: createMinor(llmGear.minor1),
+          minor2: createMinor(llmGear.minor2),
+          minor3: createMinor(llmGear.minor3),
+        });
+      };
+      
+      // Build the updates object
+      const updates: any = {
+        specialization: llmBuild.specialization || '',
+        skill1: llmBuild.skill1 || '',
+        skill2: llmBuild.skill2 || '',
+        watch: llmBuild.watch || null,
+        primaryWeapon: reconstructWeapon(llmBuild.primaryWeapon),
+        secondaryWeapon: reconstructWeapon(llmBuild.secondaryWeapon),
+        pistol: reconstructWeapon(llmBuild.pistol),
+        mask: reconstructGear(llmBuild.mask, GearType.Mask),
+        chest: reconstructGear(llmBuild.chest, GearType.Chest),
+        holster: reconstructGear(llmBuild.holster, GearType.Holster),
+        backpack: reconstructGear(llmBuild.backpack, GearType.Backpack),
+        gloves: reconstructGear(llmBuild.gloves, GearType.Gloves),
+        kneepads: reconstructGear(llmBuild.kneepads, GearType.Kneepads),
+      };
+      
+      updateCurrentBuild(updates);
       alert('Build updated successfully!');
     } catch (error: any) {
       alert(`Failed to update build: ${error.message}`);
+      console.error('Error updating build:', error);
     }
   };
 
@@ -412,6 +524,10 @@ function Build() {
   const isGearSelection = ['mask', 'chest', 'holster', 'backpack', 'gloves', 'kneepads'].includes(overlayType);
   const isWeaponSelection = ['primaryWeapon', 'secondaryWeapon', 'pistol'].includes(overlayType);
 
+  const getSpecializationImage = (name: string) => {
+    return `/images/${name.toLowerCase()}.png`;
+  };
+
   return (
     <div className="build-container">
       <div className="build-header">
@@ -423,18 +539,34 @@ function Build() {
           <button className="icon-button" onClick={handleLoad} title="Load Build">
             <MdFolderOpen />
           </button>
+          <button className="icon-button" onClick={handleReset} title="Reset Build">
+            <MdRefresh />
+          </button>
         </div>
       </div>
 
       <div className="build-content">
         <div className="build-row">
-          <div 
-            className="build-cell" 
-            onClick={() => handleCellClick('specialization')}
-          >
-            <span className="cell-label">Specialization</span>
-            <span className="cell-value">{currentBuild.specialization || 'Select...'}</span>
-          </div>
+          {currentBuild.specialization ? (
+            <div 
+              className="specialization-cell" 
+              onClick={() => handleCellClick('specialization')}
+            >
+              <img 
+                src={getSpecializationImage(currentBuild.specialization)} 
+                alt={currentBuild.specialization}
+                className="specialization-image"
+              />
+            </div>
+          ) : (
+            <div 
+              className="build-cell" 
+              onClick={() => handleCellClick('specialization')}
+            >
+              <span className="cell-label">Specialization</span>
+              <span className="cell-value">Select...</span>
+            </div>
+          )}
           {currentBuild.pistol ? (
             <WeaponTacticalCard 
               buildWeapon={currentBuild.pistol} 
@@ -610,7 +742,7 @@ function Build() {
               autoFocus
             />
 
-            <div className={`overlay-list ${!isGearSelection && !isWeaponSelection ? 'single-column' : ''}`}>
+            <div className={`overlay-list ${overlayType === 'specialization' ? 'specialization-grid' : !isGearSelection && !isWeaponSelection ? 'single-column' : ''}`}>
               {filteredItems.length > 0 ? (
                 isGearSelection ? (
                   // Render TacticalCards for gear items
@@ -628,6 +760,17 @@ function Build() {
                       key={index}
                       buildWeapon={item as BuildWeapon}
                       onClick={() => handleSelect(item as BuildWeapon)}
+                    />
+                  ))
+                ) : overlayType === 'specialization' ? (
+                  // Render specialization items with images
+                  filteredItems.map((item, index) => (
+                    <img
+                      key={index}
+                      src={getSpecializationImage(item.name)} 
+                      alt={item.name}
+                      className="specialization-item"
+                      onClick={() => handleSelect(item.name)}
                     />
                   ))
                 ) : (
