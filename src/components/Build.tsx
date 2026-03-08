@@ -275,49 +275,12 @@ function Build() {
     return buildGearList;
   };
 
-  const handleSelect = (value: string | BuildGear | BuildWeapon) => {
-    switch(overlayType) {
-      case 'specialization':
-        updateCurrentBuild({ specialization: value as string });
-        break;
-      case 'primaryWeapon':
-        updateCurrentBuild({ primaryWeapon: value as BuildWeapon });
-        break;
-      case 'secondaryWeapon':
-        updateCurrentBuild({ secondaryWeapon: value as BuildWeapon });
-        break;
-      case 'pistol':
-        updateCurrentBuild({ pistol: value as BuildWeapon });
-        break;
-      case 'mask':
-        updateCurrentBuild({ mask: value as BuildGear });
-        break;
-      case 'chest':
-        updateCurrentBuild({ chest: value as BuildGear });
-        break;
-      case 'holster':
-        updateCurrentBuild({ holster: value as BuildGear });
-        break;
-      case 'backpack':
-        updateCurrentBuild({ backpack: value as BuildGear });
-        break;
-      case 'gloves':
-        updateCurrentBuild({ gloves: value as BuildGear });
-        break;
-      case 'kneepads':
-        updateCurrentBuild({ kneepads: value as BuildGear });
-        break;
-      case 'skill1':
-        updateCurrentBuild({ skill1: value as string });
-        break;
-      case 'skill2':
-        updateCurrentBuild({ skill2: value as string });
-        break;
-      default:
-        break;
-    }
-    setShowOverlay(false);
-  };
+const handleSelect = (value: string | BuildGear | BuildWeapon) => {
+  if (overlayType) {
+    updateCurrentBuild({ [overlayType]: value } as any);
+  }
+  setShowOverlay(false);
+};
 
   const handleSave = () => {
     const name = prompt('Enter build name:', currentBuild.name || 'Untitled Build');
@@ -527,7 +490,7 @@ function Build() {
   const isWeaponSelection = ['primaryWeapon', 'secondaryWeapon', 'pistol'].includes(overlayType);
 
   const getSpecializationImage = (name: string) => {
-    return `/images/${name.toLowerCase()}.png`;
+    return `/images/specialties/${name.toLowerCase()}.png`;
   };
 
   return (

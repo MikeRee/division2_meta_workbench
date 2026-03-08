@@ -1,48 +1,34 @@
-interface WeaponData {
-  type?: string;
-  variant?: string;
-  name?: string;
-  flag?: string | null;
-  rpm?: string;
-  baseMagSize?: string;
-  moddedMagSize?: string;
-  reload?: string;
-  damage?: string;
-  optimalRange?: string;
-  modSlots?: string[];
-}
-
 class Weapon {
   type: string;
   variant: string;
   name: string;
   flag: string | null;
-  rpm: string;
-  baseMagSize: string;
-  moddedMagSize: string;
-  reload: string;
-  damage: string;
-  optimalRange: string;
+  rpm?: number;
+  baseMagSize?: number;
+  moddedMagSize?: number;
+  reload?: number;
+  damage?: number;
+  optimalRange?: number;
   modSlots: string[];
 
-  constructor(data: WeaponData = {}) {
+  constructor(data: any = {}) {
     this.type = data.type || ''; // e.g., "Assault Rifles"
     this.variant = data.variant || ''; // e.g., "aug"
     this.name = data.name || ''; // e.g., "FAL"
     this.flag = data.flag || null; // "N" (Named), "E" (Exotic), or null
-    this.rpm = data.rpm || '';
-    this.baseMagSize = data.baseMagSize || '';
-    this.moddedMagSize = data.moddedMagSize || '';
-    this.reload = data.reload || '';
-    this.damage = data.damage || '';
-    this.optimalRange = data.optimalRange || '';
+    this.rpm = data.rpm;
+    this.baseMagSize = data.baseMagSize;
+    this.moddedMagSize = data.moddedMagSize;
+    this.reload = data.reload;
+    this.damage = data.damage;
+    this.optimalRange = data.optimalRange;
     this.modSlots = data.modSlots || []; // Array of mod slot types
   }
 
   static fromSheetRow(headers: string[], row: any[]): Weapon {
-    const data: WeaponData = {};
+    const data: any = {};
     headers.forEach((header, index) => {
-      const key = this.normalizeHeaderKey(header, index) as keyof WeaponData;
+      const key = this.normalizeHeaderKey(header, index);
       const value = row[index] || '';
       
       // Skip if this key was already set by a prioritized column
