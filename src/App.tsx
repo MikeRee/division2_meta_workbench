@@ -3,6 +3,7 @@ import TitleBar from './components/TitleBar';
 import BuildComponent from './components/Build';
 import ChatWindow from './components/ChatWindow';
 import useLookupStore from './stores/useLookupStore';
+import useRawDataStore from './stores/useRawDataStore';
 import Weapon from './models/Weapon';
 import WeaponTalent from './models/WeaponTalent';
 import ExoticWeapon from './models/ExoticWeapon';
@@ -141,6 +142,18 @@ function App() {
     };
 
     loadCSVData();
+
+    // Load all raw JSON files from /raw directory
+    const loadRawFiles = async () => {
+      try {
+        await useRawDataStore.getState().loadAllRawFiles();
+        console.log('Loaded all raw JSON files from /raw directory');
+      } catch (error) {
+        console.error('Error loading raw files:', error);
+      }
+    };
+
+    loadRawFiles();
   }, []);
 
   const handleLoadWeapons = async () => {
@@ -863,9 +876,473 @@ function App() {
     }
   };
 
+  // Helper function to normalize weapon header keys (same logic as Weapon.normalizeHeaderKey)
+  const normalizeWeaponHeaderKey = (header: string, columnIndex: number): string => {
+    // Handle specific column indices for known structure
+    if (columnIndex === 0) return 'type';
+    if (columnIndex === 2) return 'name';
+    if (columnIndex === 6) return 'reload';
+    if (columnIndex === 7) return 'damage';
+    if (columnIndex === 12) return 'optimalRange';
+    
+    // Convert header names to camelCase property names
+    const normalized = header
+      .toLowerCase()
+      .replace(/[^a-z0-9]+(.)/g, (_, char) => char.toUpperCase());
+    
+    // Map common variations to property names
+    const keyMap: Record<string, string> = {
+      'weapon': 'name',
+      'weapontype': 'type',
+      'weaponname': 'name',
+      'weaponvariant': 'variant',
+      'variant': 'variant',
+      'roundsperminute': 'rpm',
+      'rpm': 'rpm',
+      'firerate': 'rpm',
+      'basemagazine': 'baseMagSize',
+      'basemag': 'baseMagSize',
+      'basemagsize': 'baseMagSize',
+      'moddedmagazine': 'moddedMagSize',
+      'moddedmag': 'moddedMagSize',
+      'moddedmagsize': 'moddedMagSize',
+      'magazinesize': 'baseMagSize',
+      'magazine': 'baseMagSize',
+      'emptyreloadsecs': 'reload',
+      'reloadspeed': 'reload',
+      'reloadtime': 'reload',
+      'level40damage': 'damage',
+      'range': 'optimalRange',
+      'optimalrange': 'optimalRange',
+      'modificationslots': 'modSlots',
+      'mods': 'modSlots',
+      'modslots': 'modSlots',
+      'flag': 'flag',
+    };
+
+    return keyMap[normalized] || normalized;
+  };
+
+  // Load2 handlers - Load raw data without normalization
+  const handleLoad2Data = async (dataType: string, pageName: string, isCSV: boolean = false) => {
+    const startTime = performance.now();
+    console.log(`[${dataType}] Starting data scrape...`);
+    
+    const apiKey = localStorage.getItem('googleApiKey');
+    let spreadsheetId = localStorage.getItem('division2GearSpreadsheet');
+
+    if (!apiKey || !spreadsheetId) {
+      const endTime = performance.now();
+      const duration = ((endTime - startTime) / 1000).toFixed(2);
+      console.log(`[${dataType}] ✗ Aborted after ${duration}s - Missing config (apiKey: ${!!apiKey}, spreadsheetId: ${!!spreadsheetId})`);
+      
+      const missingItems = [];
+      if (!apiKey) missingItems.push('Google API Key');
+      if (!spreadsheetId) missingItems.push('Spreadsheet ID');
+      
+      alert(`Missing configuration: ${missingItems.join(' and ')}\n\nPlease click the gear icon (⚙️) to configure your Google API Key and Spreadsheet ID.`);
+      setDisplayContent('Error: Please configure Google API Key and Spreadsheet ID in Config');
+      return;
+    }
+
+    console.log(`[${dataType}] Config found, proceeding with scrape`);
+    spreadsheetId = extractSpreadsheetId(spreadsheetId);
+    localStorage.setItem('division2GearSpreadsheet', spreadsheetId);
+
+    if (isCSV) {
+      // Load CSV as raw data
+      try {
+        setDisplayContent(`Loading raw ${pageName}...`);
+        const csvText = await loadCSVFile(pageName);
+        
+        // Parse CSV into raw array of objects
+        const lines = csvText.trim().split('\n');
+        const headers = lines[0].split(',').map(h => h.trim());
+        const rawData = lines.slice(1).map(line => {
+          const values = line.split(',').map(v => v.trim());
+          const obj: any = {};
+          headers.forEach((header, index) => {
+            obj[header] = values[index] || '';
+          });
+          return obj;
+        });
+        
+        useRawDataStore.getState().setRawData(dataType as any, rawData);
+        
+        const endTime = performance.now();
+        const duration = ((endTime - startTime) / 1000).toFixed(2);
+        console.log(`[${dataType}] ✓ Completed in ${duration}s (${rawData.length} items)`);
+        
+        setDisplayContent(JSON.stringify(rawData, null, 2));
+      } catch (error) {
+        const endTime = performance.now();
+        const duration = ((endTime - startTime) / 1000).toFixed(2);
+        console.error(`[${dataType}] ✗ Failed after ${duration}s:`, error);
+        
+        const errorMessageText = error instanceof Error ? error.message : String(error);
+        setDisplayContent(`Error loading raw ${pageName}: ${errorMessageText}`);
+      }
+      return;
+    }
+
+    setDisplayContent(`Loading raw ${dataType}...`);
+
+    try {
+      let url: string;
+      let useGridData = ['weapons', 'exoticWeapons', 'gearsets', 'namedGear', 'skills'].includes(dataType);
+      
+      if (useGridData) {
+        // For sheets that need grid data (color formatting, etc.)
+        if (dataType === 'exoticWeapons' || dataType === 'namedGear') {
+          // Find the correct sheet name first
+          const metaUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?key=${apiKey}`;
+          const metaResponse = await fetch(metaUrl);
+          if (!metaResponse.ok) throw new Error(`Failed to fetch spreadsheet metadata`);
+          
+          const metaData = await metaResponse.json();
+          const targetSheet = metaData.sheets.find((sheet: any) => {
+            const title = sheet.properties.title.toLowerCase();
+            if (dataType === 'exoticWeapons') {
+              return title.includes('weapon') && title.includes('named') && title.includes('exotic');
+            } else {
+              return title.includes('gear') && title.includes('named') && title.includes('exotic');
+            }
+          });
+          
+          if (!targetSheet) throw new Error(`Could not find sheet for ${dataType}`);
+          pageName = targetSheet.properties.title;
+        }
+        
+        url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?key=${apiKey}&ranges=${encodeURIComponent(pageName)}&includeGridData=true`;
+      } else {
+        // For sheets that only need values
+        // Use FORMULA render option to get =IMAGE() formulas for icon extraction
+        url = `/api/sheets/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(pageName)}?key=${apiKey}&valueRenderOption=FORMULA`;
+      }
+      
+      console.log(`[${dataType}] Fetching from: ${url.substring(0, 100)}...`);
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' },
+      });
+
+      console.log(`[${dataType}] Fetch response status: ${response.status}`);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`API Error: ${response.status} ${response.statusText}\n${errorText}`);
+      }
+
+      console.log(`[${dataType}] Parsing response...`);
+      const data = await response.json();
+      let rawData: any[];
+
+      if (useGridData) {
+        // Extract raw grid data
+        if (!data.sheets || data.sheets.length === 0 || !data.sheets[0].data || !data.sheets[0].data[0].rowData) {
+          throw new Error('No data found');
+        }
+        
+        const gridData = data.sheets[0].data[0];
+        
+        if (dataType === 'weapons') {
+          // Use the original parseWeapons function
+          const weaponList = parseWeapons(gridData);
+          rawData = weaponList.map((w: any) => ({ ...w }));
+        } else if (dataType === 'exoticWeapons') {
+          // For exotic weapons, we need formulas for icons
+          // Make a second call with FORMULA option
+          console.log(`[${dataType}] Fetching formulas for icon extraction...`);
+          const formulaUrl = `/api/sheets/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(pageName)}?key=${apiKey}&valueRenderOption=FORMULA`;
+          const formulaResponse = await fetch(formulaUrl);
+          const formulaData = await formulaResponse.json();
+          
+          console.log(`[${dataType}] Formula data rows:`, formulaData.values?.length);
+          
+          // Use the original parseExoticWeapons function with grid data
+          const exoticDataWithoutIcons = parseExoticWeapons(gridData);
+          
+          console.log(`[${dataType}] Parsed exotic weapons:`, Object.keys(exoticDataWithoutIcons));
+          
+          // Extract icons from formula data
+          if (formulaData.values) {
+            const formulaValues = formulaData.values;
+            
+            for (let i = 1; i < formulaValues.length; i++) {
+              const row = formulaValues[i] || [];
+              const colC = row[2] || '';
+              const colD = row[3] || '';
+              
+              // Check if column C has a weapon name (not a formula)
+              if (colC && colC.trim() && !colC.startsWith('=')) {
+                const weaponName = colC.trim();
+                
+                console.log(`[${dataType}] Row ${i}: name="${weaponName}", colD="${colD.substring(0, 50)}"`);
+                
+                // Check if this weapon exists in our parsed exotic weapons
+                if (exoticDataWithoutIcons[weaponName]) {
+                  const icons: string[] = [];
+                  
+                  // Check PREVIOUS row for first icon in column D
+                  if (i - 1 >= 0) {
+                    const prevRow = formulaValues[i - 1] || [];
+                    const prevColD = prevRow[3] || '';
+                    
+                    console.log(`[${dataType}] Row ${i-1} (prev): colD="${prevColD.substring(0, 50)}"`);
+                    
+                    if (prevColD && prevColD.trim() && (prevColD.startsWith('=IMAGE(') || prevColD.startsWith('=image('))) {
+                      let icon1 = prevColD.trim();
+                      const match = icon1.match(/=IMAGE\("([^"]+)"/i);
+                      if (match) {
+                        icon1 = match[1];
+                        icons.push(icon1);
+                        console.log(`[${dataType}] Found first icon for ${weaponName}:`, icon1);
+                      }
+                    }
+                  }
+                  
+                  // Extract second icon from column D of current row (where the name is)
+                  if (colD && colD.trim() && (colD.startsWith('=IMAGE(') || colD.startsWith('=image('))) {
+                    let icon2 = colD.trim();
+                    const match = icon2.match(/=IMAGE\("([^"]+)"/i);
+                    if (match) {
+                      icon2 = match[1];
+                      icons.push(icon2);
+                      console.log(`[${dataType}] Found second icon for ${weaponName}:`, icon2);
+                    }
+                  }
+                  
+                  exoticDataWithoutIcons[weaponName].icons = icons;
+                  console.log(`[${dataType}] Set ${icons.length} icon(s) for ${weaponName}:`, icons);
+                }
+              }
+            }
+          }
+          
+          rawData = Object.values(exoticDataWithoutIcons);
+        } else if (dataType === 'namedGear') {
+          // For named gear, we need formulas for icons
+          // Make a second call with FORMULA option
+          console.log(`[${dataType}] Fetching formulas for icon extraction...`);
+          const formulaUrl = `/api/sheets/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(pageName)}?key=${apiKey}&valueRenderOption=FORMULA`;
+          const formulaResponse = await fetch(formulaUrl);
+          const formulaData = await formulaResponse.json();
+          
+          // Use the original parseNamedGear function
+          const namedGearData = parseNamedGear(gridData);
+          
+          // Extract icons from formula data
+          if (formulaData.values) {
+            const formulaValues = formulaData.values;
+            
+            for (let i = 1; i < formulaValues.length; i++) {
+              const row = formulaValues[i] || [];
+              const colE = row[4] || ''; // Name is in column E
+              const colF = row[5] || ''; // Icon is in column F
+              
+              const name = colE.trim();
+              if (name && !name.startsWith('=') && namedGearData[name]) {
+                // Extract icon from column F
+                let icon = colF;
+                if (icon && (icon.startsWith('=IMAGE(') || icon.startsWith('=image('))) {
+                  const match = icon.match(/=IMAGE\("([^"]+)"/i);
+                  if (match) {
+                    icon = match[1];
+                    namedGearData[name].icon = icon;
+                    console.log(`[${dataType}] Set icon for ${name}:`, icon);
+                  }
+                }
+              }
+            }
+          }
+          
+          rawData = Object.values(namedGearData);
+        } else if (dataType === 'gearsets') {
+          // For gearsets, we need formulas for logos
+          // Make a second call with FORMULA option
+          console.log(`[${dataType}] Fetching formulas for logo extraction...`);
+          const formulaUrl = `/api/sheets/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(pageName)}?key=${apiKey}&valueRenderOption=FORMULA`;
+          const formulaResponse = await fetch(formulaUrl);
+          const formulaData = await formulaResponse.json();
+          
+          // Use the original parseGearsets function
+          const gearsets = parseGearsets(gridData);
+          
+          // Extract logos from formula data
+          if (formulaData.values) {
+            const formulaValues = formulaData.values;
+            
+            // Process in pairs (gearsets span 2 rows)
+            for (let i = 1; i < formulaValues.length; i += 2) {
+              const row1 = formulaValues[i] || [];
+              const row2 = formulaValues[i + 1] || [];
+              
+              const colA_row1 = row1[0] || '';
+              const name = (row2[0] || '').trim();
+              
+              if (name) {
+                // Extract logo from row1 column A
+                let logo = colA_row1;
+                if (logo.startsWith('=IMAGE(') || logo.startsWith('=image(')) {
+                  const match = logo.match(/=IMAGE\("([^"]+)"/i);
+                  if (match) {
+                    logo = match[1];
+                    
+                    // Find the gearset in our parsed data and update the logo
+                    const gearset = gearsets.find((g: any) => g.name === name);
+                    if (gearset) {
+                      gearset.logo = logo;
+                      console.log(`[${dataType}] Set logo for ${name}:`, logo);
+                    }
+                  }
+                }
+              }
+            }
+          }
+          
+          // Post-process: simplify single-value cores
+          rawData = gearsets.map((gearset: any) => {
+            if (gearset.core && typeof gearset.core === 'object') {
+              const keys = Object.keys(gearset.core);
+              // If there's only one key and it has only one value
+              if (keys.length === 1) {
+                const key = keys[0];
+                const values = gearset.core[key];
+                if (Array.isArray(values) && values.length === 1) {
+                  // Check if the value matches the key (case-insensitive)
+                  if (values[0].toLowerCase() === key.toLowerCase()) {
+                    return { ...gearset, core: key };
+                  }
+                }
+              }
+            }
+            return gearset;
+          });
+        } else if (dataType === 'skills') {
+          // For skills, we need formulas for icons
+          // Make a second call with FORMULA option
+          console.log(`[${dataType}] Processing skills with grid data...`);
+          
+          // Check for over-grid images in the grid data
+          console.log(`[${dataType}] Checking for over-grid images...`);
+          console.log(`[${dataType}] Grid data structure:`, Object.keys(gridData));
+          
+          // Over-grid images might be in gridData.rowMetadata or a separate property
+          if (data.sheets && data.sheets[0]) {
+            const sheet = data.sheets[0];
+            console.log(`[${dataType}] Sheet properties:`, Object.keys(sheet));
+            
+            // Check for images in sheet-level data
+            if (sheet.images) {
+              console.log(`[${dataType}] Found sheet.images:`, sheet.images);
+            }
+            if (sheet.overlays) {
+              console.log(`[${dataType}] Found sheet.overlays:`, sheet.overlays);
+            }
+          }
+          
+          console.log(`[${dataType}] Fetching formulas for icon extraction...`);
+          const formulaUrl = `/api/sheets/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(pageName)}?key=${apiKey}&valueRenderOption=FORMULA`;
+          const formulaResponse = await fetch(formulaUrl);
+          const formulaData = await formulaResponse.json();
+          
+          console.log(`[${dataType}] Formula data rows:`, formulaData.values?.length);
+          
+          // Use the original parseSkills function
+          const skillsData = parseSkills({ values: formulaData.values || [] });
+          
+          rawData = skillsData;
+        }
+      } else {
+        // Extract raw values
+        if (!data.values || data.values.length === 0) {
+          throw new Error('No data found');
+        }
+        
+        const values = data.values;
+        
+        // Special handling for weapon talents
+        if (dataType === 'weaponTalents') {
+          // Use the original parseWeaponTalents function
+          rawData = parseWeaponTalents({ values });
+        } else if (dataType === 'brandsets') {
+          // Use the original parseBrandsets function
+          rawData = parseBrandsets({ values });
+        } else if (dataType === 'gearTalents') {
+          // Use the original parseGearTalents function
+          rawData = parseGearTalents({ values });
+        } else if (dataType === 'weaponMods') {
+          // Extract raw weapon mods data without using the model
+          let currentType = '';
+          let currentSlot = '';
+          
+          rawData = [];
+          
+          // Skip header row
+          for (let i = 1; i < values.length; i++) {
+            const row = values[i] || [];
+            
+            // Skip completely empty rows
+            if (row.length === 0 || (!row[0] && !row[1] && !row[2])) continue;
+            
+            // Update type from column A if present
+            if (row[0] && row[0].trim()) {
+              currentType = row[0].trim();
+            }
+            
+            // Update slot from column B if present
+            if (row[1] && row[1].trim()) {
+              currentSlot = row[1].trim();
+            }
+            
+            // If column C (name) has content, this is a mod row
+            if (row[2] && row[2].trim()) {
+              rawData.push({
+                type: currentType,
+                slot: currentSlot,
+                name: row[2] || '',
+                bonus: row[3] || '',
+                penalty: row[4] || '',
+                source: row[5] || ''
+              });
+            }
+          }
+        } else {
+          // For other data types, convert 2D array to objects with headers
+          const headers = values[0] || [];
+          rawData = values.slice(1).map((row: any[]) => {
+            const obj: any = {};
+            row.forEach((value: any, index: number) => {
+              const key = headers[index]?.trim() || `col_${index}`;
+              obj[key] = value || '';
+            });
+            return obj;
+          });
+        }
+      }
+      
+      // Store in raw data store using generic setRawData
+      useRawDataStore.getState().setRawData(dataType as any, rawData);
+      
+      const endTime = performance.now();
+      const duration = ((endTime - startTime) / 1000).toFixed(2);
+      console.log(`[${dataType}] ✓ Completed in ${duration}s (${rawData.length} items)`);
+      
+      setDisplayContent(JSON.stringify(rawData, null, 2));
+    } catch (error) {
+      const endTime = performance.now();
+      const duration = ((endTime - startTime) / 1000).toFixed(2);
+      console.error(`[${dataType}] ✗ Failed after ${duration}s:`, error);
+      
+      console.error('Full error:', error);
+      const errorMessageText = error instanceof Error ? error.message : String(error);
+      setDisplayContent(`Error loading raw ${dataType}: ${errorMessageText}`);
+    }
+  };
+
   return (
     <div className="app">
-      <TitleBar onLoadData={handleLoadData} />
+      <TitleBar onLoadData={handleLoad2Data} />
       <div className="main-content">
         <BuildComponent />
         <ChatWindow />

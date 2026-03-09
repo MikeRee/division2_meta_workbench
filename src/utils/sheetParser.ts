@@ -288,9 +288,33 @@ export const parseExoticWeapons = (gridData: GridData): Record<string, any> => {
       if (hasExoticColor) {
         const name = row[2].trim();
         
+        // Extract icon from column D (index 3)
+        let icon = '';
+        if (cells[3]) {
+          const iconCell = cells[3];
+          // Check userEnteredValue for formula
+          if (iconCell.userEnteredValue) {
+            if (iconCell.userEnteredValue.formulaValue) {
+              const formula = iconCell.userEnteredValue.formulaValue;
+              if (formula.startsWith('=IMAGE(') || formula.startsWith('=image(')) {
+                const match = formula.match(/=IMAGE\("([^"]+)"/i);
+                if (match) {
+                  icon = match[1];
+                }
+              }
+            } else if (iconCell.userEnteredValue.stringValue) {
+              icon = iconCell.userEnteredValue.stringValue;
+            }
+          }
+          // Fallback to formatted value
+          if (!icon) {
+            icon = iconCell.formattedValue || '';
+          }
+        }
+        
         // Look at the PREVIOUS row for variant, talent, and mods (exotic weapons span 2 rows)
         // Row 1: variant in col B, talent in col E, mods in col F
-        // Row 2: weapon name in col C
+        // Row 2: weapon name in col C, icon in col D
         let variant = '';
         let talentName: string | null = null;
         let talentDesc: string | null = null;
@@ -327,6 +351,7 @@ export const parseExoticWeapons = (gridData: GridData): Record<string, any> => {
           type: currentType,
           variant: variant,
           name: name,
+          icons: [],
           talentName: talentName,
           talentDesc: talentDesc,
           modsInfo: modsInfo
@@ -857,42 +882,39 @@ export const parseSkills = (data: SheetData): Skill[] => {
       currentType = row[0].trim();
     }
     
-    // Check if column B has a skill name (not an icon URL)
+    // Check if column B has a skill name (not an icon URL or formula)
     const colB = row[1] || '';
-    if (colB && colB.trim() && !colB.startsWith('http') && !colB.startsWith('=IMAGE')) {
+    const colA = row[0] || '';
+    
+    if (colB && colB.trim() && !colB.startsWith('http') && !colB.startsWith('=IMAGE') && !colB.startsWith('=image')) {
       const skillName = colB.trim();
       
-      // Look for icon in the rows below (column B)
+      // Check if column A in the SAME row has an icon formula
       let icon = '';
-      let iconRowIndex = i + 1;
       
-      // Find the icon (should be in the next row(s) in column B)
-      while (iconRowIndex < rows.length) {
-        const nextRow = rows[iconRowIndex] || [];
-        const nextColB = nextRow[1] || '';
-        
-        // Extract icon URL from =IMAGE() formula
-        if (nextColB.startsWith('=IMAGE(') || nextColB.startsWith('=image(')) {
-          const match = nextColB.match(/=IMAGE\("([^"]+)"/i);
-          if (match) {
-            icon = match[1];
-            break;
-          }
-        } else if (nextColB.startsWith('http')) {
-          icon = nextColB;
-          break;
+      console.log(`[parseSkills] Found skill "${skillName}" at row ${i}, colA="${colA.substring(0, 80)}"`);
+      
+      // Extract icon URL from =IMAGE() formula in column A
+      if (colA && (colA.startsWith('=IMAGE(') || colA.startsWith('=image('))) {
+        const match = colA.match(/=IMAGE\("([^"]+)"/i);
+        if (match) {
+          icon = match[1];
+          console.log(`[parseSkills] ✓ Found icon in colA for "${skillName}": ${icon}`);
+        } else {
+          console.log(`[parseSkills] ✗ Failed to extract URL from colA formula: ${colA}`);
         }
-        
-        // Stop if we hit another skill name or type
-        if ((nextRow[0] && nextRow[0].trim()) || 
-            (nextColB && nextColB.trim() && !nextColB.startsWith('http') && !nextColB.startsWith('=IMAGE'))) {
-          break;
-        }
-        
-        iconRowIndex++;
+      } else if (colA && colA.startsWith('http')) {
+        icon = colA;
+        console.log(`[parseSkills] ✓ Found icon URL in colA for "${skillName}": ${icon}`);
+      } else {
+        console.log(`[parseSkills] ✗ No icon formula found in colA for "${skillName}"`);
       }
       
-      // Now collect data rows - they span from current row to where icon ends
+      if (!icon) {
+        console.log(`[parseSkills] ⚠ No icon found for "${skillName}"`);
+      }
+      
+      // Now collect data rows - they span from current row until we hit another skill name
       // Data is in columns C onwards, with keys in column C
       const skillData: Record<string, Record<string, string>> = {};
       
@@ -901,12 +923,12 @@ export const parseSkills = (data: SheetData): Skill[] => {
       let dataRowIndex = i + 1;
       
       // Determine the end of this skill's data block
-      let endRowIndex = iconRowIndex;
+      let endRowIndex = dataRowIndex;
       while (endRowIndex < rows.length) {
         const checkRow = rows[endRowIndex] || [];
         // Stop if we hit a new skill name in column B or new type in column A
         if ((checkRow[0] && checkRow[0].trim()) || 
-            (checkRow[1] && checkRow[1].trim() && !checkRow[1].startsWith('http') && !checkRow[1].startsWith('=IMAGE'))) {
+            (checkRow[1] && checkRow[1].trim() && !checkRow[1].startsWith('http') && !checkRow[1].startsWith('=IMAGE') && !checkRow[1].startsWith('=image'))) {
           break;
         }
         endRowIndex++;

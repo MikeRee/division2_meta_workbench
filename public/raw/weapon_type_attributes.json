@@ -1,0 +1,32 @@
+[
+  {
+    "Weapon": "Assault Rifle",
+    "Attribute": "Health Damage",
+    "Max": "21%"
+  },
+  {
+    "Weapon": "LMG",
+    "Attribute": "DMG to target out of cover",
+    "Max": "12%"
+  },
+  {
+    "Weapon": "SMG",
+    "Attribute": "Critical Hit Chance",
+    "Max": "21%"
+  },
+  {
+    "Weapon": "Shotgun",
+    "Attribute": "Damage to Armor",
+    "Max": "12%"
+  },
+  {
+    "Weapon": "Rifle",
+    "Attribute": "Critical Hit Damage",
+    "Max": "17%"
+  },
+  {
+    "Weapon": "MMR",
+    "Attribute": "Headshot Damage",
+    "Max": "111%"
+  }
+]

@@ -9,7 +9,8 @@ class Weapon {
   reload?: number;
   damage?: number;
   optimalRange?: number;
-  modSlots: string[];
+  modSlots: string;
+  hsd: string;
 
   constructor(data: any = {}) {
     this.type = data.type || ''; // e.g., "Assault Rifles"
@@ -22,7 +23,8 @@ class Weapon {
     this.reload = data.reload;
     this.damage = data.damage;
     this.optimalRange = data.optimalRange;
-    this.modSlots = data.modSlots || []; // Array of mod slot types
+    this.modSlots = data.modSlots || ''; // String from column N
+    this.hsd = data.hsd || ''; // String from column O
   }
 
   static fromSheetRow(headers: string[], row: any[]): Weapon {
@@ -38,8 +40,11 @@ class Weapon {
       
       // Handle special cases
       if (key === 'modSlots') {
-        // Parse mod slots as array (assuming comma-separated or similar format)
-        data[key] = typeof value === 'string' ? value.split(',').map(s => s.trim()).filter(s => s) : [];
+        // Keep as string (column N, index 13)
+        data[key] = String(value);
+      } else if (key === 'hsd') {
+        // Keep as string (column O, index 14)
+        data[key] = String(value);
       } else if (key === 'flag') {
         // Normalize flag values
         const flagValue = String(value).toUpperCase();
@@ -58,6 +63,8 @@ class Weapon {
     if (columnIndex === 6) return 'reload'; // Column G is Reload
     if (columnIndex === 7) return 'damage'; // Column H is Damage
     if (columnIndex === 12) return 'optimalRange'; // Column M is Optimal Range
+    if (columnIndex === 13) return 'modSlots'; // Column N is Mod Slots
+    if (columnIndex === 14) return 'hsd'; // Column O is HSD
     
     // Convert header names to camelCase property names
     const normalized = header
@@ -89,6 +96,8 @@ class Weapon {
       'modificationslots': 'modSlots',
       'mods': 'modSlots',
       'modslots': 'modSlots',
+      'hsd': 'hsd',
+      'headshotdamage': 'hsd',
     };
 
     return keyMap[normalized] || normalized;

@@ -1,0 +1,54 @@
+[
+  {
+    "Attribute": "Damage to Armor",
+    "Max": "6%"
+  },
+  {
+    "Attribute": "Critical Hit Chance",
+    "Max": "9.5%"
+  },
+  {
+    "Attribute": "Health Damage",
+    "Max": "9.5%"
+  },
+  {
+    "Attribute": "DMG to target out of cover",
+    "Max": "10%"
+  },
+  {
+    "Attribute": "Headshot Damage",
+    "Max": "10%"
+  },
+  {
+    "Attribute": "Critical Hit Damage",
+    "Max": "10%"
+  },
+  {
+    "Attribute": "Reload Speed",
+    "Max": "12%"
+  },
+  {
+    "Attribute": "Stability",
+    "Max": "12%"
+  },
+  {
+    "Attribute": "Accuracy",
+    "Max": "12%"
+  },
+  {
+    "Attribute": "Optimal Range",
+    "Max": "24%"
+  },
+  {
+    "Attribute": "Magazine Size",
+    "Max": "12.5%"
+  },
+  {
+    "Attribute": "Rate of Fire",
+    "Max": "5%"
+  },
+  {
+    "Attribute": "Swap Speed",
+    "Max": "15%"
+  }
+]

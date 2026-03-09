@@ -3,7 +3,7 @@ import './TitleBar.css';
 import LoadModal from './LoadModal';
 
 interface TitleBarProps {
-  onLoadData: (dataType: string, pageName: string, isCSV?: boolean) => void;
+  onLoadData: (dataType: string, pageName: string, isCSV?: boolean) => Promise<void>;
 }
 
 function TitleBar({ onLoadData }: TitleBarProps) {

@@ -1,0 +1,57 @@
+[
+  {
+    "Classification": "Offensive",
+    "Attribute": "Critical Hit Chance",
+    "Max": "6%"
+  },
+  {
+    "Classification": "Offensive",
+    "Attribute": "Critical Hit Damage",
+    "Max": "12%"
+  },
+  {
+    "Classification": "Offensive",
+    "Attribute": "Headshot Damage",
+    "Max": "10%"
+  },
+  {
+    "Classification": "Defensive",
+    "Attribute": "Protection from Elites",
+    "Max": "13%"
+  },
+  {
+    "Classification": "Defensive",
+    "Attribute": "Armor on Kill",
+    "Max": "18,935"
+  },
+  {
+    "Classification": "Defensive",
+    "Attribute": "Status Effect Resistance",
+    "Max": "10%"
+  },
+  {
+    "Classification": "Defensive",
+    "Attribute": "Pulse Resistance",
+    "Max": "10%"
+  },
+  {
+    "Classification": "Defensive",
+    "Attribute": "Incoming Repairs",
+    "Max": "20%"
+  },
+  {
+    "Classification": "Skill",
+    "Attribute": "Skill Haste",
+    "Max": "12%"
+  },
+  {
+    "Classification": "Skill",
+    "Attribute": "Skill Duration",
+    "Max": "10%"
+  },
+  {
+    "Classification": "Skill",
+    "Attribute": "Repair Skills",
+    "Max": "20%"
+  }
+]

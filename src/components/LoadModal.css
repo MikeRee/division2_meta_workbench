@@ -35,6 +35,28 @@
   font-size: 1.5rem;
 }
 
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mode-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #ecf0f1;
+  font-size: 0.9rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.mode-toggle input[type="checkbox"] {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+}
+
 .config-icon {
   background: transparent;
   border: none;
@@ -169,6 +191,13 @@
   border-color: #229954;
 }
 
+.icon-button.no-data {
+  background: #34495e;
+  border-color: #2c3e50;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .icon-button:hover {
   background: #e67e22;
   border-color: #e67e22;
@@ -180,8 +209,18 @@
   border-color: #e67e22;
 }
 
+.icon-button.no-data:hover {
+  background: #34495e;
+  border-color: #2c3e50;
+  transform: none;
+}
+
 .icon-button:active {
   transform: translateY(1px);
+}
+
+.icon-button.no-data:active {
+  transform: none;
 }
 
 .json-viewer-overlay {
@@ -329,6 +368,16 @@
   color: #27ae60;
 }
 
+.csv-icon.no-data {
+  color: #7f8c8d;
+  opacity: 0.3;
+}
+
 .csv-icon.has-data:hover {
   color: #e67e22;
+}
+
+.csv-icon.no-data:hover {
+  color: #7f8c8d;
+  cursor: not-allowed;
 }

@@ -1,0 +1,62 @@
+[
+  {
+    "Classification": "Offensive",
+    "Attribute": "Weapon Handling",
+    "Max": "8%"
+  },
+  {
+    "Classification": "Offensive",
+    "Attribute": "Critical Hit Chance",
+    "Max": "6%"
+  },
+  {
+    "Classification": "Offensive",
+    "Attribute": "Critical Hit Damage",
+    "Max": "12%"
+  },
+  {
+    "Classification": "Offensive",
+    "Attribute": "Headshot Damage",
+    "Max": "10%"
+  },
+  {
+    "Classification": "Defensive",
+    "Attribute": "Armor Regeneration",
+    "Max": "4925/s"
+  },
+  {
+    "Classification": "Defensive",
+    "Attribute": "Hazard Protection",
+    "Max": "10%"
+  },
+  {
+    "Classification": "Defensive",
+    "Attribute": "Health",
+    "Max": "18,935"
+  },
+  {
+    "Classification": "Defensive",
+    "Attribute": "Explosive Resistance",
+    "Max": "10%"
+  },
+  {
+    "Classification": "Skill",
+    "Attribute": "Skill Haste",
+    "Max": "12%"
+  },
+  {
+    "Classification": "Skill",
+    "Attribute": "Skill Damage",
+    "Max": "10%"
+  },
+  {
+    "Classification": "Skill",
+    "Attribute": "Repair Skills",
+    "Max": "20%"
+  },
+  {
+    "Classification": "Skill",
+    "Attribute": "Status Effects",
+    "Max": "10%"
+  }
+]
