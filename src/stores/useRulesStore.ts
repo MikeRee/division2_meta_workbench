@@ -6,7 +6,7 @@ import { DataKey } from '../constants/dataKeys';
 export interface RuleBinding {
   source: string;
   destination: string;
-  rule: string;
+  rules: string[];
 }
 
 interface RulesState {

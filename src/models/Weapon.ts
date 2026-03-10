@@ -3,14 +3,14 @@ class Weapon {
   variant: string;
   name: string;
   flag: string | null;
-  rpm?: number;
-  baseMagSize?: number;
-  moddedMagSize?: number;
-  reload?: number;
-  damage?: number;
-  optimalRange?: number;
-  modSlots: string;
-  hsd: string;
+  rpm: number;
+  baseMagSize: number;
+  moddedMagSize: number;
+  reload: number;
+  damage: number;
+  optimalRange: number;
+  modSlots: string[];
+  hsd: number;
 
   constructor(data: any = {}) {
     this.type = data.type || ''; // e.g., "Assault Rifles"

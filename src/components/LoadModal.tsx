@@ -37,6 +37,18 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
   const [bindingSource, setBindingSource] = useState('');
   const [bindingDestination, setBindingDestination] = useState('');
   const [bindingRule, setBindingRule] = useState('');
+  const [showBindingsJson, setShowBindingsJson] = useState(false);
+  const [bindingsJsonText, setBindingsJsonText] = useState('');
+  const [showMappingJson, setShowMappingJson] = useState(false);
+  const [mappingJsonText, setMappingJsonText] = useState('');
+  const [mappingJsonLabel, setMappingJsonLabel] = useState('');
+  const [expandedMappings, setExpandedMappings] = useState<Record<string, boolean>>({});
+  const [showCreateRule, setShowCreateRule] = useState(false);
+  const [showAllRulesJson, setShowAllRulesJson] = useState(false);
+  const [allRulesJsonText, setAllRulesJsonText] = useState('');
+  
+  // Subscribe to rules store for reactive updates
+  const rulesStore = useRulesStore();
   
   const [pages, setPages] = useState<Record<string, string>>({
     weapons: 'Weapons',
@@ -282,6 +294,30 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     return Array.from(fields).sort();
   };
 
+  const getDestinationFields = (): string[] => {
+    // Map data types to their model class fields
+    const fieldMap: Record<string, string[]> = {
+      weapons: ['type', 'variant', 'name', 'flag', 'rpm', 'baseMagSize', 'moddedMagSize', 'reload', 'damage', 'optimalRange', 'modSlots', 'hsd'],
+      exoticWeapons: ['type', 'variant', 'name', 'rpm', 'baseMagSize', 'moddedMagSize', 'reload', 'damage', 'optimalRange', 'modSlots', 'hsd', 'talent', 'talentDescription', 'mods'],
+      weaponTalents: ['weaponCategory', 'name', 'description', 'maxRolls'],
+      weaponMods: ['type', 'slot', 'attribute', 'minValue', 'maxValue'],
+      brandsets: ['icon', 'brand', 'slot', 'core', 'attributes', 'bonus1', 'bonus2', 'bonus3'],
+      gearsets: ['logo', 'name', 'core', 'attributes', 'bonus2', 'bonus3', 'bonus4'],
+      gearTalents: ['piece', 'icon', 'name', 'description', 'maxRolls'],
+      namedGear: ['type', 'brand', 'name', 'core', 'attributes', 'talent', 'modSlot'],
+      skills: ['type', 'name', 'description', 'mods'],
+      specializations: ['name', 'icon', 'description'],
+      weaponAttributes: ['classification', 'attribute', 'minValue', 'maxValue', 'increment'],
+      weaponTypeAttributes: ['weaponType', 'attribute', 'minValue', 'maxValue', 'increment'],
+      gearAttributes: ['classification', 'attribute', 'minValue', 'maxValue', 'increment'],
+      gearMods: ['classification', 'attribute', 'minValue', 'maxValue'],
+      keenersWatch: ['attribute', 'maxValue'],
+      statusImmunities: ['statusEffect', 'requiredPercent', 'sources'],
+    };
+
+    return fieldMap[rulesDataKey] || [];
+  };
+
   const handleCloseRules = () => {
     setShowRulesOverlay(false);
     setRulesDataKey('');
@@ -314,7 +350,6 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
       setNewRuleLabel('');
       setReplaceMatch('');
       setReplaceValue('');
-      alert('Replace rule created successfully!');
     } else if (ruleType === 'match') {
       if (!matchRegex) {
         alert('Please enter a regex pattern');
@@ -323,7 +358,6 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
       rulesStore.setMatchRule(newRuleLabel, matchRegex);
       setNewRuleLabel('');
       setMatchRegex('');
-      alert('Match rule created successfully!');
     } else if (ruleType === 'mapping') {
       // For mapping, just create an empty mapping with the label
       // User will add key-value pairs separately
@@ -361,13 +395,12 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     rulesStore.addBinding(rulesDataKey as any, {
       source: bindingSource,
       destination: bindingDestination,
-      rule: bindingRule,
+      rules: [bindingRule],
     });
 
     setBindingSource('');
     setBindingDestination('');
     setBindingRule('');
-    alert('Binding added successfully!');
   };
 
   const handleRemoveBinding = (index: number) => {
@@ -390,6 +423,156 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
       rulesStore.setMapping(ruleLabel, mapping);
     } else {
       rulesStore.deleteRule(ruleLabel);
+    }
+  };
+
+  const handleOpenBindingsJson = () => {
+    try {
+      console.log('Opening bindings JSON for:', rulesDataKey);
+      const rulesStore = useRulesStore.getState();
+      const bindings = rulesStore.getBindings(rulesDataKey as any);
+      console.log('Bindings:', bindings);
+      setBindingsJsonText(JSON.stringify(bindings, null, 2));
+      setShowBindingsJson(true);
+    } catch (error) {
+      console.error('Error opening bindings JSON:', error);
+      alert('Error opening bindings JSON: ' + (error instanceof Error ? error.message : String(error)));
+    }
+  };
+
+  const handleSaveBindingsJson = () => {
+    try {
+      const parsedBindings = JSON.parse(bindingsJsonText);
+      
+      // Validate that it's an array
+      if (!Array.isArray(parsedBindings)) {
+        alert('Invalid JSON: Must be an array of bindings');
+        return;
+      }
+      
+      // Validate each binding has required fields
+      for (const binding of parsedBindings) {
+        if (!binding.source || !binding.destination || !binding.rules) {
+          alert('Invalid binding: Each binding must have source, destination, and rules fields');
+          return;
+        }
+        // Ensure rules is an array
+        if (!Array.isArray(binding.rules)) {
+          alert('Invalid binding: rules must be an array');
+          return;
+        }
+      }
+      
+      // Update the store
+      const rulesStore = useRulesStore.getState();
+      // Clear existing bindings and add new ones
+      const currentBindings = rulesStore.getBindings(rulesDataKey as any);
+      for (let i = currentBindings.length - 1; i >= 0; i--) {
+        rulesStore.removeBinding(rulesDataKey as any, i);
+      }
+      
+      // Add new bindings
+      parsedBindings.forEach((binding: any) => {
+        rulesStore.addBinding(rulesDataKey as any, binding);
+      });
+      
+      setShowBindingsJson(false);
+    } catch (error) {
+      alert('Invalid JSON: ' + (error instanceof Error ? error.message : String(error)));
+    }
+  };
+
+  const handleOpenMappingJson = (label: string) => {
+    try {
+      const mapping = rulesStore.mappings[label] || {};
+      setMappingJsonLabel(label);
+      setMappingJsonText(JSON.stringify(mapping, null, 2));
+      setShowMappingJson(true);
+    } catch (error) {
+      console.error('Error opening mapping JSON:', error);
+      alert('Error opening mapping JSON: ' + (error instanceof Error ? error.message : String(error)));
+    }
+  };
+
+  const handleSaveMappingJson = () => {
+    try {
+      const parsedMapping = JSON.parse(mappingJsonText);
+      
+      // Validate that it's an object
+      if (typeof parsedMapping !== 'object' || Array.isArray(parsedMapping)) {
+        alert('Invalid JSON: Must be an object with key-value pairs');
+        return;
+      }
+      
+      // Update the store
+      rulesStore.setMapping(mappingJsonLabel, parsedMapping);
+      
+      setShowMappingJson(false);
+    } catch (error) {
+      alert('Invalid JSON: ' + (error instanceof Error ? error.message : String(error)));
+    }
+  };
+
+  const toggleMappingExpanded = (label: string) => {
+    setExpandedMappings(prev => ({
+      ...prev,
+      [label]: !prev[label]
+    }));
+  };
+
+  const handleOpenAllRulesJson = () => {
+    try {
+      const allRules = {
+        replaceRules: rulesStore.replaceRules,
+        matchRules: rulesStore.matchRules,
+        mappings: rulesStore.mappings
+      };
+      setAllRulesJsonText(JSON.stringify(allRules, null, 2));
+      setShowAllRulesJson(true);
+    } catch (error) {
+      console.error('Error opening all rules JSON:', error);
+      alert('Error opening all rules JSON: ' + (error instanceof Error ? error.message : String(error)));
+    }
+  };
+
+  const handleSaveAllRulesJson = () => {
+    try {
+      const parsed = JSON.parse(allRulesJsonText);
+      
+      // Validate structure
+      if (typeof parsed !== 'object' || Array.isArray(parsed)) {
+        alert('Invalid JSON: Must be an object with replaceRules, matchRules, and mappings');
+        return;
+      }
+      
+      // Update the store
+      if (parsed.replaceRules) {
+        Object.entries(parsed.replaceRules).forEach(([label, value]: [string, any]) => {
+          if (Array.isArray(value) && value.length === 2) {
+            rulesStore.setReplaceRule(label, value[0], value[1]);
+          }
+        });
+      }
+      
+      if (parsed.matchRules) {
+        Object.entries(parsed.matchRules).forEach(([label, regex]: [string, any]) => {
+          if (typeof regex === 'string') {
+            rulesStore.setMatchRule(label, regex);
+          }
+        });
+      }
+      
+      if (parsed.mappings) {
+        Object.entries(parsed.mappings).forEach(([label, mapping]: [string, any]) => {
+          if (typeof mapping === 'object' && !Array.isArray(mapping)) {
+            rulesStore.setMapping(label, mapping);
+          }
+        });
+      }
+      
+      setShowAllRulesJson(false);
+    } catch (error) {
+      alert('Invalid JSON: ' + (error instanceof Error ? error.message : String(error)));
     }
   };
 
@@ -919,7 +1102,16 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
               <div className="rules-body">
                 {/* Bindings Section - FIRST */}
                 <div className="rules-section-header">
-                  <h4>Bindings for {rulesDataKey}</h4>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h4>Mapping/Bindings for {rulesDataKey}</h4>
+                    <a 
+                      href="#" 
+                      onClick={(e) => { e.preventDefault(); handleOpenBindingsJson(); }}
+                      style={{ fontSize: '0.9rem', color: '#3498db', textDecoration: 'none', cursor: 'pointer' }}
+                    >
+                      json
+                    </a>
+                  </div>
                   <div style={{ fontSize: '0.85rem', color: '#7f8c8d', fontWeight: 'normal', marginTop: '0.25rem' }}>
                     Define how rules are applied to transform data fields. Rules are applied in order.
                   </div>
@@ -937,26 +1129,29 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                     ))}
                   </select>
                   <span className="arrow">→</span>
-                  <input
-                    type="text"
+                  <select
                     className="rule-input"
-                    placeholder="Destination field"
                     value={bindingDestination}
                     onChange={(e) => setBindingDestination(e.target.value)}
-                  />
+                  >
+                    <option value="">Select destination field...</option>
+                    {getDestinationFields().map(field => (
+                      <option key={field} value={field}>{field}</option>
+                    ))}
+                  </select>
                   <select
                     className="rule-input"
                     value={bindingRule}
                     onChange={(e) => setBindingRule(e.target.value)}
                   >
                     <option value="">Select rule...</option>
-                    {Object.keys(useRulesStore.getState().replaceRules).map(label => (
+                    {Object.keys(rulesStore.replaceRules).map(label => (
                       <option key={label} value={label}>{label} (replace)</option>
                     ))}
-                    {Object.keys(useRulesStore.getState().matchRules).map(label => (
+                    {Object.keys(rulesStore.matchRules).map(label => (
                       <option key={label} value={label}>{label} (match)</option>
                     ))}
-                    {Object.keys(useRulesStore.getState().mappings).map(label => (
+                    {Object.keys(rulesStore.mappings).map(label => (
                       <option key={label} value={label}>{label} (mapping)</option>
                     ))}
                   </select>
@@ -964,85 +1159,105 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                 </div>
 
                 <div className="bindings-list">
-                  {useRulesStore.getState().getBindings(rulesDataKey as any).map((binding, index) => (
+                  {rulesStore.getBindings(rulesDataKey as any).map((binding, index) => (
                     <div key={index} className="rule-row">
                       <span>{binding.source}</span>
                       <span className="arrow">→</span>
                       <span>{binding.destination}</span>
-                      <span className="rule-badge">{binding.rule}</span>
+                      <span className="rule-badge">{Array.isArray(binding.rules) ? binding.rules.join(', ') : binding.rules}</span>
                       <span className="remove-link" onClick={() => handleRemoveBinding(index)}>✕</span>
                     </div>
                   ))}
                 </div>
 
                 {/* Create New Rule Section - SECOND */}
-                <div className="rules-section-header">
-                  <h4>Create New Rule</h4>
+                <div 
+                  className="rules-section-header"
+                  style={{ cursor: 'pointer', userSelect: 'none' }}
+                  onClick={() => setShowCreateRule(!showCreateRule)}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <span style={{ marginRight: '0.5rem' }}>{showCreateRule ? '▼' : '▶'}</span>
+                    <h4>Create New Rule</h4>
+                  </div>
                 </div>
 
-                <div className="rule-row">
-                  <input
-                    type="text"
-                    className="rule-input"
-                    placeholder="Rule Label"
-                    value={newRuleLabel}
-                    onChange={(e) => setNewRuleLabel(e.target.value)}
-                  />
-                  <select 
-                    className="rule-input"
-                    value={ruleType}
-                    onChange={(e) => setRuleType(e.target.value as any)}
-                  >
-                    <option value="replace">Replace Rule</option>
-                    <option value="match">Match Rule</option>
-                    <option value="mapping">Mapping</option>
-                  </select>
-                </div>
+                {showCreateRule && (
+                  <>
+                    <div className="rule-row">
+                      <input
+                        type="text"
+                        className="rule-input"
+                        placeholder="Rule Label"
+                        value={newRuleLabel}
+                        onChange={(e) => setNewRuleLabel(e.target.value)}
+                      />
+                      <select 
+                        className="rule-input"
+                        value={ruleType}
+                        onChange={(e) => setRuleType(e.target.value as any)}
+                      >
+                        <option value="replace">Replace Rule</option>
+                        <option value="match">Match Rule</option>
+                        <option value="mapping">Mapping</option>
+                      </select>
+                    </div>
 
-                {ruleType === 'replace' && (
-                  <div className="rule-row">
-                    <input
-                      type="text"
-                      className="rule-input"
-                      placeholder="Match (regex)"
-                      value={replaceMatch}
-                      onChange={(e) => setReplaceMatch(e.target.value)}
-                    />
-                    <input
-                      type="text"
-                      className="rule-input"
-                      placeholder="Replace with"
-                      value={replaceValue}
-                      onChange={(e) => setReplaceValue(e.target.value)}
-                    />
-                  </div>
+                    {ruleType === 'replace' && (
+                      <div className="rule-row">
+                        <input
+                          type="text"
+                          className="rule-input"
+                          placeholder="Match (regex)"
+                          value={replaceMatch}
+                          onChange={(e) => setReplaceMatch(e.target.value)}
+                        />
+                        <input
+                          type="text"
+                          className="rule-input"
+                          placeholder="Replace with"
+                          value={replaceValue}
+                          onChange={(e) => setReplaceValue(e.target.value)}
+                        />
+                      </div>
+                    )}
+
+                    {ruleType === 'match' && (
+                      <div className="rule-row">
+                        <input
+                          type="text"
+                          className="rule-input full-width"
+                          placeholder="Regex pattern"
+                          value={matchRegex}
+                          onChange={(e) => setMatchRegex(e.target.value)}
+                        />
+                      </div>
+                    )}
+
+                    {ruleType === 'mapping' && (
+                      <div style={{ fontSize: '0.85rem', color: '#7f8c8d', marginBottom: '0.5rem' }}>
+                        Create a mapping rule first, then add key-value pairs to it below.
+                      </div>
+                    )}
+
+                    <button className="save-rules-btn" onClick={handleCreateRule}>
+                      {ruleType === 'mapping' ? 'Create Mapping Rule' : 'Create Rule'}
+                    </button>
+                  </>
                 )}
-
-                {ruleType === 'match' && (
-                  <div className="rule-row">
-                    <input
-                      type="text"
-                      className="rule-input full-width"
-                      placeholder="Regex pattern"
-                      value={matchRegex}
-                      onChange={(e) => setMatchRegex(e.target.value)}
-                    />
-                  </div>
-                )}
-
-                {ruleType === 'mapping' && (
-                  <div style={{ fontSize: '0.85rem', color: '#7f8c8d', marginBottom: '0.5rem' }}>
-                    Create a mapping rule first, then add key-value pairs to it below.
-                  </div>
-                )}
-
-                <button className="save-rules-btn" onClick={handleCreateRule}>
-                  {ruleType === 'mapping' ? 'Create Mapping Rule' : 'Create Rule'}
-                </button>
 
                 {/* Existing Rules Section - THIRD */}
                 <div className="rules-section-header">
-                  <h4>Existing Rules</h4>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h4>Existing Rules</h4>
+                    <a 
+                      href="#" 
+                      onClick={(e) => { e.preventDefault(); handleOpenAllRulesJson(); }}
+                      style={{ fontSize: '0.9rem', color: '#3498db', textDecoration: 'none', cursor: 'pointer' }}
+                    >
+                      json
+                    </a>
+                  </div>
                 </div>
 
                 <div className="rules-group-header">
@@ -1082,59 +1297,99 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                 <div className="rules-group-header">
                   <span>Mappings (Lookup Tables)</span>
                 </div>
-                {Object.entries(useRulesStore.getState().mappings).map(([label, mapping]) => (
-                  <div key={label} className="mapping-group">
-                    <div className="mapping-label">
-                      <strong>{label}:</strong>
-                      <span className="remove-link" onClick={() => handleDeleteRule(label)}>✕</span>
-                    </div>
-                    {Object.entries(mapping).map(([key, value]) => (
-                      <div key={key} className="rule-row mapping-entry">
-                        <span>{key}</span>
-                        <span className="arrow">→</span>
-                        <span>{value}</span>
-                        <span className="remove-link" onClick={() => handleDeleteMappingEntry(label, key)}>✕</span>
-                      </div>
-                    ))}
-                    {Object.keys(mapping).length === 0 && (
-                      <div style={{ fontSize: '0.8rem', color: '#7f8c8d', fontStyle: 'italic', paddingLeft: '1rem' }}>
-                        No entries yet. Add key-value pairs below.
-                      </div>
-                    )}
-                    <div className="rule-row mapping-entry" style={{ marginTop: '0.5rem' }}>
-                      <input
-                        type="text"
-                        className="rule-input"
-                        placeholder="Key"
-                        value={selectedRuleLabel === label ? mappingKey : ''}
-                        onFocus={() => setSelectedRuleLabel(label)}
-                        onChange={(e) => {
-                          setSelectedRuleLabel(label);
-                          setMappingKey(e.target.value);
+                {Object.entries(useRulesStore.getState().mappings).map(([label, mapping]) => {
+                  const isExpanded = expandedMappings[label] || false;
+                  const itemCount = Object.keys(mapping).length;
+                  
+                  return (
+                    <div key={label} className="mapping-group">
+                      <div 
+                        className="mapping-label" 
+                        style={{ 
+                          display: 'flex', 
+                          justifyContent: 'space-between', 
+                          alignItems: 'center',
+                          cursor: 'pointer',
+                          userSelect: 'none'
                         }}
-                      />
-                      <span className="arrow">→</span>
-                      <input
-                        type="text"
-                        className="rule-input"
-                        placeholder="Value"
-                        value={selectedRuleLabel === label ? mappingValue : ''}
-                        onFocus={() => setSelectedRuleLabel(label)}
-                        onChange={(e) => {
-                          setSelectedRuleLabel(label);
-                          setMappingValue(e.target.value);
-                        }}
-                      />
-                      <button 
-                        className="add-link" 
-                        onClick={() => handleAddMappingEntry(label)}
-                        style={{ padding: '0.25rem 0.75rem', background: '#3498db', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                        onClick={() => toggleMappingExpanded(label)}
                       >
-                        Add
-                      </button>
+                        <div>
+                          <span style={{ marginRight: '0.5rem' }}>{isExpanded ? '▼' : '▶'}</span>
+                          <strong>{label}:</strong>
+                          {!isExpanded && (
+                            <span style={{ fontSize: '0.85rem', color: '#7f8c8d', marginLeft: '0.5rem' }}>
+                              [{itemCount} {itemCount === 1 ? 'item' : 'items'}]
+                            </span>
+                          )}
+                          <a 
+                            href="#" 
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleOpenMappingJson(label); }}
+                            style={{ fontSize: '0.85rem', color: '#3498db', textDecoration: 'none', cursor: 'pointer', marginLeft: '0.5rem' }}
+                          >
+                            json
+                          </a>
+                        </div>
+                        <span 
+                          className="remove-link" 
+                          onClick={(e) => { e.stopPropagation(); handleDeleteRule(label); }}
+                        >
+                          ✕
+                        </span>
+                      </div>
+                      
+                      {isExpanded && (
+                        <>
+                          {Object.entries(mapping).map(([key, value]) => (
+                            <div key={key} className="rule-row mapping-entry">
+                              <span>{key}</span>
+                              <span className="arrow">→</span>
+                              <span>{value}</span>
+                              <span className="remove-link" onClick={() => handleDeleteMappingEntry(label, key)}>✕</span>
+                            </div>
+                          ))}
+                          {Object.keys(mapping).length === 0 && (
+                            <div style={{ fontSize: '0.8rem', color: '#7f8c8d', fontStyle: 'italic', paddingLeft: '1rem' }}>
+                              No entries yet. Add key-value pairs below.
+                            </div>
+                          )}
+                          <div className="rule-row mapping-entry" style={{ marginTop: '0.5rem' }}>
+                            <input
+                              type="text"
+                              className="rule-input"
+                              placeholder="Key"
+                              value={selectedRuleLabel === label ? mappingKey : ''}
+                              onFocus={() => setSelectedRuleLabel(label)}
+                              onChange={(e) => {
+                                setSelectedRuleLabel(label);
+                                setMappingKey(e.target.value);
+                              }}
+                            />
+                            <span className="arrow">→</span>
+                            <input
+                              type="text"
+                              className="rule-input"
+                              placeholder="Value"
+                              value={selectedRuleLabel === label ? mappingValue : ''}
+                              onFocus={() => setSelectedRuleLabel(label)}
+                              onChange={(e) => {
+                                setSelectedRuleLabel(label);
+                                setMappingValue(e.target.value);
+                              }}
+                            />
+                            <button 
+                              className="add-link" 
+                              onClick={() => handleAddMappingEntry(label)}
+                              style={{ padding: '0.25rem 0.75rem', background: '#3498db', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                            >
+                              Add
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
                 {Object.keys(useRulesStore.getState().mappings).length === 0 && (
                   <div style={{ fontSize: '0.85rem', color: '#7f8c8d', fontStyle: 'italic', marginBottom: '0.5rem' }}>
                     No mapping rules yet. Create one above to start adding key-value pairs.
@@ -1150,6 +1405,87 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                   Export Rules
                 </button>
                 <button className="cancel-btn" onClick={handleCloseRules}>Close</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Bindings JSON Editor Modal */}
+        {showBindingsJson && (
+          <div className="overlay-backdrop" onClick={() => setShowBindingsJson(false)} style={{ zIndex: 10001 }}>
+            <div className="overlay-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px', width: '90%' }}>
+              <h2>Edit Bindings JSON - {rulesDataKey}</h2>
+              <textarea
+                value={bindingsJsonText}
+                onChange={(e) => setBindingsJsonText(e.target.value)}
+                style={{
+                  width: '100%',
+                  height: '400px',
+                  fontFamily: 'monospace',
+                  fontSize: '0.9rem',
+                  padding: '10px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  resize: 'vertical'
+                }}
+              />
+              <div className="overlay-actions" style={{ marginTop: '1rem' }}>
+                <button onClick={handleSaveBindingsJson}>Save</button>
+                <button onClick={() => setShowBindingsJson(false)}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Mapping JSON Editor Modal */}
+        {showMappingJson && (
+          <div className="overlay-backdrop" onClick={() => setShowMappingJson(false)} style={{ zIndex: 10001 }}>
+            <div className="overlay-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px', width: '90%' }}>
+              <h2>Edit Mapping JSON - {mappingJsonLabel}</h2>
+              <textarea
+                value={mappingJsonText}
+                onChange={(e) => setMappingJsonText(e.target.value)}
+                style={{
+                  width: '100%',
+                  height: '400px',
+                  fontFamily: 'monospace',
+                  fontSize: '0.9rem',
+                  padding: '10px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  resize: 'vertical'
+                }}
+              />
+              <div className="overlay-actions" style={{ marginTop: '1rem' }}>
+                <button onClick={handleSaveMappingJson}>Save</button>
+                <button onClick={() => setShowMappingJson(false)}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* All Rules JSON Editor Modal */}
+        {showAllRulesJson && (
+          <div className="overlay-backdrop" onClick={() => setShowAllRulesJson(false)} style={{ zIndex: 10001 }}>
+            <div className="overlay-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px', width: '90%' }}>
+              <h2>Edit All Rules JSON</h2>
+              <textarea
+                value={allRulesJsonText}
+                onChange={(e) => setAllRulesJsonText(e.target.value)}
+                style={{
+                  width: '100%',
+                  height: '400px',
+                  fontFamily: 'monospace',
+                  fontSize: '0.9rem',
+                  padding: '10px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  resize: 'vertical'
+                }}
+              />
+              <div className="overlay-actions" style={{ marginTop: '1rem' }}>
+                <button onClick={handleSaveAllRulesJson}>Save</button>
+                <button onClick={() => setShowAllRulesJson(false)}>Cancel</button>
               </div>
             </div>
           </div>
