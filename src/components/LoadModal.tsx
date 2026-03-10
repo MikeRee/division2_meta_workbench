@@ -37,6 +37,9 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
   const [bindingSource, setBindingSource] = useState('');
   const [bindingDestination, setBindingDestination] = useState('');
   const [bindingRule, setBindingRule] = useState('');
+  const [editingBindingIndex, setEditingBindingIndex] = useState<number | null>(null);
+  const [expandedBindings, setExpandedBindings] = useState<Record<number, boolean>>({});
+  const [showExistingRules, setShowExistingRules] = useState(false);
   const [showBindingsJson, setShowBindingsJson] = useState(false);
   const [bindingsJsonText, setBindingsJsonText] = useState('');
   const [showMappingJson, setShowMappingJson] = useState(false);
@@ -386,21 +389,100 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
   };
 
   const handleAddBinding = () => {
-    if (!bindingSource || !bindingDestination || !bindingRule) {
-      alert('Please fill in all binding fields');
+    if (!bindingDestination || !bindingSource) {
+      alert('Please fill in destination and source fields');
       return;
     }
 
     const rulesStore = useRulesStore.getState();
-    rulesStore.addBinding(rulesDataKey as any, {
-      source: bindingSource,
-      destination: bindingDestination,
-      rules: [bindingRule],
-    });
+    
+    if (editingBindingIndex !== null) {
+      // Update existing binding
+      const currentBindings = rulesStore.getBindings(rulesDataKey as any);
+      const existingBinding = currentBindings[editingBindingIndex];
+      rulesStore.updateBinding(rulesDataKey as any, editingBindingIndex, {
+        destination: bindingDestination,
+        source: bindingSource,
+        rules: existingBinding.rules, // Keep existing rules
+      });
+      setEditingBindingIndex(null);
+    } else {
+      // Add new binding
+      rulesStore.addBinding(rulesDataKey as any, {
+        destination: bindingDestination,
+        source: bindingSource,
+        rules: [],
+      });
+    }
 
     setBindingSource('');
     setBindingDestination('');
     setBindingRule('');
+  };
+
+  const handleEditBinding = (index: number) => {
+    const rulesStore = useRulesStore.getState();
+    const bindings = rulesStore.getBindings(rulesDataKey as any);
+    const binding = bindings[index];
+    
+    setBindingDestination(binding.destination);
+    setBindingSource(binding.source);
+    setEditingBindingIndex(index);
+  };
+
+  const handleCancelEditBinding = () => {
+    setEditingBindingIndex(null);
+    setBindingSource('');
+    setBindingDestination('');
+    setBindingRule('');
+  };
+
+  const handleAddRuleToBinding = (bindingIndex: number) => {
+    if (!bindingRule) {
+      alert('Please select a rule');
+      return;
+    }
+
+    const rulesStore = useRulesStore.getState();
+    const bindings = rulesStore.getBindings(rulesDataKey as any);
+    const binding = bindings[bindingIndex];
+    
+    rulesStore.updateBinding(rulesDataKey as any, bindingIndex, {
+      ...binding,
+      rules: [...binding.rules, bindingRule],
+    });
+    
+    setBindingRule('');
+  };
+
+  const handleRemoveRuleFromBinding = (bindingIndex: number, ruleIndex: number) => {
+    const rulesStore = useRulesStore.getState();
+    const bindings = rulesStore.getBindings(rulesDataKey as any);
+    const binding = bindings[bindingIndex];
+    
+    const newRules = binding.rules.filter((_, i) => i !== ruleIndex);
+    rulesStore.updateBinding(rulesDataKey as any, bindingIndex, {
+      ...binding,
+      rules: newRules,
+    });
+  };
+
+  const handleMoveRuleInBinding = (bindingIndex: number, ruleIndex: number, direction: 'up' | 'down') => {
+    const rulesStore = useRulesStore.getState();
+    const bindings = rulesStore.getBindings(rulesDataKey as any);
+    const binding = bindings[bindingIndex];
+    
+    const newIndex = direction === 'up' ? ruleIndex - 1 : ruleIndex + 1;
+    if (newIndex < 0 || newIndex >= binding.rules.length) return;
+    
+    rulesStore.reorderBindingRules(rulesDataKey as any, bindingIndex, ruleIndex, newIndex);
+  };
+
+  const toggleBindingExpanded = (index: number) => {
+    setExpandedBindings(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }));
   };
 
   const handleRemoveBinding = (index: number) => {
@@ -1113,7 +1195,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                     </a>
                   </div>
                   <div style={{ fontSize: '0.85rem', color: '#7f8c8d', fontWeight: 'normal', marginTop: '0.25rem' }}>
-                    Define how rules are applied to transform data fields. Rules are applied in order.
+                    Define destination fields and their source mappings. Add rules to transform data in order.
                   </div>
                 </div>
 
@@ -1135,37 +1217,192 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                     onChange={(e) => setBindingDestination(e.target.value)}
                   >
                     <option value="">Select destination field...</option>
-                    {getDestinationFields().map(field => (
+                    {getDestinationFields().filter(field => {
+                      // Filter out destinations that are already used, except when editing
+                      const bindings = rulesStore.getBindings(rulesDataKey as any);
+                      const usedDestinations = bindings
+                        .map((b, idx) => idx === editingBindingIndex ? null : b.destination)
+                        .filter(d => d !== null);
+                      return !usedDestinations.includes(field);
+                    }).map(field => (
                       <option key={field} value={field}>{field}</option>
                     ))}
                   </select>
-                  <select
-                    className="rule-input"
-                    value={bindingRule}
-                    onChange={(e) => setBindingRule(e.target.value)}
-                  >
-                    <option value="">Select rule...</option>
-                    {Object.keys(rulesStore.replaceRules).map(label => (
-                      <option key={label} value={label}>{label} (replace)</option>
-                    ))}
-                    {Object.keys(rulesStore.matchRules).map(label => (
-                      <option key={label} value={label}>{label} (match)</option>
-                    ))}
-                    {Object.keys(rulesStore.mappings).map(label => (
-                      <option key={label} value={label}>{label} (mapping)</option>
-                    ))}
-                  </select>
-                  <button className="add-link" onClick={handleAddBinding}>Add</button>
+                  {(() => {
+                    // Check if there are any available destinations
+                    const bindings = rulesStore.getBindings(rulesDataKey as any);
+                    const usedDestinations = bindings
+                      .map((b, idx) => idx === editingBindingIndex ? null : b.destination)
+                      .filter(d => d !== null);
+                    const availableDestinations = getDestinationFields().filter(field => !usedDestinations.includes(field));
+                    
+                    return availableDestinations.length > 0 ? (
+                      <>
+                        <button className="add-link" onClick={handleAddBinding}>
+                          {editingBindingIndex !== null ? 'Update' : 'Add'}
+                        </button>
+                        {editingBindingIndex !== null && (
+                          <button className="add-link" onClick={handleCancelEditBinding}>Cancel</button>
+                        )}
+                      </>
+                    ) : editingBindingIndex !== null ? (
+                      <>
+                        <button className="add-link" onClick={handleAddBinding}>Update</button>
+                        <button className="add-link" onClick={handleCancelEditBinding}>Cancel</button>
+                      </>
+                    ) : null;
+                  })()}
                 </div>
+
+                {(() => {
+                  // Show message if all destinations are mapped
+                  const bindings = rulesStore.getBindings(rulesDataKey as any);
+                  const usedDestinations = bindings.map(b => b.destination);
+                  const availableDestinations = getDestinationFields().filter(field => !usedDestinations.includes(field));
+                  
+                  return availableDestinations.length === 0 && editingBindingIndex === null && (
+                    <div style={{ fontSize: '0.85rem', color: '#27ae60', fontStyle: 'italic', marginBottom: '0.5rem', padding: '0.5rem', backgroundColor: '#d5f4e6', borderRadius: '4px' }}>
+                      ✓ All destination fields are mapped
+                    </div>
+                  );
+                })()}
 
                 <div className="bindings-list">
                   {rulesStore.getBindings(rulesDataKey as any).map((binding, index) => (
-                    <div key={index} className="rule-row">
-                      <span>{binding.source}</span>
-                      <span className="arrow">→</span>
-                      <span>{binding.destination}</span>
-                      <span className="rule-badge">{Array.isArray(binding.rules) ? binding.rules.join(', ') : binding.rules}</span>
-                      <span className="remove-link" onClick={() => handleRemoveBinding(index)}>✕</span>
+                    <div key={index} className="binding-item" style={{ 
+                      border: '1px solid #ddd', 
+                      borderRadius: '4px', 
+                      padding: '0.5rem', 
+                      marginBottom: '0.5rem',
+                      backgroundColor: editingBindingIndex === index ? '#f0f8ff' : 'transparent'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div 
+                          style={{ display: 'flex', alignItems: 'center', flex: 1, cursor: 'pointer' }}
+                          onClick={() => toggleBindingExpanded(index)}
+                        >
+                          <span style={{ marginRight: '0.5rem', fontSize: '0.8rem' }}>
+                            {expandedBindings[index] ? '▼' : '▶'}
+                          </span>
+                          <span>{binding.source}</span>
+                          <span className="arrow" style={{ margin: '0 0.5rem' }}>→</span>
+                          <span style={{ fontWeight: 'bold' }}>{binding.destination}</span>
+                          <span style={{ 
+                            marginLeft: '0.5rem', 
+                            fontSize: '0.85rem', 
+                            color: '#7f8c8d',
+                            fontStyle: 'italic'
+                          }}>
+                            ({binding.rules.length} rule{binding.rules.length !== 1 ? 's' : ''})
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                          <button 
+                            className="icon-btn" 
+                            onClick={() => handleEditBinding(index)}
+                            title="Edit binding"
+                            style={{ fontSize: '0.8rem', padding: '0.2rem 0.4rem' }}
+                          >
+                            ✎
+                          </button>
+                          <span 
+                            className="remove-link" 
+                            onClick={() => handleRemoveBinding(index)}
+                            title="Delete binding"
+                          >
+                            ✕
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {expandedBindings[index] && (
+                        <div style={{ marginTop: '0.5rem', paddingLeft: '1.5rem' }}>
+                          <div style={{ fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>
+                            Rules (applied in order):
+                          </div>
+                          
+                          {binding.rules.length === 0 ? (
+                            <div style={{ fontSize: '0.85rem', color: '#7f8c8d', fontStyle: 'italic', marginBottom: '0.5rem' }}>
+                              No rules applied - direct mapping
+                            </div>
+                          ) : (
+                            <div style={{ marginBottom: '0.5rem' }}>
+                              {binding.rules.map((rule, ruleIndex) => (
+                                <div 
+                                  key={ruleIndex} 
+                                  style={{ 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    gap: '0.5rem',
+                                    padding: '0.25rem',
+                                    backgroundColor: '#f9f9f9',
+                                    borderRadius: '3px',
+                                    marginBottom: '0.25rem'
+                                  }}
+                                >
+                                  <span style={{ fontSize: '0.85rem', color: '#7f8c8d', minWidth: '1.5rem' }}>
+                                    {ruleIndex + 1}.
+                                  </span>
+                                  <span style={{ flex: 1, fontSize: '0.9rem' }}>{rule}</span>
+                                  <button 
+                                    className="icon-btn" 
+                                    onClick={() => handleMoveRuleInBinding(index, ruleIndex, 'up')}
+                                    disabled={ruleIndex === 0}
+                                    title="Move rule up"
+                                    style={{ fontSize: '0.7rem', padding: '0.1rem 0.3rem' }}
+                                  >
+                                    ↑
+                                  </button>
+                                  <button 
+                                    className="icon-btn" 
+                                    onClick={() => handleMoveRuleInBinding(index, ruleIndex, 'down')}
+                                    disabled={ruleIndex === binding.rules.length - 1}
+                                    title="Move rule down"
+                                    style={{ fontSize: '0.7rem', padding: '0.1rem 0.3rem' }}
+                                  >
+                                    ↓
+                                  </button>
+                                  <span 
+                                    className="remove-link" 
+                                    onClick={() => handleRemoveRuleFromBinding(index, ruleIndex)}
+                                    title="Remove rule"
+                                    style={{ fontSize: '0.8rem' }}
+                                  >
+                                    ✕
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          
+                          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                            <select
+                              className="rule-input"
+                              value={bindingRule}
+                              onChange={(e) => setBindingRule(e.target.value)}
+                              style={{ flex: 1, fontSize: '0.85rem' }}
+                            >
+                              <option value="">Add a rule...</option>
+                              {Object.keys(rulesStore.replaceRules).map(label => (
+                                <option key={label} value={label}>{label} (replace)</option>
+                              ))}
+                              {Object.keys(rulesStore.matchRules).map(label => (
+                                <option key={label} value={label}>{label} (match)</option>
+                              ))}
+                              {Object.keys(rulesStore.mappings).map(label => (
+                                <option key={label} value={label}>{label} (mapping)</option>
+                              ))}
+                            </select>
+                            <button 
+                              className="add-link" 
+                              onClick={() => handleAddRuleToBinding(index)}
+                              style={{ fontSize: '0.85rem' }}
+                            >
+                              Add Rule
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -1247,12 +1484,19 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                 )}
 
                 {/* Existing Rules Section - THIRD */}
-                <div className="rules-section-header">
+                <div 
+                  className="rules-section-header"
+                  style={{ cursor: 'pointer', userSelect: 'none' }}
+                  onClick={() => setShowExistingRules(!showExistingRules)}
+                >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h4>Existing Rules</h4>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <span style={{ marginRight: '0.5rem' }}>{showExistingRules ? '▼' : '▶'}</span>
+                      <h4>Existing Rules</h4>
+                    </div>
                     <a 
                       href="#" 
-                      onClick={(e) => { e.preventDefault(); handleOpenAllRulesJson(); }}
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleOpenAllRulesJson(); }}
                       style={{ fontSize: '0.9rem', color: '#3498db', textDecoration: 'none', cursor: 'pointer' }}
                     >
                       json
@@ -1260,18 +1504,20 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                   </div>
                 </div>
 
-                <div className="rules-group-header">
-                  <span>Replace Rules</span>
-                </div>
-                {Object.entries(useRulesStore.getState().replaceRules).map(([label, [match, replace]]) => (
-                  <div key={label} className="rule-row">
-                    <strong>{label}:</strong>
-                    <span>{match}</span>
-                    <span className="arrow">→</span>
-                    <span>{replace}</span>
-                    <span className="remove-link" onClick={() => handleDeleteRule(label)}>✕</span>
-                  </div>
-                ))}
+                {showExistingRules && (
+                  <>
+                    <div className="rules-group-header">
+                      <span>Replace Rules</span>
+                    </div>
+                    {Object.entries(useRulesStore.getState().replaceRules).map(([label, [match, replace]]) => (
+                      <div key={label} className="rule-row">
+                        <strong>{label}:</strong>
+                        <span>{match}</span>
+                        <span className="arrow">→</span>
+                        <span>{replace}</span>
+                        <span className="remove-link" onClick={() => handleDeleteRule(label)}>✕</span>
+                      </div>
+                    ))}
                 {Object.keys(useRulesStore.getState().replaceRules).length === 0 && (
                   <div style={{ fontSize: '0.85rem', color: '#7f8c8d', fontStyle: 'italic', marginBottom: '0.5rem' }}>
                     No replace rules yet
@@ -1394,6 +1640,8 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                   <div style={{ fontSize: '0.85rem', color: '#7f8c8d', fontStyle: 'italic', marginBottom: '0.5rem' }}>
                     No mapping rules yet. Create one above to start adding key-value pairs.
                   </div>
+                )}
+                  </>
                 )}
               </div>
 

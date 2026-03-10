@@ -717,3 +717,42 @@
 .rule-row select.rule-input {
   font-family: inherit;
 }
+
+/* Binding Item Styles */
+.binding-item {
+  transition: background-color 0.2s;
+}
+
+.binding-item:hover {
+  background-color: #f9f9f9 !important;
+}
+
+.icon-btn {
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.icon-btn:hover:not(:disabled) {
+  background: #2980b9;
+}
+
+.icon-btn:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.bindings-list {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+.binding-item .arrow {
+  font-weight: bold;
+  color: #3498db;
+}

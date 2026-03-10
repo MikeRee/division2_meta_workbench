@@ -618,3 +618,138 @@ function normalizeWeaponModField(
   
   return result;
 }
+
+/**
+ * Applies rule bindings to transform raw data into clean data
+ * @param rawData - Raw data object or array
+ * @param bindings - Array of RuleBinding objects defining destination fields and their transformations
+ * @param rulesStore - The rules store containing all rule definitions
+ * @returns Transformed data with rules applied
+ */
+export function applyBindings(
+  rawData: any,
+  bindings: Array<{ destination: string; source: string; rules: string[] }>,
+  rulesStore: {
+    replaceRules: Record<string, string[]>;
+    matchRules: Record<string, string>;
+    mappings: Record<string, Record<string, string>>;
+  }
+): any {
+  const isArray = Array.isArray(rawData);
+  const dataArray = isArray ? rawData : [rawData];
+  
+  const processedData = dataArray.map((item: any) => {
+    const result: any = {};
+    
+    // Process each binding
+    bindings.forEach(({ destination, source, rules }) => {
+      // Get the source value
+      let value = item[source];
+      
+      // If source doesn't exist, skip this binding
+      if (value === undefined || value === null) {
+        return;
+      }
+      
+      // Apply each rule in order
+      rules.forEach((ruleLabel) => {
+        // Check if it's a replace rule
+        if (rulesStore.replaceRules[ruleLabel]) {
+          const [match, replace] = rulesStore.replaceRules[ruleLabel];
+          const regex = new RegExp(match, 'gi');
+          value = String(value).replace(regex, replace || '');
+        }
+        
+        // Check if it's a match rule (validation)
+        if (rulesStore.matchRules[ruleLabel]) {
+          const pattern = rulesStore.matchRules[ruleLabel];
+          const regex = new RegExp(pattern, 'i');
+          if (!regex.test(String(value))) {
+            console.warn(`Value "${value}" for ${destination} does not match rule "${ruleLabel}"`);
+          }
+        }
+        
+        // Check if it's a mapping rule
+        if (rulesStore.mappings[ruleLabel]) {
+          const mapping = rulesStore.mappings[ruleLabel];
+          const mappedValue = mapping[String(value)];
+          if (mappedValue !== undefined) {
+            value = mappedValue;
+          }
+        }
+      });
+      
+      // Set the destination value
+      result[destination] = value;
+    });
+    
+    return result;
+  });
+  
+  return isArray ? processedData : processedData[0];
+}
+
+/**
+ * Processes weapon data using rule bindings
+ * @param rawData - Raw weapon data
+ * @param bindings - Array of RuleBinding objects for weapons
+ * @param rulesStore - The rules store containing all rule definitions
+ * @returns Array of Weapon instances
+ */
+export function processWeaponDataWithBindings(
+  rawData: any[],
+  bindings: Array<{ destination: string; source: string; rules: string[] }>,
+  rulesStore: {
+    replaceRules: Record<string, string[]>;
+    matchRules: Record<string, string>;
+    mappings: Record<string, Record<string, string>>;
+  }
+): any[] {
+  return rawData.map((item) => {
+    const processedItem: any = {};
+    
+    // Process each binding
+    bindings.forEach(({ destination, source, rules }) => {
+      // Get the source value
+      let value = item[source];
+      
+      // If source doesn't exist, use empty string or appropriate default
+      if (value === undefined || value === null) {
+        value = '';
+      }
+      
+      // Apply each rule in order
+      rules.forEach((ruleLabel) => {
+        // Check if it's a replace rule
+        if (rulesStore.replaceRules[ruleLabel]) {
+          const [match, replace] = rulesStore.replaceRules[ruleLabel];
+          const regex = new RegExp(match, 'gi');
+          value = String(value).replace(regex, replace || '');
+        }
+        
+        // Check if it's a match rule (validation)
+        if (rulesStore.matchRules[ruleLabel]) {
+          const pattern = rulesStore.matchRules[ruleLabel];
+          const regex = new RegExp(pattern, 'i');
+          if (!regex.test(String(value))) {
+            console.warn(`Value "${value}" for ${destination} does not match rule "${ruleLabel}"`);
+          }
+        }
+        
+        // Check if it's a mapping rule
+        if (rulesStore.mappings[ruleLabel]) {
+          const mapping = rulesStore.mappings[ruleLabel];
+          const mappedValue = mapping[String(value)];
+          if (mappedValue !== undefined) {
+            value = mappedValue;
+          }
+        }
+      });
+      
+      // Set the destination value
+      processedItem[destination] = value;
+    });
+    
+    return processedItem;
+  });
+}

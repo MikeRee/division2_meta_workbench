@@ -4,10 +4,13 @@ import { DataKey } from '../constants/dataKeys';
 
 // Define the RuleBinding type
 export interface RuleBinding {
-  source: string;
-  destination: string;
-  rules: string[];
+  destination: string; // The target field in the model (e.g., "type", "name", "rpm")
+  source: string; // The source field from raw data (e.g., "weaponType", "weaponName")
+  rules: string[]; // Array of rule labels to apply in order (e.g., ["lowercase", "trim", "removeSpaces"])
 }
+
+// Helper type for rule operations
+export type RuleOperation = 'replace' | 'match' | 'mapping' | 'transform';
 
 interface RulesState {
   // Store rules by label
@@ -23,7 +26,9 @@ interface RulesState {
   setMatchRule: (label: string, regex: string) => void;
   setMapping: (label: string, mapping: Record<string, string>) => void;
   addBinding: (dataKey: DataKey, binding: RuleBinding) => void;
+  updateBinding: (dataKey: DataKey, index: number, binding: RuleBinding) => void;
   removeBinding: (dataKey: DataKey, index: number) => void;
+  reorderBindingRules: (dataKey: DataKey, bindingIndex: number, fromRuleIndex: number, toRuleIndex: number) => void;
   getBindings: (dataKey: DataKey) => RuleBinding[];
   deleteRule: (label: string) => void;
   setLoading: (loading: boolean) => void;
@@ -126,10 +131,42 @@ export const useRulesStore = create<RulesState>()(
         }));
       },
 
+      updateBinding: (dataKey, index, binding) => {
+        set((state) => {
+          const currentBindings = state.bindings[dataKey] || [];
+          const newBindings = [...currentBindings];
+          newBindings[index] = binding;
+          return {
+            bindings: { ...state.bindings, [dataKey]: newBindings },
+            lastUpdated: Date.now(),
+          };
+        });
+      },
+
       removeBinding: (dataKey, index) => {
         set((state) => {
           const currentBindings = state.bindings[dataKey] || [];
           const newBindings = currentBindings.filter((_, i) => i !== index);
+          return {
+            bindings: { ...state.bindings, [dataKey]: newBindings },
+            lastUpdated: Date.now(),
+          };
+        });
+      },
+
+      reorderBindingRules: (dataKey, bindingIndex, fromRuleIndex, toRuleIndex) => {
+        set((state) => {
+          const currentBindings = state.bindings[dataKey] || [];
+          const binding = currentBindings[bindingIndex];
+          if (!binding) return state;
+
+          const newRules = [...binding.rules];
+          const [movedRule] = newRules.splice(fromRuleIndex, 1);
+          newRules.splice(toRuleIndex, 0, movedRule);
+
+          const newBindings = [...currentBindings];
+          newBindings[bindingIndex] = { ...binding, rules: newRules };
+
           return {
             bindings: { ...state.bindings, [dataKey]: newBindings },
             lastUpdated: Date.now(),
