@@ -195,7 +195,6 @@
   background: #34495e;
   border-color: #2c3e50;
   opacity: 0.5;
-  cursor: not-allowed;
 }
 
 .icon-button:hover {
@@ -209,17 +208,18 @@
   border-color: #e67e22;
 }
 
-.icon-button.no-data:hover {
-  background: #34495e;
-  border-color: #2c3e50;
-  transform: none;
-}
-
 .icon-button:active {
   transform: translateY(1px);
 }
 
-.icon-button.no-data:active {
+.icon-button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.icon-button:disabled:hover {
+  background: #34495e;
+  border-color: #2c3e50;
   transform: none;
 }
 
@@ -295,11 +295,114 @@
   border-color: #e67e22;
 }
 
+.clean-data-viewer {
+  flex: 1;
+  padding: 1rem;
+  background: #1a252f;
+  border: 1px solid #34495e;
+  border-radius: 4px;
+  overflow: auto;
+  min-height: 400px;
+  max-height: 60vh;
+}
+
+.empty-state {
+  color: #7f8c8d;
+  text-align: center;
+  padding: 3rem 1rem;
+  font-size: 1rem;
+  font-style: italic;
+}
+
+.object-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.object-item {
+  background: #2c3e50;
+  border: 1px solid #34495e;
+  border-radius: 6px;
+  padding: 1rem;
+  transition: border-color 0.2s;
+}
+
+.object-item:hover {
+  border-color: #e67e22;
+}
+
+.object-header {
+  color: #e67e22;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #34495e;
+}
+
+.object-properties {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.property-row {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.property-key {
+  color: #3498db;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.property-value {
+  color: #ecf0f1;
+  word-break: break-word;
+  white-space: pre-wrap;
+  font-family: 'Courier New', monospace;
+}
+
 .json-viewer-actions {
   display: flex;
   gap: 1rem;
   margin-top: 1rem;
   justify-content: flex-end;
+}
+
+.import-btn {
+  padding: 0.6rem 1.5rem;
+  background: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.import-btn:hover {
+  background: #2980b9;
+}
+
+.rules-btn {
+  padding: 0.6rem 1.5rem;
+  background: #9b59b6;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.rules-btn:hover {
+  background: #8e44ad;
 }
 
 .update-btn {
@@ -380,4 +483,237 @@
 .csv-icon.no-data:hover {
   color: #7f8c8d;
   cursor: not-allowed;
+}
+
+/* Rules Overlay Styles */
+.rules-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+}
+
+.rules-content {
+  background: #2c3e50;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+.rules-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #34495e;
+}
+
+.rules-header h3 {
+  color: #fff;
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.rules-body {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.rules-section-header {
+  margin: 1.5rem 0 1rem 0;
+}
+
+.rules-section-header:first-child {
+  margin-top: 0;
+}
+
+.rules-section-header h4 {
+  color: #e67e22;
+  font-size: 1.1rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.rules-group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0 0.5rem 0;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid #34495e;
+}
+
+.rules-group-header span:first-child {
+  color: #ecf0f1;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.add-link {
+  color: #3498db;
+  font-size: 0.85rem;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+.add-link:hover {
+  color: #5dade2;
+  text-decoration: underline;
+}
+
+.rule-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.rule-input {
+  flex: 1;
+  padding: 0.5rem;
+  background: #34495e;
+  color: #ecf0f1;
+  border: 1px solid #2c3e50;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-family: 'Courier New', monospace;
+}
+
+.rule-input.full-width {
+  flex: 1;
+}
+
+.rule-input:focus {
+  outline: none;
+  border-color: #e67e22;
+  background: #3d566e;
+}
+
+.rule-input::placeholder {
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+.arrow {
+  color: #7f8c8d;
+  font-size: 1rem;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.remove-link {
+  color: #e74c3c;
+  font-size: 1.1rem;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+  transition: color 0.2s;
+}
+
+.remove-link:hover {
+  color: #c0392b;
+}
+
+.rules-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  margin-top: 1rem;
+  border-top: 1px solid #34495e;
+}
+
+.save-rules-btn {
+  padding: 0.6rem 1.5rem;
+  background: #27ae60;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.save-rules-btn:hover {
+  background: #229954;
+}
+
+/* New Rules UI Styles */
+.mapping-group {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: #34495e;
+  border-radius: 4px;
+}
+
+.mapping-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  color: #ecf0f1;
+  font-weight: 600;
+}
+
+.mapping-entry {
+  padding-left: 1rem;
+  font-size: 0.85rem;
+}
+
+.rule-badge {
+  padding: 0.25rem 0.75rem;
+  background: #e67e22;
+  color: #fff;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.bindings-list {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #34495e;
+  border-radius: 4px;
+  min-height: 50px;
+}
+
+.bindings-list:empty::before {
+  content: 'No bindings yet. Add bindings to apply rules to this data type.';
+  color: #7f8c8d;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.rule-row strong {
+  color: #3498db;
+  font-size: 0.85rem;
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+.rule-row span:not(.arrow):not(.remove-link):not(.add-link):not(.rule-badge) {
+  color: #ecf0f1;
+  font-size: 0.85rem;
+  font-family: 'Courier New', monospace;
+}
+
+.rule-row select.rule-input {
+  font-family: inherit;
 }

@@ -1,28 +1,10 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { DATA_KEYS, type DataKey } from '../constants/dataKeys';
 
-// Define all raw data keys as a constant array
-export const RAW_SHEET_KEYS = [
-  'weapons',
-  'weaponTalents',
-  'exoticWeapons',
-  'gearsets',
-  'brandsets',
-  'gearTalents',
-  'namedGear',
-  'skills',
-  'weaponMods',
-  'specializations',
-  'weaponAttributes',
-  'weaponTypeAttributes',
-  'gearAttributes',
-  'gearMods',
-  'keenersWatch',
-  'statusImmunities',
-] as const;
-
-// Derive the type from the constant array
-export type RawSheetKey = typeof RAW_SHEET_KEYS[number];
+// Re-export for backwards compatibility
+export const RAW_SHEET_KEYS = DATA_KEYS;
+export type RawSheetKey = DataKey;
 
 interface RawDataState {
   // Store everything as raw arrays of objects
