@@ -13,6 +13,9 @@ import GearTalent from './models/GearTalent';
 import NamedGear from './models/NamedGear';
 import Skill from './models/Skill';
 import WeaponMod from './models/WeaponMod';
+import Attribute from './models/Attribute';
+import GearMod from './models/GearMod';
+import StatusImmunity from './models/StatusImmunity';
 import { 
   parseWeapons, 
   parseWeaponTalents, 
@@ -112,7 +115,89 @@ function App() {
 
     loadJsonData();
     
-    // Load CSV files on startup
+    // Load lookup data from lookups.json
+    const loadLookupData = async () => {
+      try {
+        const response = await fetch('/clean/lookups.json');
+        if (!response.ok) {
+          console.log('No lookups.json file found, falling back to CSV files');
+          // Fallback to CSV loading
+          await loadCSVData();
+          return;
+        }
+
+        const lookups = await response.json();
+        const store = useLookupStore.getState() as any;
+
+        // Load weapon attributes
+        if (lookups.weaponAttributes) {
+          const attrs = Object.entries(lookups.weaponAttributes).map(([name, max]) => 
+            new Attribute({ Attribute: name, Max: `${max}%` })
+          );
+          store.setWeaponAttributes(attrs);
+          console.log('Loaded weaponAttributes from lookups.json');
+        }
+
+        // Load weapon type attributes
+        if (lookups.weaponTypeAttributes) {
+          const attrs = Object.entries(lookups.weaponTypeAttributes).flatMap(([weapon, attrObj]: [string, any]) =>
+            Object.entries(attrObj).map(([attr, max]) =>
+              new Attribute({ Weapon: weapon, Attribute: attr, Max: `${max}%` })
+            )
+          );
+          store.setWeaponTypeAttributes(attrs);
+          console.log('Loaded weaponTypeAttributes from lookups.json');
+        }
+
+        // Load gear attributes
+        if (lookups.gearAttributes) {
+          const attrs = Object.entries(lookups.gearAttributes).flatMap(([classification, attrObj]: [string, any]) =>
+            Object.entries(attrObj).map(([attr, max]) =>
+              new GearMod({ Classification: classification, Attribute: attr, Max: typeof max === 'number' ? (max < 100 ? `${max}%` : `${max}`) : max })
+            )
+          );
+          store.setGearAttributes(attrs);
+          console.log('Loaded gearAttributes from lookups.json');
+        }
+
+        // Load gear mod attributes
+        if (lookups.gearMods) {
+          const attrs = Object.entries(lookups.gearMods).flatMap(([classification, attrObj]: [string, any]) =>
+            Object.entries(attrObj).map(([attr, max]) =>
+              new GearMod({ Classification: classification, Attribute: attr, Max: typeof max === 'number' ? (max < 100 ? `${max}%` : `${max}`) : max })
+            )
+          );
+          store.setGearModAttributes(attrs);
+          console.log('Loaded gearMods from lookups.json');
+        }
+
+        // Load Keener's Watch
+        if (lookups.keenersWatch) {
+          const attrs = Object.entries(lookups.keenersWatch).flatMap(([category, attrObj]: [string, any]) =>
+            Object.entries(attrObj).map(([attr, max]) =>
+              new Attribute({ Category: category, Attribute: attr, 'Max Bonus': `${max}%` })
+            )
+          );
+          store.setKeenersWatch(attrs);
+          console.log('Loaded keenersWatch from lookups.json');
+        }
+
+        // Load status immunities
+        if (lookups.statusImmunities) {
+          const immunities = Object.entries(lookups.statusImmunities).map(([statusEffect, required]) =>
+            new StatusImmunity({ 'Status Effect': statusEffect, 'Required %': `${required}%` })
+          );
+          store.setStatusImmunities(immunities);
+          console.log('Loaded statusImmunities from lookups.json');
+        }
+      } catch (error) {
+        console.error('Error loading lookups.json:', error);
+        // Fallback to CSV loading
+        await loadCSVData();
+      }
+    };
+
+    // Fallback CSV loading function
     const loadCSVData = async () => {
       const csvFiles = [
         { key: 'weaponAttributes', filename: 'weapon_attributes.csv', parser: parseWeaponAttributes, setter: 'setWeaponAttributes' },
@@ -141,7 +226,7 @@ function App() {
       }
     };
 
-    loadCSVData();
+    loadLookupData();
 
     // Load all raw JSON files from /raw directory
     const loadRawFiles = async () => {

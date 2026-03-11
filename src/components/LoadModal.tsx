@@ -3,7 +3,7 @@ import './LoadModal.css';
 import { useRawDataStore } from '../stores/useRawDataStore';
 import { useCleanDataStore, getModelFields, CLASS_CONSTRUCTORS } from '../stores/useCleanDataStore';
 import { useRulesStore, SYSTEM_RULES } from '../stores/useRulesStore';
-import { MdDownload, MdSave, MdEditDocument, MdCleaningServices } from 'react-icons/md';
+import { MdDownload, MdEditDocument, MdCleaningServices } from 'react-icons/md';
 import StatModifier from '../models/StatModifier';
 
 interface LoadModalProps {
@@ -183,28 +183,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     }
   };
 
-  const handleSave = async (dataType: string) => {
-    if (loadingStates[dataType]) return;
-    
-    const rawStore = useRawDataStore.getState();
-    const data = rawStore.getRawData(dataType as any);
-    
-    if (!data || data.length === 0) {
-      alert(`No data available for ${dataType}`);
-      return;
-    }
 
-    const jsonString = JSON.stringify(data, null, 2);
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${dataType}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
 
   const handleView = (dataType: string) => {
     if (loadingStates[dataType]) return;
@@ -892,14 +871,6 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
             </button>
             <button 
               className={`icon-button ${dataExists.weapons ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleSave('weapons')} 
-              title="Save"
-              disabled={!dataExists.weapons || loadingStates.weapons}
-            >
-              <MdSave />
-            </button>
-            <button 
-              className={`icon-button ${dataExists.weapons ? 'has-data' : 'no-data'}`} 
               onClick={() => handleView('weapons')} 
               title="View"
               disabled={!dataExists.weapons || loadingStates.weapons}
@@ -930,14 +901,6 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
               disabled={loadingStates.weaponTalents}
             >
               {loadingStates.weaponTalents ? '⏳' : <MdDownload />}
-            </button>
-            <button 
-              className={`icon-button ${dataExists.weaponTalents ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleSave('weaponTalents')} 
-              title="Save"
-              disabled={!dataExists.weaponTalents || loadingStates.weaponTalents}
-            >
-              <MdSave />
             </button>
             <button 
               className={`icon-button ${dataExists.weaponTalents ? 'has-data' : 'no-data'}`} 
@@ -974,14 +937,6 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
             </button>
             <button 
               className={`icon-button ${dataExists.exoticWeapons ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleSave('exoticWeapons')} 
-              title="Save"
-              disabled={!dataExists.exoticWeapons || loadingStates.exoticWeapons}
-            >
-              <MdSave />
-            </button>
-            <button 
-              className={`icon-button ${dataExists.exoticWeapons ? 'has-data' : 'no-data'}`} 
               onClick={() => handleView('exoticWeapons')} 
               title="View"
               disabled={!dataExists.exoticWeapons || loadingStates.exoticWeapons}
@@ -1012,14 +967,6 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
               disabled={loadingStates.gearsets}
             >
               {loadingStates.gearsets ? '⏳' : <MdDownload />}
-            </button>
-            <button 
-              className={`icon-button ${dataExists.gearsets ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleSave('gearsets')} 
-              title="Save"
-              disabled={!dataExists.gearsets || loadingStates.gearsets}
-            >
-              <MdSave />
             </button>
             <button 
               className={`icon-button ${dataExists.gearsets ? 'has-data' : 'no-data'}`} 
@@ -1056,14 +1003,6 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
             </button>
             <button 
               className={`icon-button ${dataExists.brandsets ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleSave('brandsets')} 
-              title="Save"
-              disabled={!dataExists.brandsets || loadingStates.brandsets}
-            >
-              <MdSave />
-            </button>
-            <button 
-              className={`icon-button ${dataExists.brandsets ? 'has-data' : 'no-data'}`} 
               onClick={() => handleView('brandsets')} 
               title="View"
               disabled={!dataExists.brandsets || loadingStates.brandsets}
@@ -1094,14 +1033,6 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
               disabled={loadingStates.gearTalents}
             >
               {loadingStates.gearTalents ? '⏳' : <MdDownload />}
-            </button>
-            <button 
-              className={`icon-button ${dataExists.gearTalents ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleSave('gearTalents')} 
-              title="Save"
-              disabled={!dataExists.gearTalents || loadingStates.gearTalents}
-            >
-              <MdSave />
             </button>
             <button 
               className={`icon-button ${dataExists.gearTalents ? 'has-data' : 'no-data'}`} 
@@ -1138,14 +1069,6 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
             </button>
             <button 
               className={`icon-button ${dataExists.namedGear ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleSave('namedGear')} 
-              title="Save"
-              disabled={!dataExists.namedGear || loadingStates.namedGear}
-            >
-              <MdSave />
-            </button>
-            <button 
-              className={`icon-button ${dataExists.namedGear ? 'has-data' : 'no-data'}`} 
               onClick={() => handleView('namedGear')} 
               title="View"
               disabled={!dataExists.namedGear || loadingStates.namedGear}
@@ -1176,14 +1099,6 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
               disabled={loadingStates.skills}
             >
               {loadingStates.skills ? '⏳' : <MdDownload />}
-            </button>
-            <button 
-              className={`icon-button ${dataExists.skills ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleSave('skills')} 
-              title="Save"
-              disabled={!dataExists.skills || loadingStates.skills}
-            >
-              <MdSave />
             </button>
             <button 
               className={`icon-button ${dataExists.skills ? 'has-data' : 'no-data'}`} 
@@ -1220,14 +1135,6 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
             </button>
             <button 
               className={`icon-button ${dataExists.weaponMods ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleSave('weaponMods')} 
-              title="Save"
-              disabled={!dataExists.weaponMods || loadingStates.weaponMods}
-            >
-              <MdSave />
-            </button>
-            <button 
-              className={`icon-button ${dataExists.weaponMods ? 'has-data' : 'no-data'}`} 
               onClick={() => handleView('weaponMods')} 
               title="View"
               disabled={!dataExists.weaponMods || loadingStates.weaponMods}
@@ -1251,12 +1158,6 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
               <span className="csv-label">{getLabel(label, key)}</span>
               {/* No Load button for CSV files - they don't have a scraping page */}
               <div style={{ width: '32px' }}></div>
-              <MdSave 
-                className={`csv-icon ${dataExists[key] ? 'has-data' : 'no-data'}`} 
-                onClick={() => !loadingStates[key] && dataExists[key] && handleSave(key)} 
-                title="Save"
-                style={{ opacity: (dataExists[key] && !loadingStates[key]) ? 1 : 0.3, cursor: (dataExists[key] && !loadingStates[key]) ? 'pointer' : 'not-allowed' }}
-              />
               <MdEditDocument 
                 className={`csv-icon ${dataExists[key] ? 'has-data' : 'no-data'}`} 
                 onClick={() => !loadingStates[key] && dataExists[key] && handleView(key)} 
