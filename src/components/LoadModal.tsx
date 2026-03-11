@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './LoadModal.css';
 import { useRawDataStore } from '../stores/useRawDataStore';
-import { useCleanDataStore } from '../stores/useCleanDataStore';
-import { useRulesStore } from '../stores/useRulesStore';
+import { useCleanDataStore, getModelFields, CLASS_CONSTRUCTORS } from '../stores/useCleanDataStore';
+import { useRulesStore, SYSTEM_RULES } from '../stores/useRulesStore';
 import { MdDownload, MdSave, MdEditDocument, MdCleaningServices } from 'react-icons/md';
+import StatModifier from '../models/StatModifier';
 
 interface LoadModalProps {
   isOpen: boolean;
@@ -49,6 +50,9 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
   const [showCreateRule, setShowCreateRule] = useState(false);
   const [showAllRulesJson, setShowAllRulesJson] = useState(false);
   const [allRulesJsonText, setAllRulesJsonText] = useState('');
+  const [showTestValidate, setShowTestValidate] = useState(true);
+  const [testItemIndex, setTestItemIndex] = useState(0);
+  const [testAllPassed, setTestAllPassed] = useState<boolean | null>(null);
   
   // Subscribe to rules store for reactive updates
   const rulesStore = useRulesStore();
@@ -268,7 +272,151 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
   };
 
   const handleImport = () => {
-    alert('Import functionality coming soon!');
+    if (!viewerType) return;
+    
+    const rawStore = useRawDataStore.getState();
+    const cleanStore = useCleanDataStore.getState();
+    const rulesStore = useRulesStore.getState();
+    
+    // Get raw data
+    const rawData = rawStore.getRawData(viewerType as any);
+    if (!rawData || !Array.isArray(rawData) || rawData.length === 0) {
+      alert('No raw data available to import');
+      return;
+    }
+    
+    // Get bindings for this data type
+    const bindings = rulesStore.getBindings(viewerType as any);
+    if (bindings.length === 0) {
+      alert('No bindings configured. Please configure bindings in the Rules section first.');
+      return;
+    }
+    
+    // Apply bindings to transform raw data
+    const processedData = rawData.map((item: any) => {
+      const result: any = {};
+      
+      bindings.forEach(({ destination, source, rules }) => {
+        let value = item[source];
+        
+        // If source doesn't exist, use empty string or appropriate default
+        if (value === undefined || value === null) {
+          value = '';
+        }
+        
+        // Apply each rule in order
+        rules.forEach((ruleLabel) => {
+          // Check if it's a replace rule
+          if (rulesStore.replaceRules[ruleLabel]) {
+            const [match, replace] = rulesStore.replaceRules[ruleLabel];
+            try {
+              const regex = new RegExp(match, 'gi');
+              value = String(value).replace(regex, replace || '');
+            } catch (error) {
+              console.warn(`Invalid regex pattern in rule "${ruleLabel}": ${match}`, error);
+            }
+          }
+          
+          // Check if it's a match rule (validation)
+          if (rulesStore.matchRules[ruleLabel]) {
+            const pattern = rulesStore.matchRules[ruleLabel];
+            try {
+              const regex = new RegExp(pattern, 'i');
+              if (!regex.test(String(value))) {
+                console.warn(`Value "${value}" for ${destination} does not match rule "${ruleLabel}"`);
+              }
+            } catch (error) {
+              console.warn(`Invalid regex pattern in rule "${ruleLabel}": ${pattern}`, error);
+            }
+          }
+          
+          // Check if it's a mapping rule
+          if (rulesStore.mappings[ruleLabel]) {
+            const mapping = rulesStore.mappings[ruleLabel];
+            const mappedValue = mapping[String(value)];
+            if (mappedValue !== undefined) {
+              value = mappedValue;
+            }
+          }
+        });
+        
+        // Type conversion based on actual destination field type
+        const fieldType = getFieldType(viewerType, destination);
+        
+        // Check if destination expects an array
+        if (fieldType === 'array') {
+          if (typeof value === 'string') {
+            value = value.split(',').map((s: string) => s.trim()).filter((s: string) => s);
+          }
+        }
+        
+        // Check if destination expects a number
+        if (fieldType === 'number') {
+          if (typeof value === 'string') {
+            if (value.trim() === '') {
+              value = 0;
+            } else {
+              const parsed = parseFloat(value);
+              value = isNaN(parsed) ? value : parsed; // Keep original if can't parse
+            }
+          }
+        }
+        
+        // object type stays as-is (already processed by rules)
+        
+        result[destination] = value;
+      });
+      
+      return result;
+    });
+    
+    // Instantiate model classes based on data type using CLASS_CONSTRUCTORS
+    let modelInstances: any[];
+    const Constructor = CLASS_CONSTRUCTORS[viewerType as keyof typeof CLASS_CONSTRUCTORS];
+    
+    if (Constructor) {
+      modelInstances = processedData.map((data: any) => new Constructor(data));
+    } else {
+      // For data types without model classes, use plain objects
+      modelInstances = processedData;
+    }
+    
+    // Get existing clean data
+    const existingCleanData = cleanStore.getCleanData(viewerType as any);
+    
+    // Compare with existing data
+    if (existingCleanData && Array.isArray(existingCleanData) && existingCleanData.length > 0) {
+      const existingJson = JSON.stringify(existingCleanData, null, 2);
+      const newJson = JSON.stringify(modelInstances, null, 2);
+      
+      if (existingJson !== newJson) {
+        const confirmed = confirm(
+          `The processed data is different from the existing clean data.\n\n` +
+          `Existing items: ${existingCleanData.length}\n` +
+          `New items: ${modelInstances.length}\n\n` +
+          `Do you want to replace the existing clean data with the newly processed data?`
+        );
+        
+        if (!confirmed) {
+          return;
+        }
+      }
+    }
+    
+    // Update clean data store
+    cleanStore.setCleanData(viewerType as any, modelInstances);
+    
+    // Update viewer to show new clean data
+    setViewerData(modelInstances);
+    setEditedJson(JSON.stringify(modelInstances, null, 2));
+    
+    // Update counts
+    const cleanExists: Record<string, boolean> = {};
+    const cleanCounts: Record<string, number> = {};
+    cleanExists[viewerType] = modelInstances && modelInstances.length > 0;
+    cleanCounts[viewerType] = modelInstances ? modelInstances.length : 0;
+    setCleanDataExists(prev => ({ ...prev, ...cleanExists }));
+    setCleanDataCounts(prev => ({ ...prev, ...cleanCounts }));
   };
 
   const handleRules = () => {
@@ -298,27 +446,45 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
   };
 
   const getDestinationFields = (): string[] => {
-    // Map data types to their model class fields
-    const fieldMap: Record<string, string[]> = {
-      weapons: ['type', 'variant', 'name', 'flag', 'rpm', 'baseMagSize', 'moddedMagSize', 'reload', 'damage', 'optimalRange', 'modSlots', 'hsd'],
-      exoticWeapons: ['type', 'variant', 'name', 'rpm', 'baseMagSize', 'moddedMagSize', 'reload', 'damage', 'optimalRange', 'modSlots', 'hsd', 'talent', 'talentDescription', 'mods'],
-      weaponTalents: ['weaponCategory', 'name', 'description', 'maxRolls'],
-      weaponMods: ['type', 'slot', 'attribute', 'minValue', 'maxValue'],
-      brandsets: ['icon', 'brand', 'slot', 'core', 'attributes', 'bonus1', 'bonus2', 'bonus3'],
-      gearsets: ['logo', 'name', 'core', 'attributes', 'bonus2', 'bonus3', 'bonus4'],
-      gearTalents: ['piece', 'icon', 'name', 'description', 'maxRolls'],
-      namedGear: ['type', 'brand', 'name', 'core', 'attributes', 'talent', 'modSlot'],
-      skills: ['type', 'name', 'description', 'mods'],
-      specializations: ['name', 'icon', 'description'],
-      weaponAttributes: ['classification', 'attribute', 'minValue', 'maxValue', 'increment'],
-      weaponTypeAttributes: ['weaponType', 'attribute', 'minValue', 'maxValue', 'increment'],
-      gearAttributes: ['classification', 'attribute', 'minValue', 'maxValue', 'increment'],
-      gearMods: ['classification', 'attribute', 'minValue', 'maxValue'],
-      keenersWatch: ['attribute', 'maxValue'],
-      statusImmunities: ['statusEffect', 'requiredPercent', 'sources'],
+    // Derive fields directly from the model class
+    return getModelFields(rulesDataKey as any);
+  };
+
+  const getFieldType = (dataKey: string, fieldName: string): 'string' | 'number' | 'array' | 'object' | 'unknown' => {
+    // Map data types and their fields to TypeScript types
+    const typeMap: Record<string, Record<string, 'string' | 'number' | 'array' | 'object'>> = {
+      weapons: {
+        type: 'string',
+        variant: 'string',
+        name: 'string',
+        flag: 'string',
+        rpm: 'number',
+        baseMagSize: 'number',
+        moddedMagSize: 'number',
+        reload: 'number',
+        damage: 'number',
+        optimalRange: 'number',
+        modSlots: 'array',
+        hsd: 'number'
+      },
+      exoticWeapons: {
+        type: 'string',
+        variant: 'string',
+        name: 'string',
+        talentName: 'string',
+        talentDesc: 'string',
+        modSlots: 'object'
+      },
+      weaponMods: {
+        type: 'string',
+        slot: 'string',
+        name: 'string',
+        bonus: 'object',
+        penalty: 'object'
+      }
     };
 
-    return fieldMap[rulesDataKey] || [];
+    return typeMap[dataKey]?.[fieldName] || 'unknown';
   };
 
   const handleCloseRules = () => {
@@ -345,10 +511,11 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     const rulesStore = useRulesStore.getState();
     
     if (ruleType === 'replace') {
-      if (!replaceMatch || !replaceValue) {
-        alert('Please enter both match and replace values');
+      if (!replaceMatch) {
+        alert('Please enter a match pattern');
         return;
       }
+      // replaceValue can be empty string (to remove matched text)
       rulesStore.setReplaceRule(newRuleLabel, replaceMatch, replaceValue);
       setNewRuleLabel('');
       setReplaceMatch('');
@@ -400,6 +567,13 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
       // Update existing binding
       const currentBindings = rulesStore.getBindings(rulesDataKey as any);
       const existingBinding = currentBindings[editingBindingIndex];
+      
+      if (!existingBinding) {
+        alert('Error: Binding not found');
+        setEditingBindingIndex(null);
+        return;
+      }
+      
       rulesStore.updateBinding(rulesDataKey as any, editingBindingIndex, {
         destination: bindingDestination,
         source: bindingSource,
@@ -1162,12 +1336,18 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                   <>
                     <button className="import-btn" onClick={handleImport}>Import</button>
                     <button className="rules-btn" onClick={handleRules}>Rules</button>
+                    <button className="cancel-btn" onClick={() => {
+                      setViewerMode('raw');
+                      setEditedJson(JSON.stringify(viewerData, null, 2));
+                    }}>View JSON</button>
                   </>
                 )}
                 {viewerMode === 'raw' && (
-                  <button className="update-btn" onClick={handleUpdateJson}>Update</button>
+                  <>
+                    <button className="update-btn" onClick={handleUpdateJson}>Update</button>
+                    <button className="cancel-btn" onClick={handleCloseViewer}>Cancel</button>
+                  </>
                 )}
-                <button className="cancel-btn" onClick={handleCloseViewer}>Cancel</button>
               </div>
             </div>
           </div>
@@ -1199,70 +1379,61 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                   </div>
                 </div>
 
-                <div className="rule-row">
-                  <select
-                    className="rule-input"
-                    value={bindingSource}
-                    onChange={(e) => setBindingSource(e.target.value)}
-                  >
-                    <option value="">Select source field...</option>
-                    {getAvailableFields().map(field => (
-                      <option key={field} value={field}>{field}</option>
-                    ))}
-                  </select>
-                  <span className="arrow">→</span>
-                  <select
-                    className="rule-input"
-                    value={bindingDestination}
-                    onChange={(e) => setBindingDestination(e.target.value)}
-                  >
-                    <option value="">Select destination field...</option>
-                    {getDestinationFields().filter(field => {
-                      // Filter out destinations that are already used, except when editing
-                      const bindings = rulesStore.getBindings(rulesDataKey as any);
-                      const usedDestinations = bindings
-                        .map((b, idx) => idx === editingBindingIndex ? null : b.destination)
-                        .filter(d => d !== null);
-                      return !usedDestinations.includes(field);
-                    }).map(field => (
-                      <option key={field} value={field}>{field}</option>
-                    ))}
-                  </select>
-                  {(() => {
-                    // Check if there are any available destinations
-                    const bindings = rulesStore.getBindings(rulesDataKey as any);
-                    const usedDestinations = bindings
-                      .map((b, idx) => idx === editingBindingIndex ? null : b.destination)
-                      .filter(d => d !== null);
-                    const availableDestinations = getDestinationFields().filter(field => !usedDestinations.includes(field));
-                    
-                    return availableDestinations.length > 0 ? (
-                      <>
-                        <button className="add-link" onClick={handleAddBinding}>
-                          {editingBindingIndex !== null ? 'Update' : 'Add'}
-                        </button>
-                        {editingBindingIndex !== null && (
-                          <button className="add-link" onClick={handleCancelEditBinding}>Cancel</button>
-                        )}
-                      </>
-                    ) : editingBindingIndex !== null ? (
-                      <>
-                        <button className="add-link" onClick={handleAddBinding}>Update</button>
-                        <button className="add-link" onClick={handleCancelEditBinding}>Cancel</button>
-                      </>
-                    ) : null;
-                  })()}
-                </div>
-
                 {(() => {
-                  // Show message if all destinations are mapped
+                  // Check if there are any available destinations
                   const bindings = rulesStore.getBindings(rulesDataKey as any);
-                  const usedDestinations = bindings.map(b => b.destination);
+                  const usedDestinations = bindings
+                    .map((b, idx) => idx === editingBindingIndex ? null : b.destination)
+                    .filter(d => d !== null);
                   const availableDestinations = getDestinationFields().filter(field => !usedDestinations.includes(field));
                   
-                  return availableDestinations.length === 0 && editingBindingIndex === null && (
-                    <div style={{ fontSize: '0.85rem', color: '#27ae60', fontStyle: 'italic', marginBottom: '0.5rem', padding: '0.5rem', backgroundColor: '#d5f4e6', borderRadius: '4px' }}>
-                      ✓ All destination fields are mapped
+                  // Hide selection fields if all destinations are mapped and not editing
+                  if (availableDestinations.length === 0 && editingBindingIndex === null) {
+                    return null;
+                  }
+                  
+                  // Show selection fields if there are available destinations OR we're editing
+                  return (
+                    <div className="rule-row">
+                      <select
+                        className="rule-input"
+                        value={bindingSource}
+                        onChange={(e) => setBindingSource(e.target.value)}
+                      >
+                        <option value="">Select source field...</option>
+                        {getAvailableFields().map(field => (
+                          <option key={field} value={field}>{field}</option>
+                        ))}
+                      </select>
+                      <span className="arrow">→</span>
+                      <select
+                        className="rule-input"
+                        value={bindingDestination}
+                        onChange={(e) => setBindingDestination(e.target.value)}
+                      >
+                        <option value="">Select destination field...</option>
+                        {getDestinationFields().filter(field => {
+                          // Filter out destinations that are already used, except when editing
+                          return !usedDestinations.includes(field);
+                        }).map(field => (
+                          <option key={field} value={field}>{field}</option>
+                        ))}
+                      </select>
+                      {availableDestinations.length > 0 ? (
+                        <>
+                          <button className="add-link" onClick={handleAddBinding}>
+                            {editingBindingIndex !== null ? 'Update' : 'Add'}
+                          </button>
+                          {editingBindingIndex !== null && (
+                            <button className="add-link" onClick={handleCancelEditBinding}>Cancel</button>
+                          )}
+                        </>
+                      ) : editingBindingIndex !== null ? (
+                        <>
+                          <button className="add-link" onClick={handleAddBinding}>Update</button>
+                          <button className="add-link" onClick={handleCancelEditBinding}>Cancel</button>
+                        </>
+                      ) : null}
                     </div>
                   );
                 })()}
@@ -1383,6 +1554,9 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                               style={{ flex: 1, fontSize: '0.85rem' }}
                             >
                               <option value="">Add a rule...</option>
+                              {Object.keys(SYSTEM_RULES).map(label => (
+                                <option key={label} value={label}>{label} (system)</option>
+                              ))}
                               {Object.keys(rulesStore.replaceRules).map(label => (
                                 <option key={label} value={label}>{label} (replace)</option>
                               ))}
@@ -1407,10 +1581,503 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                   ))}
                 </div>
 
+                {/* Test/Validate Section */}
+                <div 
+                  className="rules-section-header" 
+                  style={{ marginTop: '1.5rem', cursor: 'pointer', userSelect: 'none' }}
+                  onClick={() => setShowTestValidate(!showTestValidate)}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <span style={{ marginRight: '0.5rem' }}>{showTestValidate ? '▼' : '▶'}</span>
+                    <h4>Test/Validate</h4>
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: '#7f8c8d', fontWeight: 'normal', marginTop: '0.25rem', marginLeft: '1.5rem' }}>
+                    Test your mappings with sample data from the source
+                  </div>
+                </div>
+
+                {showTestValidate && (() => {
+                  const rawStore = useRawDataStore.getState();
+                  const rawData = rawStore.getRawData(rulesDataKey as any);
+                  const bindings = rulesStore.getBindings(rulesDataKey as any);
+                  
+                  if (!rawData || !Array.isArray(rawData) || rawData.length === 0) {
+                    return (
+                      <div style={{ fontSize: '0.85rem', color: '#7f8c8d', fontStyle: 'italic', padding: '0.5rem' }}>
+                        No source data available. Load data first to test mappings.
+                      </div>
+                    );
+                  }
+
+                  if (bindings.length === 0) {
+                    return (
+                      <div style={{ fontSize: '0.85rem', color: '#7f8c8d', fontStyle: 'italic', padding: '0.5rem' }}>
+                        No bindings configured. Add bindings above to test.
+                      </div>
+                    );
+                  }
+
+                  // Ensure testItemIndex is within bounds
+                  const currentIndex = Math.min(testItemIndex, rawData.length - 1);
+                  const sampleItem = rawData[currentIndex];
+                  
+                  // Helper function to apply a rule to a value, handling objects
+                  const applyRuleToValue = (value: any, ruleFunction: (str: string) => string): any => {
+                    // If value is an object, convert to JSON, apply rule, then parse back
+                    if (typeof value === 'object' && value !== null) {
+                      try {
+                        const jsonString = JSON.stringify(value);
+                        const transformed = ruleFunction(jsonString);
+                        return JSON.parse(transformed);
+                      } catch (error) {
+                        // If parsing fails, return the transformed string
+                        console.warn('Failed to parse object after rule application, returning string:', error);
+                        try {
+                          const jsonString = JSON.stringify(value);
+                          return ruleFunction(jsonString);
+                        } catch (e) {
+                          return value;
+                        }
+                      }
+                    }
+                    // For primitives, convert to string, apply rule
+                    return ruleFunction(String(value || ''));
+                  };
+                  
+                  // Function to apply rules and get mapped value
+                  const applyRulesToValue = (sourceValue: any, binding: any) => {
+                    let mappedValue: any = sourceValue;
+                    
+                    binding.rules.forEach((ruleLabel: string) => {
+                      // Check if it's a system rule first
+                      if (ruleLabel in SYSTEM_RULES) {
+                        mappedValue = SYSTEM_RULES[ruleLabel as keyof typeof SYSTEM_RULES](mappedValue);
+                        return;
+                      }
+                      
+                      if (rulesStore.replaceRules[ruleLabel]) {
+                        const [match, replace] = rulesStore.replaceRules[ruleLabel];
+                        try {
+                          const regex = new RegExp(match, 'gi');
+                          mappedValue = applyRuleToValue(mappedValue, (str) => str.replace(regex, replace || ''));
+                        } catch (error) {
+                          console.warn(`Invalid regex pattern in rule "${ruleLabel}": ${match}`, error);
+                        }
+                      }
+                      
+                      if (rulesStore.matchRules[ruleLabel]) {
+                        const pattern = rulesStore.matchRules[ruleLabel];
+                        try {
+                          const regex = new RegExp(pattern, 'i');
+                          // For match rules, we need to test the string representation
+                          const testValue = typeof mappedValue === 'object' ? JSON.stringify(mappedValue) : String(mappedValue || '');
+                          if (!regex.test(testValue)) {
+                            // Just validation, don't modify value
+                          }
+                        } catch (error) {
+                          console.warn(`Invalid regex pattern in rule "${ruleLabel}": ${pattern}`, error);
+                        }
+                      }
+                      
+                      if (rulesStore.mappings[ruleLabel]) {
+                        const mapping = rulesStore.mappings[ruleLabel];
+                        // For mappings, use string representation as key
+                        const key = typeof mappedValue === 'object' ? JSON.stringify(mappedValue) : String(mappedValue);
+                        const mappedVal = mapping[key];
+                        if (mappedVal !== undefined) {
+                          mappedValue = mappedVal;
+                        }
+                      }
+                    });
+                    
+                    return mappedValue;
+                  };
+                  
+                  // Function to construct model instance from mapped data
+                  const constructModelInstance = (dataKey: string, mappedData: any) => {
+                    try {
+                      const Constructor = CLASS_CONSTRUCTORS[dataKey as keyof typeof CLASS_CONSTRUCTORS];
+                      if (!Constructor) {
+                        return mappedData;
+                      }
+                      
+                      // Construct the model instance first (this may clean/transform the data)
+                      const instance = new Constructor(mappedData);
+                      
+                      // Now validate enum fields on the constructed instance
+                      const enumErrors = validateEnumFields(dataKey, instance);
+                      if (enumErrors.length > 0) {
+                        throw new Error(`Enum validation failed: ${enumErrors.join(', ')}`);
+                      }
+                      
+                      return instance;
+                    } catch (error) {
+                      throw new Error(`Model construction failed: ${error instanceof Error ? error.message : String(error)}`);
+                    }
+                  };
+                  
+                  // Function to validate enum fields
+                  const validateEnumFields = (dataKey: string, data: any): string[] => {
+                    const errors: string[] = [];
+                    
+                    // Define enum metadata: field name -> valid values
+                    const enumMetadata: Record<string, Record<string, string[]>> = {
+                      // Models with CoreType enum
+                      gearsets: {
+                        core: ['weapon damage', 'armor', 'skill tier']
+                      },
+                      brandsets: {
+                        core: ['weapon damage', 'armor', 'skill tier']
+                      },
+                      namedGear: {
+                        core: ['weapon damage', 'armor', 'skill tier']
+                      },
+                      // Models with GearModClassification enum
+                      gearMods: {
+                        classification: ['offensive', 'defensive', 'skill']
+                      },
+                      // Models with GearSource enum
+                      buildGear: {
+                        source: ['brandset', 'gearset', 'named', 'exotic']
+                      },
+                      // Models with GearType enum
+                      buildGear_type: {
+                        type: ['mask', 'chest', 'holster', 'gloves', 'backpack', 'kneepads']
+                      }
+                    };
+                    
+                    // Get enum fields for this data type
+                    const enumFields = enumMetadata[dataKey];
+                    if (!enumFields) {
+                      return errors; // No enum validation needed for this type
+                    }
+                    
+                    // Validate each enum field
+                    for (const [fieldName, validValues] of Object.entries(enumFields)) {
+                      const fieldValue = data[fieldName];
+                      
+                      // Skip if field is not present or is null/undefined
+                      if (fieldValue === null || fieldValue === undefined) {
+                        continue;
+                      }
+                      
+                      // Check if it's a string value (enums are strings at runtime)
+                      if (typeof fieldValue === 'string') {
+                        if (!validValues.includes(fieldValue)) {
+                          errors.push(`${fieldName}="${fieldValue}" is not a valid enum value (expected: ${validValues.join(', ')})`);
+                        }
+                      } else if (typeof fieldValue === 'object' && !Array.isArray(fieldValue)) {
+                        // Handle complex core types like Record<CoreType, string[]> in Gearset
+                        // This is valid, so skip validation
+                        continue;
+                      } else {
+                        // Field exists but is not a string - type mismatch
+                        errors.push(`${fieldName} has type "${typeof fieldValue}" but expected enum string (one of: ${validValues.join(', ')})`);
+                      }
+                    }
+                    
+                    return errors;
+                  };
+                  
+                  return (
+                    <div style={{ marginTop: '0.5rem' }}>
+                      {/* Pagination Controls */}
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '0.5rem', 
+                        marginBottom: '0.75rem',
+                        padding: '0.5rem',
+                        backgroundColor: '#f9f9f9',
+                        borderRadius: '4px',
+                        justifyContent: 'space-between'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <button
+                            onClick={() => {
+                              setTestItemIndex(Math.max(0, currentIndex - 1));
+                              setTestAllPassed(null); // Reset test status when manually navigating
+                            }}
+                            disabled={currentIndex === 0}
+                            style={{
+                              padding: '0.25rem 0.5rem',
+                              background: currentIndex === 0 ? '#bdc3c7' : '#3498db',
+                              color: '#fff',
+                              border: 'none',
+                              borderRadius: '3px',
+                              cursor: currentIndex === 0 ? 'not-allowed' : 'pointer',
+                              fontSize: '0.85rem'
+                            }}
+                          >
+                            ◀
+                          </button>
+                          
+                          <select
+                            value={currentIndex}
+                            onChange={(e) => {
+                              setTestItemIndex(parseInt(e.target.value));
+                              setTestAllPassed(null); // Reset test status when manually navigating
+                            }}
+                            style={{
+                              padding: '0.25rem 0.5rem',
+                              background: '#fff',
+                              border: '1px solid #ddd',
+                              borderRadius: '3px',
+                              fontSize: '0.85rem',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            {rawData.map((_: any, idx: number) => (
+                              <option key={idx} value={idx}>
+                                Item {idx + 1} of {rawData.length}
+                              </option>
+                            ))}
+                          </select>
+                          
+                          <button
+                            onClick={() => {
+                              setTestItemIndex(Math.min(rawData.length - 1, currentIndex + 1));
+                              setTestAllPassed(null); // Reset test status when manually navigating
+                            }}
+                            disabled={currentIndex === rawData.length - 1}
+                            style={{
+                              padding: '0.25rem 0.5rem',
+                              background: currentIndex === rawData.length - 1 ? '#bdc3c7' : '#3498db',
+                              color: '#fff',
+                              border: 'none',
+                              borderRadius: '3px',
+                              cursor: currentIndex === rawData.length - 1 ? 'not-allowed' : 'pointer',
+                              fontSize: '0.85rem'
+                            }}
+                          >
+                            ▶
+                          </button>
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <a
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              
+                              // Test all items
+                              for (let i = 0; i < rawData.length; i++) {
+                                const item = rawData[i];
+                                let hasError = false;
+                                
+                                // Build mapped object
+                                const mappedData: any = {};
+                                for (const binding of bindings) {
+                                  const sourceValue = item[binding.source];
+                                  const mappedValue = applyRulesToValue(sourceValue, binding);
+                                  mappedData[binding.destination] = mappedValue;
+                                }
+                                
+                                // Try to construct model instance
+                                try {
+                                  constructModelInstance(rulesDataKey, mappedData);
+                                } catch (error) {
+                                  hasError = true;
+                                }
+                                
+                                // If error found, navigate to that item and stop
+                                if (hasError) {
+                                  setTestItemIndex(i);
+                                  setTestAllPassed(false);
+                                  return;
+                                }
+                              }
+                              
+                              // All tests passed
+                              setTestAllPassed(true);
+                            }}
+                            style={{
+                              color: '#3498db',
+                              fontSize: '0.85rem',
+                              textDecoration: 'none',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            Test All
+                          </a>
+                          
+                          {testAllPassed === true && (
+                            <span style={{ 
+                              color: '#27ae60', 
+                              fontSize: '0.85rem',
+                              fontWeight: 'bold'
+                            }}>
+                              ✓ All Tests Passed
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Data Grid */}
+                      <div style={{ 
+                        display: 'grid', 
+                        gridTemplateColumns: '1fr auto 1fr auto', 
+                        gap: '0.5rem',
+                        padding: '0.5rem',
+                        backgroundColor: '#f9f9f9',
+                        borderRadius: '4px',
+                        fontSize: '0.85rem'
+                      }}>
+                        <div style={{ fontWeight: 'bold', color: '#2c3e50' }}>Source</div>
+                        <div></div>
+                        <div style={{ fontWeight: 'bold', color: '#2c3e50' }}>Mapped (Model Instance)</div>
+                        <div></div>
+                        
+                        {(() => {
+                          // Build mapped object from all bindings first
+                          const mappedData: any = {};
+                          bindings.forEach((binding) => {
+                            const sourceValue = sampleItem[binding.source];
+                            const mappedValue = applyRulesToValue(sourceValue, binding);
+                            mappedData[binding.destination] = mappedValue;
+                          });
+                          
+                          // Try to construct model instance
+                          let modelInstance: any = null;
+                          let modelError: string | null = null;
+                          
+                          try {
+                            modelInstance = constructModelInstance(rulesDataKey, mappedData);
+                          } catch (error) {
+                            modelError = error instanceof Error ? error.message : String(error);
+                          }
+                          
+                          // Now render each binding with the model instance value
+                          return bindings.map((binding, idx) => {
+                            const sourceValue = sampleItem[binding.source];
+                            
+                            // Get the value from the constructed model instance
+                            let displayValue: any;
+                            let hasError = false;
+                            let errorMessage = '';
+                            let isEnumError = false;
+                            
+                            if (modelError) {
+                              hasError = true;
+                              errorMessage = modelError;
+                              displayValue = '(model construction failed)';
+                              // Check if this specific field has an enum error
+                              if (modelError.includes(`${binding.destination}=`)) {
+                                isEnumError = true;
+                              }
+                            } else if (modelInstance) {
+                              displayValue = modelInstance[binding.destination];
+                              
+                              // Additional per-field enum validation
+                              const fieldEnumErrors = validateEnumFields(rulesDataKey, { [binding.destination]: displayValue });
+                              if (fieldEnumErrors.length > 0) {
+                                hasError = true;
+                                isEnumError = true;
+                                errorMessage = fieldEnumErrors[0];
+                              }
+                            } else {
+                              displayValue = '(no model)';
+                            }
+                            
+                            return (
+                              <React.Fragment key={`binding-${idx}`}>
+                                <div style={{ 
+                                  padding: '0.25rem', 
+                                  backgroundColor: '#fff',
+                                  borderRadius: '3px',
+                                  border: '1px solid #ddd'
+                                }}>
+                                  <div style={{ fontSize: '0.75rem', color: '#7f8c8d', marginBottom: '0.15rem' }}>
+                                    {binding.source}
+                                  </div>
+                                  <div style={{ wordBreak: 'break-word' }}>
+                                    {String(sourceValue || '')}
+                                  </div>
+                                </div>
+                                
+                                <div style={{ 
+                                  display: 'flex', 
+                                  alignItems: 'center',
+                                  color: '#3498db'
+                                }}>
+                                  →
+                                </div>
+                                
+                                <div style={{ 
+                                  padding: '0.25rem', 
+                                  backgroundColor: hasError ? (isEnumError ? '#fff3e0' : '#ffe6e6') : '#fff',
+                                  borderRadius: '3px',
+                                  border: hasError ? (isEnumError ? '2px solid #e67e22' : '1px solid #e74c3c') : '1px solid #ddd',
+                                  position: 'relative'
+                                }}>
+                                  <div style={{ fontSize: '0.75rem', color: '#7f8c8d', marginBottom: '0.15rem' }}>
+                                    {binding.destination}
+                                    {hasError && (
+                                      <span 
+                                        title={errorMessage}
+                                        style={{ 
+                                          marginLeft: '0.5rem',
+                                          color: isEnumError ? '#e67e22' : '#e74c3c',
+                                          cursor: 'help',
+                                          fontSize: '1rem'
+                                        }}
+                                      >
+                                        {isEnumError ? '🔴' : '⚠️'}
+                                      </span>
+                                    )}
+                                    {hasError && isEnumError && (
+                                      <span style={{ 
+                                        marginLeft: '0.25rem', 
+                                        color: '#e67e22', 
+                                        fontSize: '0.65rem',
+                                        fontWeight: 'bold',
+                                        textTransform: 'uppercase'
+                                      }}>
+                                        ENUM
+                                      </span>
+                                    )}
+                                    {!hasError && (
+                                      <span style={{ marginLeft: '0.25rem', color: '#95a5a6', fontSize: '0.7rem' }}>
+                                        ({typeof displayValue === 'object' && displayValue !== null ? (Array.isArray(displayValue) ? 'array' : 'object') : typeof displayValue})
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
+                                    {hasError 
+                                      ? String(displayValue)
+                                      : (typeof displayValue === 'object' && displayValue !== null)
+                                      ? JSON.stringify(displayValue, null, 2)
+                                      : (displayValue === 0 ? '0' : String(displayValue ?? ''))}
+                                  </div>
+                                  {hasError && (
+                                    <div style={{ 
+                                      fontSize: '0.7rem', 
+                                      color: isEnumError ? '#e67e22' : '#e74c3c', 
+                                      marginTop: '0.25rem',
+                                      fontStyle: 'italic',
+                                      fontWeight: isEnumError ? 'bold' : 'normal'
+                                    }}>
+                                      {errorMessage}
+                                    </div>
+                                  )}
+                                </div>
+                                
+                                <div>
+                                  {/* Empty cell for alignment */}
+                                </div>
+                              </React.Fragment>
+                            );
+                          });
+                        })()}
+                      </div>
+                    </div>
+                  );
+                })()}
+
                 {/* Create New Rule Section - SECOND */}
                 <div 
                   className="rules-section-header"
-                  style={{ cursor: 'pointer', userSelect: 'none' }}
+                  style={{ cursor: 'pointer', userSelect: 'none', marginTop: '1.5rem' }}
                   onClick={() => setShowCreateRule(!showCreateRule)}
                 >
                   <div style={{ display: 'flex', alignItems: 'center' }}>

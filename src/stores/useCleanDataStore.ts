@@ -57,7 +57,7 @@ interface CleanDataState {
 /**
  * Mapping of data keys to their class constructors
  */
-const CLASS_CONSTRUCTORS: Partial<Record<CleanDataKey, new (data: any) => any>> = {
+export const CLASS_CONSTRUCTORS: Partial<Record<CleanDataKey, new (data: any) => any>> = {
   weapons: Weapon,
   weaponTalents: WeaponTalent,
   exoticWeapons: ExoticWeapon,
@@ -73,6 +73,24 @@ const CLASS_CONSTRUCTORS: Partial<Record<CleanDataKey, new (data: any) => any>> 
   gearMods: GearMod,
   statusImmunities: StatusImmunity,
   // keenersWatch and specializations have no class constructors
+};
+
+/**
+ * Get model fields from a class constructor by instantiating it with empty data
+ */
+export const getModelFields = (dataKey: CleanDataKey): string[] => {
+  const Constructor = CLASS_CONSTRUCTORS[dataKey];
+  if (!Constructor) {
+    return [];
+  }
+  
+  try {
+    const instance = new Constructor({});
+    return Object.keys(instance);
+  } catch (error) {
+    console.error(`Failed to get fields for ${dataKey}:`, error);
+    return [];
+  }
 };
 
 /**

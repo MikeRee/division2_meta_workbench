@@ -756,3 +756,93 @@
   font-weight: bold;
   color: #3498db;
 }
+
+/* Test/Validate Section Styles */
+.test-validate-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.test-validate-header {
+  font-weight: bold;
+  color: #2c3e50;
+  padding: 0.5rem;
+  background-color: #ecf0f1;
+  border-radius: 3px;
+}
+
+.test-source-cell {
+  padding: 0.5rem;
+  background-color: #fff;
+  border-radius: 3px;
+  border: 1px solid #ddd;
+  word-break: break-word;
+}
+
+.test-source-label {
+  font-size: 0.75rem;
+  color: #7f8c8d;
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+}
+
+.test-dest-cell {
+  padding: 0.5rem;
+  background-color: #fff;
+  border-radius: 3px;
+  border: 1px solid #ddd;
+  position: relative;
+  word-break: break-word;
+}
+
+.test-dest-cell.error {
+  background-color: #ffe6e6;
+  border-color: #e74c3c;
+}
+
+.test-error-icon {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  color: #e74c3c;
+  cursor: help;
+  font-size: 1rem;
+}
+
+.test-arrow {
+  display: flex;
+  align-items: center;
+  color: #3498db;
+  font-weight: bold;
+}
+
+.test-button {
+  padding: 0.5rem 1rem;
+  background: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.test-button:hover {
+  background: #2980b9;
+}
+
+.test-empty-state {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  font-style: italic;
+  padding: 1rem;
+  text-align: center;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  border: 1px dashed #bdc3c7;
+}

@@ -1,36 +1,47 @@
 import { CoreType } from './CoreValue';
+import StatModifier from './StatModifier';
 
 interface BrandsetData {
   icon?: string;
   brand?: string;
   core?: CoreType;
-  onePc?: Record<string, number>;
-  twoPc?: Record<string, number>;
-  threePc?: Record<string, number>;
+  onePc?: StatModifier[];
+  twoPc?: StatModifier[];
+  threePc?: StatModifier[];
 }
 
 class Brandset {
   icon: string;
   brand: string;
   core: CoreType;
-  onePc: Record<string, number>;
-  twoPc: Record<string, number>;
-  threePc: Record<string, number>;
+  onePc: StatModifier[];
+  twoPc: StatModifier[];
+  threePc: StatModifier[];
 
   constructor({
     icon = '',
     brand = '',
     core = CoreType.WeaponDamage,
-    onePc = {},
-    twoPc = {},
-    threePc = {}
+    onePc = [],
+    twoPc = [],
+    threePc = []
   }: BrandsetData = {}) {
     this.icon = icon;
     this.brand = brand;
-    this.core = core;
-    this.onePc = onePc;
-    this.twoPc = twoPc;
-    this.threePc = threePc;
+    this.core = this.normalizeCoreType(core);
+    this.onePc = StatModifier.parseStatModifiers(onePc);
+    this.twoPc = StatModifier.parseStatModifiers(twoPc);
+    this.threePc = StatModifier.parseStatModifiers(threePc);
+  }
+
+  private normalizeCoreType(core: any): CoreType {
+    if (typeof core === 'string') {
+      const normalized = core.toLowerCase();
+      if (Object.values(CoreType).includes(normalized as CoreType)) {
+        return normalized as CoreType;
+      }
+    }
+    return core;
   }
 
   /**

@@ -1,0 +1,807 @@
+[
+  {
+    "icon": "https://puu.sh/Eivbc.png",
+    "brand": "5.11 Tactical",
+    "core": "armor",
+    "onePc": [
+      {
+        "stat": "Health",
+        "mod": 30
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Incoming Repairs",
+        "mod": 30
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Hazard Protection",
+        "mod": 30
+      }
+    ]
+  },
+  {
+    "icon": "https://puu.sh/D4eDs.png",
+    "brand": "Badger Tuff",
+    "core": "armor",
+    "onePc": [
+      {
+        "stat": "Shotgun Damage",
+        "mod": 10
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Total Armor",
+        "mod": 5
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Armor on Kill",
+        "mod": 15
+      }
+    ]
+  },
+  {
+    "icon": "https://i.imgur.com/iCDOWbj.png",
+    "brand": "Belstone Armory",
+    "core": "armor",
+    "onePc": [
+      {
+        "stat": "Armor Regen",
+        "mod": 1
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Armor on Kill",
+        "mod": 10
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Incoming Repairs",
+        "mod": 45
+      }
+    ]
+  },
+  {
+    "icon": "https://i.imgur.com/jbwm0ch.png",
+    "brand": "Brazos de Arcabuz",
+    "core": "armor",
+    "onePc": [
+      {
+        "stat": "Skill Haste",
+        "mod": 10
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Skill Tier",
+        "mod": 1
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Magazine Size",
+        "mod": 50
+      }
+    ]
+  },
+  {
+    "icon": "https://puu.sh/D4eDB.png",
+    "brand": "Gila Guard",
+    "core": "armor",
+    "onePc": [
+      {
+        "stat": "Total Armor",
+        "mod": 5
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Health",
+        "mod": 60
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Armor Regen",
+        "mod": 2
+      }
+    ]
+  },
+  {
+    "icon": "https://i.imgur.com/oPCQxDO.png",
+    "brand": "Golan Gear Ltd",
+    "core": "armor",
+    "onePc": [
+      {
+        "stat": "Status Effects",
+        "mod": 10
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Armor Regen",
+        "mod": 1.5
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Total Armor",
+        "mod": 10
+      }
+    ]
+  },
+  {
+    "icon": "https://imgur.com/u6NJoI0.png)",
+    "brand": "Habsburg Guard",
+    "core": "armor",
+    "onePc": [
+      {
+        "stat": "Headshot Damage",
+        "mod": 13
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Marksman Rifle Damage",
+        "mod": 20
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Status Effects",
+        "mod": 25
+      }
+    ]
+  },
+  {
+    "icon": "https://imgur.com/W4sXmQD.png",
+    "brand": "Lengmo",
+    "core": "armor",
+    "onePc": [
+      {
+        "stat": "Explosive Resistance",
+        "mod": 20
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Skill Health",
+        "mod": 20
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "LMG Damage",
+        "mod": 30
+      }
+    ]
+  },
+  {
+    "icon": "https://i.imgur.com/zmtgRt8.png",
+    "brand": "Palisade Steelworks",
+    "core": "armor",
+    "onePc": [
+      {
+        "stat": "Armor on Kill",
+        "mod": 10
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Health",
+        "mod": 60
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Skill Tier",
+        "mod": 1
+      }
+    ]
+  },
+  {
+    "icon": "https://i.imgur.com/iu8gLqk.png",
+    "brand": "Uzina Getica",
+    "core": "armor",
+    "onePc": [
+      {
+        "stat": "Total Armor",
+        "mod": 5
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Armor on Kill",
+        "mod": 10
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Hazard Protection",
+        "mod": 30
+      }
+    ]
+  },
+  {
+    "icon": "https://puu.sh/Eivj5.png",
+    "brand": "Yaahl Gear",
+    "core": "armor",
+    "onePc": [
+      {
+        "stat": "Hazard Protection",
+        "mod": 10
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Weapon Damage",
+        "mod": 10
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Pulse Resistance",
+        "mod": 40
+      }
+    ]
+  },
+  {
+    "icon": "https://puu.sh/D4eDq.png",
+    "brand": "Alps Summit Armaments",
+    "core": "skill tier",
+    "onePc": [
+      {
+        "stat": "Repair Skills",
+        "mod": 18
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Skill Duration",
+        "mod": 30
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Skill Haste",
+        "mod": 30
+      }
+    ]
+  },
+  {
+    "icon": "https://i.imgur.com/Lp0klc0.png",
+    "brand": "China Light Industries",
+    "core": "skill tier",
+    "onePc": [
+      {
+        "stat": "Explosive Damage",
+        "mod": 15
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Skill Haste",
+        "mod": 20
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Status Effects",
+        "mod": 25
+      }
+    ]
+  },
+  {
+    "icon": "https://i.imgur.com/HKDlGkL.png",
+    "brand": "Electrique",
+    "core": "skill tier",
+    "onePc": [
+      {
+        "stat": "Status effect",
+        "mod": 10
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Electricity Protection",
+        "mod": 20
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "SMG Damage",
+        "mod": 30
+      }
+    ]
+  },
+  {
+    "icon": "https://i.imgur.com/OhdQ0MK.png",
+    "brand": "Empress International",
+    "core": "skill tier",
+    "onePc": [
+      {
+        "stat": "Skill Health",
+        "mod": 10
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Skill Damage",
+        "mod": 10
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Skill Efficiency",
+        "mod": 8
+      }
+    ]
+  },
+  {
+    "icon": "https://i.imgur.com/eUhsXYn.png",
+    "brand": "Hana-U Corporation",
+    "core": "skill tier",
+    "onePc": [
+      {
+        "stat": "Skill Haste",
+        "mod": 10
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Skill Damage",
+        "mod": 10
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Weapon Damage",
+        "mod": 15
+      }
+    ]
+  },
+  {
+    "icon": "https://puu.sh/Eivj2.png",
+    "brand": "Murakami Industries",
+    "core": "skill tier",
+    "onePc": [
+      {
+        "stat": "Skill Duration",
+        "mod": 15
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Repair Skills",
+        "mod": 35
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Skill Damage",
+        "mod": 18
+      }
+    ]
+  },
+  {
+    "icon": "https://puu.sh/D4eDF.png",
+    "brand": "Richter & Kaiser GmbH",
+    "core": "skill tier",
+    "onePc": [
+      {
+        "stat": "Incoming Repairs",
+        "mod": 15
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Explosive Resistance",
+        "mod": 40
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Repair Skills",
+        "mod": 52
+      }
+    ]
+  },
+  {
+    "icon": "",
+    "brand": "Shiny Monkey",
+    "core": "skill tier",
+    "onePc": [
+      {
+        "stat": "Skill Duration",
+        "mod": 15
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Skill Efficiency",
+        "mod": 5
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Repair Skills",
+        "mod": 52
+      }
+    ]
+  },
+  {
+    "icon": "https://puu.sh/D4eDH.png",
+    "brand": "Wyvern Wear",
+    "core": "skill tier",
+    "onePc": [
+      {
+        "stat": "Skill Damage",
+        "mod": 8
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Status Effects",
+        "mod": 18
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Skill Duration",
+        "mod": 45
+      }
+    ]
+  },
+  {
+    "icon": "https://puu.sh/D4eDt.png",
+    "brand": "Airaldi Holdings",
+    "core": "weapon damage",
+    "onePc": [
+      {
+        "stat": "Marksman Rifle Damage",
+        "mod": 10
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Headshot Damage",
+        "mod": 13
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Damage to Armor",
+        "mod": 5
+      }
+    ]
+  },
+  {
+    "icon": "",
+    "brand": "Unit Alloys",
+    "core": "weapon damage",
+    "onePc": [
+      {
+        "stat": "Rate of Fire",
+        "mod": 5
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Assault Rifle Damage",
+        "mod": 20
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Magazine Size",
+        "mod": 50
+      }
+    ]
+  },
+  {
+    "icon": "https://i.imgur.com/oRFe6pE.png",
+    "brand": "Česká Výroba s.r.o.",
+    "core": "weapon damage",
+    "onePc": [
+      {
+        "stat": "Critical Hit Chance",
+        "mod": 8
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Hazard Protection",
+        "mod": 20
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Health",
+        "mod": 90
+      }
+    ]
+  },
+  {
+    "icon": "https://puu.sh/D4eDw.png",
+    "brand": "Douglas & Harding",
+    "core": "weapon damage",
+    "onePc": [
+      {
+        "stat": "Pistol Damage",
+        "mod": 20
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Stability",
+        "mod": 30
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Accuracy",
+        "mod": 50
+      }
+    ]
+  },
+  {
+    "icon": "https://puu.sh/D4eDy.png",
+    "brand": "Fenris Group AB",
+    "core": "weapon damage",
+    "onePc": [
+      {
+        "stat": "Assault Rifle Damage",
+        "mod": 10
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Reload Speed",
+        "mod": 30
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Stability",
+        "mod": 50
+      }
+    ]
+  },
+  {
+    "icon": "https://i.imgur.com/m5j0yqs.png",
+    "brand": "Grupo Sombra S.A.",
+    "core": "weapon damage",
+    "onePc": [
+      {
+        "stat": "Critical Hit Damage",
+        "mod": 13
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Explosive Damage",
+        "mod": 20
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Headshot Damage",
+        "mod": 13
+      }
+    ]
+  },
+  {
+    "icon": "",
+    "brand": "Imminence Armaments",
+    "core": "weapon damage",
+    "onePc": [
+      {
+        "stat": "Weapon Damage",
+        "mod": 5
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Increased Threat",
+        "mod": 100
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Pistol Damage",
+        "mod": 60
+      }
+    ]
+  },
+  {
+    "icon": "",
+    "brand": "Legatus S.p.A",
+    "core": "weapon damage",
+    "onePc": [
+      {
+        "stat": "Swap Speed",
+        "mod": 30
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Optimal Range",
+        "mod": 70
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Weapon Damage",
+        "mod": 15
+      }
+    ]
+  },
+  {
+    "icon": "https://puu.sh/D4eDx.png",
+    "brand": "Overlord Armaments",
+    "core": "weapon damage",
+    "onePc": [
+      {
+        "stat": "Rifle Damage",
+        "mod": 10
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Accuracy",
+        "mod": 30
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Weapon Handling",
+        "mod": 30
+      }
+    ]
+  },
+  {
+    "icon": "https://puu.sh/D4eDD.png",
+    "brand": "Petrov Defense Group",
+    "core": "weapon damage",
+    "onePc": [
+      {
+        "stat": "LMG Damage",
+        "mod": 10
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Weapon Handling",
+        "mod": 15
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Ammo Capacity",
+        "mod": 50
+      }
+    ]
+  },
+  {
+    "icon": "https://puu.sh/D4eDE.png",
+    "brand": "Providence Defense",
+    "core": "weapon damage",
+    "onePc": [
+      {
+        "stat": "Headshot Damage",
+        "mod": 13
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Critical Hit Chance",
+        "mod": 8
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Critical Hit Damage",
+        "mod": 13
+      }
+    ]
+  },
+  {
+    "icon": "https://puu.sh/D4eDG.png",
+    "brand": "Sokolov Concern",
+    "core": "weapon damage",
+    "onePc": [
+      {
+        "stat": "SMG Damage",
+        "mod": 10
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Critical Hit Damage",
+        "mod": 13
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Critical Hit Chance",
+        "mod": 8
+      }
+    ]
+  },
+  {
+    "icon": "",
+    "brand": "Urban Lookout",
+    "core": "weapon damage",
+    "onePc": [
+      {
+        "stat": "Accuracy",
+        "mod": 10
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "skill duration",
+        "mod": 30
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Marksman Rifle Damage",
+        "mod": 30
+      }
+    ]
+  },
+  {
+    "icon": "https://i.imgur.com/cOtB0Uf.png",
+    "brand": "Walker, Harris & Co.",
+    "core": "weapon damage",
+    "onePc": [
+      {
+        "stat": "Weapon Damage",
+        "mod": 5
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Damage to Armor",
+        "mod": 5
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Damage to Health",
+        "mod": 10
+      }
+    ]
+  },
+  {
+    "icon": "",
+    "brand": "Zwiadowka Sp. z o.o.",
+    "core": "weapon damage",
+    "onePc": [
+      {
+        "stat": "Magazine size",
+        "mod": 15
+      }
+    ],
+    "twoPc": [
+      {
+        "stat": "Rifle Damage",
+        "mod": 20
+      }
+    ],
+    "threePc": [
+      {
+        "stat": "Weapon Handling",
+        "mod": 30
+      }
+    ]
+  }
+]

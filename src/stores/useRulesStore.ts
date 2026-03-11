@@ -10,7 +10,52 @@ export interface RuleBinding {
 }
 
 // Helper type for rule operations
-export type RuleOperation = 'replace' | 'match' | 'mapping' | 'transform';
+export type RuleOperation = 'replace' | 'match' | 'mapping' | 'transform' | 'system';
+
+/**
+ * System rules are built-in transformation functions that cannot be edited or deleted.
+ * They can be added to any RuleBinding.rules array by their name.
+ * 
+ * Available system rules:
+ * - "lowercase": Converts the value to lowercase. If value is an object, converts to JSON string, lowercases, then parses back to object.
+ * - "trim whitespace": Trims leading and trailing whitespace from the value. If value is an object, converts to JSON string, trims, then parses back to object.
+ */
+export type SystemRuleType = 'lowercase' | 'trim whitespace';
+
+export const SYSTEM_RULES: Record<SystemRuleType, (value: any) => any> = {
+  lowercase: (value: any) => {
+    // Handle objects by converting to JSON, lowercasing, then parsing back
+    if (typeof value === 'object' && value !== null) {
+      try {
+        const jsonString = JSON.stringify(value);
+        const lowercased = jsonString.toLowerCase();
+        return JSON.parse(lowercased);
+      } catch (error) {
+        // If parsing fails, return the original value
+        console.warn('Failed to lowercase object:', error);
+        return value;
+      }
+    }
+    // Handle primitives
+    return String(value).toLowerCase();
+  },
+  'trim whitespace': (value: any) => {
+    // Handle objects by converting to JSON, trimming, then parsing back
+    if (typeof value === 'object' && value !== null) {
+      try {
+        const jsonString = JSON.stringify(value);
+        const trimmed = jsonString.trim();
+        return JSON.parse(trimmed);
+      } catch (error) {
+        // If parsing fails, return the original value
+        console.warn('Failed to trim whitespace from object:', error);
+        return value;
+      }
+    }
+    // Handle primitives
+    return String(value).trim();
+  },
+};
 
 interface RulesState {
   // Store rules by label

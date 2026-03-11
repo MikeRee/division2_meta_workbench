@@ -13,18 +13,28 @@ class Weapon {
   hsd: number;
 
   constructor(data: any = {}) {
-    this.type = data.type || ''; // e.g., "Assault Rifles"
-    this.variant = data.variant || ''; // e.g., "aug"
-    this.name = data.name || ''; // e.g., "FAL"
-    this.flag = data.flag || null; // "N" (Named), "E" (Exotic), or null
-    this.rpm = data.rpm;
-    this.baseMagSize = data.baseMagSize;
-    this.moddedMagSize = data.moddedMagSize;
-    this.reload = data.reload;
-    this.damage = data.damage;
-    this.optimalRange = data.optimalRange;
-    this.modSlots = data.modSlots || ''; // String from column N
-    this.hsd = data.hsd || ''; // String from column O
+    this.type = data.type || '';
+    this.variant = data.variant || '';
+    this.name = data.name || '';
+    this.flag = data.flag || null;
+    
+    // Ensure numeric fields are numbers
+    this.rpm = typeof data.rpm === 'number' ? data.rpm : (parseFloat(data.rpm) || 0);
+    this.baseMagSize = typeof data.baseMagSize === 'number' ? data.baseMagSize : (parseFloat(data.baseMagSize) || 0);
+    this.moddedMagSize = typeof data.moddedMagSize === 'number' ? data.moddedMagSize : (parseFloat(data.moddedMagSize) || 0);
+    this.reload = typeof data.reload === 'number' ? data.reload : (parseFloat(data.reload) || 0);
+    this.damage = typeof data.damage === 'number' ? data.damage : (parseFloat(data.damage) || 0);
+    this.optimalRange = typeof data.optimalRange === 'number' ? data.optimalRange : (parseFloat(data.optimalRange) || 0);
+    this.hsd = typeof data.hsd === 'number' ? data.hsd : (parseFloat(data.hsd) || 0);
+    
+    // Ensure modSlots is an array
+    if (Array.isArray(data.modSlots)) {
+      this.modSlots = data.modSlots;
+    } else if (typeof data.modSlots === 'string') {
+      this.modSlots = data.modSlots.split(',').map((s: string) => s.trim()).filter((s: string) => s);
+    } else {
+      this.modSlots = [];
+    }
   }
 
   static fromSheetRow(headers: string[], row: any[]): Weapon {

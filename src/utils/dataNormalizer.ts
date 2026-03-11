@@ -3,6 +3,8 @@
  */
 
 import Gearset from '../models/Gearset';
+import StatModifier from '../models/StatModifier';
+import { SYSTEM_RULES, SystemRuleType } from '../stores/useRulesStore';
 
 interface RegexPattern {
   match: string;
@@ -26,6 +28,17 @@ interface RegexPatterns {
   };
 }
 
+/**
+ * Safely creates a RegExp, returning null if the pattern is invalid
+ */
+function safeRegExp(pattern: string, flags?: string): RegExp | null {
+  try {
+    return new RegExp(pattern, flags);
+  } catch (error) {
+    console.warn(`Invalid regex pattern: "${pattern}"`, error);
+    return null;
+  }
+}
 /**
  * Loads and parses gear attributes from CSV content
  * @param csvContent - CSV file content as string
@@ -97,7 +110,7 @@ export function processGearsetData(
   patterns: RegexPatterns,
   gearAttributes: Record<string, any>
 ): any[] {
-  const attributeFields = ['twoPc', 'threePc'];
+  const attributeFields = ['twoPc', 'threePc', 'fourPc'];
   
   return rawData.map(gearset => {
     let data = { ...gearset };
@@ -105,8 +118,26 @@ export function processGearsetData(
     // Normalize core
     data = cleanCore(patterns.core, data);
     
-    // Normalize piece bonuses (twoPc, threePc)
+    // Normalize piece bonuses (twoPc, threePc, fourPc)
     data = cleanAttributes(patterns.attributes, attributeFields, gearAttributes, data);
+    
+    // Convert Record<string, number> to StatModifier[] for twoPc, threePc, fourPc
+    ['twoPc', 'threePc', 'fourPc'].forEach(field => {
+      if (data[field]) {
+        if (typeof data[field] === 'object' && !Array.isArray(data[field])) {
+          // Convert Record<string, number> to StatModifier[]
+          data[field] = Object.entries(data[field]).map(
+            ([stat, mod]) => new StatModifier(stat, mod as number)
+          );
+        } else if (typeof data[field] === 'string') {
+          // If it's still a string (like fourPc), convert to empty array for now
+          // You may want to parse this differently based on your needs
+          data[field] = [];
+        }
+      } else {
+        data[field] = [];
+      }
+    });
     
     // Return as Gearset instance
     return new Gearset(data);
@@ -165,14 +196,16 @@ export function cleanCore(corePatterns: RegexPatterns['core'], data: any): any {
   
   // Apply each regex replacement for string cores
   corePatterns.replace.forEach(({ match, replace }) => {
-    const pattern = new RegExp(match, 'g');
-    data["core"] = data["core"].toLowerCase().replace(pattern, replace || '');
+    const pattern = safeRegExp(match, 'g');
+    if (pattern) {
+      data["core"] = data["core"].toLowerCase().replace(pattern, replace || '');
+    }
   });
 
   // Validate that the core matches at least one validation pattern
   const hasValidMatch = corePatterns.validation.some(pattern => {
-    const validationRegex = new RegExp(pattern);
-    return validationRegex.test(data["core"]);
+    const validationRegex = safeRegExp(pattern);
+    return validationRegex ? validationRegex.test(data["core"]) : false;
   });
 
   if (!hasValidMatch) {
@@ -208,13 +241,17 @@ export function cleanAttributes(attributePatterns: RegexPatterns['attributes'], 
         
         // Apply cleanPass patterns
         attributePatterns.cleanPass.forEach(({ match, replace }) => {
-          const regex = new RegExp(match, 'gi');
-          tempData[field] = tempData[field].toLowerCase().replace(regex, replace || '');
+          const regex = safeRegExp(match, 'gi');
+          if (regex) {
+            tempData[field] = tempData[field].toLowerCase().replace(regex, replace || '');
+          }
         });
         
         // Apply 'is' patterns
         for (const match of attributePatterns.is) {
-          const pattern = new RegExp(match, 'g');
+          const pattern = safeRegExp(match, 'g');
+          if (!pattern) continue;
+          
           const matchResult = pattern.exec(tempData[field]);
           
           if (matchResult && matchResult.length === 3) {
@@ -249,13 +286,17 @@ export function cleanAttributes(attributePatterns: RegexPatterns['attributes'], 
     
     // Apply cleanPass patterns (simple string replacements)
     attributePatterns.cleanPass.forEach(({ match, replace }) => {
-      const regex = new RegExp(match, 'gi');
-      data[field] = data[field].toLowerCase().replace(regex, replace || '');
+      const regex = safeRegExp(match, 'gi');
+      if (regex) {
+        data[field] = data[field].toLowerCase().replace(regex, replace || '');
+      }
     });
     
     // Apply 'is' patterns (regex matching with capture groups)
     for (const match of attributePatterns.is) {
-      const pattern = new RegExp(match, 'g');
+      const pattern = safeRegExp(match, 'g');
+      if (!pattern) continue;
+      
       const matchResult = pattern.exec(data[field]);
       
       if (matchResult && matchResult.length === 3) {
@@ -280,7 +321,9 @@ export function cleanAttributes(attributePatterns: RegexPatterns['attributes'], 
     
     // Check if value matches 'any' patterns
     for (const { match, but } of attributePatterns.any) {
-      const regex = new RegExp(match, 'i');
+      const regex = safeRegExp(match, 'i');
+      if (!regex) continue;
+      
       const matches = regex.test(data[field]);
       
       if (matches) {
@@ -293,8 +336,8 @@ export function cleanAttributes(attributePatterns: RegexPatterns['attributes'], 
             
             // Check if this attribute is in the exclusion list
             const isExcluded = but.some(excluded => {
-              const excludeRegex = new RegExp(excluded, 'i');
-              return excludeRegex.test(attributeName);
+              const excludeRegex = safeRegExp(excluded, 'i');
+              return excludeRegex ? excludeRegex.test(attributeName) : false;
             });
             
             if (!isExcluded) {
@@ -321,8 +364,8 @@ export function cleanAttributes(attributePatterns: RegexPatterns['attributes'], 
     
     // Check if value matches 'mod' patterns
     for (const pattern of attributePatterns.mod) {
-      const regex = new RegExp(pattern, 'i');
-      if (regex.test(data[field])) {
+      const regex = safeRegExp(pattern, 'i');
+      if (regex && regex.test(data[field])) {
         data[field] = "mod";
         return; // Stop processing this field
       }
@@ -330,8 +373,8 @@ export function cleanAttributes(attributePatterns: RegexPatterns['attributes'], 
     
     // Check if value matches 'oneOf' patterns
     for (const { match, values, classification } of attributePatterns.oneOf) {
-      const regex = new RegExp(match, 'i');
-      if (regex.test(originalValue)) {
+      const regex = safeRegExp(match, 'i');
+      if (regex && regex.test(originalValue)) {
         // If there's a classification, filter gear attributes by that classification
         if (classification) {
           const classifiedAttributes: Record<string, string> = {};
@@ -453,8 +496,10 @@ function normalizeExoticWeaponMods(
     
     // Step 3: Apply clean patterns (match/replace) to this line
     for (const { match, replace } of cleanPatterns) {
-      const regex = new RegExp(match, 'gi');
-      cleanLine = cleanLine.replace(regex, replace);
+      const regex = safeRegExp(match, 'gi');
+      if (regex) {
+        cleanLine = cleanLine.replace(regex, replace);
+      }
     }
     
     // Trim again after cleaning
@@ -471,7 +516,9 @@ function normalizeExoticWeaponMods(
     // Pattern format: "^(.*?):\\s*\\+(\\d+)%?\\s+(.*)$"
     // This should match: "type: +value attribute"
     for (const pattern of isPatterns) {
-      const regex = new RegExp(pattern, 'i');
+      const regex = safeRegExp(pattern, 'i');
+      if (!regex) continue;
+      
       const match = regex.exec(cleanLine);
       
       if (match && match.length === 4) {
@@ -517,7 +564,10 @@ export function processWeaponModData(
       let normalized = data.type.toLowerCase().trim();
       if (patterns.cleanType) {
         patterns.cleanType.forEach(({ match, replace }) => {
-          normalized = normalized.replace(new RegExp(match, 'gi'), replace);
+          const regex = safeRegExp(match, 'gi');
+          if (regex) {
+            normalized = normalized.replace(regex, replace);
+          }
         });
       }
       data.type = normalized;
@@ -565,8 +615,10 @@ function normalizeWeaponModField(
     
     // Step 2: Apply clean patterns (match/replace)
     for (const { match, replace } of cleanPatterns) {
-      const regex = new RegExp(match, 'gi');
-      cleanLine = cleanLine.replace(regex, replace);
+      const regex = safeRegExp(match, 'gi');
+      if (regex) {
+        cleanLine = cleanLine.replace(regex, replace);
+      }
     }
     
     // Trim again after replacements
@@ -583,7 +635,9 @@ function normalizeWeaponModField(
     for (const pattern of isPatterns) {
       // Remove the trailing \\n[\\s\\S]*$ from pattern to match single lines
       const singleLinePattern = pattern.replace(/\\n\[\\\\s\\\\S\]\*\$/, '');
-      const regex = new RegExp(singleLinePattern, 'i');
+      const regex = safeRegExp(singleLinePattern, 'i');
+      if (!regex) continue;
+      
       const match = regex.exec(cleanLine);
       
       if (match && match.length === 3) {
@@ -637,55 +691,96 @@ export function applyBindings(
 ): any {
   const isArray = Array.isArray(rawData);
   const dataArray = isArray ? rawData : [rawData];
-  
+
+  // Helper function to apply a rule to a value, handling objects
+  const applyRuleToValue = (value: any, ruleFunction: (str: string) => string): any => {
+    // If value is an object, convert to JSON, apply rule, then parse back
+    if (typeof value === 'object' && value !== null) {
+      try {
+        const jsonString = JSON.stringify(value);
+        const transformed = ruleFunction(jsonString);
+        return JSON.parse(transformed);
+      } catch (error) {
+        // If parsing fails, return the transformed string
+        console.warn('Failed to parse object after rule application, returning string:', error);
+        try {
+          const jsonString = JSON.stringify(value);
+          return ruleFunction(jsonString);
+        } catch (e) {
+          return value;
+        }
+      }
+    }
+    // For primitives, convert to string, apply rule
+    return ruleFunction(String(value || ''));
+  };
+
   const processedData = dataArray.map((item: any) => {
     const result: any = {};
-    
+
     // Process each binding
     bindings.forEach(({ destination, source, rules }) => {
       // Get the source value
       let value = item[source];
-      
+
       // If source doesn't exist, skip this binding
       if (value === undefined || value === null) {
         return;
       }
-      
+
       // Apply each rule in order
       rules.forEach((ruleLabel) => {
+        // Check if it's a system rule first
+        if (ruleLabel in SYSTEM_RULES) {
+          value = SYSTEM_RULES[ruleLabel as SystemRuleType](value);
+          return;
+        }
+
         // Check if it's a replace rule
         if (rulesStore.replaceRules[ruleLabel]) {
           const [match, replace] = rulesStore.replaceRules[ruleLabel];
-          const regex = new RegExp(match, 'gi');
-          value = String(value).replace(regex, replace || '');
+          try {
+            const regex = new RegExp(match, 'gi');
+            value = applyRuleToValue(value, (str) => str.replace(regex, replace || ''));
+          } catch (error) {
+            console.warn(`Invalid regex pattern in rule "${ruleLabel}": ${match}`, error);
+          }
         }
-        
+
         // Check if it's a match rule (validation)
         if (rulesStore.matchRules[ruleLabel]) {
           const pattern = rulesStore.matchRules[ruleLabel];
-          const regex = new RegExp(pattern, 'i');
-          if (!regex.test(String(value))) {
-            console.warn(`Value "${value}" for ${destination} does not match rule "${ruleLabel}"`);
+          try {
+            const regex = new RegExp(pattern, 'i');
+            // For match rules, test the string representation
+            const testValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
+            if (!regex.test(testValue)) {
+              console.warn(`Value "${testValue}" for ${destination} does not match rule "${ruleLabel}"`);
+            }
+          } catch (error) {
+            console.warn(`Invalid regex pattern in rule "${ruleLabel}": ${pattern}`, error);
           }
         }
-        
+
         // Check if it's a mapping rule
         if (rulesStore.mappings[ruleLabel]) {
           const mapping = rulesStore.mappings[ruleLabel];
-          const mappedValue = mapping[String(value)];
+          // For mappings, use string representation as key
+          const key = typeof value === 'object' ? JSON.stringify(value) : String(value);
+          const mappedValue = mapping[key];
           if (mappedValue !== undefined) {
             value = mappedValue;
           }
         }
       });
-      
+
       // Set the destination value
       result[destination] = value;
     });
-    
+
     return result;
   });
-  
+
   return isArray ? processedData : processedData[0];
 }
 
@@ -723,16 +818,24 @@ export function processWeaponDataWithBindings(
         // Check if it's a replace rule
         if (rulesStore.replaceRules[ruleLabel]) {
           const [match, replace] = rulesStore.replaceRules[ruleLabel];
-          const regex = new RegExp(match, 'gi');
-          value = String(value).replace(regex, replace || '');
+          try {
+            const regex = new RegExp(match, 'gi');
+            value = String(value).replace(regex, replace || '');
+          } catch (error) {
+            console.warn(`Invalid regex pattern in rule "${ruleLabel}": ${match}`, error);
+          }
         }
         
         // Check if it's a match rule (validation)
         if (rulesStore.matchRules[ruleLabel]) {
           const pattern = rulesStore.matchRules[ruleLabel];
-          const regex = new RegExp(pattern, 'i');
-          if (!regex.test(String(value))) {
-            console.warn(`Value "${value}" for ${destination} does not match rule "${ruleLabel}"`);
+          try {
+            const regex = new RegExp(pattern, 'i');
+            if (!regex.test(String(value))) {
+              console.warn(`Value "${value}" for ${destination} does not match rule "${ruleLabel}"`);
+            }
+          } catch (error) {
+            console.warn(`Invalid regex pattern in rule "${ruleLabel}": ${pattern}`, error);
           }
         }
         

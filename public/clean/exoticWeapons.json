@@ -1,0 +1,1020 @@
+[
+  {
+    "type": "Assault Rifle",
+    "variant": "Kriss Vector",
+    "name": "Chameleon",
+    "icons": ["https://i.imgur.com/KokvEKZ.png"],
+    "talentName": "Adaptive Instincts",
+    "talentDesc": "Hitting 30 headshots grants 20% critical hit chance and 50% critical hit damage for 45 seconds.\n\nHitting 65 body shots grants 90% weapon damage for 45 seconds.\n\nHitting 20 leg shots grants 150% reload speed for 45 seconds.\n\nBuffs refresh when out of combat.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Critical Hit Chance",
+        "value": 15
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Rounds",
+        "value": 20
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Accuracy",
+        "value": 20
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Stability",
+        "value": 10
+      }
+    }
+  },
+  {
+    "type": "Assault Rifle",
+    "variant": "P416 G3",
+    "name": "Eagle Bearer",
+    "icons": [
+      "https://i.imgur.com/Dqw7YxW.png",
+      "https://i.imgur.com/adMBMKc.png"
+    ],
+    "talentName": "Eagle Strike",
+    "talentDesc": "Accuracy increases as you continuously fire, up to 30%.\n\nHeadshot kills grant the Tenacity buff for 15 seconds.\n\nThe strength of Tenacity is increased by 1% for body shots and 5% for headshots. \n\nTenacity\n40-80% of damage taken is delayed until the buff expires.\n\nAll of the total delayed damage is reduced for each enemy killed while the buff is active, up to 100% with 3 kills.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Critical Hit Chance",
+        "value": 15
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Rounds",
+        "value": 30
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Critical Hit Damage",
+        "value": 20
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Weapon Handling",
+        "value": 10
+      }
+    }
+  },
+  {
+    "type": "Assault Rifle",
+    "variant": "LVOA-C",
+    "name": "St. Elmo's Engine",
+    "icons": [],
+    "talentName": "Actum Est",
+    "talentDesc": "Shooting an enemy with this weapon will give 1 stack. \n\nAt 100 stacks the next magazine will be 100% filled with shock ammo.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Critical Damage",
+        "value": 15
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Rounds",
+        "value": 30
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Critical Hit chance",
+        "value": 15
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Weapon Handling",
+        "value": 10
+      }
+    }
+  },
+  {
+    "type": "Assault Rifle",
+    "variant": "Aug A3-CQC",
+    "name": "The Bighorn",
+    "icons": ["https://i.imgur.com/FQdcqg9.png"],
+    "talentName": "Big Game Hunter",
+    "talentDesc": "When scoped, switches to semi-automatic fire mode, dealing 450% weapon damage with each shot.\n\nHeadshots grant +6% headshot damage. Stacks up to 25 times. Once at full stacks, 10 stacks decay every 4 seconds until all stacks have been removed. Headshots delay decaying of stacks.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Headshot Damage",
+        "value": 40
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Reload Speed",
+        "value": 20
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Accuracy",
+        "value": 20
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Stability",
+        "value": 20
+      }
+    }
+  },
+  {
+    "type": "Assault Rifle",
+    "variant": "FAL",
+    "name": "Strega",
+    "icons": ["https://imgur.com/ZC5K8gj.png"],
+    "talentName": "Talent Unnerve",
+    "talentDesc": "Killing an enemy will apply a mark on every enemy within 20m of it. Multiple marks can be applied to the same enemy. Max number of marks that can be applied to an enemy is 5. all marks on an enemy will disappear 10s after the last one has been applied. Deal +15% Amplified Damage per mark to marked enemies.",
+    "modSlots": {
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Rounds",
+        "value": 20
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Critical Hit Damage",
+        "value": 5
+      },
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Critical Hit Chance",
+        "value": 5
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Weapon Handling",
+        "value": 10
+      }
+    }
+  },
+  {
+    "type": "Assault Rifle",
+    "variant": "PDR ",
+    "name": "Capacitor",
+    "icons": ["https://i.imgur.com/LuQd3wf.png"],
+    "talentName": "Capacitance",
+    "talentDesc": "Shooting enemies builds stacks to a cap of 40. Each stack grants 1.5% Skill Damage. After 5 seconds, stacks decay 1 per second.\n\nFor each skill tier gain 7.5% Weapon Damage.",
+    "modSlots": {
+      "Main attributes": {
+        "type": "Main attributes",
+        "attribute": "Damage to Armour",
+        "value": 12
+      },
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Critical Hit Chance",
+        "value": 10
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Rounds",
+        "value": 11
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Critical Hit Damage",
+        "value": 30
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Weapon Handling",
+        "value": 10
+      }
+    }
+  },
+  {
+    "type": "LMG",
+    "variant": "IWI-NEGEV",
+    "name": "Bullet King",
+    "icons": [],
+    "talentName": "Bullet Hell",
+    "talentDesc": "This weapon never needs to be reloaded.\n\nFor every 100 bullets that hit an enemy, replenish some ammo to you and all your allies' reserves.",
+    "modSlots": {
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Critical Hit chance",
+        "value": 15
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Stability",
+        "value": 20
+      }
+    }
+  },
+  {
+    "type": "LMG",
+    "variant": "Stoner ",
+    "name": "Bluescreen",
+    "icons": ["https://i.imgur.com/LLAVIOW.png"],
+    "talentName": null,
+    "talentDesc": "Disruptor Rounds\nShooting an enemy marks that enemy and adds a stack to the agent up to a count of 50. Shooting a marked enemy refreshes the mark and adds stacks to the agent. When you deploy a non-shield skill, remove all stacks on agent and all marked targets trigger an effect. \n\n1 - 10 Stacks - Pulse marked targets for 5 seconds \n11 - 25 Stacks - Pulse and Disrupt marked targets for 5 seconds. \n26 - 49 Stacks - Pulse, Disrupt, and Disorient marked targets for 5 seconds. \n50 Stacks - Pulse, Disrupt, and Disorient marked targets and all hostiles within 10 meters of the marked targets for 5 seconds. This effect will trigger immediately if any marked enemy is killed.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Reload speed",
+        "value": 20
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Weapon Handling",
+        "value": 15
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Rate of fire",
+        "value": 20
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Stability",
+        "value": 10
+      }
+    }
+  },
+  {
+    "type": "LMG",
+    "variant": "MG5",
+    "name": "Iron Lung",
+    "icons": ["https://i.imgur.com/Iz5gJq1.png"],
+    "talentName": null,
+    "talentDesc": "Ardent\nShooting heats up the weapon, filling up heat meter. The meter is equivalent to 50% of the weapon's standard Magazine Size.\n\nWhen the meter is full, rounds shot by the weapon will ignite enemies.\n\nWhen not shooting, the meter depletes over time. Reloading or swapping the weapon fully depletes the meter.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Critical Hit Damage",
+        "value": 10
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Rrounds",
+        "value": 35
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Critical Hit Damage",
+        "value": 10
+      }
+    }
+  },
+  {
+    "type": "LMG",
+    "variant": "RPK",
+    "name": "Pakhan",
+    "icons": [],
+    "talentName": null,
+    "talentDesc": "Pakhan\nEach kill with this weapon gains a stack of 75% Base Magazine Size increase to the next magazine, up to 4 stacks.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Wapon Damage",
+        "value": 15
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Rounds",
+        "value": 20
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Critical Hit chance",
+        "value": 15
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Reload Speed",
+        "value": 10
+      }
+    }
+  },
+  {
+    "type": "LMG",
+    "variant": "M249",
+    "name": "Pestilence",
+    "icons": ["https://i.imgur.com/AE4AliZg.png"],
+    "talentName": "Plague of the Outcasts",
+    "talentDesc": "Hits apply a debuff dealing 100% weapon damage over 10s. This stacks up to 50 times.\n\nWhenever an enemy dies with this debuff, the stacks are transferred to a nearby enemy within 25m.",
+    "modSlots": {
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Rate of Fire",
+        "value": 10
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Accuracy",
+        "value": 10
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Stability",
+        "value": 10
+      }
+    }
+  },
+  {
+    "type": "SMG",
+    "variant": "MPX",
+    "name": "Backfire",
+    "icons": ["https://i.imgur.com/WAjJkSJ.png"],
+    "talentName": "Payment in kind",
+    "talentDesc": "Dealing damage to enemies adds a stack of 2% Critical Hit Damage, up to 100 stacks, lasting 10s.\n\nOn reload apply a 10s bleed to yourself, which deals 0.5% armor damage per stack.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Critical Hit Chance",
+        "value": 15
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Rounds",
+        "value": 20
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Critical Hit Damage",
+        "value": 15
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Stability",
+        "value": 10
+      }
+    }
+  },
+  {
+    "type": "SMG",
+    "variant": "FN P90",
+    "name": "The Chatterbox",
+    "icons": ["https://i.imgur.com/MVSbP7O.png"],
+    "talentName": "Incessant Chatter",
+    "talentDesc": "When you reload, rate of fire is increased by 25% for each enemy within 15m for the duration of that magazine.\n\nMax stacks: 5\n\nKills refill 50% of your magazine.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Critical Hit Chance",
+        "value": 15
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Rounds",
+        "value": 10
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Critical Hit Damage",
+        "value": 15
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Weapon Handling",
+        "value": 10
+      }
+    }
+  },
+  {
+    "type": "SMG",
+    "variant": "CMMG Banshee",
+    "name": "Lady Death",
+    "icons": ["https://i.imgur.com/zMmMnWt.png"],
+    "talentName": "Breathe Free",
+    "talentDesc": "When moving, gain 4 stacks per second, or 8 stacks if sprinting. Max stack is equal to the weapon's Magazine Size.\n\nEach round fired consumes a stack, amplifying damage by 75%.\n\nKills grant +20% movement speed for 10s.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Critical Hit Chance",
+        "value": 15
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Reload Speed",
+        "value": 10
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Critical Hit Damage",
+        "value": 10
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Melee Damage",
+        "value": 500
+      }
+    }
+  },
+  {
+    "type": "SMG",
+    "variant": "Vector",
+    "name": "Ouroboros",
+    "icons": ["https://i.imgur.com/5W7BbsF.png"],
+    "talentName": null,
+    "talentDesc": "Rule them all\nWhen the agent has a Status Effect applied to them, 50% of the ammo in their next magazine will apply the same Status Effect to their targets.\n\nThis effect will only occur during combat.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Critical Hit Damage",
+        "value": 10
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Reload Speed",
+        "value": 25
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Rate of Fire",
+        "value": 10
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Critical Hit Chance",
+        "value": 10
+      }
+    }
+  },
+  {
+    "type": "SMG",
+    "variant": "MP7",
+    "name": "Oxpecker",
+    "icons": [],
+    "talentName": null,
+    "talentDesc": "Symbiosis\nWhile having a Shield deployed, lose Shield Health at a rate of 10% per second.\nYour Shield recieves repairs of 25% of the damage dealt by this weapon.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Optimal Range",
+        "value": 50
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Rounds",
+        "value": 10
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Critical Hit Chance",
+        "value": 15
+      }
+    }
+  },
+  {
+    "type": "Shotgun",
+    "variant": "SPAS-12",
+    "name": "Lullaby",
+    "icons": ["https://i.imgur.com/eh25ukz.png"],
+    "talentName": "Sandman",
+    "talentDesc": "Melee attacks instantly kill non-elite enemies.\n\nCooldown: 15s.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Accuracy",
+        "value": 15
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Reload Speed",
+        "value": 15
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Optimal Range",
+        "value": 25
+      }
+    }
+  },
+  {
+    "type": "Shotgun",
+    "variant": "SPAS-12",
+    "name": "Sweet Dreams",
+    "icons": ["https://i.imgur.com/eh25ukz.png"],
+    "talentName": "Sandman",
+    "talentDesc": "Melee attacks instantly kill non-elite enemies.\n\nCooldown: 15s.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Accuracy",
+        "value": 15
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Reload Speed",
+        "value": 15
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Optimal Range",
+        "value": 25
+      }
+    }
+  },
+  {
+    "type": "Shotgun",
+    "variant": "KSG",
+    "name": "Overlord",
+    "icons": [],
+    "talentName": "Capitulate",
+    "talentDesc": "Hitting an enemy applies -4% Movement Speed for each pellet hit for 5 seconds. Shooting the enemy again will reapply the stacks.",
+    "modSlots": {
+      "Optics Slot": {
+        "type": "Optics Slot",
+        "attribute": "Critical Hit Damage",
+        "value": 15
+      },
+      "Magazine Slot": {
+        "type": "Magazine Slot",
+        "attribute": "Reload Speed",
+        "value": 15
+      },
+      "Underbarrel Slot": {
+        "type": "Underbarrel Slot",
+        "attribute": "Weapon Stability",
+        "value": 20
+      }
+    }
+  },
+  {
+    "type": "Shotgun",
+    "variant": "SIX12",
+    "name": "Scorpio",
+    "icons": ["https://i.imgur.com/OhFusnh.png"],
+    "talentName": "Septic Shock",
+    "talentDesc": "Shooting a target applies stacks of venom, which last for 10s. Increasing stacks adds more severe debuffs to the target.\n\n2 - Poison\n4 - Disorient \n6 - Shock \n9 - Target takes additional 20% damage (from all sources). Stacks no longer increase.\n\nDuration of Status Effects is based on percentage of pellets hit on applying shot.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "critical hit chance",
+        "value": 10
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Reload Speed",
+        "value": 10
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Stability",
+        "value": 10
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Weapon Handling",
+        "value": 10
+      }
+    }
+  },
+  {
+    "type": "Rifle",
+    "variant": "AKM",
+    "name": "Ruthless",
+    "icons": ["https://i.imgur.com/rWMhL1u.png"],
+    "talentName": "Binary Trigger",
+    "talentDesc": "This weapon fires on trigger pull and release.\n\nIf both bullets hit the same enemy, gain a stack.\n\nAt 7 stacks, shooting an enemy deals 500% amplified damage and creates a 7m explosion dealing 500% weapon damage, consuming the stacks.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Accuracy",
+        "value": 15
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Reload Speed",
+        "value": 10
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Stability",
+        "value": 15
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Weapon Handling",
+        "value": 15
+      }
+    }
+  },
+  {
+    "type": "Rifle",
+    "variant": "AKM",
+    "name": "Merciless",
+    "icons": ["https://i.imgur.com/rWMhL1u.png"],
+    "talentName": "Binary Trigger",
+    "talentDesc": "This weapon fires on trigger pull and release.\n\nIf both bullets hit the same enemy, gain a stack.\n\nAt 7 stacks, shooting an enemy deals 500% amplified damage and creates a 7m explosion dealing 500% weapon damage, consuming the stacks.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Accuracy",
+        "value": 15
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Reload Speed",
+        "value": 10
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Stability",
+        "value": 15
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Weapon Handling",
+        "value": 15
+      }
+    }
+  },
+  {
+    "type": "Rifle",
+    "variant": "1886",
+    "name": "Diamondback",
+    "icons": ["https://i.imgur.com/VuBTPrk.png"],
+    "talentName": "Agonizing Bite",
+    "talentDesc": "Diamondback randomly marks an enemy within 20m. If no enemies are within 20m, it marks the enemy closest to you.\n\nHitting that enemy consumes the mark, guaranteeing a critical hit with damage amplified by 20%. \n\nAfter hitting a mark, all shots fired are guaranteed critical hits for 5 seconds. \n\nA new random enemy is marked afterwards and whenever you reload.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Accuracy",
+        "value": 10
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Reload Speed",
+        "value": 10
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Critical Hit Damage",
+        "value": 15
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "stability",
+        "value": 10
+      }
+    }
+  },
+  {
+    "type": "Rifle",
+    "variant": "M1A CQB",
+    "name": "Doctor Home",
+    "icons": ["https://i.imgur.com/fkX7JMO.png"],
+    "talentName": "Doctor Home",
+    "talentDesc": "Shooting an enemy with this weapon will apply a mark for 5 seconds.\nIf a marked target is killed it will give a 10% armor repair kit which applies to the whole party.\nThe kit will not give bonus armor.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Accuracy",
+        "value": 10
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Reload Speed",
+        "value": 10
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Stability",
+        "value": 10
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Weapon Handling",
+        "value": 10
+      }
+    }
+  },
+  {
+    "type": "Rifle",
+    "variant": "SIG 716",
+    "name": "The Ravenous",
+    "icons": ["https://i.imgur.com/LIqgQuU.png"],
+    "talentName": "Geri and Freki",
+    "talentDesc": "On trigger pull, fire both barrels at once.\n\nWhen fired from the right shoulder, hits add offensive primers, and defensive primers when fired drom the left shoulder.\n\nHits from one shoulder will detonate all of the opposite shoulder's primers when present.\n\nWhen detonated, each offensive primer deals 100% weapon damage, while each defensive primer grants +4% bonus armor and +10% amplified damage to armor plates for 5s.\n\nPrimer effectiveness is doubled at 10 stacks.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Critical Hit Chance",
+        "value": 5
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Reload Speed",
+        "value": 10
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Stability",
+        "value": 10
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Critical Hit Damage",
+        "value": 5
+      }
+    }
+  },
+  {
+    "type": "Rifle",
+    "variant": "Modified Desert Tech MDR",
+    "name": "Vindicator",
+    "icons": ["https://i.imgur.com/u6eNJhD.png"],
+    "talentName": "Ortiz Assault Interface",
+    "talentDesc": "While scoped, the weapon will highlight a random body section of each enemy.\nThe weapon amplifies damage by +60% Weapon Damage to highlighted body sections.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Accuracy",
+        "value": 15
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Rounds",
+        "value": 5
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Optimal Range",
+        "value": 10
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Stability",
+        "value": 15
+      }
+    }
+  },
+  {
+    "type": "Marksman Rifle",
+    "variant": "G28 Marksmen Rifle",
+    "name": "Sacrum Imperium",
+    "icons": ["https://i.imgur.com/aiqF8tM.png"],
+    "talentName": "The Trap",
+    "talentDesc": "Tags enemies when in scope (maximum 10) If Agent kills any marked target with a headshot, all other targets will have 50% (20% PVP) movement speed and recieve burn for 10 seconds. \n\nCooldown 30 seconds. \n\nKilling another enemy with a headshot will shorten the cooldown for 10 seconds. \n\nTargets are marked after 1 seconds in crosshair.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Headshot damage",
+        "value": 20
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Headshot damage",
+        "value": 10
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Optimal Range",
+        "value": 20
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Stability",
+        "value": 20
+      }
+    }
+  },
+  {
+    "type": "Marksman Rifle",
+    "variant": "SVD",
+    "name": "Dread Edict",
+    "icons": ["https://i.imgur.com/1ZXdXEl.png"],
+    "talentName": "Full Stop",
+    "talentDesc": "Shooting enemies builds stacks to a cap of 20. Headshots grant 2 stacks. Each stack grants 2% Weapon Damage and 5% Headshot Damage. On reload, clear all stacks and gain 5% of your max armor as temp armor for 10 seconds for each stack removed. \n\nHeadshot kills with Dread Edict restore all bullets in the magazine. This does not count as a reload.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Headshot Damage",
+        "value": 40
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Weapon Handling",
+        "value": 15
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Critical Hit Chance",
+        "value": 10
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Stability",
+        "value": 10
+      }
+    }
+  },
+  {
+    "type": "Marksman Rifle",
+    "variant": "Custom AWM\nAICS 2.0 chasis\nAX50 stock\nMagpul AFG-12",
+    "name": "Nemesis",
+    "icons": ["https://i.imgur.com/Mv4dizw.png"],
+    "talentName": "Electromagnetic Accelerator",
+    "talentDesc": "Shots fired deal 0-100% weapon damage based on how long the trigger is held before releasing.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Headshot Damage",
+        "value": 45
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Reload Speed",
+        "value": 10
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Critical Hit Damage",
+        "value": 5
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Weapon Handling",
+        "value": 5
+      }
+    }
+  },
+  {
+    "type": "Marksman Rifle",
+    "variant": "M700 Carbon",
+    "name": "Shroud",
+    "icons": [],
+    "talentName": "High Priority Target",
+    "talentDesc": "Amplifies Weapon Damage by 125% to the highest ranking enemies currently in combat, as per the Tier hierarchy.\n\nTier 1: Hunter, Rogue, Leader, Tank, Shield, Heavy Weapons, RPG, Medic, Controller, Warhound, Marauder.\nTier 2: Support, Engineer, Bodyguard, Immobilizer, Bomber, Mini Tank, Drone Operator.\nTier 3: Any other enemy or skill proxy.\n\nEditor's note: 2.25x amplifier includes Headhunter bonus, for more details read Headhunter Synergy Guide.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Headshot Damage",
+        "value": 25
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Reload Speed",
+        "value": 25
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Headshot Damage",
+        "value": 20
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Critical Hit Chance",
+        "value": 5
+      }
+    }
+  },
+  {
+    "type": "Marksman Rifle",
+    "variant": "SRS-A1 ",
+    "name": "Mantis",
+    "icons": ["https://i.imgur.com/5aB6GWb.png"],
+    "talentName": "In Plain Sight",
+    "talentDesc": "Your scoped view displays additional information about enemies not targetting you. \n\nHeadshot and weakpoint damage against enemies not targetting you is amplified by 50%.\n\nHeadshot kills reset the cooldown of your Decoy Skill. This bonus will wait until the Decoy goes on cooldown if currently active.\n\nEditor's note: 1.5x amplifier excludes Headhunter bonus, for more details read Headhunter Synergy Guide.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Headshot Damaeg",
+        "value": 40
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Reload Speed",
+        "value": 10
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Critical Hit Chance",
+        "value": 5
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Stability",
+        "value": 10
+      }
+    }
+  },
+  {
+    "type": "Pistol",
+    "variant": "D50\n(Desert Eagle)",
+    "name": "Liberty",
+    "icons": ["https://i.imgur.com/yVxCyXf.png"],
+    "talentName": "Liberty or Death",
+    "talentDesc": "Hits grant +2% weapon damage. Stacks up to 30 times.\n\nHeadshots consume all stacks, repairing your shield for 3% per stack.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Headshot Damage",
+        "value": 5
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Weapon Handling",
+        "value": 15
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Critical Hit Chance",
+        "value": 5
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Rate of Fire",
+        "value": 15
+      }
+    }
+  },
+  {
+    "type": "Pistol",
+    "variant": "PF45",
+    "name": "Busy Little Bee",
+    "icons": ["https://i.imgur.com/6JEJd88.png"],
+    "talentName": "Busy Little Bee",
+    "talentDesc": "Each shot to a different target will give 1 stack, up to 10, each stack will give 20% weapon damage increase. \n\nStacks will activate once the agent switches weapon and will last for 10 seconds.\n\nEditor's note: each stack adds to an amplifier, (1 + 0.2 * n) where n is number of stacks, n from 1 to 10.",
+    "modSlots": {
+      "Optics": {
+        "type": "Optics",
+        "attribute": "Optimal Range",
+        "value": 25
+      },
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Reload speed",
+        "value": 10
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Stability",
+        "value": 10
+      },
+      "Underbarrel": {
+        "type": "Underbarrel",
+        "attribute": "Critical Hit Chance",
+        "value": 5
+      }
+    }
+  },
+  {
+    "type": "Pistol",
+    "variant": "Magnum",
+    "name": "Regulus",
+    "icons": ["https://i.imgur.com/wPJdbc6.png"],
+    "talentName": "Regicide",
+    "talentDesc": "Headshot Kills create a 5m explosion, dealing 400% weapon damage and applying bleed to all enemies hit.",
+    "modSlots": {
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Reload speed",
+        "value": 10
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Accuracy",
+        "value": 20
+      }
+    }
+  },
+  {
+    "type": "Pistol",
+    "variant": "M93R",
+    "name": "Tempest",
+    "icons": [],
+    "talentName": "Restrained:",
+    "talentDesc": "The pistol is fully automatic and deals +25% Amplified Damage for 20s after your Shield gets broken.",
+    "modSlots": {
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Stability",
+        "value": 50
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Critical Hit Chance",
+        "value": 15
+      }
+    }
+  },
+  {
+    "type": "Pistol",
+    "variant": "M9",
+    "name": "Mosquito",
+    "icons": ["https://i.imgur.com/zbQobWp.png"],
+    "talentName": "Mosquito Song",
+    "talentDesc": "Hitting an enemy applies a stack. Stacks are shared between players. \n\nAt 5 stacks, the enemy will forcefully target the last player to apply a stack for 5s and take 25% more damage to armor. \n\nStacks deplete every 5s. Activating the effect on an enemy will remove all stacks from other enemies.\n\nEditor's note: the \"damage to armor\" taken debuff works similarly to Sledgehammer, in that it is an amplifier that applies to both armor and armor plating.",
+    "modSlots": {
+      "Magazine": {
+        "type": "Magazine",
+        "attribute": "Reload Speed",
+        "value": 15
+      },
+      "Muzzle": {
+        "type": "Muzzle",
+        "attribute": "Weapon Accuracy",
+        "value": 15
+      }
+    }
+  }
+]

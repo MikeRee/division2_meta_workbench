@@ -4,7 +4,6 @@ interface WeaponTalentData {
   icon?: string;
   perfect?: string;
   description?: string;
-  multiplier?: string;
 }
 
 class WeaponTalent {
@@ -13,7 +12,6 @@ class WeaponTalent {
   icon: string;
   perfect: string;
   description: string;
-  multiplier: string;
 
   constructor(data: WeaponTalentData = {}) {
     this.weaponCategory = data.weaponCategory || ''; // The weapon category (from col B when col A is empty)
@@ -21,7 +19,6 @@ class WeaponTalent {
     this.icon = data.icon || ''; // Column A - Icon
     this.perfect = data.perfect || ''; // Column C - Perfect version
     this.description = data.description || ''; // Column D - Description
-    this.multiplier = data.multiplier || ''; // Column E - Multiplier
   }
 
   static fromSheetRow(row: any[], currentWeaponCategory: string): WeaponTalent {
@@ -31,7 +28,6 @@ class WeaponTalent {
       icon: row[0] || '',
       perfect: row[2] || '',
       description: row[3] || '',
-      multiplier: row[4] || '',
     });
   }
 

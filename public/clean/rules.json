@@ -1,0 +1,116 @@
+{
+  "replaceRules": {
+    "merica_armor": [
+      "armour",
+      "armor"
+    ],
+    "number": [
+      "[^0-9.]",
+      ""
+    ],
+    "Remove N/A": [
+      "N/A",
+      ""
+    ]
+  },
+  "matchRules": {},
+  "mappings": {
+    "weapon_slots": {
+      "0": "",
+      "3": "optics, magazine slot, muzzle slot",
+      "4": "optics, magazine slot, muzzle slot, underbarrel",
+      "4\\": "optics rail, magazine slot, muzzle slot, underbarrel",
+      "(Empty/NaN)": "",
+      "3!": "optics, magazine slot, underbarrel",
+      "3!\\": "optics rail, magazine slot, underbarrel",
+      "3#": "optics, magazine slot, muzzle slot",
+      "2$!": "optics, underbarrel",
+      "4/": "optics, magazine slot, muzzle slot, underbarrel",
+      "2$#": "optics, muzzle slot",
+      "3&": "magazine slot, muzzle slot, underbarrel",
+      "2!#": "optics, magazine slot",
+      "1#&!": "muzzle slot",
+      "1$#!": "optics",
+      "1#!&": "muzzle slot",
+      "4*": "optics, magazine slot, muzzle slot, underbarrel",
+      "2&#": "magazine slot, muzzle slot",
+      "2#&": "magazine slot, muzzle slot",
+      "2&!": "magazine slot, underbarrel",
+      "1&!#": "magazine slot",
+      "3!*": "optics, magazine slot, underbarrel",
+      "1!#$": "optics",
+      "2!&": "magazine slot, underbarrel"
+    }
+  },
+  "bindings": {
+    "weapons": [
+      {
+        "source": "modSlots",
+        "destination": "modSlots",
+        "rules": [
+          "Remove N/A",
+          "weapon_slots"
+        ]
+      },
+      {
+        "destination": "moddedMagSize",
+        "source": "moddedMagSize",
+        "rules": [
+          "Remove N/A"
+        ]
+      },
+      {
+        "destination": "type",
+        "source": "type",
+        "rules": []
+      },
+      {
+        "destination": "variant",
+        "source": "variant",
+        "rules": []
+      },
+      {
+        "destination": "rpm",
+        "source": "rpm",
+        "rules": []
+      },
+      {
+        "destination": "flag",
+        "source": "flag",
+        "rules": []
+      },
+      {
+        "destination": "damage",
+        "source": "damage",
+        "rules": [
+          "number"
+        ]
+      },
+      {
+        "destination": "name",
+        "source": "name",
+        "rules": []
+      },
+      {
+        "destination": "baseMagSize",
+        "source": "baseMagSize",
+        "rules": []
+      },
+      {
+        "destination": "reload",
+        "source": "reload",
+        "rules": []
+      },
+      {
+        "destination": "optimalRange",
+        "source": "optimalRange",
+        "rules": []
+      },
+      {
+        "destination": "hsd",
+        "source": "hsd",
+        "rules": []
+      }
+    ]
+  }
+}

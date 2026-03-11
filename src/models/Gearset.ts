@@ -1,11 +1,12 @@
 import { CoreType } from './CoreValue';
+import StatModifier from './StatModifier';
 
 class Gearset {
   logo: string;
   name: string;
   core: CoreType | Record<CoreType, string[]>;
-  twoPc: Record<string, number>;
-  threePc: Record<string, number>;
+  twoPc: StatModifier[];
+  threePc: StatModifier[];
   fourPc: string;
   chest: string;
   chestDesc: string;
@@ -17,8 +18,8 @@ class Gearset {
     logo = '',
     name = '',
     core = CoreType.WeaponDamage,
-    twoPc = {},
-    threePc = {},
+    twoPc = [],
+    threePc = [],
     fourPc = '',
     chest = '',
     chestDesc = '',
@@ -29,8 +30,8 @@ class Gearset {
     logo?: string;
     name?: string;
     core?: CoreType | Record<CoreType, string[]>;
-    twoPc?: Record<string, number>;
-    threePc?: Record<string, number>;
+    twoPc?: StatModifier[] | string;
+    threePc?: StatModifier[] | string;
     fourPc?: string;
     chest?: string;
     chestDesc?: string;
@@ -41,8 +42,8 @@ class Gearset {
     this.logo = logo;
     this.name = name;
     this.core = core;
-    this.twoPc = twoPc;
-    this.threePc = threePc;
+    this.twoPc = StatModifier.parseStatModifiers(twoPc);
+    this.threePc = StatModifier.parseStatModifiers(threePc);
     this.fourPc = fourPc;
     this.chest = chest;
     this.chestDesc = chestDesc;
@@ -50,7 +51,6 @@ class Gearset {
     this.backpackDesc = backpackDesc;
     this.hint = hint;
   }
-
 }
 
 export default Gearset;
