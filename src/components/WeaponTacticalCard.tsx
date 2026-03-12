@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./TacticalCard.module.css";
 import { BuildWeapon } from "../models/BuildWeapon";
+import { getDefaultCoreImage } from "../models/CoreValue";
+import { getDefaultAttrImage, GearModClassification } from "../models/GearMod";
 
 // Color mapping based on weapon flag
 const getWeaponColors = (flag: string | null) => {
@@ -29,6 +31,39 @@ const getWeaponColors = (flag: string | null) => {
   }
 };
 
+// Helper function to determine classification from weapon attribute key
+const getAttributeClassification = (key: string | undefined): GearModClassification => {
+  if (!key) return GearModClassification.Offensive;
+  
+  const lowerKey = key.toLowerCase();
+  
+  // Check for offensive attributes
+  if (lowerKey.includes('damage') || 
+      lowerKey.includes('critical') || 
+      lowerKey.includes('headshot') ||
+      lowerKey.includes('health damage')) {
+    return GearModClassification.Offensive;
+  }
+  
+  // Check for defensive attributes
+  if (lowerKey.includes('armor') || 
+      lowerKey.includes('health') ||
+      lowerKey.includes('hazard protection')) {
+    return GearModClassification.Defensive;
+  }
+  
+  // Check for utility/skill attributes
+  if (lowerKey.includes('skill') || 
+      lowerKey.includes('status effects') ||
+      lowerKey.includes('repair') ||
+      lowerKey.includes('duration')) {
+    return GearModClassification.Skill;
+  }
+  
+  // Default to offensive for weapon attributes
+  return GearModClassification.Offensive;
+};
+
 interface WeaponTacticalCardProps {
   /** BuildWeapon item to display */
   buildWeapon: BuildWeapon;
@@ -40,6 +75,11 @@ const WeaponTacticalCard: React.FC<WeaponTacticalCardProps> = ({
   buildWeapon,
   onClick,
 }) => {
+  // // Debug logger for buildWeapon prop
+  // useEffect(() => {
+  //   console.log('WeaponTacticalCard - buildWeapon:', buildWeapon);
+  // }, [buildWeapon]);
+
   // Defensive check - ensure buildWeapon and weapon exist
   if (!buildWeapon || !buildWeapon.weapon) {
     console.error('WeaponTacticalCard: Invalid buildWeapon prop', buildWeapon);
@@ -93,6 +133,36 @@ const WeaponTacticalCard: React.FC<WeaponTacticalCardProps> = ({
         </div>
 
         <div className={styles.pipContainer}>
+          {/* Core1 attribute image - weapon type damage */}
+          {buildWeapon.core1 && buildWeapon.core1.key && (
+            <div
+              className={styles.attributeIcon}
+              dangerouslySetInnerHTML={{
+                __html: getDefaultAttrImage(GearModClassification.Offensive), // Weapon damage is always offensive
+              }}
+            />
+          )}
+
+          {/* Core2 attribute image - secondary weapon attribute */}
+          {buildWeapon.core2 && buildWeapon.core2.key && (
+            <div
+              className={styles.attributeIcon}
+              dangerouslySetInnerHTML={{
+                __html: getDefaultAttrImage(getAttributeClassification(buildWeapon.core2.key)),
+              }}
+            />
+          )}
+
+          {/* Attrib attribute image - tertiary weapon attribute */}
+          {buildWeapon.attrib && buildWeapon.attrib.key && (
+            <div
+              className={styles.attributeIcon}
+              dangerouslySetInnerHTML={{
+                __html: getDefaultAttrImage(getAttributeClassification(buildWeapon.attrib.key)),
+              }}
+            />
+          )}
+
           {/* Display mod slots as pips */}
           {weapon.modSlots && weapon.modSlots.map((slot, index) => (
             <div

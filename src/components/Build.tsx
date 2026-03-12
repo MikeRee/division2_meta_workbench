@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './Build.css';
 import { MdSave, MdFolderOpen, MdRefresh } from 'react-icons/md';
 import { useBuildStore } from '../stores/useBuildStore';
@@ -36,6 +36,7 @@ function Build() {
   const brandsetsMap = useLookupStore(state => state.brandsets);
   const gearsetsMap = useLookupStore(state => state.gearsets);
   const gearAttributesMap = useLookupStore(state => state.gearAttributes);
+  const weaponModsMap = useLookupStore(state => state.weaponMods);
   
   const specializations = specializationsMap instanceof Map ? Array.from(specializationsMap.values()) : [];
   const weapons = weaponsMap instanceof Map ? Array.from(weaponsMap.values()) : [];
@@ -43,6 +44,16 @@ function Build() {
   const namedGear = namedGearMap instanceof Map ? Array.from(namedGearMap.values()) : [];
   const brandsets = brandsetsMap instanceof Map ? Array.from(brandsetsMap.values()) : [];
   const gearsets = gearsetsMap instanceof Map ? Array.from(gearsetsMap.values()) : [];
+  const weaponMods = weaponModsMap instanceof Map ? Array.from(weaponModsMap.values()) : [];
+
+  // Initialize BuildGear with gear attributes when they're loaded
+  useEffect(() => {
+    if (gearAttributesMap) {
+      const gearAttrs = gearAttributesMap.getAll();
+      console.log('Build.tsx useEffect - initializing with attributes:', gearAttrs);
+      BuildGear.initializeGearAttributes(gearAttrs);
+    }
+  }, [gearAttributesMap]);
 
   const handleCellClick = (type: string) => {
     setOverlayType(type);
@@ -99,8 +110,8 @@ function Build() {
 
     // 1. Add NamedGear items of this type
     const namedGearItems = (namedGear as NamedGear[]).filter(gear => 
-      gear.type?.toLowerCase() === gearType.toLowerCase() || 
-      (gearType === 'kneepads' && gear.type?.toLowerCase() === 'knees')
+      gear.type === gearType || 
+      (gearType === GearType.Kneepads && gear.type === GearType.Kneepads)
     );
     
     console.log('Filtered NamedGear items:', namedGearItems.length);
@@ -133,138 +144,25 @@ function Build() {
       }
       
       // Process minor attributes
-      const minor1Mod = processMinorAttribute(gear.minor1, defaultMinors.minor1, allGearMods);
-      const minor2Mod = processMinorAttribute(
-        gear.minor2,
-        defaultMinors.minor2,
-        allGearMods,
-      );
-      const minor3Mod = processMinorAttribute(
-        gear.minor3,
-        null,
-        allGearMods,
-      );
-      
-      buildGearList.push(new BuildGear({
-        name: gear.name,
-        source: gear.isExotic ? GearSource.Exotic : GearSource.Named,
-        type: gearType,
-        icon: gear.icon,
-        core: { type: gear.core, value: getDefaultCoreValue(gear.core) },
-        minor1: minor1Mod,
-        minor2: minor2Mod,
-        minor3: null,
-      }));
+      buildGearList.push(new BuildGear(gear));
     });
 
-    // 2. Add Gearset items
+    // 2. Add Gearset items for this gear type
     gearsets.forEach(gearset => {
       if (!gearset.core) {
         console.warn(`Gearset "${gearset.name}" has no core attribute defined, skipping`);
         return;
       }
-      // Extract CoreType from gearset.core (can be CoreType or Record<CoreType, string[]>)
-      const core = typeof gearset.core === 'object' 
-        ? Object.keys(gearset.core)[0] as CoreType
-        : gearset.core;
-      const defaultMinors = getDefaultMinorAttributes(core);
-
-      // Get all possible gear mods as a Record<string, number>
-      const allGearMods: Record<string, number> = {};
-      if (gearAttributesMap instanceof Map) {
-        for (const [key, gearMod] of gearAttributesMap.entries()) {
-          allGearMods[gearMod.attribute] = gearMod.max;
-        }
-      }
-      const gearAttrCollection = useLookupStore.getState().gearAttributes;
-      const allGearAttr = gearAttrCollection!.getAll();
-
-      // Process minor attributes
-      const minor1Mod = processMinorAttribute(
-        allGearAttr,
-        defaultMinors.minor1,
-        allGearMods,
-      );
-      const minor3Mod = processMinorAttribute("mod", null, allGearMods);
-      
-      buildGearList.push(
-        new BuildGear({
-          name: gearset.name,
-          source: GearSource.Gearset,
-          type: gearType,
-          icon: gearset.logo,
-          core: {
-            type: core,
-            value: getDefaultCoreValue(core),
-          },
-          minor1: minor1Mod,
-          minor2: null,
-          minor3:
-            gearType === GearType.Mask ||
-            gearType === GearType.Chest ||
-            gearType === GearType.Backpack
-              ? minor3Mod
-              : null,
-        }),
-      );
+      buildGearList.push(new BuildGear(gearset, gearType));
     });
 
-    // 3. Add Brandset items
+    // 3. Add Brandset items for this gear type
     brandsets.forEach(brandset => {
       if (!brandset.core) {
         console.warn(`Brandset "${brandset.brand}" has no core attribute defined, skipping`);
         return;
       }
-      
-      const defaultMinors = getDefaultMinorAttributes(brandset.core);
-
-      // Get all possible gear mods as a Record<string, number>
-      const allGearMods: Record<string, number> = {};
-      if (gearAttributesMap instanceof Map) {
-        for (const [key, gearMod] of gearAttributesMap.entries()) {
-          allGearMods[gearMod.attribute] = gearMod.max;
-        }
-      }
-      const gearAttrCollection = useLookupStore.getState().gearAttributes;
-      const allGearAttr = gearAttrCollection!.getAll();
-
-      // Process minor attributes
-      const minor1Mod = processMinorAttribute(
-        allGearAttr,
-        defaultMinors.minor1,
-        allGearMods,
-      );
-      const minor2Mod = processMinorAttribute(
-        allGearAttr,
-        defaultMinors.minor2,
-        allGearMods,
-      );
-      const minor3Mod = processMinorAttribute(
-        "mod",
-        null,
-        allGearMods,
-      );
-      
-      buildGearList.push(
-        new BuildGear({
-          name: brandset.brand,
-          source: GearSource.Brandset,
-          type: gearType,
-          icon: brandset.icon,
-          core: {
-            type: brandset.core,
-            value: getDefaultCoreValue(brandset.core),
-          },
-          minor1: minor1Mod,
-          minor2: minor2Mod,
-          minor3:
-            gearType === GearType.Mask ||
-            gearType === GearType.Chest ||
-            gearType === GearType.Backpack
-              ? minor3Mod
-              : null,
-        }),
-      );
+      buildGearList.push(new BuildGear(brandset, gearType));
     });
 
     // 4. Sort alphabetically by name
@@ -330,7 +228,7 @@ const handleSelect = (value: string | BuildGear | BuildWeapon) => {
           configuredModSlots.optics = { [llmWeapon.opticsIfOption]: 0 };
         }
         
-        return new BuildWeapon(weapon, configuredModSlots);
+        return new BuildWeapon(weapon, configuredModSlots, weaponMods);
       };
       
       // Reconstruct BuildGear instances by looking up gear by name
@@ -342,53 +240,62 @@ const handleSelect = (value: string | BuildGear | BuildWeapon) => {
         const gearsetItem = gearsets.find(g => g.name === llmGear.name);
         const brandsetItem = brandsets.find(b => b.brand === llmGear.name);
         
-        if (!namedGearItem && !gearsetItem && !brandsetItem) {
+        const foundItem = namedGearItem || gearsetItem || brandsetItem;
+        
+        if (!foundItem) {
           console.warn(`Gear not found: ${llmGear.name}`);
           return null;
         }
         
-        // Get all possible gear mods
-        const allGearMods: Record<string, number> = {};
-        if (gearAttributesMap instanceof Map) {
-          for (const [key, gearMod] of gearAttributesMap.entries()) {
-            allGearMods[gearMod.attribute] = gearMod.max;
+        // Create BuildGear from the found item
+        const buildGear = gearsetItem || brandsetItem 
+          ? new BuildGear(foundItem, gearType)
+          : new BuildGear(foundItem);
+        
+        // Apply attributes from LlmGear if they exist
+        if (llmGear.gearAttrib1 && buildGear.minor1 && gearAttributesMap) {
+          // Find the attribute in gearAttributesMap and update minor1
+          const allGearAttrs = gearAttributesMap.toArray();
+          const mod = allGearAttrs.find(m => m.attribute === llmGear.gearAttrib1);
+          if (mod) {
+            buildGear.minor1 = new GearModValue(
+              { [mod.attribute]: mod.max },
+              mod.classification,
+              mod.attribute,
+              mod.max
+            );
           }
         }
         
-        // Create GearModValue instances for minors
-        const createMinor = (minorKey: string | null): GearModValue | null => {
-          if (!minorKey) return null;
-          
-          const missingMapping = useLookupStore.getState().getMissingMapping(minorKey);
-          const classification = missingMapping || useLookupStore.getState().gearAttributes?.getClassification(minorKey);
-          
-          return new GearModValue({ [minorKey]: allGearMods[minorKey] || 0 }, classification!, minorKey, allGearMods[minorKey] || 0);
-        };
-        
-        let source: GearSource;
-        let icon = '';
-        
-        if (namedGearItem) {
-          source = namedGearItem.isExotic ? GearSource.Exotic : GearSource.Named;
-          icon = namedGearItem.icon || '';
-        } else if (gearsetItem) {
-          source = GearSource.Gearset;
-          icon = gearsetItem.logo || '';
-        } else {
-          source = GearSource.Brandset;
-          icon = brandsetItem?.icon || '';
+        if (llmGear.gearAttrib2 && buildGear.minor2 && gearAttributesMap) {
+          // Find the attribute in gearAttributesMap and update minor2
+          const allGearAttrs = gearAttributesMap.toArray();
+          const mod = allGearAttrs.find(m => m.attribute === llmGear.gearAttrib2);
+          if (mod) {
+            buildGear.minor2 = new GearModValue(
+              { [mod.attribute]: mod.max },
+              mod.classification,
+              mod.attribute,
+              mod.max
+            );
+          }
         }
         
-        return new BuildGear({
-          name: llmGear.name,
-          source,
-          type: gearType,
-          icon,
-          core: { type: llmGear.core, value: getDefaultCoreValue(llmGear.core) },
-          minor1: createMinor(llmGear.minor1),
-          minor2: createMinor(llmGear.minor2),
-          minor3: createMinor(llmGear.minor3),
-        });
+        if (llmGear.gearMod && buildGear.minor3 && gearAttributesMap) {
+          // Find the mod in gearAttributesMap and update minor3
+          const allGearAttrs = gearAttributesMap.toArray();
+          const mod = allGearAttrs.find(m => m.attribute === llmGear.gearMod);
+          if (mod) {
+            buildGear.minor3 = new GearModValue(
+              { [mod.attribute]: mod.max },
+              mod.classification,
+              mod.attribute,
+              mod.max
+            );
+          }
+        }
+        
+        return buildGear;
       };
       
       // Build the updates object
@@ -428,20 +335,18 @@ const handleSelect = (value: string | BuildGear | BuildWeapon) => {
       case 'secondaryWeapon':
         // Filter out pistols for primary and secondary weapons, wrap in BuildWeapon
         items = (weapons as Weapon[])
-          .filter(weapon => 
-            weapon.type?.toLowerCase() !== 'pistols' && 
+          .filter(weapon =>
             weapon.type?.toLowerCase() !== 'pistol'
           )
-          .map(weapon => new BuildWeapon(weapon));
+          .map(weapon => new BuildWeapon(weapon, {}, weaponMods));
         break;
       case 'pistol':
         // Only show pistols, wrap in BuildWeapon
         items = (weapons as Weapon[])
-          .filter(weapon => 
-            weapon.type?.toLowerCase() === 'pistols' || 
+          .filter(weapon =>
             weapon.type?.toLowerCase() === 'pistol'
           )
-          .map(weapon => new BuildWeapon(weapon));
+          .map(weapon => new BuildWeapon(weapon, {}, weaponMods));
         break;
       case 'mask':
         items = createBuildGearList(GearType.Mask);

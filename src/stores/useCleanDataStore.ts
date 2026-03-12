@@ -106,8 +106,10 @@ const useCleanDataStore = create<CleanDataState>()(
 
       // Actions
       setCleanData: (key, data) => {
+        // Restore class instances when setting clean data
+        const restoredData = restoreClassInstances(key, data);
         set((state) => ({
-          data: { ...state.data, [key]: data },
+          data: { ...state.data, [key]: restoredData },
           lastUpdated: { ...state.lastUpdated, [key]: Date.now() },
         }));
       },

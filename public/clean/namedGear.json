@@ -1,6 +1,6 @@
 [
   {
-    "type": "Mask",
+    "type": "mask",
     "brand": "Douglas & Harding",
     "name": "Punch Drunk",
     "icon": "",
@@ -30,7 +30,7 @@
     "icon2": ""
   },
   {
-    "type": "Mask",
+    "type": "mask",
     "brand": "Gila Guard",
     "name": "Nightwatcher",
     "icon": "",
@@ -61,7 +61,7 @@
     "icon2": ""
   },
   {
-    "type": "Mask",
+    "type": "mask",
     "brand": "Gila Guard",
     "name": "Chill Out",
     "icon": "",
@@ -102,7 +102,7 @@
     "icon2": ""
   },
   {
-    "type": "Mask",
+    "type": "mask",
     "brand": "Legatus S.p.A.",
     "name": "Visionario",
     "icon": "",
@@ -133,7 +133,7 @@
     "icon2": ""
   },
   {
-    "type": "Mask",
+    "type": "mask",
     "brand": "Yaahl Gear",
     "name": "The Hollow Man",
     "icon": "",
@@ -164,7 +164,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "Belstone Armory",
     "name": "Liquid Engineer",
     "icon": "https://puu.sh/DlKPY.png",
@@ -207,7 +207,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "Brazos de Arcabuz ",
     "name": "Hermano",
     "icon": "https://i.imgur.com/LKXR3Ak.png",
@@ -250,7 +250,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "Habsburg Guard ",
     "name": "The Courier",
     "icon": "https://puu.sh/DlKPG.png",
@@ -293,7 +293,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "Lengmo ",
     "name": "Backbone",
     "icon": "https://i.imgur.com/EBm8Qa3.png",
@@ -336,7 +336,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "Golan Gear",
     "name": "Anarchist's Cookbook",
     "icon": "https://puu.sh/DqdzW.png",
@@ -379,7 +379,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "China Light \nIndustries \nCorporation",
     "name": "Strategic Alignment",
     "icon": "https://i.imgur.com/OXtuVa6.png",
@@ -422,7 +422,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "Electrique ",
     "name": "Lavoisier",
     "icon": "https://i.imgur.com/stOWq2o.png",
@@ -465,7 +465,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "Walker, Harris & Co.",
     "name": "Matador",
     "icon": "https://i.imgur.com/X5NdKxH.png",
@@ -508,7 +508,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "Providence Defense",
     "name": "The Gift",
     "icon": "https://i.imgur.com/HqmbcCc.png",
@@ -551,7 +551,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "Alps Summit \nArmament",
     "name": "Percussive Maintenance",
     "icon": "https://puu.sh/DqdzV.png",
@@ -594,7 +594,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "Legatus S.p.A.",
     "name": "Vigil",
     "icon": "https://imgur.com/KDVMrxo.png",
@@ -637,7 +637,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "Ceska Vyroba s.r.o",
     "name": "Devil's Due",
     "icon": "https://puu.sh/DlKPU.png",
@@ -680,7 +680,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "Empress International",
     "name": "Battery Pack",
     "icon": "https://puu.sh/DlKPZ.png",
@@ -723,7 +723,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "Uzina Getica",
     "name": "The Setup",
     "icon": "https://i.imgur.com/J5lsDVS.png",
@@ -766,7 +766,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "Hana-U Corporation",
     "name": "Force Multiplier",
     "icon": "https://i.imgur.com/9qbtwET.png",
@@ -809,7 +809,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "Palisade Steelworks",
     "name": "Proxy",
     "icon": "https://i.imgur.com/zZMJMGr.png",
@@ -852,7 +852,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "Shiny Monkey",
     "name": "Axel",
     "icon": "https://i.imgur.com/YCX7zqy.png",
@@ -895,7 +895,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "Imminence Armaments",
     "name": "Cap'n",
     "icon": "https://i.imgur.com/kEfW0sS.png",
@@ -938,7 +938,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "Grupo Sombra S.A.",
     "name": "Festive Delivery",
     "icon": "https://i.imgur.com/0VJnf5D.png",
@@ -981,7 +981,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "Electrique ",
     "name": "Henri",
     "icon": "https://i.imgur.com/gcy4vXQ.png",
@@ -1024,7 +1024,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "Golan Gear",
     "name": "Hunter-Killer",
     "icon": "https://i.imgur.com/445bJsn.png",
@@ -1067,7 +1067,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "Belstone Armory",
     "name": "Everyday Carrier",
     "icon": "https://i.imgur.com/Afz5mgp.png",
@@ -1110,7 +1110,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "Walker, Harris & Co.",
     "name": "Chainkiller",
     "icon": "https://i.imgur.com/m0FzrVI.png",
@@ -1153,7 +1153,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "Gila",
     "name": "Pointman",
     "icon": "https://i.imgur.com/JNUUDCc.png",
@@ -1196,7 +1196,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "Petrov",
     "name": "Vedmedytsya Vest",
     "icon": "https://puu.sh/DqdzT.png",
@@ -1239,7 +1239,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "Providence Defense",
     "name": "The Sacrifice",
     "icon": "https://i.imgur.com/KFxRoT7.png",
@@ -1282,7 +1282,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "Badger Tuff",
     "name": "Zero F’s",
     "icon": "https://puu.sh/DlKPi.png",
@@ -1325,7 +1325,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "Fenris Group AB",
     "name": "Ferocious Calm",
     "icon": "https://i.imgur.com/SPBmcNn.png",
@@ -1368,7 +1368,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "Grupo Sombra S.A.",
     "name": "Door-Kicker’s Knock",
     "icon": "https://i.imgur.com/SqA0iK2.png",
@@ -1411,7 +1411,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "Empress International",
     "name": "Caesar's Guard",
     "icon": "https://puu.sh/DlKPr.png",
@@ -1454,7 +1454,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "Uzina Getica",
     "name": "Closer",
     "icon": "https://i.imgur.com/iq8Zila.png",
@@ -1497,7 +1497,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "Habsburg Guard ",
     "name": "Cherished",
     "icon": "https://i.imgur.com/ZYb9PVG.png",
@@ -1540,7 +1540,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "Lengmo ",
     "name": "Carpenter",
     "icon": "https://i.imgur.com/54L7Cck.png",
@@ -1583,7 +1583,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "Zwiadowka Sp. z o.o.",
     "name": "Bober",
     "icon": "https://imgur.com/RCnXtP0.png",
@@ -1626,7 +1626,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "Airaldi Holdings",
     "name": "Pristine Example",
     "icon": "https://i.imgur.com/TBuSBVk.png",
@@ -1669,7 +1669,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "Urban Lookout",
     "name": "Sleight",
     "icon": "",
@@ -1712,7 +1712,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "Palisade Steelworks",
     "name": "Combustor",
     "icon": "https://i.imgur.com/vVDISvN.png",
@@ -1755,7 +1755,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "Unit Alloys",
     "name": "Equalizer",
     "icon": "",
@@ -1798,7 +1798,7 @@
     "icon2": ""
   },
   {
-    "type": "Gloves",
+    "type": "gloves",
     "brand": "5.11 Tactical",
     "name": "Deathgrips",
     "icon": "",
@@ -1829,7 +1829,7 @@
     "icon2": ""
   },
   {
-    "type": "Gloves",
+    "type": "gloves",
     "brand": "Petrov",
     "name": "Contractor’s Gloves",
     "icon": "",
@@ -1860,7 +1860,7 @@
     "icon2": ""
   },
   {
-    "type": "Gloves",
+    "type": "gloves",
     "brand": "Alps Summit \nArmament",
     "name": "Motherly Love",
     "icon": "",
@@ -1891,7 +1891,7 @@
     "icon2": ""
   },
   {
-    "type": "Gloves",
+    "type": "gloves",
     "brand": "Zwiadowka Sp. z o.o.",
     "name": "Eagles Grasp",
     "icon": "",
@@ -1922,7 +1922,7 @@
     "icon2": ""
   },
   {
-    "type": "Gloves",
+    "type": "gloves",
     "brand": "Sokolov Concern",
     "name": "Firm Handshake",
     "icon": "",
@@ -1953,7 +1953,7 @@
     "icon2": ""
   },
   {
-    "type": "Holster",
+    "type": "holster",
     "brand": "Richter & Kaiser",
     "name": "Forge",
     "icon": "",
@@ -1984,7 +1984,7 @@
     "icon2": ""
   },
   {
-    "type": "Holster",
+    "type": "holster",
     "brand": "Badger Tuff",
     "name": "Ammo Dump",
     "icon": "",
@@ -2029,7 +2029,7 @@
     "icon2": ""
   },
   {
-    "type": "Holster",
+    "type": "holster",
     "brand": "Brazos de Arcabuz ",
     "name": "Picaros Holster",
     "icon": "",
@@ -2060,7 +2060,7 @@
     "icon2": ""
   },
   {
-    "type": "Holster",
+    "type": "holster",
     "brand": "Urban Lookout",
     "name": "Spot-On",
     "icon": "",
@@ -2091,7 +2091,7 @@
     "icon2": ""
   },
   {
-    "type": "Holster",
+    "type": "holster",
     "brand": "Unit Alloys",
     "name": "Salvo",
     "icon": "",
@@ -2122,7 +2122,7 @@
     "icon2": ""
   },
   {
-    "type": "Holster",
+    "type": "holster",
     "brand": "Wyvern Wear",
     "name": "Claws Out",
     "icon": "",
@@ -2155,7 +2155,7 @@
     "icon2": ""
   },
   {
-    "type": "Knees",
+    "type": "kneepads",
     "brand": "Overlord Armaments",
     "name": "Fox’s Prayer",
     "icon": "",
@@ -2186,7 +2186,7 @@
     "icon2": ""
   },
   {
-    "type": "Knees",
+    "type": "kneepads",
     "brand": "Electrique ",
     "name": "Snow Machine",
     "icon": "",
@@ -2231,7 +2231,7 @@
     "icon2": ""
   },
   {
-    "type": "Knees",
+    "type": "kneepads",
     "brand": "Ceska Vyroba s.r.o",
     "name": "Turmoil",
     "icon": "https://i.imgur.com/hMvRHvT.png",
@@ -2250,7 +2250,7 @@
     "icon2": ""
   },
   {
-    "type": "Knees",
+    "type": "kneepads",
     "brand": "Murakami Industries",
     "name": "Emperor’s Guard",
     "icon": "",
@@ -2281,7 +2281,7 @@
     "icon2": ""
   },
   {
-    "type": "Knees",
+    "type": "kneepads",
     "brand": "Shiny Monkey",
     "name": "Grease",
     "icon": "",
@@ -2312,7 +2312,7 @@
     "icon2": ""
   },
   {
-    "type": "Knees",
+    "type": "kneepads",
     "brand": "Imminence Armaments",
     "name": "Cloak",
     "icon": "",
@@ -2343,7 +2343,7 @@
     "icon2": ""
   },
   {
-    "type": "Mask",
+    "type": "mask",
     "brand": "",
     "name": "Vile",
     "icon": "https://i.imgur.com/96SjUgf.png",
@@ -2374,7 +2374,7 @@
     "icon2": ""
   },
   {
-    "type": "Mask",
+    "type": "mask",
     "brand": "",
     "name": "Catharsis",
     "icon": "https://i.imgur.com/1quXSH4.png",
@@ -2405,7 +2405,7 @@
     "icon2": ""
   },
   {
-    "type": "Mask",
+    "type": "mask",
     "brand": "",
     "name": "Coyote’s Mask",
     "icon": "https://i.imgur.com/AHF79yr.png",
@@ -2436,7 +2436,7 @@
     "icon2": ""
   },
   {
-    "type": "Mask",
+    "type": "mask",
     "brand": "",
     "name": "Catalyst",
     "icon": "https://i.imgur.com/W1u7ME1.png",
@@ -2467,7 +2467,7 @@
     "icon2": ""
   },
   {
-    "type": "Mask",
+    "type": "mask",
     "brand": "",
     "name": "Tinkerer",
     "icon": "https://i.imgur.com/RW8ai8x.png",
@@ -2498,7 +2498,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "",
     "name": "Acosta's Go-Bag",
     "icon": "https://i.imgur.com/s34JQT2.png",
@@ -2529,7 +2529,7 @@
     "icon2": "https://i.imgur.com/s34JQT2.png"
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "",
     "name": "Birdie's Quick Fix Pack",
     "icon": "https://i.imgur.com/yIlE6q9.png",
@@ -2560,7 +2560,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "",
     "name": "Memento",
     "icon": "https://i.imgur.com/j9OeN4i.png",
@@ -2591,7 +2591,7 @@
     "icon2": ""
   },
   {
-    "type": "Backpack",
+    "type": "backpack",
     "brand": "",
     "name": "NinjaBike \nMessenger Backpack",
     "icon": "https://i.imgur.com/ePsaHve.png",
@@ -2622,7 +2622,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "",
     "name": "Collector",
     "icon": "https://i.imgur.com/Oc9c8gg.png",
@@ -2653,7 +2653,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "",
     "name": "Provocator",
     "icon": "https://i.imgur.com/UVJByEl.png",
@@ -2684,7 +2684,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "",
     "name": "Beacon",
     "icon": "",
@@ -2715,7 +2715,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "",
     "name": "Tardigrade \nArmor System",
     "icon": "https://i.imgur.com/Vrao5D4.png",
@@ -2746,7 +2746,7 @@
     "icon2": ""
   },
   {
-    "type": "Chest",
+    "type": "chest",
     "brand": "",
     "name": "Ridgeway's Pride",
     "icon": "https://i.imgur.com/Vrao5D4.png",
@@ -2777,7 +2777,7 @@
     "icon2": ""
   },
   {
-    "type": "Gloves",
+    "type": "gloves",
     "brand": "",
     "name": "Bloody Knuckles",
     "icon": "",
@@ -2796,7 +2796,7 @@
     "icon2": ""
   },
   {
-    "type": "Gloves",
+    "type": "gloves",
     "brand": "",
     "name": "BTSU Datagloves",
     "icon": "https://i.imgur.com/8IwfXPP.png",
@@ -2815,7 +2815,7 @@
     "icon2": ""
   },
   {
-    "type": "Gloves",
+    "type": "gloves",
     "brand": "",
     "name": "Exodus Gloves",
     "icon": "https://i.imgur.com/7XXAiNb.png",
@@ -2834,7 +2834,7 @@
     "icon2": ""
   },
   {
-    "type": "Gloves",
+    "type": "gloves",
     "brand": "",
     "name": "Overdogs",
     "icon": "",
@@ -2853,7 +2853,7 @@
     "icon2": ""
   },
   {
-    "type": "Gloves",
+    "type": "gloves",
     "brand": "",
     "name": "Rugged Gauntlets",
     "icon": "https://i.imgur.com/Ix5kCQO.png",
@@ -2872,7 +2872,7 @@
     "icon2": ""
   },
   {
-    "type": "Holster",
+    "type": "holster",
     "brand": "",
     "name": "Centurion Scabbard",
     "icon": "https://imgur.com/l4RkTUT.png",
@@ -2891,7 +2891,7 @@
     "icon2": ""
   },
   {
-    "type": "Holster",
+    "type": "holster",
     "brand": "",
     "name": "Dodge City\nGunslinger's Holster",
     "icon": "https://i.imgur.com/6ycuPp0.png",
@@ -2910,7 +2910,7 @@
     "icon2": ""
   },
   {
-    "type": "Holster",
+    "type": "holster",
     "brand": "",
     "name": "Imperial Dynasty",
     "icon": "https://i.imgur.com/bJ4dJvq.png",
@@ -2929,7 +2929,7 @@
     "icon2": ""
   },
   {
-    "type": "Holster",
+    "type": "holster",
     "brand": "",
     "name": "Shocker Punch",
     "icon": "https://i.imgur.com/wo5wDL4.png",
@@ -2948,7 +2948,7 @@
     "icon2": ""
   },
   {
-    "type": "Holster",
+    "type": "holster",
     "brand": "",
     "name": "Waveform",
     "icon": "https://i.imgur.com/VC6Anj3.png",
@@ -2967,7 +2967,7 @@
     "icon2": ""
   },
   {
-    "type": "Holster",
+    "type": "holster",
     "brand": "",
     "name": "Nimble Holster",
     "icon": "https://i.imgur.com/SzkrnMn.png",
@@ -2986,7 +2986,7 @@
     "icon2": ""
   },
   {
-    "type": "Knees",
+    "type": "kneepads",
     "brand": "",
     "name": "Sawyer's Kneepads",
     "icon": "https://i.imgur.com/a24EX8B.png",
@@ -3005,7 +3005,7 @@
     "icon2": ""
   },
   {
-    "type": "Knees",
+    "type": "kneepads",
     "brand": "",
     "name": "Acosta Kneepads",
     "icon": "https://imgur.com/K29Zuid.png",
@@ -3036,7 +3036,7 @@
     "icon2": ""
   },
   {
-    "type": "Knees",
+    "type": "kneepads",
     "brand": "",
     "name": "Blacklisters",
     "icon": "",
@@ -3055,7 +3055,7 @@
     "icon2": ""
   },
   {
-    "type": "Knees",
+    "type": "kneepads",
     "brand": "",
     "name": "NinjaBike \nMessenger Kneepads",
     "icon": "https://i.imgur.com/sXoLFXK.png",

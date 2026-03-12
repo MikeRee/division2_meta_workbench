@@ -62,6 +62,18 @@
       "3!*": "optics, magazine slot, underbarrel",
       "1!#$": "optics",
       "2!&": "magazine slot, underbarrel"
+    },
+    "weapon mapping": {
+      "ASSAULT RIFLES": "assault rifle",
+      "LIGHT MACHINE GUNS": "lmg",
+      "MARKSMAN RIFLES": "mr",
+      "PISTOLS": "pistol",
+      "RIFLES": "rifle",
+      "SHOTGUNS": "shotgun",
+      "SUBMACHINE GUNS": "smg"
+    },
+    "GearType": {
+      "knees": "kneepads"
     }
   },
   "bindings": {
@@ -79,7 +91,7 @@
       {
         "destination": "type",
         "source": "type",
-        "rules": []
+        "rules": ["weapon mapping"]
       },
       {
         "destination": "variant",
@@ -316,7 +328,7 @@
       {
         "destination": "type",
         "source": "type",
-        "rules": []
+        "rules": ["lowercase", "GearType"]
       },
       {
         "destination": "brand",

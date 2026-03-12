@@ -4,6 +4,7 @@ import BuildComponent from './components/Build';
 import ChatWindow from './components/ChatWindow';
 import useLookupStore from './stores/useLookupStore';
 import useRawDataStore from './stores/useRawDataStore';
+import { useRulesStore } from './stores/useRulesStore';
 import Weapon from './models/Weapon';
 import WeaponTalent from './models/WeaponTalent';
 import ExoticWeapon from './models/ExoticWeapon';
@@ -58,17 +59,18 @@ function App() {
   useEffect(() => {
     const loadJsonData = async () => {
       const dataFiles: Record<string, string> = {
-        weapons: '/data/weapons.json',
-        weaponTalents: '/data/weaponTalents.json',
-        exoticWeapons: '/data/exoticWeapons.json',
-        gearsets: '/data/gearsets.json',
-        brandsets: '/data/brandsets.json',
-        gearTalents: '/data/gearTalents.json',
-        namedGear: '/data/namedGear.json',
+        weapons: '/clean/weapons.json',
+        weaponTalents: '/clean/weaponTalents.json',
+        exoticWeapons: '/clean/exoticWeapons.json',
+        gearsets: '/clean/gearsets.json',
+        brandsets: '/clean/brandsets.json',
+        gearTalents: '/clean/gearTalents.json',
+        namedGear: '/clean/namedGear.json',
         skills: '/data/skills.json',
-        weaponMods: '/data/weaponMods.json',
+        weaponMods: '/clean/weaponMods.json',
         specializations: '/data/specialties.json',
-        missingMappings: '/data/missingMappings.json'
+        missingMappings: '/data/missingMappings.json',
+        prompts: '/clean/prompts.json'
       };
 
       const store = useLookupStore.getState() as any;
@@ -86,8 +88,9 @@ function App() {
                 name,
                 ...(spec as object)
               }));
-            } else if (dataType === 'missingMappings') {
+            } else if (dataType === 'missingMappings' || dataType === 'prompts') {
               // missingMappings is a Record<string, GearModClassification>, not an array
+              // prompts is a Record<string, string>, not an array
               const setterName = `set${dataType.charAt(0).toUpperCase() + dataType.slice(1)}`;
               if (store[setterName]) {
                 store[setterName](data);
@@ -115,6 +118,38 @@ function App() {
 
     loadJsonData();
     
+    // Load clean data files on startup
+    const loadCleanData = async () => {
+      const cleanDataFiles: Record<string, string> = {
+        weapons: '/clean/weapons.json',
+        weaponTalents: '/clean/weaponTalents.json',
+        exoticWeapons: '/clean/exoticWeapons.json',
+        gearsets: '/clean/gearsets.json',
+        brandsets: '/clean/brandsets.json',
+        gearTalents: '/clean/gearTalents.json',
+        namedGear: '/clean/namedGear.json',
+        weaponMods: '/clean/weaponMods.json'
+      };
+
+      const { useCleanDataStore } = await import('./stores/useCleanDataStore');
+      const cleanStore = useCleanDataStore.getState();
+
+      for (const [dataType, filePath] of Object.entries(cleanDataFiles)) {
+        try {
+          const response = await fetch(filePath);
+          if (response.ok) {
+            const data = await response.json();
+            cleanStore.setCleanData(dataType as any, data);
+            console.log(`Loaded clean ${dataType} from ${filePath}`);
+          }
+        } catch (error) {
+          console.log(`No clean data file found for ${dataType}`);
+        }
+      }
+    };
+
+    loadCleanData();
+    
     // Load lookup data from lookups.json
     const loadLookupData = async () => {
       try {
@@ -129,10 +164,16 @@ function App() {
         const lookups = await response.json();
         const store = useLookupStore.getState() as any;
 
+        // Initialize BuildWeapon with weapon attributes
+        if (lookups.weaponAttributes) {
+          const { BuildWeapon } = await import('./models/BuildWeapon');
+          BuildWeapon.initializeWeaponAttributes(lookups.weaponAttributes);
+        }
+
         // Load weapon attributes
         if (lookups.weaponAttributes) {
           const attrs = Object.entries(lookups.weaponAttributes).map(([name, max]) => 
-            new Attribute({ Attribute: name, Max: `${max}%` })
+            new Attribute({ attribute: name, max: `${max}%` })
           );
           store.setWeaponAttributes(attrs);
           console.log('Loaded weaponAttributes from lookups.json');
@@ -153,9 +194,14 @@ function App() {
         if (lookups.gearAttributes) {
           const attrs = Object.entries(lookups.gearAttributes).flatMap(([classification, attrObj]: [string, any]) =>
             Object.entries(attrObj).map(([attr, max]) =>
-              new GearMod({ Classification: classification, Attribute: attr, Max: typeof max === 'number' ? (max < 100 ? `${max}%` : `${max}`) : max })
+              new GearMod({ classification: classification, attribute: attr, max: typeof max === 'number' ? (max < 100 ? `${max}%` : `${max}`) : max })
             )
           );
+          console.log('App.tsx - Created', attrs.length, 'GearMod objects');
+          if (attrs.length > 0) {
+            console.log('App.tsx - First GearMod:', attrs[0]);
+            console.log('App.tsx - Last GearMod:', attrs[attrs.length - 1]);
+          }
           store.setGearAttributes(attrs);
           console.log('Loaded gearAttributes from lookups.json');
         }
@@ -164,7 +210,7 @@ function App() {
         if (lookups.gearMods) {
           const attrs = Object.entries(lookups.gearMods).flatMap(([classification, attrObj]: [string, any]) =>
             Object.entries(attrObj).map(([attr, max]) =>
-              new GearMod({ Classification: classification, Attribute: attr, Max: typeof max === 'number' ? (max < 100 ? `${max}%` : `${max}`) : max })
+              new GearMod({ classification: classification, attribute: attr, max: typeof max === 'number' ? (max < 100 ? `${max}%` : `${max}`) : max })
             )
           );
           store.setGearModAttributes(attrs);
@@ -239,6 +285,14 @@ function App() {
     };
 
     loadRawFiles();
+  }, []);
+
+  // Load rules on app startup
+  useEffect(() => {
+    const loadRules = async () => {
+      await useRulesStore.getState().loadRulesFromFile();
+    };
+    loadRules();
   }, []);
 
   const handleLoadWeapons = async () => {

@@ -1,10 +1,11 @@
 import { CoreType, parseCoreType } from './CoreValue';
 import { parseRecordField } from '../utils/recordParser';
+import { GearType, parseGearType } from './BuildGear';
 
 export type MinorAttribute = Record<string, number> | 'mod';
 
 interface NamedGearData {
-  type?: string;
+  type?: GearType | string;
   brand?: string;
   name?: string;
   icon?: string;
@@ -21,7 +22,7 @@ interface NamedGearData {
 }
 
 class NamedGear {
-  type: string;
+  type: GearType;
   brand: string;
   name: string;
   icon: string;
@@ -36,7 +37,7 @@ class NamedGear {
   icon2: string;
 
   static readonly FIELD_TYPES = {
-    type: 'string',
+    type: 'GearType',
     brand: 'string',
     name: 'string',
     icon: 'string',
@@ -52,7 +53,7 @@ class NamedGear {
   } as const;
 
   constructor({
-    type = '',
+    type = GearType.Mask,
     brand = '',
     name = '',
     icon = '',
@@ -67,7 +68,7 @@ class NamedGear {
     icon2 = '',
     __appliedRules = {}
   }: NamedGearData = {}) {
-    this.type = type;
+    this.type = typeof type === 'string' ? parseGearType(type) : type;
     this.brand = brand;
     this.name = name;
     this.icon = icon;

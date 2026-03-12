@@ -114,19 +114,19 @@ const downloadRulesFile = (data: RulesData) => {
 };
 
 /**
- * Load rules from /data directory
+ * Load rules from /clean directory
  */
 const loadRulesFile = async (): Promise<RulesData | null> => {
   try {
-    const response = await fetch('/data/rules.json');
+    const response = await fetch('/clean/rules.json');
     if (!response.ok) {
-      console.warn(`Failed to load /data/rules.json: ${response.status}`);
+      console.warn(`Failed to load /clean/rules.json: ${response.status}`);
       return null;
     }
     const data = await response.json();
     return typeof data === 'object' && !Array.isArray(data) ? data : null;
   } catch (error) {
-    console.error('Error loading /data/rules.json:', error);
+    console.error('Error loading /clean/rules.json:', error);
     return null;
   }
 };
@@ -250,6 +250,19 @@ export const useRulesStore = create<RulesState>()(
         }),
 
       loadRulesFromFile: async () => {
+        const state = get();
+        
+        // Only load if cache is empty (no rules and no bindings)
+        const hasRules = Object.keys(state.replaceRules).length > 0 || 
+                        Object.keys(state.matchRules).length > 0 || 
+                        Object.keys(state.mappings).length > 0;
+        const hasBindings = Object.keys(state.bindings).length > 0;
+        
+        if (hasRules || hasBindings) {
+          console.log('Rules already loaded from cache, skipping file load');
+          return;
+        }
+
         set({ isLoading: true });
         try {
           const data = await loadRulesFile();
@@ -263,7 +276,7 @@ export const useRulesStore = create<RulesState>()(
               lastUpdated: Date.now(),
               isLoading: false,
             });
-            console.log('Loaded rules from /data');
+            console.log('Loaded rules from /clean/rules.json');
           } else {
             set({ isLoading: false });
           }

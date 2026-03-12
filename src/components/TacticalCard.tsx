@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./TacticalCard.module.css";
 import BuildGear, { GearSource } from "../models/BuildGear";
 import { getDefaultCoreImage } from "../models/CoreValue";
@@ -56,6 +56,10 @@ const TacticalCard: React.FC<TacticalCardProps> = ({
   buildGear,
   onClick,
 }) => {
+  // Debug logger for buildWeapon prop
+  useEffect(() => {
+    console.log("TacticalCard - buildGear:", buildGear);
+  }, [buildGear]);
   // Get colors based on gear source
   const colors = getGearColors(buildGear.source || null);
 
@@ -95,33 +99,49 @@ const TacticalCard: React.FC<TacticalCardProps> = ({
           {buildGear.minor1 && (
             <div className={styles.attribute}>
               {buildGear.minor1.value}
-              {buildGear.minor1.value && buildGear.minor1.value < 1000 ? '%' : buildGear.minor1.value && buildGear.minor1.value >= 1000 ? '/s' : ''} {buildGear.minor1.key}
+              {buildGear.minor1.value && buildGear.minor1.value < 1000
+                ? "%"
+                : buildGear.minor1.value && buildGear.minor1.value >= 1000
+                  ? "/s"
+                  : ""}{" "}
+              {buildGear.minor1.key}
             </div>
           )}
           {buildGear.minor2 && (
             <div className={styles.attribute}>
               {buildGear.minor2.value}
-              {buildGear.minor2.value && buildGear.minor2.value < 1000 ? '%' : buildGear.minor2.value && buildGear.minor2.value >= 1000 ? '/s' : ''} {buildGear.minor2.key}
+              {buildGear.minor2.value && buildGear.minor2.value < 1000
+                ? "%"
+                : buildGear.minor2.value && buildGear.minor2.value >= 1000
+                  ? "/s"
+                  : ""}{" "}
+              {buildGear.minor2.key}
             </div>
           )}
           {buildGear.minor3 && (
             <div className={styles.attribute}>
               {buildGear.minor3.value}
-              {buildGear.minor3.value && buildGear.minor3.value < 1000 ? '%' : buildGear.minor3.value && buildGear.minor3.value >= 1000 ? '/s' : ''} {buildGear.minor3.key}
+              {buildGear.minor3.value && buildGear.minor3.value < 1000
+                ? "%"
+                : buildGear.minor3.value && buildGear.minor3.value >= 1000
+                  ? "/s"
+                  : ""}{" "}
+              {buildGear.minor3.key}
             </div>
           )}
         </div>
 
         <div className={styles.pipContainer}>
-          {/* Core attribute image */}
-          {buildGear.core && (
+          {/* Core attribute images */}
+          {buildGear.core && buildGear.core.map((coreValue, index) => (
             <div
+              key={index}
               className={styles.attributeIcon}
               dangerouslySetInnerHTML={{
-                __html: getDefaultCoreImage(buildGear.core.type),
+                __html: getDefaultCoreImage(coreValue.type),
               }}
             />
-          )}
+          ))}
 
           {/* Minor 1 attribute image */}
           {buildGear.minor1 &&

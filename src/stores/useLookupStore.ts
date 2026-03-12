@@ -31,6 +31,7 @@ interface LookupState {
   keenersWatch: Map<string, Attribute>;
   statusImmunities: Map<string, StatusImmunity>;
   missingMappings: Record<string, GearModClassification>;
+  prompts: Map<string, string>;
 
   lastUpdated: number | null;
   isLoading: boolean;
@@ -53,6 +54,7 @@ interface LookupState {
   setKeenersWatch: (attributeList: Attribute[]) => void;
   setStatusImmunities: (immunityList: StatusImmunity[]) => void;
   setMissingMappings: (mappings: Record<string, GearModClassification>) => void;
+  setPrompts: (promptsData: Record<string, string>) => void;
 
   setLoading: (isLoading: boolean) => void;
 
@@ -74,6 +76,7 @@ interface LookupState {
   getKeenersWatchStat: (key: string) => Attribute | undefined;
   getStatusImmunity: (statusEffect: string) => StatusImmunity | undefined;
   getMissingMapping: (attribute: string) => GearModClassification | undefined;
+  getPrompt: (key: string) => string | undefined;
 
   getAllWeapons: () => Weapon[];
   getAllWeaponTalents: () => WeaponTalent[];
@@ -92,6 +95,7 @@ interface LookupState {
   getAllGearModAttributes: () => GearMod[];
   getAllKeenersWatch: () => Attribute[];
   getAllStatusImmunities: () => StatusImmunity[];
+  getAllPrompts: () => Map<string, string>;
 
   clearAll: () => void;
 }
@@ -123,6 +127,7 @@ const useLookupStore = create<LookupState>()(
       keenersWatch: new Map<string, Attribute>(),
       statusImmunities: new Map<string, StatusImmunity>(),
       missingMappings: {},
+      prompts: new Map<string, string>(),
 
       // Metadata
       lastUpdated: null,
@@ -286,6 +291,14 @@ const useLookupStore = create<LookupState>()(
         set({ missingMappings: mappings, lastUpdated: Date.now() });
       },
 
+      setPrompts: (promptsData) => {
+        const promptsMap = new Map<string, string>();
+        Object.entries(promptsData).forEach(([key, value]) => {
+          promptsMap.set(key, value);
+        });
+        set({ prompts: promptsMap, lastUpdated: Date.now() });
+      },
+
       setLoading: (isLoading) => set({ isLoading }),
 
       // Lookup methods
@@ -308,6 +321,7 @@ const useLookupStore = create<LookupState>()(
       getKeenersWatchStat: (key) => get().keenersWatch.get(key),
       getStatusImmunity: (statusEffect) => get().statusImmunities.get(statusEffect),
       getMissingMapping: (attribute) => get().missingMappings[attribute],
+      getPrompt: (key) => get().prompts.get(key),
 
       // Get all items as arrays
       getAllWeapons: () => {
@@ -367,6 +381,7 @@ const useLookupStore = create<LookupState>()(
       getAllGearModAttributes: () => Array.from(get().gearModAttributes.values()),
       getAllKeenersWatch: () => Array.from(get().keenersWatch.values()),
       getAllStatusImmunities: () => Array.from(get().statusImmunities.values()),
+      getAllPrompts: () => get().prompts,
 
       // Clear all data
       clearAll: () => set({
@@ -387,6 +402,7 @@ const useLookupStore = create<LookupState>()(
         keenersWatch: new Map(),
         statusImmunities: new Map(),
         missingMappings: {},
+        prompts: new Map(),
         lastUpdated: null,
       }),
     }),
@@ -398,7 +414,7 @@ const useLookupStore = create<LookupState>()(
             'weapons', 'weaponTalents', 'exoticWeapons', 'gearsets', 'brandsets',
             'gearTalents', 'namedGear', 'skills', 'weaponMods', 'specializations',
             'weaponAttributes', 'weaponTypeAttributes',
-            'gearModAttributes', 'keenersWatch', 'statusImmunities'
+            'gearModAttributes', 'keenersWatch', 'statusImmunities', 'prompts'
           ];
           
           if (mapKeys.includes(key) && Array.isArray(value)) {
@@ -421,6 +437,7 @@ const useLookupStore = create<LookupState>()(
                 case 'gearModAttributes':
                   return new GearMod(item);
                 case 'statusImmunities': return new StatusImmunity(item);
+                case 'prompts': return item; // prompts are just strings
                 default: return item;
               }
             };
