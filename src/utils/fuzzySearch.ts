@@ -57,6 +57,22 @@ function similarityScore(str1: string, str2: string): number {
   
   if (normalized1 === normalized2) return 1;
   
+  // Check for partial matches (substring or prefix)
+  // If str1 is fully contained in str2, give it a high score
+  if (normalized2.includes(normalized1)) {
+    // Score based on how much of str2 is matched by str1
+    // If str1 matches the beginning of str2, give it an even higher score
+    if (normalized2.startsWith(normalized1)) {
+      return 0.95; // Very high score for prefix matches
+    }
+    return 0.85; // High score for substring matches
+  }
+  
+  // Check if str2 is contained in str1 (less common but possible)
+  if (normalized1.includes(normalized2)) {
+    return 0.85;
+  }
+  
   const maxLen = Math.max(normalized1.length, normalized2.length);
   if (maxLen === 0) return 1;
   

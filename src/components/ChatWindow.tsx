@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef, JSX } from 'react';
 import './ChatWindow.css';
 import useBuildStore from '../stores/useBuildStore';
 import useCleanDataStore from '../stores/useCleanDataStore';
+import useLookupStore from '../stores/useLookupStore';
 import { BuildWeapon } from '../models/BuildWeapon';
 import BuildGear, { GearType } from '../models/BuildGear';
+import { GearModValue } from '../models/GearMod';
 import Weapon from '../models/Weapon';
 import NamedGear from '../models/NamedGear';
 import { fuzzyFind } from '../utils/fuzzySearch';
@@ -334,6 +336,48 @@ function ChatWindow() {
             type: parseCoreType(coreType),
             value: getDefaultCoreValue(parseCoreType(coreType))
           }));
+        }
+        
+        // Apply gear attributes from LlmGear if they exist
+        const gearAttributesMap = useLookupStore.getState().gearAttributes;
+        
+        if (llmGear.gearAttrib1 && buildGear.minor1 && gearAttributesMap) {
+          const allGearAttrs = gearAttributesMap.toArray();
+          const mod = allGearAttrs.find(m => m.attribute === llmGear.gearAttrib1);
+          if (mod) {
+            buildGear.minor1 = new GearModValue(
+              { [mod.attribute]: mod.max },
+              mod.classification,
+              mod.attribute,
+              mod.max
+            );
+          }
+        }
+        
+        if (llmGear.gearAttrib2 && buildGear.minor2 && gearAttributesMap) {
+          const allGearAttrs = gearAttributesMap.toArray();
+          const mod = allGearAttrs.find(m => m.attribute === llmGear.gearAttrib2);
+          if (mod) {
+            buildGear.minor2 = new GearModValue(
+              { [mod.attribute]: mod.max },
+              mod.classification,
+              mod.attribute,
+              mod.max
+            );
+          }
+        }
+        
+        if (llmGear.gearMod && buildGear.minor3 && gearAttributesMap) {
+          const allGearAttrs = gearAttributesMap.toArray();
+          const mod = allGearAttrs.find(m => m.attribute === llmGear.gearMod);
+          if (mod) {
+            buildGear.minor3 = new GearModValue(
+              { [mod.attribute]: mod.max },
+              mod.classification,
+              mod.attribute,
+              mod.max
+            );
+          }
         }
         
         return buildGear;
