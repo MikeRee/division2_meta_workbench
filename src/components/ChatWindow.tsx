@@ -7,6 +7,7 @@ import BuildGear, { GearType } from '../models/BuildGear';
 import Weapon from '../models/Weapon';
 import NamedGear from '../models/NamedGear';
 import { fuzzyFind } from '../utils/fuzzySearch';
+import { parseCoreType, getDefaultCoreValue } from '../models/CoreValue';
 
 interface GeminiModel {
   name: string;
@@ -199,8 +200,13 @@ function ChatWindow() {
     
     // Try to parse and apply the MODEL
     try {
-      const modelJson = modelMatch[1].trim();
+      let modelJson = modelMatch[1].trim();
       console.log('Model JSON:', modelJson);
+      
+      // Strip markdown code fences if present
+      if (modelJson.startsWith('```')) {
+        modelJson = modelJson.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+      }
       
       const llmBuild = JSON.parse(modelJson);
       console.log('Parsed LlmBuild:', llmBuild);
@@ -321,6 +327,14 @@ function ChatWindow() {
         const buildGear = gearsetItem || brandsetItem 
           ? new BuildGear(foundItem, gearType)
           : new BuildGear(foundItem);
+        
+        // Apply core attributes from LlmGear if specified
+        if (llmGear.core && Array.isArray(llmGear.core) && llmGear.core.length > 0) {
+          buildGear.core = llmGear.core.map((coreType: string) => ({
+            type: parseCoreType(coreType),
+            value: getDefaultCoreValue(parseCoreType(coreType))
+          }));
+        }
         
         return buildGear;
       };

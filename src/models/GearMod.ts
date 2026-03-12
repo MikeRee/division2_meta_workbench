@@ -247,15 +247,10 @@ class GearModCollection {
   private modsByAttribute: Map<string, GearMod>;
 
   constructor(mods: GearMod[]) {
-    console.log('GearModCollection constructor - received', mods.length, 'mods');
-    if (mods.length > 0) {
-      console.log('GearModCollection - first mod:', mods[0]);
-    }
     this.modsByAttribute = new Map();
     mods.forEach(mod => {
       this.modsByAttribute.set(mod.attribute, mod);
     });
-    console.log('GearModCollection - Map has', this.modsByAttribute.size, 'entries');
   }
 
   /**

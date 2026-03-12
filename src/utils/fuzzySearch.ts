@@ -29,11 +29,16 @@ function levenshteinDistance(str1: string, str2: string): number {
 }
 
 /**
- * Normalize string for comparison (lowercase, normalize apostrophes/quotes, remove punctuation and extra spaces)
+ * Normalize string for comparison (lowercase, normalize diacritics, normalize apostrophes/quotes, remove punctuation and extra spaces)
  */
 function normalizeString(str: string): string {
   return str
     .toLowerCase()
+    // Remove parenthetical content (e.g., "Pestilence (M249 B)" -> "Pestilence")
+    .replace(/\s*\([^)]*\)/g, '')
+    // Normalize diacritics to ASCII equivalents
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
     // Normalize different types of apostrophes and quotes to standard ones
     .replace(/['']/g, "'")
     .replace(/[""]/g, '"')
@@ -60,6 +65,33 @@ function similarityScore(str1: string, str2: string): number {
 }
 
 /**
+ * Common gear type suffixes to strip from search strings
+ */
+const GEAR_TYPE_SUFFIXES = [
+  'mask', 'chest', 'holster', 'gloves', 'backpack', 'kneepads',
+  'masks', 'chests', 'holsters', 'backpacks' // plural forms
+];
+
+/**
+ * Strip gear type suffix from search string if present
+ */
+function stripGearTypeSuffix(searchStr: string): string {
+  const normalized = normalizeString(searchStr);
+  const words = normalized.split(' ');
+  
+  // Check if the last word is a gear type
+  if (words.length > 1) {
+    const lastWord = words[words.length - 1];
+    if (GEAR_TYPE_SUFFIXES.includes(lastWord)) {
+      // Remove the last word and return
+      return words.slice(0, -1).join(' ');
+    }
+  }
+  
+  return normalized;
+}
+
+/**
  * Find the best match from an array of items based on a search string
  * @param searchStr The string to search for
  * @param items Array of items to search through
@@ -77,11 +109,21 @@ export function fuzzyFind<T>(
 
   let bestMatch: T | null = null;
   let bestScore = threshold;
+  
+  // Try with gear type suffix stripped
+  const strippedSearch = stripGearTypeSuffix(searchStr);
   const normalizedSearch = normalizeString(searchStr);
 
   for (const item of items) {
     const itemName = getItemName(item);
-    const score = similarityScore(searchStr, itemName);
+    
+    // Try both original and stripped versions
+    const scoreOriginal = similarityScore(searchStr, itemName);
+    const scoreStripped = strippedSearch !== normalizedSearch 
+      ? similarityScore(strippedSearch, normalizeString(itemName))
+      : 0;
+    
+    const score = Math.max(scoreOriginal, scoreStripped);
     
     if (score > bestScore) {
       bestScore = score;
@@ -91,7 +133,7 @@ export function fuzzyFind<T>(
 
   // Debug logging for failed matches
   if (!bestMatch && items.length > 0) {
-    console.log(`Fuzzy search failed for "${searchStr}" (normalized: "${normalizedSearch}")`);
+    console.log(`Fuzzy search failed for "${searchStr}" (normalized: "${normalizedSearch}", stripped: "${strippedSearch}")`);
     console.log(`Threshold: ${threshold}, Best score found: ${bestScore}`);
     
     // Show top 3 closest matches

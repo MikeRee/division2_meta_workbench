@@ -50,7 +50,6 @@ function Build() {
   useEffect(() => {
     if (gearAttributesMap) {
       const gearAttrs = gearAttributesMap.getAll();
-      console.log('Build.tsx useEffect - initializing with attributes:', gearAttrs);
       BuildGear.initializeGearAttributes(gearAttrs);
     }
   }, [gearAttributesMap]);

@@ -23,13 +23,20 @@ function KeenersWatch({ stats, onChange }: KeenersWatchProps) {
     
     if (keenersWatchData instanceof Map) {
       keenersWatchData.forEach((attr) => {
-        const category = attr.category as keyof KeenersWatchStats;
+        // Capitalize the first letter of category to match KeenersWatchStats interface
+        const rawCategory = attr.category;
+        const category = rawCategory 
+          ? (rawCategory.charAt(0).toUpperCase() + rawCategory.slice(1)) as keyof KeenersWatchStats
+          : null;
         const statName = attr.attribute;
         const maxValue = parseFloat(attr.max.toString().replace('%', '')) || 0;
         
-        if (category && statName) {
+        // Validate category exists in defaults before setting
+        if (category && statName && defaults[category]) {
           defaults[category][statName] = maxValue;
           maxVals[statName] = maxValue;
+        } else if (rawCategory && statName) {
+          console.warn(`Invalid Keener's Watch category: "${rawCategory}" (normalized: "${category}") for stat "${statName}"`);
         }
       });
     }

@@ -56,10 +56,6 @@ const TacticalCard: React.FC<TacticalCardProps> = ({
   buildGear,
   onClick,
 }) => {
-  // Debug logger for buildWeapon prop
-  useEffect(() => {
-    console.log("TacticalCard - buildGear:", buildGear);
-  }, [buildGear]);
   // Get colors based on gear source
   const colors = getGearColors(buildGear.source || null);
 

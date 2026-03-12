@@ -184,7 +184,7 @@ function App() {
         if (lookups.weaponTypeAttributes) {
           const attrs = Object.entries(lookups.weaponTypeAttributes).flatMap(([weapon, attrObj]: [string, any]) =>
             Object.entries(attrObj).map(([attr, max]) =>
-              new Attribute({ Weapon: weapon, Attribute: attr, Max: `${max}%` })
+              new Attribute({ weaponType: weapon, attribute: attr, max: `${max}%` })
             )
           );
           store.setWeaponTypeAttributes(attrs);
@@ -195,14 +195,9 @@ function App() {
         if (lookups.gearAttributes) {
           const attrs = Object.entries(lookups.gearAttributes).flatMap(([classification, attrObj]: [string, any]) =>
             Object.entries(attrObj).map(([attr, max]) =>
-              new GearMod({ classification: classification, attribute: attr, max: typeof max === 'number' ? (max < 100 ? `${max}%` : `${max}`) : max })
+              new GearMod({ classification: classification, attribute: attr, max: typeof max === 'number' ? (max < 100 ? `${max}%` : `${max}`) : String(max) })
             )
           );
-          console.log('App.tsx - Created', attrs.length, 'GearMod objects');
-          if (attrs.length > 0) {
-            console.log('App.tsx - First GearMod:', attrs[0]);
-            console.log('App.tsx - Last GearMod:', attrs[attrs.length - 1]);
-          }
           store.setGearAttributes(attrs);
           console.log('Loaded gearAttributes from lookups.json');
         }
@@ -211,7 +206,7 @@ function App() {
         if (lookups.gearMods) {
           const attrs = Object.entries(lookups.gearMods).flatMap(([classification, attrObj]: [string, any]) =>
             Object.entries(attrObj).map(([attr, max]) =>
-              new GearMod({ classification: classification, attribute: attr, max: typeof max === 'number' ? (max < 100 ? `${max}%` : `${max}`) : max })
+              new GearMod({ classification: classification, attribute: attr, max: typeof max === 'number' ? (max < 100 ? `${max}%` : `${max}`) : String(max) })
             )
           );
           store.setGearModAttributes(attrs);
@@ -222,7 +217,7 @@ function App() {
         if (lookups.keenersWatch) {
           const attrs = Object.entries(lookups.keenersWatch).flatMap(([category, attrObj]: [string, any]) =>
             Object.entries(attrObj).map(([attr, max]) =>
-              new Attribute({ Category: category, Attribute: attr, 'Max Bonus': `${max}%` })
+              new Attribute({ category: category, attribute: attr, max: `${max}%` })
             )
           );
           store.setKeenersWatch(attrs);
@@ -232,7 +227,7 @@ function App() {
         // Load status immunities
         if (lookups.statusImmunities) {
           const immunities = Object.entries(lookups.statusImmunities).map(([statusEffect, required]) =>
-            new StatusImmunity({ 'Status Effect': statusEffect, 'Required %': `${required}%` })
+            new StatusImmunity({ statusEffect: statusEffect, requiredPercent: `${required}%` })
           );
           store.setStatusImmunities(immunities);
           console.log('Loaded statusImmunities from lookups.json');
@@ -274,18 +269,6 @@ function App() {
     };
 
     loadLookupData();
-
-    // Load all raw JSON files from /raw directory
-    const loadRawFiles = async () => {
-      try {
-        await useRawDataStore.getState().loadAllRawFiles();
-        console.log('Loaded all raw JSON files from /raw directory');
-      } catch (error) {
-        console.error('Error loading raw files:', error);
-      }
-    };
-
-    loadRawFiles();
   }, []);
 
   // Load rules on app startup
@@ -1392,6 +1375,9 @@ function App() {
           const skillsData = parseSkills({ values: formulaData.values || [] });
           
           rawData = skillsData;
+        } else {
+          // Fallback for unknown grid data types
+          throw new Error(`Unknown grid data type: ${dataType}`);
         }
       } else {
         // Extract raw values
