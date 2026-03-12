@@ -1,10 +1,10 @@
-import { CoreType } from './CoreValue';
+import { CoreType, parseCoreType } from './CoreValue';
 import StatModifier from './StatModifier';
 
 interface BrandsetData {
   icon?: string;
   brand?: string;
-  core?: CoreType;
+  core?: CoreType | string;
   onePc?: StatModifier[];
   twoPc?: StatModifier[];
   threePc?: StatModifier[];
@@ -18,6 +18,15 @@ class Brandset {
   twoPc: StatModifier[];
   threePc: StatModifier[];
 
+  static readonly FIELD_TYPES = {
+    icon: 'string',
+    brand: 'string',
+    core: 'CoreType',
+    onePc: 'StatModifier[]',
+    twoPc: 'StatModifier[]',
+    threePc: 'StatModifier[]'
+  } as const;
+
   constructor({
     icon = '',
     brand = '',
@@ -28,20 +37,10 @@ class Brandset {
   }: BrandsetData = {}) {
     this.icon = icon;
     this.brand = brand;
-    this.core = this.normalizeCoreType(core);
+    this.core = parseCoreType(core);
     this.onePc = StatModifier.parseStatModifiers(onePc);
     this.twoPc = StatModifier.parseStatModifiers(twoPc);
     this.threePc = StatModifier.parseStatModifiers(threePc);
-  }
-
-  private normalizeCoreType(core: any): CoreType {
-    if (typeof core === 'string') {
-      const normalized = core.toLowerCase();
-      if (Object.values(CoreType).includes(normalized as CoreType)) {
-        return normalized as CoreType;
-      }
-    }
-    return core;
   }
 
   /**

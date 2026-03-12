@@ -678,7 +678,8 @@ function normalizeWeaponModField(
  * @param rawData - Raw data object or array
  * @param bindings - Array of RuleBinding objects defining destination fields and their transformations
  * @param rulesStore - The rules store containing all rule definitions
- * @returns Transformed data with rules applied
+ * @param options - Optional configuration including trackRules flag
+ * @returns Transformed data with rules applied, and optionally rule tracking info
  */
 export function applyBindings(
   rawData: any,
@@ -687,10 +688,12 @@ export function applyBindings(
     replaceRules: Record<string, string[]>;
     matchRules: Record<string, string>;
     mappings: Record<string, Record<string, string>>;
-  }
+  },
+  options?: { trackRules?: boolean }
 ): any {
   const isArray = Array.isArray(rawData);
   const dataArray = isArray ? rawData : [rawData];
+  const trackRules = options?.trackRules || false;
 
   // Helper function to apply a rule to a value, handling objects
   const applyRuleToValue = (value: any, ruleFunction: (str: string) => string): any => {
@@ -717,6 +720,7 @@ export function applyBindings(
 
   const processedData = dataArray.map((item: any) => {
     const result: any = {};
+    const appliedRules: Record<string, string[]> = {};
 
     // Process each binding
     bindings.forEach(({ destination, source, rules }) => {
@@ -728,11 +732,20 @@ export function applyBindings(
         return;
       }
 
+      if (trackRules) {
+        appliedRules[destination] = [];
+      }
+
       // Apply each rule in order
       rules.forEach((ruleLabel) => {
+        const beforeValue = value;
+
         // Check if it's a system rule first
         if (ruleLabel in SYSTEM_RULES) {
           value = SYSTEM_RULES[ruleLabel as SystemRuleType](value);
+          if (trackRules && value !== beforeValue) {
+            appliedRules[destination].push(ruleLabel);
+          }
           return;
         }
 
@@ -742,6 +755,9 @@ export function applyBindings(
           try {
             const regex = new RegExp(match, 'gi');
             value = applyRuleToValue(value, (str) => str.replace(regex, replace || ''));
+            if (trackRules && value !== beforeValue) {
+              appliedRules[destination].push(ruleLabel);
+            }
           } catch (error) {
             console.warn(`Invalid regex pattern in rule "${ruleLabel}": ${match}`, error);
           }
@@ -770,6 +786,9 @@ export function applyBindings(
           const mappedValue = mapping[key];
           if (mappedValue !== undefined) {
             value = mappedValue;
+            if (trackRules && value !== beforeValue) {
+              appliedRules[destination].push(ruleLabel);
+            }
           }
         }
       });
@@ -777,6 +796,10 @@ export function applyBindings(
       // Set the destination value
       result[destination] = value;
     });
+
+    if (trackRules) {
+      result.__appliedRules = appliedRules;
+    }
 
     return result;
   });

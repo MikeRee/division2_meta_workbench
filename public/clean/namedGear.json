@@ -1,0 +1,3076 @@
+[
+  {
+    "type": "Mask",
+    "brand": "Douglas & Harding",
+    "name": "Punch Drunk",
+    "icon": "",
+    "talent": "",
+    "desc": "Extra Headshot Damage",
+    "core": "weapon damage",
+    "minor1": {
+      "headshot damage": 20
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {},
+    "notes": "\"If the first shot doesn't drop 'em, the second one will. Or the third, third's usually good.\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Mask",
+    "brand": "Gila Guard",
+    "name": "Nightwatcher",
+    "icon": "",
+    "talent": "",
+    "desc": "Scanner Pulse Haste",
+    "core": "armor",
+    "minor1": {
+      "scanner pulse haste": 100
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {},
+    "notes": "\"Through glass and steel; looking at you; a view so cruel.\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Mask",
+    "brand": "Gila Guard",
+    "name": "Chill Out",
+    "icon": "",
+    "talent": "",
+    "desc": "Has 2 Mod Slots and only 1 Minor Stat",
+    "core": "armor",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"Revenge is a dish best served cold.\"- Someone who remembers you",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Mask",
+    "brand": "Legatus S.p.A.",
+    "name": "Visionario",
+    "icon": "",
+    "talent": "",
+    "desc": "Extra optimal range",
+    "core": "weapon damage",
+    "minor1": {
+      "optimal range": 50
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {},
+    "notes": "\"So far be distant; and good night, sweet friend\" - A Midsummer Night's Dream",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Mask",
+    "brand": "Yaahl Gear",
+    "name": "The Hollow Man",
+    "icon": "",
+    "talent": "",
+    "desc": "Damage to Health",
+    "core": "armor",
+    "minor1": {
+      "damage to health": 14
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {},
+    "notes": "\"No whimper. No bang. Just silence. The end of all things.\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "Belstone Armory",
+    "name": "Liquid Engineer",
+    "icon": "https://puu.sh/DlKPY.png",
+    "talent": "Perfect Bloodsucker",
+    "desc": "Killing an enemy adds and refreshes a stack of +12% bonus armor for 10s. Max stack is 10",
+    "core": "armor",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"Is that oil, or blood?\" -BTSU Combat Medic",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "Brazos de Arcabuz ",
+    "name": "Hermano",
+    "icon": "https://i.imgur.com/LKXR3Ak.png",
+    "talent": "Perfect Overclock",
+    "desc": "You and allies within 15m of your deployed skills, gain +30% reload speed and reduces active cooldowns by 0.6 each second.",
+    "core": "armor",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "-",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "Habsburg Guard ",
+    "name": "The Courier",
+    "icon": "https://puu.sh/DlKPG.png",
+    "talent": "Perfect Creeping Death",
+    "desc": "When you apply a status effect, it is also applied to all enemies within 10m of your target. \n\nCooldown: 10s",
+    "core": "armor",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"May this carry your soul to paradise\" -The Priest",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "Lengmo ",
+    "name": "Backbone",
+    "icon": "https://i.imgur.com/EBm8Qa3.png",
+    "talent": "Perfectly Unstoppable Force",
+    "desc": "Killing an enemy increases total weapon damage by 7% for 15s.\nStacks up to 5.\nGrenade kills add 2 stacks.",
+    "core": "armor",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"Your first kill is hard. But it gets easier the more you do it.\" -The Stratagist",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "Golan Gear",
+    "name": "Anarchist's Cookbook",
+    "icon": "https://puu.sh/DqdzW.png",
+    "talent": "Perfectly Wicked",
+    "desc": "Applying a status effect increases total weapon damage by 18% for 27s",
+    "core": "armor",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"Conley, I think you'll find some great toys in here. Try not to blow everything up while you're looking through it.\" - Aaron Keener",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "China Light \nIndustries \nCorporation",
+    "name": "Strategic Alignment",
+    "icon": "https://i.imgur.com/OXtuVa6.png",
+    "talent": "Perfect Shock and Awe",
+    "desc": "Applying a status effect to an enemy increases total skill damage and repair by 20% for 27s",
+    "core": "skill tier",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"I know this is going to look liike we're destroying everything. Don't worry about it. We don't make mistakes. Just happy accidents.\" - Bob Ross",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "Electrique ",
+    "name": "Lavoisier",
+    "icon": "https://i.imgur.com/stOWq2o.png",
+    "talent": "Perfect Galvanize",
+    "desc": "Applying Blind, Ensnare, Confuse, or Shock to an enemy grants 50% of your armor as bonus armor to you and all allies within 30 meters of that enemy for 10 seconds.",
+    "core": "skill tier",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"A piece of perfection, if you understand what you can do with it.\"  Anonymous",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "Walker, Harris & Co.",
+    "name": "Matador",
+    "icon": "https://i.imgur.com/X5NdKxH.png",
+    "talent": "Perfect Adrenaline Rush",
+    "desc": "When you are within 10m of an enemy, gain 23% bonus armor for 5s. Stacks up to 3 times.\n\nCooldown: 5s",
+    "core": "weapon damage",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"I used to dance with death itself, but grew tired of the performance. I think I prefer having the odds stacked against me instead.\" - The Bull",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "Providence Defense",
+    "name": "The Gift",
+    "icon": "https://i.imgur.com/HqmbcCc.png",
+    "talent": "Perfect Vigilance",
+    "desc": "Increases total weapon damage by 25%. \nTaking damage disables buff for 3s",
+    "core": "weapon damage",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"Only after everything has been taken, can you learn to give. When the vessel is full, the soul is empty.\" - Unknown",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "Alps Summit \nArmament",
+    "name": "Percussive Maintenance",
+    "icon": "https://puu.sh/DqdzV.png",
+    "talent": "Perfect Tech Support",
+    "desc": "Skill kills increase total skill damage by 25% for 27s",
+    "core": "skill tier",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"Have you tried turning it off and on again?\"\n(note: don't turn your devices on and off. Use the Restart function to solve problems instead. They have different functions.)",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "Legatus S.p.A.",
+    "name": "Vigil",
+    "icon": "https://imgur.com/KDVMrxo.png",
+    "talent": "Perfect Versatile",
+    "desc": "Amplifies total weapon damage for 10s when swapping between your primary and secondary weapons if they are different.\n\n45% to enemies within 15m for Shotguns and SMG's.\n45% to enemies further than 25m for Rifles and MMR's.\n20% to enemies between 15-25m for LMG's and AR's\nAt most once per 5s per weapon type.",
+    "core": "weapon damage",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"Honor the fallen.\"  ",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "Ceska Vyroba s.r.o",
+    "name": "Devil's Due",
+    "icon": "https://puu.sh/DlKPU.png",
+    "talent": "Perfect Clutch",
+    "desc": "When you are below 20% armor, critical hits repair 2.5% of missing armour. \nOn kill, critical hits repair 2.5% of missing armor for 4 seconds.\nLowest possible repair is 0% armour\n\nEach red core attribute adds 1 second to the time.\nMaximum is 10 seconds.",
+    "core": "weapon damage",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "When he comes calling\nIt's best not be stalling\nOr you might find yourself falling\nDown, down, down below\n- Inscription inside the pack",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "Empress International",
+    "name": "Battery Pack",
+    "icon": "https://puu.sh/DlKPZ.png",
+    "talent": "Perfectly Calculated",
+    "desc": "Kills from cover reduce skill cooldowns by 15%.",
+    "core": "skill tier",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "-",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "Uzina Getica",
+    "name": "The Setup",
+    "icon": "https://i.imgur.com/J5lsDVS.png",
+    "talent": "Perfectly Opportunistic",
+    "desc": " Enemies you hit with shotguns and marksman rifles amplifies the damage they take by 15% from all sources for 5s.",
+    "core": "armor",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "-",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "Hana-U Corporation",
+    "name": "Force Multiplier",
+    "icon": "https://i.imgur.com/9qbtwET.png",
+    "talent": "Perfect Combined Arms",
+    "desc": "Shooting an enemy increases total skill damage by 30% for 3s. ",
+    "core": "skill tier",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"You've got to think about force multipliers in this line of work. You don't always have backup, so make use of what's available.\" - SHD Training Guide",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "Palisade Steelworks",
+    "name": "Proxy",
+    "icon": "https://i.imgur.com/zZMJMGr.png",
+    "talent": "Perfectly Tamper Proof",
+    "desc": "Enemies that walk within 3 meters of your Hive, Turret, Remote Pulse or Decoy are shocked.\r\n\r\nArm time: 2 seconds. Cooldown per Skill: 8 seconds\r\n",
+    "core": "armor",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"Hostile detected. Hostile Eliminated.\" -Alexander Ortiz",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "Shiny Monkey",
+    "name": "Axel",
+    "icon": "https://i.imgur.com/YCX7zqy.png",
+    "talent": "Perfect Energize",
+    "desc": "Using an armor kit grants +1 Skill Tier for 15s. \nIf already at Skill Tier 6, grants Overcharge. \n\nCooldown 30s. ",
+    "core": "skill tier",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"Don't fear your instincts, Society taught you how to fail.\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "Imminence Armaments",
+    "name": "Cap'n",
+    "icon": "https://i.imgur.com/kEfW0sS.png",
+    "talent": "Perfect Leadership",
+    "desc": "Performing a cover to cover grants 20% of your armor as bonus armor to you and all allies for 10s. \nThis is Tripled if you end within 10m of an enemy. \n\nCooldown: 10s.",
+    "core": "weapon damage",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"Get behind me.\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "Grupo Sombra S.A.",
+    "name": "Festive Delivery",
+    "icon": "https://i.imgur.com/0VJnf5D.png",
+    "talent": "Fireworks Show",
+    "desc": "Concussion grenades become Festive Grenades.\n\nHitting an enemy with a Festive Grenade will cause explosions to happen around two other enemies within 20m. 10m in pvp \n\n*Dealing 15% damage in PVP",
+    "core": "weapon damage",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"You get fireworks, and you get fireworks. Everybody gets fireworks!\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "Electrique ",
+    "name": "Henri",
+    "icon": "https://i.imgur.com/gcy4vXQ.png",
+    "talent": "Perfect Companion ",
+    "desc": "While you are within 10m of an ally or skill, total weapon damage is increased by 20%",
+    "core": "skill tier",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"We live together, we learn together, we die together. But, first we make each other stronger.\"  Anonymous",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "Golan Gear",
+    "name": "Hunter-Killer",
+    "icon": "https://i.imgur.com/445bJsn.png",
+    "talent": "Perfect intimidate",
+    "desc": "While you have bonus armour, gain 3 stacks each second up to a max of 10. Each stack increases total weapon damage by 4% to enemies within 10m.\n\nAll stacks are lost when you have no bonus armour.",
+    "core": "armor",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"These guys came out of nowhere. Dressed to kill and armed to the teeth. Turns out, we were the ones they were sent to kill.\" \n- Division Agent",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "Belstone Armory",
+    "name": "Everyday Carrier",
+    "icon": "https://i.imgur.com/Afz5mgp.png",
+    "talent": "Perfectly Efficient",
+    "desc": "Using an armor kit has a 75% chance to not consume the armor kit. Specialization armor kit bonuses are increased by 100%.\n\nRequires 10 seconds to arm talent",
+    "core": "armor",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"What's in my everyday carry? As many armour plates as I can fit\" \n\n- Agent Sanders",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "Walker, Harris & Co.",
+    "name": "Chainkiller",
+    "icon": "https://i.imgur.com/m0FzrVI.png",
+    "talent": "Perfect Headhunter",
+    "desc": "After killing an enemy with a headshot, your next weapon hit within 30s deals 150% of that killing blow’s damage in addition to it.\n\nDamage is capped to 800% of your weapon damage. This is raised to 1250% if your headshot damage is greater than 150%.",
+    "core": "weapon damage",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"Ninety-nine bottles of beer on the wall, ninety-nine bottles of beer. Shoot one down, watch it explode, ninety-eight bottles of beer on the wall...\"\n\n- Bored True Sons Marksman",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "Gila",
+    "name": "Pointman",
+    "icon": "https://i.imgur.com/JNUUDCc.png",
+    "talent": "Perfect Vanguard",
+    "desc": "Deploying a shield makes it invulnerable for 5s and grants 50% of your armor as bonus armor to all other allies for 20s. \n\nCooldown: 25s",
+    "core": "armor",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"Knuckles, Ron, you're with me.  Duchess, you're on point. Here, take this. Maybe it'll save yer ass.\" \n- James Dragov",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "Petrov",
+    "name": "Vedmedytsya Vest",
+    "icon": "https://puu.sh/DqdzT.png",
+    "talent": "Perfect Braced",
+    "desc": "While in cover weapon handling is increased by +50%",
+    "core": "weapon damage",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "Brace yourself. Stand firm against the tide of history.",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "Providence Defense",
+    "name": "The Sacrifice",
+    "icon": "https://i.imgur.com/KFxRoT7.png",
+    "talent": "Perfect Glass Cannon",
+    "desc": "All damage you deal is amplified by 30%. \nAll damage you take is amplified by 60%.",
+    "core": "weapon damage",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"Only after everything has been given, can you expect to receive. When the vessel is empty, the soul is complete.\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "Badger Tuff",
+    "name": "Zero F’s",
+    "icon": "https://puu.sh/DlKPi.png",
+    "talent": "Perfect Unbreakable",
+    "desc": "When your armor is depleted, repair 100% of your armor. \nCooldown: 55s",
+    "core": "armor",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"Behold! The field in which I grow my fucks. Lay thine eyes upon it and see that it is barren.\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "Fenris Group AB",
+    "name": "Ferocious Calm",
+    "icon": "https://i.imgur.com/SPBmcNn.png",
+    "talent": "Perfect Overwatch",
+    "desc": "After staying in cover for 8 seconds, increase your and all allies’ total weapon and skill damage by 14% as long as you remain in cover or in a cover-to-cover move.",
+    "core": "weapon damage",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"The invention of the gun required a redefinition of courage from aggressive ferocity to calmness under fire\" - Robert L . O'Connell",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "Grupo Sombra S.A.",
+    "name": "Door-Kicker’s Knock",
+    "icon": "https://i.imgur.com/SqA0iK2.png",
+    "talent": "Perfect Spark",
+    "desc": "Damaging an enemy with a skill increases total weapon damage by 18% for 20 seconds.",
+    "core": "weapon damage",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"Just drop your seeker and let it go. Don't let the bang trip you up. You've got to prepare for the shock.\" - SHD Training Guide",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "Empress International",
+    "name": "Caesar's Guard",
+    "icon": "https://puu.sh/DlKPr.png",
+    "talent": "Perfectly Skilled",
+    "desc": "Skill kills have a 30% chance to reset skill cooldowns",
+    "core": "skill tier",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "-",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "Uzina Getica",
+    "name": "Closer",
+    "icon": "https://i.imgur.com/iq8Zila.png",
+    "talent": "Perfect Spotter",
+    "desc": "Amplifies total weapon and skill damage by 20% to pulsed enemies.",
+    "core": "armor",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "-",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "Habsburg Guard ",
+    "name": "Cherished",
+    "icon": "https://i.imgur.com/ZYb9PVG.png",
+    "talent": "Perfect Trauma",
+    "desc": "Applies blind to enemy hit in the head. Cooldown 20 seconds. Applies bleed to an enemy hit in the chest. Cooldown 20 seconds ",
+    "core": "armor",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"My gift to you, to protect your sacred heart.\" The Priest",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "Lengmo ",
+    "name": "Carpenter",
+    "icon": "https://i.imgur.com/54L7Cck.png",
+    "talent": "Perfectly Mad Bomber",
+    "desc": "Grenade Radius is increased by 75%\nGrenade that kill an enemy are refunded.\nGrenades can now be ''cooked'' by holding the fire button, making them explode earlier.\nGain 15% bonus armor while aiming grendes",
+    "core": "armor",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"The things i break stay broken.\" - The Stratagist",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "Zwiadowka Sp. z o.o.",
+    "name": "Bober",
+    "icon": "https://imgur.com/RCnXtP0.png",
+    "talent": "Perfect Entrench",
+    "desc": "If you are below 30% Armor, headshots from cover repair 30% of your armor. Cooldown 2 seconds.",
+    "core": "weapon damage",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"No way they can get me in this.\" - Diesel",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "Airaldi Holdings",
+    "name": "Pristine Example",
+    "icon": "https://i.imgur.com/TBuSBVk.png",
+    "talent": "Perfect Focus",
+    "desc": "Increases total weapon damage by 6% every second you are aiming while scoped 8x or higher, up to 60%.",
+    "core": "weapon damage",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"Only the first shot is clean. Everything after that is just messy.\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "Urban Lookout",
+    "name": "Sleight",
+    "icon": "",
+    "talent": "Perfect Protected Reload",
+    "desc": "Grants +40% bonus armor while reloading.\n\nGrants 0-30% of your armor as bonus armor to all other allies when they are reloading, based on your Blue core attribute.",
+    "core": "weapon damage",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"I'm feeling generous.\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "Palisade Steelworks",
+    "name": "Combustor",
+    "icon": "https://i.imgur.com/vVDISvN.png",
+    "talent": "Perfectly Explosive Delivey",
+    "desc": "Whenever you throw a skill, 1.5 seconds after landing, it creates an explosion damaging enemies within 5m. \nAfterwards explosions will occur evey 5s.\n\nDamage scales with skill tier dealing 25-100% damage of a concussion grenade. \n\nOccurs once per skill. \n\nApplies to Remote Pulse, All Turrets, All Hives, Explosive Seeker, Cluster Seeker, Mender Seeker, Decoy, All Traps.",
+    "core": "armor",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"My operatives would never be left alone in the field\" - Natalya Sokolova",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "Unit Alloys",
+    "name": "Equalizer",
+    "icon": "",
+    "talent": "Perfect Obliterate",
+    "desc": "Critical hits increase total weapon damage by 1% for 10s. Stacks up to 24 times.",
+    "core": "weapon damage",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Gloves",
+    "brand": "5.11 Tactical",
+    "name": "Deathgrips",
+    "icon": "",
+    "talent": "",
+    "desc": "Armor on Kill",
+    "core": "armor",
+    "minor1": {
+      "armor on kill": 10
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {},
+    "notes": "\"Most people are white-knuckling their way through life, sterss levels off the charts. Working dead-end jobs paying off their loans, student debts and fucking lattes. \nThat shit will kill you without clarity in your life, and nothing brings clarity like hanging off the side of a mountain.\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Gloves",
+    "brand": "Petrov",
+    "name": "Contractor’s Gloves",
+    "icon": "",
+    "talent": "",
+    "desc": "Damage to Armor",
+    "core": "weapon damage",
+    "minor1": {
+      "damage to armor": 8
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {},
+    "notes": "\"Never met a man I couldn't break. Apply enough pressure on a small enough point, and anything cracks.\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Gloves",
+    "brand": "Alps Summit \nArmament",
+    "name": "Motherly Love",
+    "icon": "",
+    "talent": "",
+    "desc": "Skill Health",
+    "core": "skill tier",
+    "minor1": {
+      "skill health": 25
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {},
+    "notes": "\"Life is horrible. Once you realise that, it's easier to appreciate the moments that are the exceptions. Makes it all a bit more realistic to endure.\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Gloves",
+    "brand": "Zwiadowka Sp. z o.o.",
+    "name": "Eagles Grasp",
+    "icon": "",
+    "talent": "",
+    "desc": "Weapon Handling",
+    "core": "weapon damage",
+    "minor1": {
+      "weapon handling": 15
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {},
+    "notes": "\"Just wait until I get my hands on them.\" \n- Saint",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Gloves",
+    "brand": "Sokolov Concern",
+    "name": "Firm Handshake",
+    "icon": "",
+    "talent": "",
+    "desc": "Extra Status effect",
+    "core": "weapon damage",
+    "minor1": {
+      "status effects": 16
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {},
+    "notes": "\"You can tell a lot about a person from their handshake. It's also a great pathogenic delivery system.\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Holster",
+    "brand": "Richter & Kaiser",
+    "name": "Forge",
+    "icon": "",
+    "talent": "",
+    "desc": "Shield Health",
+    "core": "skill tier",
+    "minor1": {
+      "shield health": 50
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {},
+    "notes": "\"The space in between is where you want to be. Not the hammer. Not the anvil. You are the impact, \nthe energy, the potential. Bend or break, you will find purpose. And in purpose, there is truth.\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Holster",
+    "brand": "Badger Tuff",
+    "name": "Ammo Dump",
+    "icon": "",
+    "talent": "",
+    "desc": "Ammo Capacity",
+    "core": "armor",
+    "minor1": {
+      "ammo capacity": 10
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "notes": "\"Whaddya mean yer outta ammo? Dig around in that mess you call a holster and find something to shove in your gun and shoot!\" \n- True Sons platoon leader",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Holster",
+    "brand": "Brazos de Arcabuz ",
+    "name": "Picaros Holster",
+    "icon": "",
+    "talent": "",
+    "desc": "Weapon Damage Minor Stat",
+    "core": "armor",
+    "minor1": {
+      "weapon damage": 10
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {},
+    "notes": "-",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Holster",
+    "brand": "Urban Lookout",
+    "name": "Spot-On",
+    "icon": "",
+    "talent": "",
+    "desc": "Accuracy ",
+    "core": "weapon damage",
+    "minor1": {
+      "accuracy": 38
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {},
+    "notes": "\"It's all in the hip.\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Holster",
+    "brand": "Unit Alloys",
+    "name": "Salvo",
+    "icon": "",
+    "talent": "",
+    "desc": "Rate of Fire",
+    "core": "weapon damage",
+    "minor1": {
+      "rate of fire": 5
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {},
+    "notes": "",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Holster",
+    "brand": "Wyvern Wear",
+    "name": "Claws Out",
+    "icon": "",
+    "talent": "",
+    "desc": "Melee Damage + Pistol Damage",
+    "core": "skill tier",
+    "minor1": {
+      "melee damage": 500
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "Pistol Damage": 11
+    },
+    "notes": "\"Rip and tear!\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Knees",
+    "brand": "Overlord Armaments",
+    "name": "Fox’s Prayer",
+    "icon": "",
+    "talent": "",
+    "desc": "Damage to Targets Out of Cover",
+    "core": "weapon damage",
+    "minor1": {
+      "damage to out of cover": 8
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {},
+    "notes": "\"Ever heard of an atheist in a foxhole? Me neither.\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Knees",
+    "brand": "Electrique ",
+    "name": "Snow Machine",
+    "icon": "",
+    "talent": "Flurry",
+    "desc": "status effects apply snowfall to target",
+    "core": "skill tier",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "notes": "\"Like our friends down under, if we want snow on Christmas we have to make it ourselves\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Knees",
+    "brand": "Ceska Vyroba s.r.o",
+    "name": "Turmoil",
+    "icon": "https://i.imgur.com/hMvRHvT.png",
+    "talent": "Bewildered",
+    "desc": "When dealing Weapon Damage to an enemy, 50% of the damage will be dealt to another enemy within 30m instead. When there are no enemies nearby, deal damage normally. Does not apply to Armor Plates",
+    "core": "weapon damage",
+    "minor1": {
+      "critical hit damage": 12
+    },
+    "minor2": {
+      "critical hit chance": 6
+    },
+    "minor3": {},
+    "notes": "Never let them know your next move.",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Knees",
+    "brand": "Murakami Industries",
+    "name": "Emperor’s Guard",
+    "icon": "",
+    "talent": "",
+    "desc": "% Armor Regen",
+    "core": "skill tier",
+    "minor1": {
+      "armor regen": 1
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {},
+    "notes": "\"Fall down seven times, get up eight.\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Knees",
+    "brand": "Shiny Monkey",
+    "name": "Grease",
+    "icon": "",
+    "talent": "",
+    "desc": "Extra Status effect",
+    "core": "skill tier",
+    "minor1": {
+      "status effects": 16
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {},
+    "notes": "\"I'm not in danger, you're in danger\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Knees",
+    "brand": "Imminence Armaments",
+    "name": "Cloak",
+    "icon": "",
+    "talent": "",
+    "desc": "% Reduced Threat",
+    "core": "weapon damage",
+    "minor1": {
+      "reduced threat": 50
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {},
+    "notes": "\"No sudden movements.\"",
+    "isExotic": false,
+    "icon2": ""
+  },
+  {
+    "type": "Mask",
+    "brand": "",
+    "name": "Vile",
+    "icon": "https://i.imgur.com/96SjUgf.png",
+    "talent": "Toxic Delivery",
+    "desc": "Status effects also apply a damage over time debuff for 10s.  \n\nTotal Damage dealt is equal to 50% of your concussion grenade damage and increased by your status effect attributes.",
+    "core": "skill tier",
+    "minor1": {
+      "status effect": 5
+    },
+    "minor2": {
+      "hazard protection": 10
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"You cling to life like a rebellious teen resisting curfew. But death is patient... and so am I.\" \n\n- Dr Vilis, BTSU Physician",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Mask",
+    "brand": "",
+    "name": "Catharsis",
+    "icon": "https://i.imgur.com/1quXSH4.png",
+    "talent": "Vicious Cycle",
+    "desc": "Taking damage builds stacks to a cap of 30. Each stack grants 1.5% Weapon Damage. Taking damage at max stacks triggers a purge, removing all stacks and Status Effects and then dropping a healing cloud which restores 5% of Max Armor for 10s to all allies in the cloud. ",
+    "core": "armor",
+    "minor1": {
+      "incoming repair": 7.8
+    },
+    "minor2": {
+      "armor regen": 4925
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"The establishment does everything in its power to ensure that revolutionary rage is redirected into empty outlets which provide pressure releases for \ndesires that could become dangerous if allowed to progress\" \n\n-George L. Jackson",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Mask",
+    "brand": "",
+    "name": "Coyote’s Mask",
+    "icon": "https://i.imgur.com/AHF79yr.png",
+    "talent": "Pack Instincts",
+    "desc": "You and all allies gain a bonus based on the distance of the last enemy you hit.\n\n0-15m: +25% critical hit damage\n15-25m: +10% critical hit chance and +10% critical hit damage\n25m+: +25% critcal hit Chance",
+    "core": "weapon damage",
+    "minor1": {
+      "critical hit chance": 1.2
+    },
+    "minor2": {
+      "critical hit damage": 12
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"Lived through this bullet. I'll live through yours.\" \n- Coyote\n\n- Do not bother farming for this exotic through Coyote at Jefferson Trade Centre. Instead, farm Countdown with mask targeted loot. It is more efficient.\n- The Jefferson Trade Centre mission becomes tragic when you realise that Espinoza is one of Agent Kelso's few trusted friends in DC.\n- Agent Kelso was overly confident that Coyote wouldn't kill Espinoza not because she didn't care, but because she was in denial and couldn't believe\nthat anything bad could happen to him.\n- Kelso and Espinoza's backstory can be heard on the Embassy classified assignment collectibles. Click on this cell to watch a video of that mission.\n-A group member can receive all 3 damage buffs at the same time, However, a group member can only have 1 of each damage buff at a time\n(e.g. if there are 2 CQC players, you will still only get +25% critical hit damage)",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Mask",
+    "brand": "",
+    "name": "Catalyst",
+    "icon": "https://i.imgur.com/W1u7ME1.png",
+    "talent": "Chemical Agent",
+    "desc": "Catalysis\nDealing and recieving status effects (Burn, Bleed, Shock, EMP/Disrupt, Poison and blind/disorient) builds stacks of Catalysis to a maximum of 12. each stack grants:\n+2% Weapon Damage\n+2% Status Effects\n\nEach enemy within 25 Meters that is affected by a status effect grants +1 stack/sec. Being affectedby status effects grants +2 stacks/sec. \nStacks decay at 1 stac/sec after 5s if no enemies in the radius or you are affected by status effects.\n\nReactant\nAt max stacks, killing a status-affected enemy grants bonuses for 5s:\n+25% bonus armor\n+20% reload speed\n\nStabilizer\nWhile burning, you can maintain ADS without disruption.",
+    "core": "weapon damage",
+    "minor1": {
+      "hazard protection": 5
+    },
+    "minor2": {
+      "status effect": 10
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"We're still being tested. The only constant variable is fire\"\n\n\n-the status effect that give stacks do not include foam",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Mask",
+    "brand": "",
+    "name": "Tinkerer",
+    "icon": "https://i.imgur.com/RW8ai8x.png",
+    "talent": "Abridged",
+    "desc": "If your Primary and Secondary weapon are not Exotic or Named and of the same type, the Secondary Weapon's talent will also be applied to the Primary Weapon.\n\nDoesn't apply to talents that include Weapon Swapping.",
+    "core": "weapon damage",
+    "minor1": {
+      "critical hit chance": 1.2
+    },
+    "minor2": {
+      "critical hit damage": 12
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"Why not both.\"",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "",
+    "name": "Acosta's Go-Bag",
+    "icon": "https://i.imgur.com/s34JQT2.png",
+    "talent": "One in the Hand...\n\n\n\n\n...Two in the bag",
+    "desc": "Throwing a grenade refunds it and grants +1 skill tier for 15s. \nGrants overcharge if already at skill tier 6\n\nCooldown: 60s\n\n+1 Armor Kit Capacity\n+3 Grenade Capacity\n+25% Ammo Capacity\n+10% Repair-Skills\n+10% Status Effects",
+    "core": "skill tier",
+    "minor1": {
+      "skill damage": 15
+    },
+    "minor2": {
+      "skill haste": 12
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"You never know what you're going to need, so it's best to be prepared.\" \n- Eva Acosta, Urban Spelunker\n\n- This backpack can drop with a variety of strap colours, namely red, green and purple. Gotta collect them all!\n- Eva Acosta is a character from Division 1 who left audio logs all over the city detailing her exploration. Due to the nature of what she sees, these logs get \nincreasingly disturbing. Click on this cell to listen to Eva's logs.\n- Eva does not seem to be associated with any organsation, and even her spelunking crew seems to be a group of friends. It is evident, however, that she has\nlived in New York all her life and cares deeply about well being of the city. For this reason, I chose to use a symbol from a redesign of the New York flag.\n- The full redesigned New York flag is from r/Vexillology",
+    "isExotic": true,
+    "icon2": "https://i.imgur.com/s34JQT2.png"
+  },
+  {
+    "type": "Backpack",
+    "brand": "",
+    "name": "Birdie's Quick Fix Pack",
+    "icon": "https://i.imgur.com/yIlE6q9.png",
+    "talent": "Combat Medic",
+    "desc": "+80% Revive Speed\n-50% Weakened Debuff timer\n+45% Hive efficiency\nProvides +50% damage resistance to both agents while reviving or being revived, and for 5s after a successful Hive Revive, or 10s after a Manual Revive. Any successful revives provide  +1 Skill tier for 5s. Revives at skill tier 6 grant Overcharge for 15s.",
+    "core": "skill tier",
+    "minor1": {
+      "skill haste": 6
+    },
+    "minor2": {
+      "repair skills": 20
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"Get up, we're out of body bags.\"",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "",
+    "name": "Memento",
+    "icon": "https://i.imgur.com/j9OeN4i.png",
+    "talent": "Kill Confirmed",
+    "desc": "Enemies you kill drop a trophy on death. Collecting trophies provides both a short and long term buff, the first of which scales with the number of core attributes equipped and lasts 10s.\n\nRed Core - 5% Weapon Damage\nBlue Core - 10% Bonus Armor\nYellow Core - 5% Skill Effciency\n\nFor every trophy collected gain an additional +1% weapon damage, +1% skill efficiency and +0.1% armor regeneration for 300s\n\nMaximum 30 stacks",
+    "core": "weapon damage",
+    "minor1": {
+      "armor": 170000
+    },
+    "minor2": {
+      "skill": 1
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"I took from those who watched, hunted, and collected, until only tgheir shadows remained. Now my watch has ended, so yours may begin.\"\n\n- Inscription by an unknown author\n\n\n- The name \"Memento\" is a reference to  the fact that Hunters keep watches of Agents they have killed as sick mementos. \n- The axes on the backpack are Hunter axes. These Crash Axes, the same ones found in planes. While usually used for breaching and rescue, \nHunters use these axes to melee Agents who get too close.\n- +5% Skill Efficiency grants +5% of every yellow minor attribute (skill haste, status effects, skill health...). +1% Skill Efficiency grants +1%.\n- Memento is suspiciously similar to Prism Gloves, a joke exotic posted by Azurmen32 to the Division 2 subreddit. This is part of a running gag about \nrainbow roll items being good.",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Backpack",
+    "brand": "",
+    "name": "NinjaBike \nMessenger Backpack",
+    "icon": "https://i.imgur.com/ePsaHve.png",
+    "talent": "Resourceful",
+    "desc": "\nSlots in with any equipped Gear Set and/or \nBrand Set item to fulfill a requirement towards \nunlocking a Gear and/or Brand Sets bonus. \nCan unlock bonuses from multiple sets \nsimultaneously.",
+    "core": "weapon damage",
+    "minor1": {
+      "armor": 170000
+    },
+    "minor2": {
+      "skill": 1
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"From the depths of hell, this has been resurrected as if it cannot die.\" The Priest",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "",
+    "name": "Collector",
+    "icon": "https://i.imgur.com/Oc9c8gg.png",
+    "talent": "Hoarder",
+    "desc": "+3 Grenade Capacity\n+50% Grenade Radius\n+35% Grenade Damage\n+25% Grenade Damage for each extra enemy caught in the blast\nAutomatically regenerate grenades every 30s, if you have less than 2 grenades in your inventory.",
+    "core": "weapon damage",
+    "minor1": {
+      "critical hit chance": 1.2
+    },
+    "minor2": {
+      "critical hit damage": 12
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"Let's see the Division glue you back together after this.\"\n- The Strategist",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "",
+    "name": "Provocator",
+    "icon": "https://i.imgur.com/UVJByEl.png",
+    "talent": "Challenger",
+    "desc": "Recieve +25% Damage resistance from enemies within 20m",
+    "core": "armor",
+    "minor1": {
+      "armor regen": 4925
+    },
+    "minor2": {
+      "hazard protection": 10
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"One does not simply wear red into battle. A red knight is not afraid but ready to provoke .\" - Anonymous",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "",
+    "name": "Beacon",
+    "icon": "",
+    "talent": "Bond",
+    "desc": "Both you and Allies receive +30% Critical Hit Damage, +15% Skill Efficiency and +2% Armor Regen when an Ally is within 10 m of you.\n\nReceive +15% Critical Hit Damage, +7.5% Skill Efficiency and +1% Armor Regen when one of your Skills is within 10m of you.\n\nOnly the highest group of buffs can be active at one time.",
+    "core": "weapon damage",
+    "minor1": {
+      "critical hit chance": 1.2
+    },
+    "minor2": {
+      "critical hit damage": 12
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "With Me.",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "",
+    "name": "Tardigrade \nArmor System",
+    "icon": "https://i.imgur.com/Vrao5D4.png",
+    "talent": "Ablative Nano-Plating",
+    "desc": "Whenever you or any ally's armor breaks, they gain 80% of your armor as bonus armor for 10s.\n\nCooldown per ally: 45s\n\nKilling an enemy with your specialization weapon removes this cooldown for all allies.",
+    "core": "armor",
+    "minor1": {
+      "armor regen": 4925
+    },
+    "minor2": {
+      "explosive resist": 10
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "An evolution of the reactive armour concept, ablative nano-plating was initially designed as a prototype technology for self-repairing heat shields on aircraft repeatedly entering and exiting planetary atmospheres.\n\n- This is a science fiction version of ablative heat shielding, which is used primarily on spacecraft. The earliest description of this technology is\nfound in Robert H. Goddard's 1920 letter to the Smithsonian Institution, hence the faction logo. Goddard pioneered much of the technology used in modern space\nexploration, and a lot of his research was made possible through a grant from the Smithsonian Instiitution.\n- In reality self-repairing materials exist, but ablative heat shields do not self-repair. Instead, they are made in a manner which allows them to sustain greatly \ndecreased wear from atmospheric re-entry.",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Chest",
+    "brand": "",
+    "name": "Ridgeway's Pride",
+    "icon": "https://i.imgur.com/Vrao5D4.png",
+    "talent": "Bleeding Edge",
+    "desc": "Shooting enemies within 15m applies bleed to the target.\n\nRepair 3-48% of your armor per second for every enemy that is bleeding within 15m.\n\nRepair strength per number of bleeding enemies:\n\n1:3% 2:6% 3:12% 4:24% 5:48%",
+    "core": "weapon damage",
+    "minor1": {
+      "critical hit chance": 1.2
+    },
+    "minor2": {
+      "critical hit damage": 12
+    },
+    "minor3": {
+      "critical hit chance": 6,
+      "critical hit damage": 12,
+      "headshot damage": 10,
+      "protection from elites": 13,
+      "armor on kill": 18935,
+      "status effect resistance": 10,
+      "pulse resistance": 10,
+      "incoming repairs": 20,
+      "skill haste": 12,
+      "skill duration": 10,
+      "repair skills": 20
+    },
+    "notes": "\"You can tell a lot about a man by the way he bleeds. Me? I bleed for my country, and nothing else.\" \n\n- General Antwon Ridgeway",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Gloves",
+    "brand": "",
+    "name": "Bloody Knuckles",
+    "icon": "",
+    "talent": "Over the top",
+    "desc": "Damaging an enemy with a grenade or striking an enemy with a melee attack, activates Seeing Red. \n\nSeeing Red grants +25% weapon damage and +100% melee damage. \n\nSeeing Red lasts 20 seconds and starts a 60 second cooldown after completion.\n\nWhile in cooldown, damaging an enemy with a melee attack or hitting an enemy with the effect of a grenade will complete the cooldown instantly.\n\nEditor's note: the 25% \"weapon damage\" buff actually gives total weapon damage.",
+    "core": "weapon damage",
+    "minor1": {
+      "critical hit chance": 1.2
+    },
+    "minor2": {
+      "critical hit damage": 12
+    },
+    "minor3": {},
+    "notes": "\"A broken watch is still a good memento.\" 13",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Gloves",
+    "brand": "",
+    "name": "BTSU Datagloves",
+    "icon": "https://i.imgur.com/8IwfXPP.png",
+    "talent": "Transference Overclock",
+    "desc": "Grants 15% Hive skill haste per skill tier.\n\nDetonating a hive refreshes your skill cooldowns and grants overcharge for 15s. \nIf at Skill Tier 6, this effect also applies to all allies.\n\nAllies recieving this effect are unable to benefit from it again for 120s",
+    "core": "skill tier",
+    "minor1": {
+      "skill haste": 6
+    },
+    "minor2": {
+      "skill repair": 20
+    },
+    "minor3": {},
+    "notes": "\"Pop always told me 'son, you're only as good as the tools you work with.' So I chose to work with the organisation with the best tools.\" \n- Galveston\n\n- Galveston is the endboss of Camp White Oak, and was in charge of keeping track of President Ellis\n- In real life, judging from crow's flight distance, Camp White Oak is most likely Camp David. This camp is a Presidental retreat, which makes the fact that the \nPresident retreated here a clever pun.",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Gloves",
+    "brand": "",
+    "name": "Exodus Gloves",
+    "icon": "https://i.imgur.com/7XXAiNb.png",
+    "talent": "Smoke Screen",
+    "desc": "On Armor break, drop a Smoke Bomb at your feet, concealing you from enemies for 3s.\nCooldown: 40s",
+    "core": "weapon damage",
+    "minor1": {
+      "critical hit chance": 1.2
+    },
+    "minor2": {
+      "critical hit damage": 12
+    },
+    "minor3": {},
+    "notes": "\"I'd like to make a withdrawal.\"",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Gloves",
+    "brand": "",
+    "name": "Overdogs",
+    "icon": "",
+    "talent": "Weakest Link",
+    "desc": "Amplifies Weapon Damage by 30% to the lowest ranking enemies currently in combat, as per the Tier hierarchy.\n\nTier 1: Hunter, Rogue, Leader, Tank, Shield, Heavy Weapons, RPG, Medic, Controller, Warhound, Marauder.\nTier 2: Support, Engineer, Bodyguard, Immobilizer, Bomber, Mini Tank, Drone Operator.\nTier 3: Any other enemy or skill proxy.",
+    "core": "weapon damage",
+    "minor1": {
+      "critical hit chance": 1.2
+    },
+    "minor2": {
+      "critical hit damage": 12
+    },
+    "minor3": {},
+    "notes": "\"Start from the bottom and make your way up.\"\n\nNote: Tier 3 is lowest, tier 1 is highest.",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Gloves",
+    "brand": "",
+    "name": "Rugged Gauntlets",
+    "icon": "https://i.imgur.com/Ix5kCQO.png",
+    "talent": "Iron Grip",
+    "desc": "-50% Recoil Penalty when hip-firing.\n\n-50% Recoil Penalty when blind-firing from cover.",
+    "core": "weapon damage",
+    "minor1": {
+      "critical hit chance": 1.2
+    },
+    "minor2": {
+      "critical hit damage": 12
+    },
+    "minor3": {},
+    "notes": "\"Can't say I invented this, but at least I had a hand in it.\" \n- Calvin McManus",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Holster",
+    "brand": "",
+    "name": "Centurion Scabbard",
+    "icon": "https://imgur.com/l4RkTUT.png",
+    "talent": "Counter",
+    "desc": "Swapping weapons will give the following groups of bonuses one by one, in order:\n\n1. +20% Rate of Fire, +20% Weapon Damage\n2. +50% Magazine Size, +50% Reload Speed\n\nThe bonuses remain active for 12s or until the next weapon swap. \nSwapping to your sidearm will not trigger the next group of bonuses.",
+    "core": "weapon damage",
+    "minor1": {
+      "critical hit chance": 1.2
+    },
+    "minor2": {
+      "weapon handling": 8
+    },
+    "minor3": {},
+    "notes": "\"it's better ti have more than one gun in your holster.\"",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Holster",
+    "brand": "",
+    "name": "Dodge City\nGunslinger's Holster",
+    "icon": "https://i.imgur.com/6ycuPp0.png",
+    "talent": "Ouick Draw",
+    "desc": "While your pistol is holstered, gain a stacking buff every 0.3s, up to 100.\n\nWhen you swap to it, your first shot consumes the buff and deals +10% damage per stack.  This deals headshot damage to anywhere you hit.\n\nREQUIRES\nPistol Equipped",
+    "core": "weapon damage",
+    "minor1": {
+      "weapon handling": 8
+    },
+    "minor2": {
+      "headshot damage": 10
+    },
+    "minor3": {},
+    "notes": "\"Fast is fine, but accuracy is everything. In a gunfight... You need to take your time in a hurry.\" \n\n- Wyatt Earp\n\n-Blueprint flavour text: Ed managed to put together this retro-modern holster blueprint using the parts we found, and some more modern gear.\n- Dodge City is an administrative name for Ford County, Kansas. It is famous for being a \"wild west\" town in the past.\n- Its seal features the Texas Longhorn Steer, a species of cattle that were brought to the town from Texas. In fact, the town was unintentionally created by a\nrancher of these cattle.",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Holster",
+    "brand": "",
+    "name": "Imperial Dynasty",
+    "icon": "https://i.imgur.com/bJ4dJvq.png",
+    "talent": "Dragon's Glare",
+    "desc": "While in combat, applies burn to the enemy closest to you within 20m.\n\nCooldown: 35s",
+    "core": "skill tier",
+    "minor1": {
+      "status effects": 5
+    },
+    "minor2": {
+      "hazard protection": 10
+    },
+    "minor3": {},
+    "notes": "\"Symbols are important. Look at the phoenix you wear on your sleeve. The dragon bears a similar significance to me.\" \n- Faye Lau\n\n- SPOILERS AHEAD\n- The Lau (or Liu) family was the ruling family of the Han Dynasty in ancient China. The ancient Chinese were deeply superstitious and the founder of the Han \nDynasty, Liu Bang, claimed that he was conceived after his mother dreamt of a dragon. This was a clever move considering that in ancient China,  dragons were a \nsymbol of imperial power and represented the Emperor. \n- The dragon bears a significance to Faye because just like the Han rebellion in ancient China, she believes that she will wipe out The Division take control.",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Holster",
+    "brand": "",
+    "name": "Shocker Punch",
+    "icon": "https://i.imgur.com/wo5wDL4.png",
+    "talent": "Defibrillator",
+    "desc": "While \"Shocker Punch\" is equipped, the stun received by the agent from the Shock status effect will be reduced by 50%.\n\nUsing a shield will give 100% to melee damage.\n\nUsing St. Elmo's Engine with the holster will give 100% extra melee damage and will make the next melee attack apply shock to the target. \n\nUsing all three items will offer all of the above mentioned bonuses and the Shock from the melee attack will have a 5m radius, starting from the first target. \n\n15 second cooldown.",
+    "core": "armor",
+    "minor1": {
+      "explosive resist": 1
+    },
+    "minor2": {
+      "hazard protection": 10
+    },
+    "minor3": {},
+    "notes": "\"After getting sucker punched at the mall, I came up with a shocking solution.\" Anonymous",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Holster",
+    "brand": "",
+    "name": "Waveform",
+    "icon": "https://i.imgur.com/VC6Anj3.png",
+    "talent": "Alternating Current",
+    "desc": "Generate a stack of 3% skill damage on one of your skills every second, capping at 10 stacks. After 10 seconds at the cap the stacks transfer to your other skill. The process then repeats ad-infinitum",
+    "core": "skill tier",
+    "minor1": {
+      "skill damage": 15
+    },
+    "minor2": {
+      "skill haste": 12
+    },
+    "minor3": {},
+    "notes": "Graphite layers are suffused throughout the holster kevlar weave, that when the wearer moves creates an inductive oscillating electromagnetic field. This field allows for remote charging of electrical devices.",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Holster",
+    "brand": "",
+    "name": "Nimble Holster",
+    "icon": "https://i.imgur.com/SzkrnMn.png",
+    "talent": "Bob and Weave",
+    "desc": "Receive repairs of 5% of your Total Armor for every 1m run in cover-to-cover. Damage taken while doing a cover-to-cover is healed over 10s.",
+    "core": "weapon damage",
+    "minor1": {
+      "critical hit chance": 1.2
+    },
+    "minor2": {
+      "critical hit damage": 12
+    },
+    "minor3": {},
+    "notes": "\"Run for your life.\"",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Knees",
+    "brand": "",
+    "name": "Sawyer's Kneepads",
+    "icon": "https://i.imgur.com/a24EX8B.png",
+    "talent": "Stand Your Ground",
+    "desc": "Cannot be staggered by explosions.\n\nIncreases total weapon damage by 3% each second you are not moving.\nStacks up to 10 until you start moving.  All stacks lost 10s after moving.",
+    "core": "armor",
+    "minor1": {
+      "explosive resist": 1
+    },
+    "minor2": {
+      "health": 18935
+    },
+    "minor3": {},
+    "notes": "\"When I lost my leg, I thought that was it for me. But I found new purpose. I rose, just like the phoenix on my patch. Now it's time for these to find new purpose.\"\n\n- Odessa Sawyer\n\n- There is a deep irony in the fact that Odessa lost her leg to a sniper, causing her kneepads to become an exotic with a talent that greatly benefits players who \nuse sniper rifles.\n- Stand Your Ground does NOT cause players to ignore mortars in the Morozova fight.",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Knees",
+    "brand": "",
+    "name": "Acosta Kneepads",
+    "icon": "https://imgur.com/K29Zuid.png",
+    "talent": "Escape Plan",
+    "desc": "Vaulting grants +10% Movement Speed for 3s. \nAfter not moving for 5s, recieve +20% Movement Speed for 5s.\nBeing applied a Stutus Effect grants +10% Movement Speed for 5s.\nMax Movement Speed bonus is 20%. The bonuses do not stack with Movement Speed bonuses from other sources.\n-50% Movement Impairment penalty from Status Effects.",
+    "core": "armor",
+    "minor1": {
+      "damage to armor": 6
+    },
+    "minor2": {
+      "damage to armor": 6,
+      "critical hit chance": 9.5,
+      "health damage": 9.5,
+      "dmg to target out of cover": 10,
+      "headshot damage": 10,
+      "critical hit damage": 10,
+      "reload speed": 12,
+      "stability": 12,
+      "accuracy": 12,
+      "optimal range": 24,
+      "magazine size": 12.5,
+      "rate of fire": 5,
+      "swap speed": 15
+    },
+    "minor3": {},
+    "notes": "\"They got they asses caught by the JTF, but they don't have my mad parkour skills.\"\n- Eva Acosta",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Knees",
+    "brand": "",
+    "name": "Blacklisters",
+    "icon": "",
+    "talent": "Ostracize",
+    "desc": "Shooting an enemy applies a mark. Only one mark can be active at a time. The mark disappears after 15s, or when the marked enemy dies. Recieve 600% Amplified Damage from the marked enemy. Deal 20% Amplified Damage to unmarked enemies. If only one enemy remains in combat, the mark disappears and cannot be reapplied.",
+    "core": "weapon damage",
+    "minor1": {
+      "critical hit chance": 1.2
+    },
+    "minor2": {
+      "critical hit damage": 12
+    },
+    "minor3": {},
+    "notes": "Screw that one guy in particular.",
+    "isExotic": true,
+    "icon2": ""
+  },
+  {
+    "type": "Knees",
+    "brand": "",
+    "name": "NinjaBike \nMessenger Kneepads",
+    "icon": "https://i.imgur.com/sXoLFXK.png",
+    "talent": "Parkour!",
+    "desc": "Performing a cover to cover or vaulting reloads your drawn weapon and grants +25% bonus arrmor for 5s.",
+    "core": "weapon damage",
+    "minor1": {
+      "critical hit chance": 1.2
+    },
+    "minor2": {
+      "critical hit damage": 12
+    },
+    "minor3": {},
+    "notes": "\"Parkour! Parkour!\" \n- an over-enthusiastic NinjaBike messenger\n\n- I've worked 2 messenger jobs so far and I haven't met one person who knows how to do parkour\n- I haven't met anyone who wears kneepads, either.\n- NinjaBike doesn't exist, but Ninjavan is a real company.\n- The type of vault that players do in game is most likely a clunky version of a speed vault, modified due to carrying a heavy backpack.",
+    "isExotic": true,
+    "icon2": ""
+  }
+]

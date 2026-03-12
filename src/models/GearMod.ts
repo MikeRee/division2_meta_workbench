@@ -1,4 +1,5 @@
 import { CoreType } from "./CoreValue";
+import { parseEnum } from '../utils/enumParser';
 
 /**
  * Classification enum for gear mods
@@ -10,6 +11,14 @@ export enum GearModClassification {
 }
 
 /**
+ * Parse a string into GearModClassification enum
+ * @throws Error if value is not a valid GearModClassification
+ */
+export function parseGearModClassification(value: string | GearModClassification): GearModClassification {
+  return parseEnum(value, GearModClassification, 'GearModClassification');
+}
+
+/**
  * GearMod model representing a gear modification type
  */
 class GearMod {
@@ -17,26 +26,17 @@ class GearMod {
   attribute: string;
   max: number;
 
+  static readonly FIELD_TYPES = {
+    classification: 'GearModClassification',
+    attribute: 'string',
+    max: 'number'
+  } as const;
+
   constructor({ classification, attribute, max }: { classification?: string; attribute?: string; max?: string | number }) {
-    // Parse classification
-    this.classification = this.parseClassification(classification);
+    // Parse classification - will throw error if invalid
+    this.classification = parseGearModClassification(classification || 'offensive');
     this.attribute = (attribute || '').toLowerCase();
     this.max = typeof max === 'number' ? max : parseFloat(max || '0');
-  }
-
-  private parseClassification(value?: string): GearModClassification {
-    const normalized = (value || '').trim().toLowerCase();
-    
-    switch (normalized) {
-      case 'offensive':
-        return GearModClassification.Offensive;
-      case 'defensive':
-        return GearModClassification.Defensive;
-      case 'skill':
-        return GearModClassification.Skill;
-      default:
-        return GearModClassification.Offensive; // Default fallback
-    }
   }
 
   /**

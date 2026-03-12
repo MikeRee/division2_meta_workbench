@@ -1,11 +1,20 @@
-import { CoreType, CoreValue, getDefaultCoreValue } from './CoreValue';
+import { CoreType, CoreValue, getDefaultCoreValue, parseCoreType } from './CoreValue';
 import { GearModValue } from './GearMod';
+import { parseEnum } from '../utils/enumParser';
 
 export enum GearSource {
   Brandset = 'brandset',
   Gearset = 'gearset',
   Named = 'named',
   Exotic = 'exotic'
+}
+
+/**
+ * Parse a string into GearSource enum
+ * @throws Error if value is not a valid GearSource
+ */
+export function parseGearSource(value: string | GearSource): GearSource {
+  return parseEnum(value, GearSource, 'GearSource');
 }
 
 export enum GearType {
@@ -17,10 +26,18 @@ export enum GearType {
   Kneepads = 'kneepads'
 }
 
+/**
+ * Parse a string into GearType enum
+ * @throws Error if value is not a valid GearType
+ */
+export function parseGearType(value: string | GearType): GearType {
+  return parseEnum(value, GearType, 'GearType');
+}
+
 interface BuildGearData {
   name?: string;
-  source: GearSource;
-  type?: GearType | null;
+  source: GearSource | string;
+  type?: GearType | string | null;
   icon?: string;
   core?: CoreValue;
   minor1?: GearModValue | null;
@@ -38,6 +55,17 @@ class BuildGear {
   minor2: GearModValue | null;
   minor3: GearModValue | null;
 
+  static readonly FIELD_TYPES = {
+    name: 'string',
+    source: 'GearSource',
+    type: 'GearType | null',
+    icon: 'string',
+    core: 'CoreValue',
+    minor1: 'GearModValue | null',
+    minor2: 'GearModValue | null',
+    minor3: 'GearModValue | null'
+  } as const;
+
   constructor({
     name = '',
     source,
@@ -49,10 +77,20 @@ class BuildGear {
     minor3: minor3 = null
   }: BuildGearData) {
     this.name = name;
-    this.source = source;
-    this.type = type;
+    this.source = parseGearSource(source);
+    this.type = type ? parseGearType(type) : null;
     this.icon = icon;
-    this.core = core;
+    
+    // Parse core type if it's a string
+    if (core && typeof core === 'object' && 'type' in core) {
+      this.core = {
+        type: parseCoreType(core.type),
+        value: core.value
+      };
+    } else {
+      this.core = core;
+    }
+    
     this.minor1 = minor1;
     this.minor2 = minor2;
     this.minor3 = minor3;

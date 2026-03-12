@@ -5,6 +5,7 @@ import { useCleanDataStore, getModelFields, CLASS_CONSTRUCTORS } from '../stores
 import { useRulesStore, SYSTEM_RULES } from '../stores/useRulesStore';
 import { MdDownload, MdEditDocument, MdCleaningServices } from 'react-icons/md';
 import StatModifier from '../models/StatModifier';
+import { applyBindings } from '../utils/dataNormalizer';
 
 interface LoadModalProps {
   isOpen: boolean;
@@ -50,6 +51,8 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
   const [showCreateRule, setShowCreateRule] = useState(false);
   const [showAllRulesJson, setShowAllRulesJson] = useState(false);
   const [allRulesJsonText, setAllRulesJsonText] = useState('');
+  const [showRulesJsonOverlay, setShowRulesJsonOverlay] = useState(false);
+  const [rulesJsonText, setRulesJsonText] = useState('');
   const [showTestValidate, setShowTestValidate] = useState(true);
   const [testItemIndex, setTestItemIndex] = useState(0);
   const [testAllPassed, setTestAllPassed] = useState<boolean | null>(null);
@@ -87,7 +90,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     if (savedSpreadsheet) setSpreadsheetUrl(savedSpreadsheet);
 
     // Check which data types have data in the store
-    const checkDataExists = () => {
+    const checkDataExists = async () => {
       const exists: Record<string, boolean> = {};
       const counts: Record<string, number> = {};
       const cleanExists: Record<string, boolean> = {};
@@ -106,15 +109,54 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
         cleanCounts[dataType] = cleanData && Array.isArray(cleanData) ? cleanData.length : 0;
       });
       
-      csvFiles.forEach(({ key }) => {
+      // Check CSV files and load from lookups.json if needed
+      const lookupTypes = ['weaponAttributes', 'weaponTypeAttributes', 'gearAttributes', 'gearMods', 'keenersWatch', 'statusImmunities', 'specializations'];
+      let lookupsData: any = null;
+      
+      for (const { key } of csvFiles) {
         const data = rawStore.getRawData(key as any);
         exists[key] = data && data.length > 0;
         counts[key] = data ? data.length : 0;
         
-        const cleanData = cleanStore.getCleanData(key as any);
-        cleanExists[key] = cleanData && (Array.isArray(cleanData) ? cleanData.length > 0 : true);
-        cleanCounts[key] = cleanData && Array.isArray(cleanData) ? cleanData.length : 0;
-      });
+        let cleanData = cleanStore.getCleanData(key as any);
+        
+        // If clean data is empty and this is a lookup type, load from lookups.json
+        const isEmpty = !cleanData || 
+                       (Array.isArray(cleanData) && cleanData.length === 0) ||
+                       (typeof cleanData === 'object' && Object.keys(cleanData).length === 0);
+        
+        if (isEmpty && lookupTypes.includes(key)) {
+          try {
+            // Load lookups.json only once
+            if (!lookupsData) {
+              const response = await fetch('/clean/lookups.json');
+              lookupsData = await response.json();
+            }
+            
+            const lookupData = lookupsData[key];
+            if (lookupData) {
+              // Save to clean store in original structure (no conversion)
+              cleanStore.setCleanData(key as any, lookupData);
+              cleanData = lookupData;
+            }
+          } catch (error) {
+            console.error(`Failed to load ${key} from lookups.json:`, error);
+          }
+        }
+        
+        // Count based on data structure
+        let count = 0;
+        if (cleanData) {
+          if (Array.isArray(cleanData)) {
+            count = cleanData.length;
+          } else if (typeof cleanData === 'object') {
+            count = Object.keys(cleanData).length;
+          }
+        }
+        
+        cleanExists[key] = cleanData && count > 0;
+        cleanCounts[key] = count;
+      }
       
       setDataExists(exists);
       setDataCounts(counts);
@@ -206,15 +248,62 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     if (loadingStates[dataType]) return;
     
     const cleanStore = useCleanDataStore.getState();
-    const data = cleanStore.getCleanData(dataType as any);
+    let data = cleanStore.getCleanData(dataType as any);
     
-    // Allow viewing even if empty
-    const displayData = data || [];
-
-    setViewerData(displayData);
-    setViewerType(dataType);
-    setViewerMode('clean');
-    setEditedJson(JSON.stringify(displayData, null, 2));
+    // If clean data is empty and this is a lookup-based type, try to load from lookups.json
+    const lookupTypes = ['weaponAttributes', 'weaponTypeAttributes', 'gearAttributes', 'gearMods', 'keenersWatch', 'statusImmunities', 'specializations'];
+    const isLookupType = lookupTypes.includes(dataType);
+    
+    if ((!data || (typeof data === 'object' && Object.keys(data).length === 0) || (Array.isArray(data) && data.length === 0)) && isLookupType) {
+      // Attempt to load from lookups.json
+      fetch('/clean/lookups.json')
+        .then(response => response.json())
+        .then(lookups => {
+          const lookupData = lookups[dataType];
+          if (lookupData) {
+            // Save to clean store in original structure (no conversion to array)
+            cleanStore.setCleanData(dataType as any, lookupData);
+            
+            // Update viewer with loaded data - show JSON for lookup types
+            setViewerData(lookupData);
+            setViewerType(dataType);
+            setViewerMode('raw'); // Show JSON view for lookup types
+            setEditedJson(JSON.stringify(lookupData, null, 2));
+            
+            // Update counts - count based on structure
+            let count = 0;
+            if (typeof lookupData === 'object') {
+              count = Object.keys(lookupData).length;
+            }
+            setCleanDataExists(prev => ({ ...prev, [dataType]: true }));
+            setCleanDataCounts(prev => ({ ...prev, [dataType]: count }));
+          } else {
+            // No data in lookups.json either
+            const displayData = data || {};
+            setViewerData(displayData);
+            setViewerType(dataType);
+            setViewerMode(isLookupType ? 'raw' : 'clean');
+            setEditedJson(JSON.stringify(displayData, null, 2));
+          }
+        })
+        .catch(error => {
+          console.error('Failed to load lookups.json:', error);
+          // Fall back to showing empty data
+          const displayData = data || {};
+          setViewerData(displayData);
+          setViewerType(dataType);
+          setViewerMode(isLookupType ? 'raw' : 'clean');
+          setEditedJson(JSON.stringify(displayData, null, 2));
+        });
+    } else {
+      // Allow viewing even if empty
+      const displayData = data || {};
+      setViewerData(displayData);
+      setViewerType(dataType);
+      // For lookup types, show JSON view by default
+      setViewerMode(isLookupType ? 'raw' : 'clean');
+      setEditedJson(JSON.stringify(displayData, null, 2));
+    }
   };
 
   const handleCloseViewer = () => {
@@ -224,8 +313,8 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     setEditedJson('');
   };
 
-  const getLabel = (baseLabel: string, key: string) => {
-    const count = dataCounts[key];
+  const getLabel = (baseLabel: string, key: string, useClean: boolean = false) => {
+    const count = useClean ? cleanDataCounts[key] : dataCounts[key];
     return count > 0 ? `${baseLabel} (${count})` : baseLabel;
   };
 
@@ -271,83 +360,12 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
       return;
     }
     
-    // Apply bindings to transform raw data
-    const processedData = rawData.map((item: any) => {
-      const result: any = {};
-      
-      bindings.forEach(({ destination, source, rules }) => {
-        let value = item[source];
-        
-        // If source doesn't exist, use empty string or appropriate default
-        if (value === undefined || value === null) {
-          value = '';
-        }
-        
-        // Apply each rule in order
-        rules.forEach((ruleLabel) => {
-          // Check if it's a replace rule
-          if (rulesStore.replaceRules[ruleLabel]) {
-            const [match, replace] = rulesStore.replaceRules[ruleLabel];
-            try {
-              const regex = new RegExp(match, 'gi');
-              value = String(value).replace(regex, replace || '');
-            } catch (error) {
-              console.warn(`Invalid regex pattern in rule "${ruleLabel}": ${match}`, error);
-            }
-          }
-          
-          // Check if it's a match rule (validation)
-          if (rulesStore.matchRules[ruleLabel]) {
-            const pattern = rulesStore.matchRules[ruleLabel];
-            try {
-              const regex = new RegExp(pattern, 'i');
-              if (!regex.test(String(value))) {
-                console.warn(`Value "${value}" for ${destination} does not match rule "${ruleLabel}"`);
-              }
-            } catch (error) {
-              console.warn(`Invalid regex pattern in rule "${ruleLabel}": ${pattern}`, error);
-            }
-          }
-          
-          // Check if it's a mapping rule
-          if (rulesStore.mappings[ruleLabel]) {
-            const mapping = rulesStore.mappings[ruleLabel];
-            const mappedValue = mapping[String(value)];
-            if (mappedValue !== undefined) {
-              value = mappedValue;
-            }
-          }
-        });
-        
-        // Type conversion based on actual destination field type
-        const fieldType = getFieldType(viewerType, destination);
-        
-        // Check if destination expects an array
-        if (fieldType === 'array') {
-          if (typeof value === 'string') {
-            value = value.split(',').map((s: string) => s.trim()).filter((s: string) => s);
-          }
-        }
-        
-        // Check if destination expects a number
-        if (fieldType === 'number') {
-          if (typeof value === 'string') {
-            if (value.trim() === '') {
-              value = 0;
-            } else {
-              const parsed = parseFloat(value);
-              value = isNaN(parsed) ? value : parsed; // Keep original if can't parse
-            }
-          }
-        }
-        
-        // object type stays as-is (already processed by rules)
-        
-        result[destination] = value;
-      });
-      
-      return result;
-    });
+    // Apply bindings to transform raw data using shared function
+    const processedData = applyBindings(rawData, bindings, {
+      replaceRules: rulesStore.replaceRules,
+      matchRules: rulesStore.matchRules,
+      mappings: rulesStore.mappings
+    }, { trackRules: true });
     
     // Instantiate model classes based on data type using CLASS_CONSTRUCTORS
     let modelInstances: any[];
@@ -811,6 +829,66 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     }
   };
 
+  const handleSaveRulesJson = () => {
+    try {
+      const parsed = JSON.parse(rulesJsonText);
+      
+      // Validate structure
+      if (typeof parsed !== 'object' || Array.isArray(parsed)) {
+        alert('Invalid JSON: Must be an object with replaceRules, matchRules, mappings, and bindings');
+        return;
+      }
+      
+      // Clear existing rules
+      rulesStore.clearAll();
+      
+      // Update replace rules
+      if (parsed.replaceRules) {
+        Object.entries(parsed.replaceRules).forEach(([label, value]: [string, any]) => {
+          if (Array.isArray(value) && value.length === 2) {
+            rulesStore.setReplaceRule(label, value[0], value[1]);
+          }
+        });
+      }
+      
+      // Update match rules
+      if (parsed.matchRules) {
+        Object.entries(parsed.matchRules).forEach(([label, regex]: [string, any]) => {
+          if (typeof regex === 'string') {
+            rulesStore.setMatchRule(label, regex);
+          }
+        });
+      }
+      
+      // Update mappings
+      if (parsed.mappings) {
+        Object.entries(parsed.mappings).forEach(([label, mapping]: [string, any]) => {
+          if (typeof mapping === 'object' && !Array.isArray(mapping)) {
+            rulesStore.setMapping(label, mapping);
+          }
+        });
+      }
+      
+      // Update bindings
+      if (parsed.bindings) {
+        Object.entries(parsed.bindings).forEach(([dataKey, bindings]: [string, any]) => {
+          if (Array.isArray(bindings)) {
+            bindings.forEach((binding: any) => {
+              if (binding.source && binding.destination && Array.isArray(binding.rules)) {
+                rulesStore.addBinding(dataKey as any, binding);
+              }
+            });
+          }
+        });
+      }
+      
+      setShowRulesJsonOverlay(false);
+      alert('Rules updated successfully!');
+    } catch (error) {
+      alert('Invalid JSON: ' + (error instanceof Error ? error.message : String(error)));
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -1153,25 +1231,28 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
         </div>
 
         <div className="csv-grid">
-          {csvFiles.map(({ key, label, filename }) => (
-            <div key={key} className="csv-item">
-              <span className="csv-label">{getLabel(label, key)}</span>
-              {/* No Load button for CSV files - they don't have a scraping page */}
-              <div style={{ width: '32px' }}></div>
-              <MdEditDocument 
-                className={`csv-icon ${dataExists[key] ? 'has-data' : 'no-data'}`} 
-                onClick={() => !loadingStates[key] && dataExists[key] && handleView(key)} 
-                title="View"
-                style={{ opacity: (dataExists[key] && !loadingStates[key]) ? 1 : 0.3, cursor: (dataExists[key] && !loadingStates[key]) ? 'pointer' : 'not-allowed' }}
-              />
-              <MdCleaningServices 
-                className={`csv-icon ${cleanDataExists[key] ? 'has-data' : 'no-data'}`} 
-                onClick={() => !loadingStates[key] && handleViewClean(key)} 
-                title="View Clean Data"
-                style={{ opacity: !loadingStates[key] ? 1 : 0.3, cursor: !loadingStates[key] ? 'pointer' : 'not-allowed' }}
-              />
-            </div>
-          ))}
+          {csvFiles.map(({ key, label, filename }) => {
+            // All CSV files should only show one view icon
+            const cleanOnly = true;
+            
+            return (
+              <div key={key} className="csv-item">
+                <span className="csv-label">{getLabel(label, key, cleanOnly)}</span>
+                {/* No Load button for CSV files - they don't have a scraping page */}
+                <div style={{ width: '32px' }}></div>
+                <MdEditDocument 
+                  className={`csv-icon ${cleanDataExists[key] ? 'has-data' : 'no-data'}`} 
+                  onClick={() => {
+                    if (loadingStates[key]) return;
+                    handleViewClean(key);
+                  }} 
+                  title="View Data"
+                  style={{ opacity: cleanDataExists[key] && !loadingStates[key] ? 1 : 0.3, cursor: cleanDataExists[key] && !loadingStates[key] ? 'pointer' : 'not-allowed' }}
+                />
+                <div style={{ width: '32px' }}></div>
+              </div>
+            );
+          })}
         </div>
 
         {viewerData !== null && (
@@ -1181,74 +1262,118 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                 <h3>{viewerType} Data {viewerMode === 'clean' && '(Clean)'}</h3>
                 <button className="close-viewer-btn" onClick={handleCloseViewer}>✕</button>
               </div>
-              {viewerMode === 'clean' ? (
-                <div className="clean-data-viewer">
-                  {Array.isArray(viewerData) && viewerData.length === 0 ? (
-                    <div className="empty-state">No clean data available. Use Import or Rules to populate.</div>
-                  ) : (
-                    <div className="object-list">
-                      {Array.isArray(viewerData) ? (
-                        viewerData.map((item, index) => (
-                          <div key={index} className="object-item">
-                            <div className="object-header">Item {index + 1}</div>
-                            <div className="object-properties">
-                              {Object.entries(item).map(([key, value]) => (
-                                <div key={key} className="property-row">
-                                  <span className="property-key">{key}:</span>
-                                  <span className="property-value">
-                                    {typeof value === 'object' && value !== null
-                                      ? JSON.stringify(value, null, 2)
-                                      : String(value)}
-                                  </span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        ))
+              {(() => {
+                const lookupOnlyTypes = ['weaponAttributes', 'weaponTypeAttributes', 'gearAttributes', 'gearMods', 'keenersWatch', 'statusImmunities'];
+                const isLookupOnly = lookupOnlyTypes.includes(viewerType);
+                
+                // For lookup-only types, always show JSON editor
+                if (isLookupOnly) {
+                  return (
+                    <textarea
+                      className="json-editor"
+                      value={editedJson}
+                      onChange={(e) => setEditedJson(e.target.value)}
+                      spellCheck={false}
+                    />
+                  );
+                }
+                
+                // For other types, show clean viewer or JSON based on mode
+                if (viewerMode === 'clean') {
+                  return (
+                    <div className="clean-data-viewer">
+                      {Array.isArray(viewerData) && viewerData.length === 0 ? (
+                        <div className="empty-state">No clean data available. Use Import or Rules to populate.</div>
                       ) : (
-                        <div className="object-item">
-                          <div className="object-properties">
-                            {Object.entries(viewerData).map(([key, value]) => (
-                              <div key={key} className="property-row">
-                                <span className="property-key">{key}:</span>
-                                <span className="property-value">
-                                  {typeof value === 'object' && value !== null
-                                    ? JSON.stringify(value, null, 2)
-                                    : String(value)}
-                                </span>
+                        <div className="object-list">
+                          {Array.isArray(viewerData) ? (
+                            viewerData.map((item, index) => (
+                              <div key={index} className="object-item">
+                                <div className="object-header">Item {index + 1}</div>
+                                <div className="object-properties">
+                                  {Object.entries(item).map(([key, value]) => (
+                                    <div key={key} className="property-row">
+                                      <span className="property-key">{key}:</span>
+                                      <span className="property-value">
+                                        {typeof value === 'object' && value !== null
+                                          ? JSON.stringify(value, null, 2)
+                                          : String(value)}
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
                               </div>
-                            ))}
-                          </div>
+                            ))
+                          ) : (
+                            <div className="object-item">
+                              <div className="object-properties">
+                                {Object.entries(viewerData).map(([key, value]) => (
+                                  <div key={key} className="property-row">
+                                    <span className="property-key">{key}:</span>
+                                    <span className="property-value">
+                                      {typeof value === 'object' && value !== null
+                                        ? JSON.stringify(value, null, 2)
+                                        : String(value)}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
-                  )}
-                </div>
-              ) : (
-                <textarea
-                  className="json-editor"
-                  value={editedJson}
-                  onChange={(e) => setEditedJson(e.target.value)}
-                  spellCheck={false}
-                />
-              )}
+                  );
+                } else {
+                  return (
+                    <textarea
+                      className="json-editor"
+                      value={editedJson}
+                      onChange={(e) => setEditedJson(e.target.value)}
+                      spellCheck={false}
+                    />
+                  );
+                }
+              })()}
               <div className="json-viewer-actions">
-                {viewerMode === 'clean' && (
-                  <>
-                    <button className="import-btn" onClick={handleImport}>Import</button>
-                    <button className="rules-btn" onClick={handleRules}>Rules</button>
-                    <button className="cancel-btn" onClick={() => {
-                      setViewerMode('raw');
-                      setEditedJson(JSON.stringify(viewerData, null, 2));
-                    }}>View JSON</button>
-                  </>
-                )}
-                {viewerMode === 'raw' && (
-                  <>
-                    <button className="update-btn" onClick={handleUpdateJson}>Update</button>
-                    <button className="cancel-btn" onClick={handleCloseViewer}>Cancel</button>
-                  </>
-                )}
+                {(() => {
+                  // These types should not have Import/Rules buttons
+                  const lookupOnlyTypes = ['weaponAttributes', 'weaponTypeAttributes', 'gearAttributes', 'gearMods', 'keenersWatch', 'statusImmunities'];
+                  const isLookupOnly = lookupOnlyTypes.includes(viewerType);
+                  
+                  console.log('Viewer Type:', viewerType, 'Is Lookup Only:', isLookupOnly, 'Viewer Mode:', viewerMode);
+                  
+                  // For lookup-only types, only show Update/Cancel buttons
+                  if (isLookupOnly) {
+                    return (
+                      <>
+                        <button className="update-btn" onClick={handleUpdateJson}>Update</button>
+                        <button className="cancel-btn" onClick={handleCloseViewer}>Cancel</button>
+                      </>
+                    );
+                  }
+                  
+                  // For other types, show appropriate buttons based on mode
+                  if (viewerMode === 'clean') {
+                    return (
+                      <>
+                        <button className="import-btn" onClick={handleImport}>Import</button>
+                        <button className="rules-btn" onClick={handleRules}>Rules</button>
+                        <button className="cancel-btn" onClick={() => {
+                          setViewerMode('raw');
+                          setEditedJson(JSON.stringify(viewerData, null, 2));
+                        }}>View JSON</button>
+                      </>
+                    );
+                  } else {
+                    return (
+                      <>
+                        <button className="update-btn" onClick={handleUpdateJson}>Update</button>
+                        <button className="cancel-btn" onClick={handleCloseViewer}>Cancel</button>
+                      </>
+                    );
+                  }
+                })()}
               </div>
             </div>
           </div>
@@ -1522,78 +1647,6 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                   const currentIndex = Math.min(testItemIndex, rawData.length - 1);
                   const sampleItem = rawData[currentIndex];
                   
-                  // Helper function to apply a rule to a value, handling objects
-                  const applyRuleToValue = (value: any, ruleFunction: (str: string) => string): any => {
-                    // If value is an object, convert to JSON, apply rule, then parse back
-                    if (typeof value === 'object' && value !== null) {
-                      try {
-                        const jsonString = JSON.stringify(value);
-                        const transformed = ruleFunction(jsonString);
-                        return JSON.parse(transformed);
-                      } catch (error) {
-                        // If parsing fails, return the transformed string
-                        console.warn('Failed to parse object after rule application, returning string:', error);
-                        try {
-                          const jsonString = JSON.stringify(value);
-                          return ruleFunction(jsonString);
-                        } catch (e) {
-                          return value;
-                        }
-                      }
-                    }
-                    // For primitives, convert to string, apply rule
-                    return ruleFunction(String(value || ''));
-                  };
-                  
-                  // Function to apply rules and get mapped value
-                  const applyRulesToValue = (sourceValue: any, binding: any) => {
-                    let mappedValue: any = sourceValue;
-                    
-                    binding.rules.forEach((ruleLabel: string) => {
-                      // Check if it's a system rule first
-                      if (ruleLabel in SYSTEM_RULES) {
-                        mappedValue = SYSTEM_RULES[ruleLabel as keyof typeof SYSTEM_RULES](mappedValue);
-                        return;
-                      }
-                      
-                      if (rulesStore.replaceRules[ruleLabel]) {
-                        const [match, replace] = rulesStore.replaceRules[ruleLabel];
-                        try {
-                          const regex = new RegExp(match, 'gi');
-                          mappedValue = applyRuleToValue(mappedValue, (str) => str.replace(regex, replace || ''));
-                        } catch (error) {
-                          console.warn(`Invalid regex pattern in rule "${ruleLabel}": ${match}`, error);
-                        }
-                      }
-                      
-                      if (rulesStore.matchRules[ruleLabel]) {
-                        const pattern = rulesStore.matchRules[ruleLabel];
-                        try {
-                          const regex = new RegExp(pattern, 'i');
-                          // For match rules, we need to test the string representation
-                          const testValue = typeof mappedValue === 'object' ? JSON.stringify(mappedValue) : String(mappedValue || '');
-                          if (!regex.test(testValue)) {
-                            // Just validation, don't modify value
-                          }
-                        } catch (error) {
-                          console.warn(`Invalid regex pattern in rule "${ruleLabel}": ${pattern}`, error);
-                        }
-                      }
-                      
-                      if (rulesStore.mappings[ruleLabel]) {
-                        const mapping = rulesStore.mappings[ruleLabel];
-                        // For mappings, use string representation as key
-                        const key = typeof mappedValue === 'object' ? JSON.stringify(mappedValue) : String(mappedValue);
-                        const mappedVal = mapping[key];
-                        if (mappedVal !== undefined) {
-                          mappedValue = mappedVal;
-                        }
-                      }
-                    });
-                    
-                    return mappedValue;
-                  };
-                  
                   // Function to construct model instance from mapped data
                   const constructModelInstance = (dataKey: string, mappedData: any) => {
                     try {
@@ -1616,6 +1669,61 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                       throw new Error(`Model construction failed: ${error instanceof Error ? error.message : String(error)}`);
                     }
                   };
+                  
+                  // Function to get expected type from model metadata
+                  const getExpectedType = (dataKey: string, fieldName: string): string | null => {
+                    const Constructor = CLASS_CONSTRUCTORS[dataKey as keyof typeof CLASS_CONSTRUCTORS];
+                    if (!Constructor) {
+                      return null;
+                    }
+                    
+                    // Check if the constructor has FIELD_TYPES metadata
+                    const fieldTypes = (Constructor as any).FIELD_TYPES;
+                    if (fieldTypes && fieldTypes[fieldName]) {
+                      return fieldTypes[fieldName];
+                    }
+                    
+                    return null;
+                  };
+                  
+                  // Function to check if value matches expected type
+                  const checkTypeMatch = (value: any, expectedType: string): { matches: boolean; actualType: string } => {
+                    const actualType = typeof value === 'object' && value !== null 
+                      ? (Array.isArray(value) ? 'array' : 'object') 
+                      : typeof value;
+                    
+                    // Simple type matching
+                    if (expectedType === 'string' && typeof value === 'string') {
+                      return { matches: true, actualType };
+                    }
+                    if (expectedType === 'number' && typeof value === 'number') {
+                      return { matches: true, actualType };
+                    }
+                    if (expectedType === 'boolean' && typeof value === 'boolean') {
+                      return { matches: true, actualType };
+                    }
+                    if (expectedType.startsWith('Record<') && typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                      return { matches: true, actualType: expectedType };
+                    }
+                    if (expectedType.endsWith('[]') && Array.isArray(value)) {
+                      return { matches: true, actualType: expectedType };
+                    }
+                    
+                    // Enum types - enums are strings at runtime
+                    // Check for common enum type names or union types with quotes
+                    if (typeof value === 'string' && (
+                      expectedType.endsWith('Type') || 
+                      expectedType.endsWith('Source') || 
+                      expectedType.endsWith('Classification') ||
+                      expectedType.includes('"') || 
+                      expectedType.includes('|')
+                    )) {
+                      return { matches: true, actualType: expectedType };
+                    }
+                    
+                    return { matches: false, actualType };
+                  };
+                  
                   
                   // Function to validate enum fields
                   const validateEnumFields = (dataKey: string, data: any): string[] => {
@@ -1761,18 +1869,18 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                             onClick={(e) => {
                               e.preventDefault();
                               
-                              // Test all items
+                              // Test all items using the same applyBindings function as Import
                               for (let i = 0; i < rawData.length; i++) {
                                 const item = rawData[i];
                                 let hasError = false;
                                 
-                                // Build mapped object
-                                const mappedData: any = {};
-                                for (const binding of bindings) {
-                                  const sourceValue = item[binding.source];
-                                  const mappedValue = applyRulesToValue(sourceValue, binding);
-                                  mappedData[binding.destination] = mappedValue;
-                                }
+                                // Apply bindings using shared function
+                                const processedArray = applyBindings([item], bindings, {
+                                  replaceRules: rulesStore.replaceRules,
+                                  matchRules: rulesStore.matchRules,
+                                  mappings: rulesStore.mappings
+                                }, { trackRules: true });
+                                const mappedData = processedArray[0] || {};
                                 
                                 // Try to construct model instance
                                 try {
@@ -1829,14 +1937,14 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                         <div style={{ fontWeight: 'bold', color: '#2c3e50' }}>Mapped (Model Instance)</div>
                         <div></div>
                         
-                        {(() => {
-                          // Build mapped object from all bindings first
-                          const mappedData: any = {};
-                          bindings.forEach((binding) => {
-                            const sourceValue = sampleItem[binding.source];
-                            const mappedValue = applyRulesToValue(sourceValue, binding);
-                            mappedData[binding.destination] = mappedValue;
-                          });
+                          {(() => {
+                          // Use the same applyBindings function as Import
+                          const processedArray = applyBindings([sampleItem], bindings, {
+                            replaceRules: rulesStore.replaceRules,
+                            matchRules: rulesStore.matchRules,
+                            mappings: rulesStore.mappings
+                          }, { trackRules: true });
+                          const mappedData = processedArray[0] || {};
                           
                           // Try to construct model instance
                           let modelInstance: any = null;
@@ -1868,6 +1976,16 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                               }
                             } else if (modelInstance) {
                               displayValue = modelInstance[binding.destination];
+                              
+                              // Check if value matches expected type
+                              const expectedType = getExpectedType(rulesDataKey, binding.destination);
+                              if (expectedType) {
+                                const typeCheck = checkTypeMatch(displayValue, expectedType);
+                                if (!typeCheck.matches) {
+                                  hasError = true;
+                                  errorMessage = `Type mismatch: expected ${expectedType}, got ${typeCheck.actualType}`;
+                                }
+                              }
                               
                               // Additional per-field enum validation
                               const fieldEnumErrors = validateEnumFields(rulesDataKey, { [binding.destination]: displayValue });
@@ -1937,11 +2055,12 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                                         ENUM
                                       </span>
                                     )}
-                                    {!hasError && (
-                                      <span style={{ marginLeft: '0.25rem', color: '#95a5a6', fontSize: '0.7rem' }}>
-                                        ({typeof displayValue === 'object' && displayValue !== null ? (Array.isArray(displayValue) ? 'array' : 'object') : typeof displayValue})
-                                      </span>
-                                    )}
+                                    <span style={{ marginLeft: '0.25rem', color: '#95a5a6', fontSize: '0.7rem' }}>
+                                      ({(() => {
+                                        const expectedType = getExpectedType(rulesDataKey, binding.destination);
+                                        return expectedType || (typeof displayValue === 'object' && displayValue !== null ? (Array.isArray(displayValue) ? 'array' : 'object') : typeof displayValue);
+                                      })()})
+                                    </span>
                                   </div>
                                   <div style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
                                     {hasError 
@@ -2215,10 +2334,17 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
 
               <div className="rules-actions">
                 <button className="save-rules-btn" onClick={() => {
-                  useRulesStore.getState().saveToFile();
-                  alert('Rules saved to file!');
+                  const rulesState = useRulesStore.getState();
+                  const rulesData = {
+                    replaceRules: rulesState.replaceRules,
+                    matchRules: rulesState.matchRules,
+                    mappings: rulesState.mappings,
+                    bindings: rulesState.bindings
+                  };
+                  setRulesJsonText(JSON.stringify(rulesData, null, 2));
+                  setShowRulesJsonOverlay(true);
                 }}>
-                  Export Rules
+                  Show Rules
                 </button>
                 <button className="cancel-btn" onClick={handleCloseRules}>Close</button>
               </div>
@@ -2302,6 +2428,36 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
               <div className="overlay-actions" style={{ marginTop: '1rem' }}>
                 <button onClick={handleSaveAllRulesJson}>Save</button>
                 <button onClick={() => setShowAllRulesJson(false)}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Complete Rules JSON Editor Modal */}
+        {showRulesJsonOverlay && (
+          <div className="overlay-backdrop" onClick={() => setShowRulesJsonOverlay(false)} style={{ zIndex: 10001 }}>
+            <div className="overlay-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px', width: '90%' }}>
+              <h2>Edit Rules JSON</h2>
+              <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '1rem' }}>
+                Edit the complete rules configuration including replaceRules, matchRules, mappings, and bindings.
+              </p>
+              <textarea
+                value={rulesJsonText}
+                onChange={(e) => setRulesJsonText(e.target.value)}
+                style={{
+                  width: '100%',
+                  height: '400px',
+                  fontFamily: 'monospace',
+                  fontSize: '0.9rem',
+                  padding: '10px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  resize: 'vertical'
+                }}
+              />
+              <div className="overlay-actions" style={{ marginTop: '1rem' }}>
+                <button onClick={handleSaveRulesJson}>Save</button>
+                <button onClick={() => setShowRulesJsonOverlay(false)}>Cancel</button>
               </div>
             </div>
           </div>

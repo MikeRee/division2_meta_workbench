@@ -1,7 +1,17 @@
+import { parseEnum } from '../utils/enumParser';
+
 export enum CoreType {
   WeaponDamage = 'weapon damage',
   Armor = 'armor',
   SkillTier = 'skill tier'
+}
+
+/**
+ * Parse a string into CoreType enum
+ * @throws Error if value is not a valid CoreType
+ */
+export function parseCoreType(value: string | CoreType): CoreType {
+  return parseEnum(value, CoreType, 'CoreType');
 }
 
 export interface CoreValue {

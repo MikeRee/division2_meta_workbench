@@ -1,27 +1,23 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { DATA_KEYS, type DataKey } from '../constants/dataKeys';
-
-// Re-export for backwards compatibility
-export const RAW_SHEET_KEYS = DATA_KEYS;
-export type RawSheetKey = DataKey;
+import { MAIN_DATA_KEYS, type MainDataKey } from '../constants/dataKeys';
 
 interface RawDataState {
   // Store everything as raw arrays of objects
-  sheets: Partial<Record<RawSheetKey, any[]>>;
+  sheets: Partial<Record<MainDataKey, any[]>>;
   lastUpdated: Record<string, number>;
   isLoading: boolean;
 
   // Actions
-  setRawData: (key: RawSheetKey, data: any[]) => void;
-  getRawData: (key: RawSheetKey) => any[];
-  hasData: (key: RawSheetKey) => boolean;
-  clearSheet: (key: RawSheetKey) => void;
-  getAllKeys: () => RawSheetKey[];
+  setRawData: (key: MainDataKey, data: any[]) => void;
+  getRawData: (key: MainDataKey) => any[];
+  hasData: (key: MainDataKey) => boolean;
+  clearSheet: (key: MainDataKey) => void;
+  getAllKeys: () => MainDataKey[];
   setLoading: (loading: boolean) => void;
   clearAll: () => void;
   loadAllRawFiles: () => Promise<void>;
-  saveToFile: (key: RawSheetKey) => void;
+  saveToFile: (key: MainDataKey) => void;
 }
 
 /**
@@ -114,7 +110,7 @@ export const useRawDataStore = create<RawDataState>()(
           return { sheets: newSheets, lastUpdated: newLastUpdated };
         }),
 
-      getAllKeys: () => Object.keys(get().sheets) as RawSheetKey[],
+      getAllKeys: () => Object.keys(get().sheets) as MainDataKey[],
 
       setLoading: (isLoading) => set({ isLoading }),
 
@@ -128,14 +124,14 @@ export const useRawDataStore = create<RawDataState>()(
         set({ isLoading: true });
         try {
           const results = await Promise.all(
-            RAW_SHEET_KEYS.map(async (key) => {
+            MAIN_DATA_KEYS.map(async (key) => {
               const filename = `${camelToSnake(key)}.json`;
               const data = await loadRawFile(filename);
               return { key, data };
             })
           );
 
-          const newSheets: Partial<Record<RawSheetKey, any[]>> = {};
+          const newSheets: Partial<Record<MainDataKey, any[]>> = {};
           const newLastUpdated: Record<string, number> = {};
           const now = Date.now();
 

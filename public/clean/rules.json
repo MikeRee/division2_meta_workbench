@@ -1,17 +1,39 @@
 {
   "replaceRules": {
-    "merica_armor": [
-      "armour",
-      "armor"
+    "merica_armor": ["armour", "armor"],
+    "number": ["[^0-9.]", ""],
+    "Remove N/A": ["N/A", ""],
+    "plus": ["\\+", ""],
+    ">+1<": [">\\+1<\\s+", ""],
+    "AlphaNumeric": ["[^a-zA-Z ]", ""],
+    "#% key": ["(\\d+)%\\s+(.*)", "$2=$1"],
+    "NoPlus": ["\\+", ""],
+    "----": ["----", ""],
+    "stat ##%": ["^([a-z\\s]+).*?([\\d.]+)%", "$1=$2"],
+    "Any Basic (cant be HSD)": [
+      "Any Basic\\s+\\(cant be HSD\\)",
+      "damage to armor=6,critical hit chance=9.5,health damage=9.5,dmg to target out of cover=10,critical hit damage=10,reload speed=12,stability=12,accuracy=12,optimal range=24,magazine size=12.5,rate of fire=5,swap speed=15"
     ],
-    "number": [
-      "[^0-9.]",
-      ""
+    "Any Basic": [
+      "Any Basic",
+      "damage to armor=6,critical hit chance=9.5,health damage=9.5,dmg to target out of cover=10,headshot damage=10,critical hit damage=10,reload speed=12,stability=12,accuracy=12,optimal range=24,magazine size=12.5,rate of fire=5,swap speed=15"
     ],
-    "Remove N/A": [
-      "N/A",
-      ""
-    ]
+    "Mod Slot": [
+      "Mod Slot",
+      "critical hit chance=6,critical hit damage=12,headshot damage=10,protection from elites=13,armor on kill=18935,status effect resistance=10,pulse resistance=10,incoming repairs=20,skill haste=12,skill duration=10,repair skills=20"
+    ],
+    "Armor Regen": ["^([a-z\\s]+)\\s+\\d+\\s*-\\s*([\\d.]+)", "$1=$2"],
+    "Incoming Repair": [
+      "^([a-z\\s]+)\\s+[\\d.]+%?\\s*-\\s*([\\d.]+)%?",
+      "$1=$2"
+    ],
+    "Line Break": ["\\n", ""],
+    "Armor Core": ["armour\\s+[\\d,]+\\s*-\\s*([\\d,]+)", "armor=$1"],
+    "comma": [",", ""],
+    "skill tier": [">\\+(\\d+)<\\s+skill tier", "skill=1"],
+    "Question ?=0": ["\\?", "0"],
+    "Skill Damage": ["skill damage", "skill damage=15"],
+    "Skill Haste": ["skill haste", "skill haste=12"]
   },
   "matchRules": {},
   "mappings": {
@@ -47,17 +69,12 @@
       {
         "source": "modSlots",
         "destination": "modSlots",
-        "rules": [
-          "Remove N/A",
-          "weapon_slots"
-        ]
+        "rules": ["Remove N/A", "weapon_slots"]
       },
       {
         "destination": "moddedMagSize",
         "source": "moddedMagSize",
-        "rules": [
-          "Remove N/A"
-        ]
+        "rules": ["Remove N/A"]
       },
       {
         "destination": "type",
@@ -82,9 +99,7 @@
       {
         "destination": "damage",
         "source": "damage",
-        "rules": [
-          "number"
-        ]
+        "rules": ["number"]
       },
       {
         "destination": "name",
@@ -109,6 +124,314 @@
       {
         "destination": "hsd",
         "source": "hsd",
+        "rules": []
+      }
+    ],
+    "weaponTalents": [
+      {
+        "destination": "weaponCategory",
+        "source": "weaponCategory",
+        "rules": ["lowercase"]
+      },
+      {
+        "destination": "name",
+        "source": "name",
+        "rules": []
+      },
+      {
+        "destination": "icon",
+        "source": "icon",
+        "rules": []
+      },
+      {
+        "destination": "perfect",
+        "source": "perfect",
+        "rules": []
+      },
+      {
+        "destination": "description",
+        "source": "description",
+        "rules": []
+      }
+    ],
+    "exoticWeapons": [
+      {
+        "destination": "type",
+        "source": "type",
+        "rules": []
+      },
+      {
+        "destination": "icons",
+        "source": "icons",
+        "rules": []
+      },
+      {
+        "destination": "variant",
+        "source": "variant",
+        "rules": []
+      },
+      {
+        "destination": "name",
+        "source": "name",
+        "rules": []
+      },
+      {
+        "destination": "talentName",
+        "source": "talentName",
+        "rules": []
+      },
+      {
+        "destination": "talentDesc",
+        "source": "talentDesc",
+        "rules": []
+      },
+      {
+        "destination": "modSlots",
+        "source": "modsInfo",
+        "rules": []
+      }
+    ],
+    "gearsets": [
+      {
+        "destination": "name",
+        "source": "name",
+        "rules": []
+      },
+      {
+        "destination": "logo",
+        "source": "logo",
+        "rules": []
+      },
+      {
+        "destination": "core",
+        "source": "core",
+        "rules": ["lowercase"]
+      },
+      {
+        "destination": "twoPc",
+        "source": "twoPc",
+        "rules": ["lowercase"]
+      },
+      {
+        "destination": "threePc",
+        "source": "threePc",
+        "rules": ["lowercase"]
+      },
+      {
+        "destination": "fourPc",
+        "source": "fourPc",
+        "rules": []
+      },
+      {
+        "destination": "chest",
+        "source": "chest",
+        "rules": []
+      },
+      {
+        "destination": "chestDesc",
+        "source": "chestDesc",
+        "rules": []
+      },
+      {
+        "destination": "backpack",
+        "source": "backpack",
+        "rules": []
+      },
+      {
+        "destination": "backpackDesc",
+        "source": "backpackDesc",
+        "rules": []
+      },
+      {
+        "destination": "hint",
+        "source": "hint",
+        "rules": []
+      }
+    ],
+    "brandsets": [
+      {
+        "destination": "icon",
+        "source": "icon",
+        "rules": []
+      },
+      {
+        "destination": "brand",
+        "source": "brand",
+        "rules": []
+      },
+      {
+        "destination": "core",
+        "source": "core",
+        "rules": []
+      },
+      {
+        "destination": "onePc",
+        "source": "onePc",
+        "rules": ["lowercase"]
+      },
+      {
+        "destination": "twoPc",
+        "source": "twoPc",
+        "rules": ["lowercase"]
+      },
+      {
+        "destination": "threePc",
+        "source": "threePc",
+        "rules": ["lowercase", "plus"]
+      }
+    ],
+    "gearTalents": [
+      {
+        "destination": "piece",
+        "source": "piece",
+        "rules": []
+      },
+      {
+        "destination": "icon",
+        "source": "icon",
+        "rules": []
+      },
+      {
+        "destination": "talent",
+        "source": "talent",
+        "rules": []
+      },
+      {
+        "destination": "perfectTalent",
+        "source": "perfectTalent",
+        "rules": []
+      },
+      {
+        "destination": "description",
+        "source": "description",
+        "rules": []
+      },
+      {
+        "destination": "hint",
+        "source": "hint",
+        "rules": []
+      }
+    ],
+    "namedGear": [
+      {
+        "destination": "type",
+        "source": "type",
+        "rules": []
+      },
+      {
+        "destination": "brand",
+        "source": "brand",
+        "rules": []
+      },
+      {
+        "destination": "name",
+        "source": "name",
+        "rules": []
+      },
+      {
+        "destination": "icon",
+        "source": "icon",
+        "rules": ["----"]
+      },
+      {
+        "destination": "talent",
+        "source": "talent",
+        "rules": ["----"]
+      },
+      {
+        "destination": "desc",
+        "source": "desc",
+        "rules": []
+      },
+      {
+        "destination": "core",
+        "source": "core",
+        "rules": [
+          "lowercase",
+          "AlphaNumeric",
+          "trim whitespace",
+          "merica_armor"
+        ]
+      },
+      {
+        "destination": "minor1",
+        "source": "minor1",
+        "rules": [
+          "lowercase",
+          "stat ##%",
+          "#% key",
+          "Any Basic",
+          "comma",
+          "Armor Core",
+          "Incoming Repair",
+          "Skill Damage"
+        ]
+      },
+      {
+        "destination": "minor2",
+        "source": "minor2",
+        "rules": [
+          "Any Basic (cant be HSD)",
+          "Any Basic",
+          "Mod Slot",
+          "#% key",
+          "lowercase",
+          "Armor Regen",
+          "skill tier",
+          "stat ##%",
+          "Skill Haste"
+        ]
+      },
+      {
+        "destination": "minor3",
+        "source": "minor3",
+        "rules": ["----", "Mod Slot", "Any Basic", "stat ##%"]
+      },
+      {
+        "destination": "notes",
+        "source": "notes",
+        "rules": []
+      },
+      {
+        "destination": "isExotic",
+        "source": "isExotic",
+        "rules": []
+      },
+      {
+        "destination": "icon2",
+        "source": "icon2",
+        "rules": []
+      }
+    ],
+    "weaponMods": [
+      {
+        "destination": "type",
+        "source": "type",
+        "rules": []
+      },
+      {
+        "destination": "slot",
+        "source": "slot",
+        "rules": []
+      },
+      {
+        "destination": "name",
+        "source": "name",
+        "rules": []
+      },
+      {
+        "destination": "bonus",
+        "source": "bonus",
+        "rules": ["lowercase", "NoPlus", "#% key"]
+      },
+      {
+        "destination": "penalty",
+        "source": "penalty",
+        "rules": []
+      },
+      {
+        "destination": "source",
+        "source": "source",
         "rules": []
       }
     ]
