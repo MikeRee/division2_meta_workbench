@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import TitleBar from './components/TitleBar';
 import BuildComponent from './components/Build';
-import ChatWindow from './components/ChatWindow';
+import Stats from './components/Stats';
+import FloatingChat from './components/FloatingChat';
 import useLookupStore from './stores/useLookupStore';
 import useRawDataStore from './stores/useRawDataStore';
 import { useRulesStore } from './stores/useRulesStore';
@@ -1484,8 +1485,9 @@ function App() {
       <TitleBar onLoadData={handleLoad2Data} />
       <div className="main-content">
         <BuildComponent />
-        <ChatWindow />
+        <Stats />
       </div>
+      <FloatingChat />
     </div>
   );
 }

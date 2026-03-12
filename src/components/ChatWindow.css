@@ -6,6 +6,8 @@
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
+  min-height: 0;
+  height: 100%;
 }
 
 .chat-header {
@@ -15,12 +17,19 @@
   margin-bottom: 1rem;
 }
 
+.chat-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 .chat-window h2 {
   margin: 0;
   color: #333;
 }
 
-.config-button {
+.config-button,
+.clear-chat-button {
   background: transparent;
   border: none;
   font-size: 1.5rem;
@@ -30,17 +39,25 @@
   transition: background 0.2s;
 }
 
-.config-button:hover {
+.config-button:hover,
+.clear-chat-button:hover {
   background: #f0f0f0;
+}
+
+.clear-chat-button {
+  font-size: 1.3rem;
 }
 
 .chat-messages {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  overscroll-behavior: contain;
+  min-height: 0;
 }
 
 .empty-state {
@@ -77,13 +94,109 @@
   font-size: 0.75rem;
   font-weight: 600;
   opacity: 0.8;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.model-applied-badge {
+  background: #28a745;
+  color: white;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.model-applied-badge.clickable {
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.model-applied-badge.clickable:hover {
+  background: #218838;
+}
+
+.json-viewer {
+  width: 100%;
+  min-height: 300px;
+  max-height: 500px;
+  padding: 1rem;
+  background: #1e1e1e;
+  color: #d4d4d4;
+  border: 1px solid #34495e;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  overflow: auto;
+  white-space: pre;
+  box-sizing: border-box;
 }
 
 .message-content {
   font-size: 0.9rem;
-  line-height: 1.5;
-  white-space: pre-wrap;
+  line-height: 1.6;
   word-wrap: break-word;
+}
+
+.message-content p {
+  margin: 0.5rem 0;
+}
+
+.message-content p:first-child {
+  margin-top: 0;
+}
+
+.message-content p:last-child {
+  margin-bottom: 0;
+}
+
+.message-content ul,
+.message-content ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.message-content li {
+  margin: 0.25rem 0;
+}
+
+.message-content code {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85em;
+}
+
+.message.assistant .message-content code {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.message.user .message-content code {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.message-content pre {
+  background: rgba(0, 0, 0, 0.05);
+  padding: 0.75rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 0.5rem 0;
+}
+
+.message-content pre code {
+  background: none;
+  padding: 0;
+}
+
+.message-content strong {
+  font-weight: 600;
+}
+
+.message-content em {
+  font-style: italic;
 }
 
 .llm-status {
@@ -120,6 +233,59 @@
 }
 
 .model-selector:focus {
+  outline: none;
+  border-color: #4a90e2;
+}
+
+.chat-options {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.chat-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #555;
+  cursor: pointer;
+  user-select: none;
+}
+
+.chat-checkbox input[type="checkbox"] {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+
+.seasonal-link {
+  color: #4a90e2;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.seasonal-link:hover {
+  color: #357abd;
+}
+
+.seasonal-input-container {
+  width: 100%;
+}
+
+.seasonal-textarea {
+  width: 100%;
+  min-height: 60px;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.seasonal-textarea:focus {
   outline: none;
   border-color: #4a90e2;
 }
@@ -168,6 +334,21 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
+.overlay-content.config-overlay {
+  min-width: 600px;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.overlay-content.prompt-editor-overlay {
+  min-width: 700px;
+  max-width: 900px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
 .overlay-content h2 {
   color: #fff;
   margin: 0 0 1.5rem 0;
@@ -197,6 +378,119 @@
 }
 
 .config-field input:focus {
+  outline: none;
+  border-color: #e67e22;
+}
+
+.config-section {
+  margin-bottom: 1.5rem;
+}
+
+.config-section h3 {
+  color: #ecf0f1;
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.section-header h3 {
+  margin: 0;
+}
+
+.json-link {
+  background: transparent;
+  border: 1px solid #e67e22;
+  color: #e67e22;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Courier New', monospace;
+}
+
+.json-link:hover {
+  background: #e67e22;
+  color: #fff;
+}
+
+.prompts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.prompt-item {
+  background: #34495e;
+  border: 1px solid #2c3e50;
+  border-radius: 4px;
+  padding: 0.75rem;
+}
+
+.prompt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.prompt-label {
+  color: #ecf0f1;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.prompt-edit-btn {
+  background: #e67e22;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.prompt-edit-btn:hover {
+  background: #d35400;
+}
+
+.prompt-preview {
+  color: #95a5a6;
+  font-size: 0.85rem;
+  font-style: italic;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.prompt-textarea {
+  width: 100%;
+  min-height: 300px;
+  padding: 0.75rem;
+  border: 1px solid #34495e;
+  border-radius: 4px;
+  background: #34495e;
+  color: #fff;
+  font-size: 0.9rem;
+  font-family: 'Courier New', monospace;
+  line-height: 1.5;
+  resize: vertical;
+  box-sizing: border-box;
+  flex: 1;
+}
+
+.prompt-textarea.json-editor {
+  font-family: 'Courier New', monospace;
+  tab-size: 2;
+}
+
+.prompt-textarea:focus {
   outline: none;
   border-color: #e67e22;
 }
