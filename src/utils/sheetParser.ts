@@ -29,6 +29,8 @@ interface CellData {
   };
   userEnteredValue?: {
     formulaValue?: string;
+    stringValue?: string;
+    numberValue?: number;
   };
   effectiveValue?: {
     numberValue?: number;

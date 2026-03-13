@@ -2,6 +2,7 @@ import Build from './Build';
 import { BuildWeapon } from './BuildWeapon';
 
 export interface WeaponStats {
+  [key: string]: number;
   weaponDamage: number;
   pvpWeaponDamage: number;
   criticalHitChance: number;
@@ -20,6 +21,7 @@ export interface WeaponStats {
 }
 
 export interface OffenseStats {
+  [key: string]: number;
   allWeaponDamageBonus: number;
   marksmanRifleDamageBonus: number;
   rifleDamageBonus: number;
@@ -32,6 +34,7 @@ export interface OffenseStats {
 }
 
 export interface DefenseStats {
+  [key: string]: number;
   armor: number;
   armorOnKill: number;
   armorRegeneration: number;
