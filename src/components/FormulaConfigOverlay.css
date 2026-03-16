@@ -65,6 +65,22 @@
   color: #d4af37;
 }
 
+.formula-weapon-select {
+  background: #2d2d2d;
+  border: 1px solid #444;
+  color: #ccc;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  outline: none;
+  cursor: pointer;
+  max-width: 200px;
+}
+
+.formula-weapon-select:focus {
+  border-color: #d4af37;
+}
+
 .formula-close-btn {
   background: none;
   border: none;
@@ -294,6 +310,12 @@
   color: #ddd;
   font-size: 0.85rem;
   font-weight: 500;
+}
+
+.formula-item-value {
+  color: #d4af37;
+  font-size: 0.8rem;
+  font-weight: 400;
 }
 
 .formula-item-type {

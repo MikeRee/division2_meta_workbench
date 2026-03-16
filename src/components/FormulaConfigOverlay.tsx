@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import * as Blockly from 'blockly/core';
 import 'blockly/blocks';
 import 'blockly/javascript';
@@ -6,6 +6,7 @@ import { javascriptGenerator } from 'blockly/javascript';
 import { useFormulaStore } from '../stores/useFormulaStore';
 import { useLookupStore } from '../stores/useLookupStore';
 import { useCleanDataStore } from '../stores/useCleanDataStore';
+import useBuildStore from '../stores/useBuildStore';
 import { Formula, FormulaType } from '../models/Formula';
 import FormulaJsonModal from './FormulaJsonModal';
 import Weapon from '../models/Weapon';
@@ -23,6 +24,32 @@ interface FormulaConfigOverlayProps {
 const weaponProps = Weapon.blocklyProperties();
 const gearProps = BuildGear.blocklyProperties();
 
+// Module-level state for aggregated values that Blockly callbacks can access
+let currentAggregatedValues: Record<string, number> = {};
+
+// Function to update the aggregated values (called from React component)
+function setBlocklyAggregatedValues(values: Record<string, number>) {
+  currentAggregatedValues = values;
+}
+
+// Helper to format value for display in dropdown
+function formatBlocklyValue(value: number): string {
+  if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+  if (value >= 1000) return `${(value / 1000).toFixed(1)}K`;
+  if (!Number.isInteger(value)) return value.toFixed(1);
+  return value.toString();
+}
+
+// Helper to get value suffix for a key (exact match only)
+function getValueSuffix(key: string): string {
+  const lowerKey = key.toLowerCase();
+  const value = currentAggregatedValues[lowerKey];
+  if (value !== undefined) {
+    return ` [${formatBlocklyValue(value)}]`;
+  }
+  return '';
+}
+
 // Register custom blocks for stat formulas
 function registerCustomBlocks() {
   if (Blockly.Blocks['base_weapon']) return; // already registered
@@ -31,7 +58,9 @@ function registerCustomBlocks() {
     init(this: Blockly.Block) {
       this.appendDummyInput()
         .appendField('base weapon')
-        .appendField(new Blockly.FieldDropdown(weaponProps), 'PROP');
+        .appendField(new Blockly.FieldDropdown(() => {
+          return weaponProps.map(([label, value]) => [label + getValueSuffix(value), value] as [string, string]);
+        }), 'PROP');
       this.setOutput(true, 'Number');
       this.setColour(30);
       this.setTooltip('Get a base weapon property value');
@@ -152,7 +181,9 @@ function registerCustomBlocks() {
           const lookupVocab = useLookupStore.getState().getAttributeVocabulary();
           const cleanVocab = useCleanDataStore.getState().getAttributeVocabulary();
           const merged = new Map<string, string>([...lookupVocab, ...cleanVocab]);
-          const vocab = Array.from(merged.entries()).map(([k, v]) => [k, v] as [string, string]).sort((a, b) => a[0].localeCompare(b[0]));
+          const vocab = Array.from(merged.entries())
+            .map(([k, v]) => [k + getValueSuffix(k), v] as [string, string])
+            .sort((a, b) => a[0].localeCompare(b[0]));
           return vocab.length > 0 ? vocab : [['(no data loaded)', '']];
         }), 'ATTR');
       this.setOutput(true, 'Number');
@@ -173,7 +204,9 @@ function registerCustomBlocks() {
           const lookupVocab = useLookupStore.getState().getAttributeVocabulary();
           const cleanVocab = useCleanDataStore.getState().getAttributeVocabulary();
           const merged = new Map<string, string>([...lookupVocab, ...cleanVocab]);
-          const vocab = Array.from(merged.entries()).map(([k, v]) => [k, v] as [string, string]).sort((a, b) => a[0].localeCompare(b[0]));
+          const vocab = Array.from(merged.entries())
+            .map(([k, v]) => [k + getValueSuffix(k), v] as [string, string])
+            .sort((a, b) => a[0].localeCompare(b[0]));
           return vocab.length > 0 ? vocab : [['(no data loaded)', '']];
         }), 'ATTR');
       this.setOutput(true, 'Number');
@@ -194,7 +227,9 @@ function registerCustomBlocks() {
     init(this: Blockly.Block) {
       this.appendDummyInput()
         .appendField('core')
-        .appendField(new Blockly.FieldDropdown(coreTypeOptions), 'CORE');
+        .appendField(new Blockly.FieldDropdown(() => {
+          return coreTypeOptions.map(([label, value]) => [label + getValueSuffix(value), value] as [string, string]);
+        }), 'CORE');
       this.setOutput(true, 'Number');
       this.setColour(0);
       this.setTooltip('Get the sum of a core attribute type across all gear');
@@ -469,6 +504,96 @@ function BlocklyEditor({ formula, onSave, onCancel }: BlocklyEditorProps) {
 }
 
 
+// Format an aggregated value for display
+function formatAggValue(value: number): string {
+  if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+  if (value >= 1000) return `${(value / 1000).toFixed(1)}K`;
+  if (!Number.isInteger(value)) return value.toFixed(1);
+  return value.toString();
+}
+
+// Helper function to compute aggregated attribute values from all gear + selected weapon slot
+function useAggregatedValues(weaponSlot: 'primary' | 'secondary' | 'pistol') {
+  const currentBuild = useBuildStore((s) => s.currentBuild);
+  
+  return useMemo(() => {
+    const values: Record<string, number> = {};
+    
+    // Get the selected build weapon
+    const buildWeapon = weaponSlot === 'primary' ? currentBuild.primaryWeapon
+      : weaponSlot === 'secondary' ? currentBuild.secondaryWeapon
+      : currentBuild.pistol;
+    
+    // Add weapon base stats from the selected slot
+    if (buildWeapon) {
+      const base = buildWeapon.weapon;
+      values['weapon damage'] = base.damage || 0;
+      values['rpm'] = base.rpm || 0;
+      values['base mag size'] = base.baseMagSize || 0;
+      values['modded mag size'] = base.moddedMagSize || 0;
+      values['reload'] = base.reload || 0;
+      values['optimal range'] = base.optimalRange || 0;
+      values['hsd'] = base.hsd || 0;
+      
+      // Add weapon core/attrib values
+      if (buildWeapon.core1?.key && buildWeapon.core1?.value !== undefined) {
+        const key = buildWeapon.core1.key.toLowerCase();
+        values[key] = (values[key] || 0) + buildWeapon.core1.value;
+      }
+      if (buildWeapon.core2?.key && buildWeapon.core2?.value !== undefined) {
+        const key = buildWeapon.core2.key.toLowerCase();
+        values[key] = (values[key] || 0) + buildWeapon.core2.value;
+      }
+      if (buildWeapon.attrib?.key && buildWeapon.attrib?.value !== undefined) {
+        const key = buildWeapon.attrib.key.toLowerCase();
+        values[key] = (values[key] || 0) + buildWeapon.attrib.value;
+      }
+      
+      // Add weapon mod slot values
+      if (buildWeapon.configuredModSlots) {
+        Object.values(buildWeapon.configuredModSlots).forEach(modSlot => {
+          Object.entries(modSlot).forEach(([statKey, statValue]) => {
+            const key = statKey.toLowerCase();
+            values[key] = (values[key] || 0) + statValue;
+          });
+        });
+      }
+    }
+    
+    // Aggregate values from all gear pieces
+    const gearPieces = [
+      currentBuild.mask,
+      currentBuild.chest,
+      currentBuild.holster,
+      currentBuild.backpack,
+      currentBuild.gloves,
+      currentBuild.kneepads
+    ];
+    
+    gearPieces.forEach(gear => {
+      if (!gear) return;
+      
+      // Add core values
+      if (gear.core) {
+        gear.core.forEach(coreValue => {
+          const key = coreValue.type.toLowerCase();
+          values[key] = (values[key] || 0) + (coreValue.value || 0);
+        });
+      }
+      
+      // Add minor attributes
+      [gear.minor1, gear.minor2, gear.minor3].forEach(minor => {
+        if (minor?.key && minor?.value !== undefined) {
+          const key = minor.key.toLowerCase();
+          values[key] = (values[key] || 0) + minor.value;
+        }
+      });
+    });
+    
+    return values;
+  }, [currentBuild, weaponSlot]);
+}
+
 // --- Main Overlay Component ---
 function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
   const formulas = useFormulaStore((s) => s.formulas);
@@ -479,6 +604,8 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
   const updateFormula = useFormulaStore((s) => s.updateFormula);
   const removeFormula = useFormulaStore((s) => s.removeFormula);
   const reorderFormula = useFormulaStore((s) => s.reorderFormula);
+  
+  const currentBuild = useBuildStore((s) => s.currentBuild);
 
   const [newCategoryName, setNewCategoryName] = useState('');
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
@@ -487,6 +614,24 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
   const [addingToCategory, setAddingToCategory] = useState<string | null>(null);
   const [showJsonModal, setShowJsonModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedWeaponSlot, setSelectedWeaponSlot] = useState<'primary' | 'secondary' | 'pistol'>('primary');
+  
+  // Get aggregated values for display
+  const aggregatedValues = useAggregatedValues(selectedWeaponSlot);
+  
+  // Sync aggregated values to module-level state for Blockly dropdown callbacks
+  useEffect(() => {
+    setBlocklyAggregatedValues(aggregatedValues);
+  }, [aggregatedValues]);
+  
+  // Build weapon slot labels
+  const getWeaponSlotLabel = (slot: 'primary' | 'secondary' | 'pistol'): string => {
+    const weapon = slot === 'primary' ? currentBuild.primaryWeapon
+      : slot === 'secondary' ? currentBuild.secondaryWeapon
+      : currentBuild.pistol;
+    const label = slot === 'primary' ? 'Primary' : slot === 'secondary' ? 'Secondary' : 'Pistol';
+    return weapon ? `${label}: ${weapon.weapon.name}` : `${label} (Empty)`;
+  };
 
   const categories = Object.keys(formulas);
 
@@ -546,6 +691,22 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
   if (!isOpen) return null;
 
   const currentFormulas = selectedCategory ? formulas[selectedCategory] || [] : [];
+  
+  // Helper to find the aggregated value for a formula label
+  const getValueForLabel = (label: string): string | null => {
+    const lowerLabel = label.toLowerCase().trim();
+    // Try exact match first
+    if (aggregatedValues[lowerLabel] !== undefined) {
+      return formatAggValue(aggregatedValues[lowerLabel]);
+    }
+    // Try partial match
+    for (const [key, val] of Object.entries(aggregatedValues)) {
+      if (lowerLabel.includes(key) || key.includes(lowerLabel)) {
+        return formatAggValue(val);
+      }
+    }
+    return null;
+  };
 
   return (
     <div className="formula-overlay-backdrop" onClick={onClose}>
@@ -553,6 +714,15 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
         <div className="formula-overlay-header">
           <h3>Stat Formula Configuration</h3>
           <div className="formula-overlay-header-actions">
+            <select
+              className="formula-weapon-select"
+              value={selectedWeaponSlot}
+              onChange={(e) => setSelectedWeaponSlot(e.target.value as 'primary' | 'secondary' | 'pistol')}
+            >
+              <option value="primary">{getWeaponSlotLabel('primary')}</option>
+              <option value="secondary">{getWeaponSlotLabel('secondary')}</option>
+              <option value="pistol">{getWeaponSlotLabel('pistol')}</option>
+            </select>
             <button className="formula-json-btn" onClick={() => setShowJsonModal(true)} title="View JSON">
               <MdCode /> JSON
             </button>
@@ -634,7 +804,13 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
                       ) : (
                         <div className="formula-list-item-row">
                           <div className="formula-list-item-info">
-                            <span className="formula-item-label">{f.label}</span>
+                            <span className="formula-item-label">
+                              {f.label}
+                              {(() => {
+                                const val = getValueForLabel(f.label);
+                                return val !== null ? <span className="formula-item-value"> [{val}]</span> : null;
+                              })()}
+                            </span>
                             <span className="formula-item-type">{f.type}</span>
                             {f.formula && <code className="formula-item-code">{f.formula}</code>}
                           </div>
