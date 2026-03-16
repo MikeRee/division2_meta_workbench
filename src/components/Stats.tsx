@@ -1,12 +1,15 @@
 import React, { useMemo, useState } from 'react';
+import { MdSettings } from 'react-icons/md';
 import './Stats.css';
 import { Stats as StatsModel } from '../models/Stats';
 import { BuildWeapon } from '../models/BuildWeapon';
 import useBuildStore from '../stores/useBuildStore';
+import FormulaConfigOverlay from './FormulaConfigOverlay';
 
 function Stats() {
   const currentBuild = useBuildStore((state) => state.currentBuild);
   const [selectedWeaponSlot, setSelectedWeaponSlot] = useState<'primary' | 'secondary' | 'pistol'>('primary');
+  const [showFormulaConfig, setShowFormulaConfig] = useState(false);
 
   const selectedWeapon = useMemo(() => {
     switch (selectedWeaponSlot) {
@@ -113,12 +116,23 @@ function Stats() {
     <div className="stats-container">
       <div className="stats-header">
         <h2>BUILD STATS</h2>
+        <button 
+          className="stats-config-btn" 
+          onClick={() => setShowFormulaConfig(true)}
+          title="Configure Stat Formulas"
+        >
+          <MdSettings />
+        </button>
       </div>
       <div className="stats-content">
         {renderStatCategory('Weapon Stats', stats.weapon, 'weapon', true)}
         {renderStatCategory('Offense Stats', stats.offense, 'offense')}
         {renderStatCategory('Defense Stats', stats.defense, 'defense')}
       </div>
+      <FormulaConfigOverlay
+        isOpen={showFormulaConfig}
+        onClose={() => setShowFormulaConfig(false)}
+      />
     </div>
   );
 }

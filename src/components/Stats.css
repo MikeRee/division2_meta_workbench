@@ -11,11 +11,31 @@
 
 .stats-header {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid #3a3a3a;
+}
+
+.stats-config-btn {
+  background: none;
+  border: 1px solid #3a3a3a;
+  border-radius: 2px;
+  color: #999;
+  cursor: pointer;
+  padding: 4px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.stats-config-btn:hover {
+  color: #d4af37;
+  border-color: #d4af37;
+  background: rgba(212, 175, 55, 0.1);
 }
 
 .stats-container h2 {

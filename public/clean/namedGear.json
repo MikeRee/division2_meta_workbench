@@ -20,7 +20,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -51,7 +51,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -123,7 +123,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -154,7 +154,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -185,7 +185,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -228,7 +228,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -271,7 +271,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -314,7 +314,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -357,7 +357,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -400,7 +400,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -443,7 +443,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -486,7 +486,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -529,7 +529,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -572,7 +572,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -615,7 +615,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -658,7 +658,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -701,7 +701,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -744,7 +744,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -787,7 +787,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -830,7 +830,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -873,7 +873,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -916,7 +916,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -959,7 +959,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1002,7 +1002,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1045,7 +1045,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1088,7 +1088,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1131,7 +1131,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1174,7 +1174,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1217,7 +1217,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1260,7 +1260,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1303,7 +1303,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1346,7 +1346,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1389,7 +1389,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1432,7 +1432,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1475,7 +1475,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1518,7 +1518,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1561,7 +1561,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1604,7 +1604,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1647,7 +1647,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1690,7 +1690,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1733,7 +1733,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1776,7 +1776,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1819,7 +1819,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1850,7 +1850,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1881,7 +1881,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1912,7 +1912,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1930,7 +1930,7 @@
     "desc": "Extra Status effect",
     "core": "weapon damage",
     "minor1": {
-      "status effects": 16
+      "status effect": 16
     },
     "minor2": {
       "damage to armor": 6,
@@ -1943,7 +1943,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -1974,7 +1974,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -2005,7 +2005,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -2020,7 +2020,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -2050,7 +2050,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -2081,7 +2081,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -2112,7 +2112,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -2143,12 +2143,12 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
     "minor3": {
-      "Pistol Damage": 11
+      "pistol damage": 11
     },
     "notes": "\"Rip and tear!\"",
     "isExotic": false,
@@ -2163,7 +2163,7 @@
     "desc": "Damage to Targets Out of Cover",
     "core": "weapon damage",
     "minor1": {
-      "damage to out of cover": 8
+      "dmg to target out of cover": 8
     },
     "minor2": {
       "damage to armor": 6,
@@ -2176,7 +2176,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -2207,7 +2207,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -2222,7 +2222,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -2271,7 +2271,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -2289,7 +2289,7 @@
     "desc": "Extra Status effect",
     "core": "skill tier",
     "minor1": {
-      "status effects": 16
+      "status effect": 16
     },
     "minor2": {
       "damage to armor": 6,
@@ -2302,7 +2302,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -2333,7 +2333,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },
@@ -2571,7 +2571,7 @@
       "armor": 170000
     },
     "minor2": {
-      "skill": 1
+      "skill tier": 1
     },
     "minor3": {
       "critical hit chance": 6,
@@ -2602,7 +2602,7 @@
       "armor": 170000
     },
     "minor2": {
-      "skill": 1
+      "skill tier": 1
     },
     "minor3": {
       "critical hit chance": 6,
@@ -2726,7 +2726,7 @@
       "armor regen": 4925
     },
     "minor2": {
-      "explosive resist": 10
+      "explosive resistance": 10
     },
     "minor3": {
       "critical hit chance": 6,
@@ -2918,7 +2918,7 @@
     "desc": "While in combat, applies burn to the enemy closest to you within 20m.\n\nCooldown: 35s",
     "core": "skill tier",
     "minor1": {
-      "status effects": 5
+      "status effect": 5
     },
     "minor2": {
       "hazard protection": 10
@@ -2937,7 +2937,7 @@
     "desc": "While \"Shocker Punch\" is equipped, the stun received by the agent from the Shock status effect will be reduced by 50%.\n\nUsing a shield will give 100% to melee damage.\n\nUsing St. Elmo's Engine with the holster will give 100% extra melee damage and will make the next melee attack apply shock to the target. \n\nUsing all three items will offer all of the above mentioned bonuses and the Shock from the melee attack will have a 5m radius, starting from the first target. \n\n15 second cooldown.",
     "core": "armor",
     "minor1": {
-      "explosive resist": 1
+      "explosive resistance": 1
     },
     "minor2": {
       "hazard protection": 10
@@ -2994,7 +2994,7 @@
     "desc": "Cannot be staggered by explosions.\n\nIncreases total weapon damage by 3% each second you are not moving.\nStacks up to 10 until you start moving.  All stacks lost 10s after moving.",
     "core": "armor",
     "minor1": {
-      "explosive resist": 1
+      "explosive resistance": 1
     },
     "minor2": {
       "health": 18935
@@ -3026,7 +3026,7 @@
       "stability": 12,
       "accuracy": 12,
       "optimal range": 24,
-      "magazine size": 12.5,
+      "mag size": 12.5,
       "rate of fire": 5,
       "swap speed": 15
     },

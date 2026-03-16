@@ -38,6 +38,7 @@ interface CleanDataState {
   removeCleanData: (key: MainDataKey) => void;
   clearAll: () => void;
   setProcessing: (isProcessing: boolean) => void;
+  getAttributeVocabulary: () => [string, string][];
 }
 
 /**
@@ -137,6 +138,69 @@ const useCleanDataStore = create<CleanDataState>()(
       }),
 
       setProcessing: (isProcessing) => set({ isProcessing }),
+
+      getAttributeVocabulary: () => {
+        const names = new Set<string>();
+        const data = get().data;
+
+        // ExoticWeapon: modSlots.*.attribute
+        const exotics = data.exoticWeapons;
+        if (exotics) {
+          for (const ew of exotics) {
+            for (const mod of Object.values(ew.modSlots)) {
+              if (mod.attribute) names.add(mod.attribute);
+            }
+          }
+        }
+
+        // Gearset: twoPc, threePc (Record<string, number>)
+        const gearsets = data.gearsets;
+        if (gearsets) {
+          for (const gs of gearsets) {
+            for (const key of Object.keys(gs.twoPc)) {
+              if (key) names.add(key);
+            }
+            for (const key of Object.keys(gs.threePc)) {
+              if (key) names.add(key);
+            }
+          }
+        }
+
+        // Brandset: onePc, twoPc, threePc (Record<string, number>)
+        const brandsets = data.brandsets;
+        if (brandsets) {
+          for (const bs of brandsets) {
+            for (const key of Object.keys(bs.onePc)) {
+              if (key) names.add(key);
+            }
+            for (const key of Object.keys(bs.twoPc)) {
+              if (key) names.add(key);
+            }
+            for (const key of Object.keys(bs.threePc)) {
+              if (key) names.add(key);
+            }
+          }
+        }
+
+        // NamedGear: minor1, minor2, minor3 (Record<string, number> | 'mod')
+        const namedGear = data.namedGear;
+        if (namedGear) {
+          for (const ng of namedGear) {
+            for (const minor of [ng.minor1, ng.minor2, ng.minor3]) {
+              if (minor && minor !== 'mod' && typeof minor === 'object') {
+                for (const key of Object.keys(minor)) {
+                  if (key && key !== 'armor' && key !== 'skill tier') {
+                    names.add(key);
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        const sorted = Array.from(names).sort();
+        return sorted.map((n) => [n, n] as [string, string]);
+      },
     }),
     {
       name: 'clean-data-store',

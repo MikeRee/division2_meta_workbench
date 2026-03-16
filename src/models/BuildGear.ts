@@ -278,6 +278,15 @@ class BuildGear {
   }
 
 
+  /** Returns the list of property names available for Blockly dropdowns */
+  static blocklyProperties(): [string, string][] {
+    return [
+      ['Name', 'name'],
+      ['Source', 'source'],
+      ['Type', 'type'],
+    ];
+  }
+
   toJSON(): BuildGearData {
     return {
       name: this.name,

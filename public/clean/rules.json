@@ -30,10 +30,24 @@
     "Line Break": ["\\n", ""],
     "Armor Core": ["armour\\s+[\\d,]+\\s*-\\s*([\\d,]+)", "armor=$1"],
     "comma": [",", ""],
-    "skill tier": [">\\+(\\d+)<\\s+skill tier", "skill=1"],
+    "skill tier": [">\\+(\\d+)<\\s+skill tier", "skill tier=1"],
     "Question ?=0": ["\\?", "0"],
     "Skill Damage": ["skill damage", "skill damage=15"],
-    "Skill Haste": ["skill haste", "skill haste=12"]
+    "Skill Haste": ["skill haste", "skill haste=12"],
+    "critical chance": ["critical chance", "critical hit chance"],
+    "critical damage": ["critical damage", "critical hit damage"],
+    "status effects": ["status effects", "status effect"],
+    "wapon": ["wapon", "weapon"],
+    "rrounds": ["rrounds", "rounds"],
+    "repair-skills": ["repair-skills", "repair skills"],
+    "damage to out of cover": [
+      "damage to out of cover",
+      "dmg to target out of cover"
+    ],
+    "damaeg": ["damaeg", "damage"],
+    "magazine size": ["magazine size", "mag size"],
+    "explosive resist": ["explosive resist=", "explosive resistance="],
+    "marksman rifle damage": ["marksman rifle damage", "mmr damage"]
   },
   "matchRules": {},
   "mappings": {
@@ -200,7 +214,14 @@
       {
         "destination": "modSlots",
         "source": "modsInfo",
-        "rules": []
+        "rules": [
+          "lowercase",
+          "critical damage",
+          "merica_armor",
+          "wapon",
+          "rrounds",
+          "damaeg"
+        ]
       }
     ],
     "gearsets": [
@@ -222,12 +243,19 @@
       {
         "destination": "twoPc",
         "source": "twoPc",
-        "rules": ["lowercase"]
+        "rules": [
+          "lowercase",
+          "critical chance",
+          "status effects",
+          "repair-skills",
+          "magazine size",
+          "marksman rifle damage"
+        ]
       },
       {
         "destination": "threePc",
         "source": "threePc",
-        "rules": ["lowercase"]
+        "rules": ["lowercase", "magazine size"]
       },
       {
         "destination": "fourPc",
@@ -279,17 +307,28 @@
       {
         "destination": "onePc",
         "source": "onePc",
-        "rules": ["lowercase"]
+        "rules": [
+          "lowercase",
+          "status effects",
+          "magazine size",
+          "marksman rifle damage"
+        ]
       },
       {
         "destination": "twoPc",
         "source": "twoPc",
-        "rules": ["lowercase"]
+        "rules": ["lowercase", "status effects", "marksman rifle damage"]
       },
       {
         "destination": "threePc",
         "source": "threePc",
-        "rules": ["lowercase", "plus"]
+        "rules": [
+          "lowercase",
+          "plus",
+          "status effects",
+          "magazine size",
+          "marksman rifle damage"
+        ]
       }
     ],
     "gearTalents": [
@@ -376,7 +415,11 @@
           "comma",
           "Armor Core",
           "Incoming Repair",
-          "Skill Damage"
+          "Skill Damage",
+          "status effects",
+          "damage to out of cover",
+          "Line Break",
+          "explosive resist"
         ]
       },
       {
@@ -391,13 +434,23 @@
           "Armor Regen",
           "skill tier",
           "stat ##%",
-          "Skill Haste"
+          "Skill Haste",
+          "Line Break",
+          "explosive resist",
+          "magazine size"
         ]
       },
       {
         "destination": "minor3",
         "source": "minor3",
-        "rules": ["----", "Mod Slot", "Any Basic", "stat ##%"]
+        "rules": [
+          "----",
+          "Mod Slot",
+          "Any Basic",
+          "stat ##%",
+          "lowercase",
+          "magazine size"
+        ]
       },
       {
         "destination": "notes",

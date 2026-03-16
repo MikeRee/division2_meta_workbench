@@ -3,8 +3,9 @@
  */
 
 import Gearset from '../models/Gearset';
-import StatModifier from '../models/StatModifier';
+import { parseStatModifiers } from './mappingUtils';
 import { SYSTEM_RULES, SystemRuleType } from '../stores/useRulesStore';
+import { formatMapAsString } from './recordParser';
 
 interface RegexPattern {
   match: string;
@@ -121,23 +122,14 @@ export function processGearsetData(
     // Normalize piece bonuses (twoPc, threePc, fourPc)
     data = cleanAttributes(patterns.attributes, attributeFields, gearAttributes, data);
     
-    // Convert Record<string, number> to StatModifier[] for twoPc, threePc, fourPc
-    ['twoPc', 'threePc', 'fourPc'].forEach(field => {
-      if (data[field]) {
-        if (typeof data[field] === 'object' && !Array.isArray(data[field])) {
-          // Convert Record<string, number> to StatModifier[]
-          data[field] = Object.entries(data[field]).map(
-            ([stat, mod]) => new StatModifier(stat, mod as number)
-          );
-        } else if (typeof data[field] === 'string') {
-          // If it's still a string (like fourPc), convert to empty array for now
-          // You may want to parse this differently based on your needs
-          data[field] = [];
-        }
-      } else {
-        data[field] = [];
-      }
+    // Normalize twoPc, threePc into Record<string, number>
+    ['twoPc', 'threePc'].forEach(field => {
+      data[field] = data[field] ? parseStatModifiers(data[field]) : {};
     });
+    // fourPc is a string description, not stat modifiers
+    if (!data.fourPc || typeof data.fourPc !== 'string') {
+      data.fourPc = '';
+    }
     
     // Return as Gearset instance
     return new Gearset(data);
@@ -697,21 +689,22 @@ export function applyBindings(
 
   // Helper function to apply a rule to a value, handling objects
   const applyRuleToValue = (value: any, ruleFunction: (str: string) => string): any => {
-    // If value is an object, convert to JSON, apply rule, then parse back
+    // If value is an object, convert to key=value format, apply rule, then try to parse back
     if (typeof value === 'object' && value !== null) {
       try {
-        const jsonString = JSON.stringify(value);
-        const transformed = ruleFunction(jsonString);
-        return JSON.parse(transformed);
-      } catch (error) {
-        // If parsing fails, return the transformed string
-        console.warn('Failed to parse object after rule application, returning string:', error);
+        const mapString = formatMapAsString(value);
+        const transformed = ruleFunction(mapString);
+        // Try to parse back as JSON first (in case the rule produced valid JSON)
         try {
-          const jsonString = JSON.stringify(value);
-          return ruleFunction(jsonString);
-        } catch (e) {
-          return value;
+          return JSON.parse(transformed);
+        } catch {
+          // Not valid JSON, return the transformed string as-is
+          // (downstream parseRecordField can handle key=value format)
+          return transformed;
         }
+      } catch (error) {
+        console.warn('Failed to apply rule to object value:', error);
+        return value;
       }
     }
     // For primitives, convert to string, apply rule
@@ -724,12 +717,17 @@ export function applyBindings(
 
     // Process each binding
     bindings.forEach(({ destination, source, rules }) => {
-      // Get the source value
+      // Get the source value — convert maps/objects to key=value string upfront
       let value = item[source];
 
       // If source doesn't exist, skip this binding
       if (value === undefined || value === null) {
         return;
+      }
+
+      // Convert object/map sources to key=value string before any rules run
+      if (typeof value === 'object' && value !== null) {
+        value = formatMapAsString(value);
       }
 
       if (trackRules) {
@@ -769,7 +767,7 @@ export function applyBindings(
           try {
             const regex = new RegExp(pattern, 'i');
             // For match rules, test the string representation
-            const testValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
+            const testValue = typeof value === 'object' ? formatMapAsString(value) : String(value);
             if (!regex.test(testValue)) {
               console.warn(`Value "${testValue}" for ${destination} does not match rule "${ruleLabel}"`);
             }
@@ -781,8 +779,8 @@ export function applyBindings(
         // Check if it's a mapping rule
         if (rulesStore.mappings[ruleLabel]) {
           const mapping = rulesStore.mappings[ruleLabel];
-          // For mappings, use string representation as key
-          const key = typeof value === 'object' ? JSON.stringify(value) : String(value);
+          // For mappings, use key=value string representation as key
+          const key = typeof value === 'object' ? formatMapAsString(value) : String(value);
           const mappedValue = mapping[key];
           if (mappedValue !== undefined) {
             value = mappedValue;

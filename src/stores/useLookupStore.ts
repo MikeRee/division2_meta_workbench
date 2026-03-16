@@ -97,6 +97,12 @@ interface LookupState {
   getAllStatusImmunities: () => StatusImmunity[];
   getAllPrompts: () => Map<string, string>;
 
+  /** Returns a unique sorted list of all attribute names across all lookup maps */
+  getAttributeVocabulary: () => [string, string][];
+
+  /** Returns a unique sorted list of gear mod attribute names */
+  getGearModVocabulary: () => [string, string][];
+
   clearAll: () => void;
 }
 
@@ -382,6 +388,64 @@ const useLookupStore = create<LookupState>()(
       getAllKeenersWatch: () => Array.from(get().keenersWatch.values()),
       getAllStatusImmunities: () => Array.from(get().statusImmunities.values()),
       getAllPrompts: () => get().prompts,
+
+      getAttributeVocabulary: () => {
+        const names = new Set<string>();
+        const state = get();
+
+        // weaponAttributes: Map<string, Attribute>
+        if (state.weaponAttributes instanceof Map) {
+          for (const attr of state.weaponAttributes.values()) {
+            if (attr.attribute) names.add(attr.attribute);
+          }
+        }
+
+        // weaponTypeAttributes: Map<string, Attribute>
+        if (state.weaponTypeAttributes instanceof Map) {
+          for (const attr of state.weaponTypeAttributes.values()) {
+            if (attr.attribute) names.add(attr.attribute);
+          }
+        }
+
+        // gearAttributes: GearModCollection
+        if (state.gearAttributes) {
+          const all = state.gearAttributes.getAll();
+          for (const key of Object.keys(all)) {
+            if (key) names.add(key);
+          }
+        }
+
+        // gearModAttributes: Map<string, GearMod>
+        if (state.gearModAttributes instanceof Map) {
+          for (const mod of state.gearModAttributes.values()) {
+            if (mod.attribute) names.add(mod.attribute);
+          }
+        }
+
+        // keenersWatch: Map<string, Attribute>
+        if (state.keenersWatch instanceof Map) {
+          for (const attr of state.keenersWatch.values()) {
+            if (attr.attribute) names.add(attr.attribute);
+          }
+        }
+
+        const sorted = Array.from(names).sort();
+        return sorted.map((n) => [n, n] as [string, string]);
+      },
+
+      getGearModVocabulary: () => {
+        const names = new Set<string>();
+        const state = get();
+
+        if (state.gearModAttributes instanceof Map) {
+          for (const mod of state.gearModAttributes.values()) {
+            if (mod.attribute) names.add(mod.attribute);
+          }
+        }
+
+        const sorted = Array.from(names).sort();
+        return sorted.map((n) => [n, n] as [string, string]);
+      },
 
       // Clear all data
       clearAll: () => set({

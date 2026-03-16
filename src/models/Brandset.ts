@@ -1,46 +1,46 @@
 import { CoreType, parseCoreType } from './CoreValue';
-import StatModifier from './StatModifier';
+import { parseStatModifiers } from '../utils/mappingUtils';
 
 interface BrandsetData {
   icon?: string;
   brand?: string;
   core?: CoreType | string;
-  onePc?: StatModifier[];
-  twoPc?: StatModifier[];
-  threePc?: StatModifier[];
+  onePc?: Record<string, number> | any;
+  twoPc?: Record<string, number> | any;
+  threePc?: Record<string, number> | any;
 }
 
 class Brandset {
   icon: string;
   brand: string;
   core: CoreType;
-  onePc: StatModifier[];
-  twoPc: StatModifier[];
-  threePc: StatModifier[];
+  onePc: Record<string, number>;
+  twoPc: Record<string, number>;
+  threePc: Record<string, number>;
 
   static readonly FIELD_TYPES = {
     icon: 'string',
     brand: 'string',
     core: 'CoreType',
-    onePc: 'StatModifier[]',
-    twoPc: 'StatModifier[]',
-    threePc: 'StatModifier[]'
+    onePc: 'Record<string, number>',
+    twoPc: 'Record<string, number>',
+    threePc: 'Record<string, number>'
   } as const;
 
   constructor({
     icon = '',
     brand = '',
     core = CoreType.WeaponDamage,
-    onePc = [],
-    twoPc = [],
-    threePc = []
+    onePc = {},
+    twoPc = {},
+    threePc = {}
   }: BrandsetData = {}) {
     this.icon = icon;
     this.brand = brand;
     this.core = parseCoreType(core);
-    this.onePc = StatModifier.parseStatModifiers(onePc);
-    this.twoPc = StatModifier.parseStatModifiers(twoPc);
-    this.threePc = StatModifier.parseStatModifiers(threePc);
+    this.onePc = parseStatModifiers(onePc);
+    this.twoPc = parseStatModifiers(twoPc);
+    this.threePc = parseStatModifiers(threePc);
   }
 
   /**

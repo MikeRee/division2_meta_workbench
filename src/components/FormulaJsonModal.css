@@ -1,0 +1,113 @@
+.formula-json-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1200;
+}
+
+.formula-json-content {
+  background: #1e1e1e;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 900px;
+  height: 75vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.formula-json-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #333;
+}
+
+.formula-json-header h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 1.1rem;
+}
+
+.formula-json-header .close-btn {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.formula-json-header .close-btn:hover {
+  color: #fff;
+}
+
+.formula-json-error {
+  background: #ff4444;
+  color: #fff;
+  padding: 8px 20px;
+  font-size: 0.85rem;
+}
+
+.formula-json-editor {
+  flex: 1;
+  margin: 16px;
+  padding: 12px;
+  background: #2d2d2d;
+  color: #d4d4d4;
+  border: 1px solid #444;
+  border-radius: 4px;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  resize: none;
+  overflow: auto;
+}
+
+.formula-json-editor:focus {
+  outline: none;
+  border-color: #007acc;
+}
+
+.formula-json-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 20px;
+  border-top: 1px solid #333;
+}
+
+.formula-json-actions button {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.formula-json-actions .save-btn {
+  background: #007acc;
+  color: #fff;
+}
+
+.formula-json-actions .save-btn:hover {
+  background: #005a9e;
+}
+
+.formula-json-actions .cancel-btn {
+  background: #444;
+  color: #fff;
+}
+
+.formula-json-actions .cancel-btn:hover {
+  background: #555;
+}

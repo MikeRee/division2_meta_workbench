@@ -3,22 +3,13 @@
     "logo": "https://i.imgur.com/PtNkqMZ.png",
     "name": "Aces & Eights",
     "core": "weapon damage",
-    "twoPc": [
-      {
-        "stat": "MMR Damage",
-        "mod": 15
-      },
-      {
-        "stat": "Rifle damage",
-        "mod": 15
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Headshot Damage",
-        "mod": 30
-      }
-    ],
+    "twoPc": {
+      "mmr damage": 15,
+      "rifle damage": 15
+    },
+    "threePc": {
+      "headshot damage": 30
+    },
     "fourPc": "Dead Man's Hand\n\nFlip a card when landing shots with a Rifle or Marksman rifle. \n\nAfter 5 cards are flipped, the damage of your next shot is amplified by 30%. \nMore shots are enhanced the better the hand revealed. \n\nFour of a Kind: 4 shots\nFull House: 3 shots\nAces and Eights: 2 shots. \n\nFlip an additional card on headshots.",
     "chest": "No Limit\n\nIncreases Dead Man's Hand damage bonus \nfrom 30% to 50%. ",
     "chestDesc": "Ace in the Sleeve\n\nAmplifies 1 extra shot when revealing your hand",
@@ -30,18 +21,12 @@
     "logo": "https://i.imgur.com/8tbTowM.png",
     "name": "Aegis",
     "core": "armor",
-    "twoPc": [
-      {
-        "stat": "Health",
-        "mod": 70
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Total Armor",
-        "mod": 15
-      }
-    ],
+    "twoPc": {
+      "health": 70
+    },
+    "threePc": {
+      "total armor": 15
+    },
     "fourPc": "Stoic\n\nGet +4% Damage Resistance for every enemy that is targeting you.\n\nThe bonus is multiplied by 1.X, where X is the number of agents in your group.",
     "chest": "Deceit\n\nEnemies targeting your Decoy also count towards the Stoic Damage Reduction bonus.",
     "chestDesc": "Polyethylene Plating\n\nIncrease Stoic Damage Resistance bonus from 4% to 5%.",
@@ -53,26 +38,14 @@
     "logo": "",
     "name": "Breaking Point",
     "core": "weapon damage",
-    "twoPc": [
-      {
-        "stat": "Rifle Damage",
-        "mod": 25
-      },
-      {
-        "stat": "MMR Damage",
-        "mod": 25
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Headshot Damage",
-        "mod": 30
-      },
-      {
-        "stat": "Weapon Handling",
-        "mod": 15
-      }
-    ],
+    "twoPc": {
+      "rifle damage": 25,
+      "mmr damage": 25
+    },
+    "threePc": {
+      "headshot damage": 30,
+      "weapon handling": 15
+    },
     "fourPc": "On Point\n\nHitting a shot with a rifle or MMR grants 1 stack, max stack equal to magazine size. \nReloading grants 2% handling and 4% WD per stack for 10s. No stacks gained while bonuses are active. \nOnce timer runs out magazine is refilled. Reloading will stop effect. \nReloading with stacks while inactive will remove all stacks and refill magazine ",
     "chest": "Point of no Return\n\nIncrease on point bonuses timer from 10s - 15s",
     "chestDesc": "Point of honor \n\nIncreases On Point Weapon Damage bonus from 4 to 7.2.",
@@ -84,18 +57,12 @@
     "logo": "https://i.imgur.com/a3wFseF.png",
     "name": "Cavalier",
     "core": "armor",
-    "twoPc": [
-      {
-        "stat": "Hazard Protection",
-        "mod": 30
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Repair Skills",
-        "mod": 40
-      }
-    ],
+    "twoPc": {
+      "hazard protection": 30
+    },
+    "threePc": {
+      "repair skills": 40
+    },
     "fourPc": "Charging\n\nFor each second spent out of cover during combat, Agents will get 5% reduced incoming skill damage. Max 50%\n\nCharged\n\nWhile fully charged, gain immunity to any movement speed debuff and share this with all of the agents hazard protection and the incoming skill damage with all allies for 10 seconds.\n\nAfter Charged is consumed, Charging buff will resume if still in combat and out of cover!",
     "chest": "Overcharging:\n\nIncreases Charger max incoming damage protection to 70%",
     "chestDesc": "Safe Charging:\n\nCharging gives 10% protection per second.",
@@ -107,8 +74,12 @@
     "logo": "",
     "name": "Concentrated Company",
     "core": "weapon damage",
-    "twoPc": [],
-    "threePc": [],
+    "twoPc": {
+      "weapon damage": 10
+    },
+    "threePc": {
+      "weapon handling": 30
+    },
     "fourPc": "Camaraderie\n\nShooting an enemy marks them for 7 seconds.\n\nWhen a marked enemy dies, receive one stack of 3% Weapon Damage and 2% Critical Hit Damage for each Ally or Skill that has contributed to killing that enemy.\n\nMax stacks is 35. Stacks decay every 10 seconds.\nMaximum amount of marks that can be placed is 4.",
     "chest": "All for One\n\nIncrease the amount of marks that can be placed from 4 to 8.",
     "chestDesc": "One for All\n\nIncrease the Weapon Damage bonus per stack from 3% to 5%.",
@@ -120,22 +91,13 @@
     "logo": "https://i.imgur.com/fbcV3JY.png",
     "name": "Eclipse Protocol",
     "core": "skill tier",
-    "twoPc": [
-      {
-        "stat": "Status Effects",
-        "mod": 15
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Skill Haste",
-        "mod": 15
-      },
-      {
-        "stat": "Hazard Protection",
-        "mod": 30
-      }
-    ],
+    "twoPc": {
+      "status effect": 15
+    },
+    "threePc": {
+      "skill haste": 15,
+      "hazard protection": 30
+    },
     "fourPc": "Indirect Transmission\n\nOn kill:\n> Spread status effects of that enemy to all enemies within 10m\n> Refresh 50% of status effect durations",
     "chest": "Proliferation\n\nIncreases Indirect Transmission range \nfrom 10m to 15m\n\nIncreases refresh percentage from\n50% to 75%.",
     "chestDesc": "Symptom Aggravator\n\nAmplifies all damage you deal to \nstatus affected targets by 30%",
@@ -147,22 +109,13 @@
     "logo": "https://i.imgur.com/HPx0FU7.png",
     "name": "Foundry Bulwark",
     "core": "armor",
-    "twoPc": [
-      {
-        "stat": "Total Armor",
-        "mod": 10
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Armor Regen",
-        "mod": 1
-      },
-      {
-        "stat": "Shield Health",
-        "mod": 50
-      }
-    ],
+    "twoPc": {
+      "total armor": 10
+    },
+    "threePc": {
+      "armor regen": 1,
+      "shield health": 50
+    },
     "fourPc": "Makeshift Repairs\n\nWhenever you or your shield take damage,\n25% of that amount is repaired to both over 10s. ",
     "chest": "Improved Materials\n\nDecreases time taken for Makeshift Repairs\nfrom 10s to 5s. ",
     "chestDesc": "Process Refinery\n\nIncreases Makeshift Repairs from 25% over 10s\nto 35% over 10s",
@@ -174,22 +127,13 @@
     "logo": "https://i.imgur.com/qyQzKCU.png",
     "name": "Future Initiative",
     "core": "skill tier",
-    "twoPc": [
-      {
-        "stat": "Repair-skills",
-        "mod": 30
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Skill Duration",
-        "mod": 30
-      },
-      {
-        "stat": "Skill Haste",
-        "mod": 15
-      }
-    ],
+    "twoPc": {
+      "repair skills": 30
+    },
+    "threePc": {
+      "skill duration": 30,
+      "skill haste": 15
+    },
     "fourPc": "Ground Control\n\nIncreases you and your allies' total weapon and skill damage\nby 15% when at full armor.\n\nWhen you repair an ally, you and all allies within 5m of you\nare also repaired for 60% of that amount.",
     "chest": "Tactical Superiority\n\nIncreases Ground Control damage bonus\nfrom 15% to 25%",
     "chestDesc": "Advanced Combat Tactics\n\nIncreases Ground Control proximity repair\nfrom 60% to 120%",
@@ -201,22 +145,13 @@
     "logo": "https://i.imgur.com/De6m9NO.png",
     "name": "Hard Wired",
     "core": "skill tier",
-    "twoPc": [
-      {
-        "stat": "Skill Haste",
-        "mod": 15
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Skill Damage",
-        "mod": 15
-      },
-      {
-        "stat": "Repair Skills",
-        "mod": 30
-      }
-    ],
+    "twoPc": {
+      "skill haste": 15
+    },
+    "threePc": {
+      "skill damage": 15,
+      "repair skills": 30
+    },
     "fourPc": "Feedback Loop\n\nWhenever you use or cancel a skill, \n> your other skill's cooldown is reduced by 30s \n> total skill repair is increased by 10% for 20s.\n> total skill damage is increased by 10% for 20s.\n\nCooldown: 10s.",
     "chest": "Positive Reinforcement\n\nIncreases Feedback Loop skill damage \nand repair bonus from +10% to +25%",
     "chestDesc": "Short Circuit\n\nDecreases Feedback Loop cooldown from 10s to 5s.",
@@ -228,22 +163,13 @@
     "logo": "https://i.imgur.com/cabNPK0.png",
     "name": "Heartbreaker",
     "core": "armor",
-    "twoPc": [
-      {
-        "stat": "Assault Rifle Damage",
-        "mod": 15
-      },
-      {
-        "stat": "LMG Damage",
-        "mod": 15
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Weapon Handling",
-        "mod": 15
-      }
-    ],
+    "twoPc": {
+      "assault rifle damage": 15,
+      "lmg damage": 15
+    },
+    "threePc": {
+      "weapon handling": 15
+    },
     "fourPc": "Heartstopper\n\nHeadshots apply pulse 5s.\nWeapon hits on pulsed enemies add and refreshes a stack of +1% bonus armor and +1.1% weapon damage to pulsed enemies for 5s. Max stack is 50.\n\nTwo stacks are lost per second.",
     "chest": "Max BPM\n\nMax stack is now 100.",
     "chestDesc": "Cold\n\nStacks now supply +2% bonus armor",
@@ -255,22 +181,13 @@
     "logo": "https://imgur.com/yaasvrl.png",
     "name": "Hotshot",
     "core": "weapon damage",
-    "twoPc": [
-      {
-        "stat": "Marksman Rifle Damage",
-        "mod": 30
-      },
-      {
-        "stat": "Weapon Handling",
-        "mod": 30
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Headshot Damage",
-        "mod": 30
-      }
-    ],
+    "twoPc": {
+      "mmr damage": 30,
+      "weapon handling": 30
+    },
+    "threePc": {
+      "headshot damage": 30
+    },
     "fourPc": "Headache\n\nFirst Headshot with a Marksman Rifle will increase next headshot by 20%, second consecutive headshot with a Marksman Rifle will give +10% armor (if at full armor it will give bonus armor max +50% of current armor value), third consecutive headshot will refill magazine. \n\nFrom the fourth headshot forward agents will get all 3 bonuses for each consecutive headshot kill. Missing a headshot will reset the cycle",
     "chest": "Stand Tall \n\nIncreases bonus Armor from 50% to 100% \n ",
     "chestDesc": "Lucky\n\nAgents can miss a headshot before resetting the cycle ",
@@ -282,26 +199,14 @@
     "logo": "https://i.imgur.com/avuG3TM.png",
     "name": "Hunter's Fury",
     "core": "weapon damage",
-    "twoPc": [
-      {
-        "stat": "Shotgun Damage",
-        "mod": 15
-      },
-      {
-        "stat": "SMG Damage",
-        "mod": 15
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Armor on kill",
-        "mod": 20
-      },
-      {
-        "stat": "Health on Kill",
-        "mod": 50
-      }
-    ],
+    "twoPc": {
+      "shotgun damage": 15,
+      "smg damage": 15
+    },
+    "threePc": {
+      "armor on kill": 20,
+      "health on kill": 50
+    },
     "fourPc": "Apex Predator\n\nEnemies within 15m receive a debuff, amplifying your weapon damage against them by +20%. \n\nKilling a debuffed enemy with your weapon disorients other enemies within 5m, and amplifies weapon damage by 5% for 10s, \nstacking up to 5 times.",
     "chest": "Endless Hunger\n\nIncreases the duration of Apex Predator stacks from 10s to 30s.",
     "chestDesc": "Overwhelming Force\n\n Increases the radius of disorient on Apex Predator kills from 5m to 10m.",
@@ -313,22 +218,13 @@
     "logo": "",
     "name": "Measured Assembly",
     "core": "skill tier",
-    "twoPc": [
-      {
-        "stat": "Skill Haste",
-        "mod": 15
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Repair Skills",
-        "mod": 60
-      },
-      {
-        "stat": "Explosive Resistance",
-        "mod": 40
-      }
-    ],
+    "twoPc": {
+      "skill haste": 15
+    },
+    "threePc": {
+      "repair skills": 60,
+      "explosive resistance": 40
+    },
     "fourPc": "Huddle\n\nRecieve +1 Skill Tier for each ally Agent that is within the range of the hive or Smart Cover. While at Skill Tier 6, having at least one ally Agent in the range of your Hive or Smart Cover for 4s will grant Overcharge for 15s Cooldown: 40s\n\nMortars and enemy Skills that enter the range of your Hive or Smart Cover will be destroyed. cooldown 10s. The cooldown is 20% faster for each ally agent within the range of your hive or smart cover.",
     "chest": "Hivemind\n\n Decrease the Overcharge cooldown from 40 to 25. ",
     "chestDesc": "Smart Cooperation\n\nDecrease the cooldown for destroying Mortars and enemy skills from 10 to 1",
@@ -340,18 +236,12 @@
     "logo": "https://i.imgur.com/0zrR7UI.png",
     "name": "Negotiator's Dilemma",
     "core": "weapon damage",
-    "twoPc": [
-      {
-        "stat": "Critical Hit Chance",
-        "mod": 15
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Critical Hit Damage",
-        "mod": 20
-      }
-    ],
+    "twoPc": {
+      "critical hit chance": 15
+    },
+    "threePc": {
+      "critical hit damage": 20
+    },
     "fourPc": "Crowd Control\n\nCritical hits mark enemies for 20s, up to 3 marks total. \n\nWhen you critically hit a marked enemy, all other marked enemies\ntake 60% of the damage dealt. \n\nWhenever a marked enemy dies, gain +2% critical hit damage,\nstacking up to 20 times, or until combat ends.",
     "chest": "Target Rich Environment\n\nIncreases Crowd Control mark count \nfrom 3 to 5.",
     "chestDesc": "Critical Measures\n\nIncreases Crowd Control damage to \nadditional marked enemies from 60% to 112%. ",
@@ -363,18 +253,12 @@
     "logo": "https://i.imgur.com/XV8MKLt.png",
     "name": "Ongoing Directive",
     "core": "weapon damage",
-    "twoPc": [
-      {
-        "stat": "Status Effects",
-        "mod": 15
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Reload Speed",
-        "mod": 30
-      }
-    ],
+    "twoPc": {
+      "status effect": 15
+    },
+    "threePc": {
+      "reload speed": 30
+    },
     "fourPc": "Rules of Engagement\n\nShooting a status affected enemy will apply a mark.\n\nKilling a marked enemy grants a full clip of Hollow-Point Ammo for your active weapon, and half a clip of the agent's active weapon to the rest of the party.\n\nMarklast for 10 Seconds.\n\nHollow-Point Ammo amplifies weapon damage by 20% and applies bleed on hit.",
     "chest": "Parabellum Rounds\n\nIncreases Hollow-Point Ammo weapon damage amplification to 50%\n\nDoes not effect party ammo.",
     "chestDesc": "Trauma Specialist\n\nIncreases duration of bleed status effects by 50% all bleed damage done by 100%",
@@ -386,18 +270,13 @@
     "logo": "https://i.imgur.com/k3jgBqT.png",
     "name": "Ortiz: Exuro",
     "core": "skill tier",
-    "twoPc": [
-      {
-        "stat": "Burn Duration 15% Skill Health",
-        "mod": 20
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Burn Damage",
-        "mod": 40
-      }
-    ],
+    "twoPc": {
+      "burn duration": 20,
+      "skill health": 15
+    },
+    "threePc": {
+      "burn damage": 40
+    },
     "fourPc": "Ortiz Incinerator Turret Prototype\n\nThe Incinerator Turret spins 360°. You are immune to your own Incinerator Turret's fire. The Incinerator Turret explodes when disabled.",
     "chest": "Chain Combustion\n\nEnemies set ablaze by the Ortiz Incinerator Turret Prototype ignite other enemies within 2m. ",
     "chestDesc": "Heatstroke\n\n+25% Weapon Damage to enemies set on fire by the Ortiz Incinerator Turret Prototype.\n\n+25% Ortiz Incinerator Turret Prototype Range.",
@@ -409,16 +288,15 @@
     "logo": "",
     "name": "Refactor",
     "core": {
-      "skill tier": ["Mask", "Chest", "Holster"],
-      "armor": ["Backpack", "Gloves", "Kneepads"]
+      "skill tier": ["mask", "chest", "holster"],
+      "armor": ["backpack", "gloves", "kneepads"]
     },
-    "twoPc": [
-      {
-        "stat": "Status Effects",
-        "mod": 15
-      }
-    ],
-    "threePc": [],
+    "twoPc": {
+      "status effect": 15
+    },
+    "threePc": {
+      "skill damage": 25
+    },
     "fourPc": "Return to Sender\n\nFor PvE: Receive repairs of 10% of the damage dealt by your Skills. Your allies will receive repairs of 20% of the damage dealt by your Skills.\n\nFor PvP: Receive repairs of 5% of the damage dealt by your Skills. Your allies will receive repairs of 10% of the damage dealt by your Skills.",
     "chest": "Increased Interest\n\nFor PvE: Increase the repairs received from Return to Sender from 10% to 25%, and from 20% to 35%\n\nFor PvP: Increase the repairs received from Return to Sender from 5% to 15%, and from 10% to 20%",
     "chestDesc": "Over-engineered\n\nWhile at full Armor, repairs received from Return to Sender will provide Bonus Armor, up to 80% of your Total Armor. Does not apply to allies.",
@@ -430,18 +308,12 @@
     "logo": "https://i.imgur.com/1WCdHXM.png",
     "name": "Rigger",
     "core": "skill tier",
-    "twoPc": [
-      {
-        "stat": "Skill Haste",
-        "mod": 15
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Skill Duration",
-        "mod": 15
-      }
-    ],
+    "twoPc": {
+      "skill haste": 15
+    },
+    "threePc": {
+      "skill duration": 15
+    },
     "fourPc": "Tend and Befriend\n\nInteracting with your deployed skills grants the skill 25% skill damage for 10s. This buff cannot be refreshed.\n\nInteractions include:\nUsing / Deploying the Skill\nChanging the skills target\nHealing the skill\n",
     "chest": "Best Buds\n\nIncrease the damage buff from 25% to 50%",
     "chestDesc": "Complete Uptime\n\nCancelling your skills will reset their cooldown.",
@@ -453,18 +325,12 @@
     "logo": "https://i.imgur.com/jlIXDlg.png",
     "name": "Striker's Battlegear",
     "core": "weapon damage",
-    "twoPc": [
-      {
-        "stat": "Weapon Handling",
-        "mod": 15
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Rate of Fire",
-        "mod": 15
-      }
-    ],
+    "twoPc": {
+      "weapon handling": 15
+    },
+    "threePc": {
+      "rate of fire": 15
+    },
     "fourPc": "Striker's Gamble\n\nWeapon hits increase total weapon damage by 0.65%, stacking up to 100 times. 1 stacks lost per second between 0 to 50 stacks; 2 stacks lost per second between 51 and 100 stacks. ",
     "chest": "Press the Advantage\n\nIncreases max stacks for Striker’s Gamble from 100 to 200. 3 stacks lost per second between 101 and 200 stacks.",
     "chestDesc": "Risk Management\n\nIncreases total weapon damage gained per stack of Striker’s Gamble from 0.65% to .9%. ",
@@ -476,25 +342,16 @@
     "logo": "https://i.imgur.com/8OehPqT.png",
     "name": "System Corruption\n(Dark Zone Exclusive)",
     "core": {
-      "weapon damage": ["Mask", "Gloves", "Holster"],
-      "armor": ["Backpack", "Chest", "Kneepads"]
+      "weapon damage": ["mask", "gloves", "holster"],
+      "armor": ["backpack", "chest", "kneepads"]
     },
-    "twoPc": [
-      {
-        "stat": "Armor on Kill",
-        "mod": 15
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Disrupt Resistance",
-        "mod": 40
-      },
-      {
-        "stat": "Pulse Resistance",
-        "mod": 40
-      }
-    ],
+    "twoPc": {
+      "armor on kill": 15
+    },
+    "threePc": {
+      "disrupt resistance": 40,
+      "pulse resistance": 40
+    },
     "fourPc": "Hackstep Protocol\n\nReplaces armor kits with an instant, infinite-use ability.\n\n> Grants 50% bonus armor for 5s\n> Hides your nameplate for 5s. \n> Repairs 20% of your armor\n> Increases total weapon damage by 2% per 5% \nbonus armor gained, up to 20% \n\nAbility cooldown: 20s",
     "chest": "Compiler Optimization\n\nDecreases Hackstep Protocol cooldown \nfrom 20s to 15s. ",
     "chestDesc": "Multithreaded Execution\n\nIncreases Hackstep Protocol bonus armor\nfrom 50% to 100%. ",
@@ -506,18 +363,12 @@
     "logo": "https://i.imgur.com/faLj58L.png",
     "name": "Tip of the Spear",
     "core": "weapon damage",
-    "twoPc": [
-      {
-        "stat": "Signature Weapon Damage",
-        "mod": 20
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Weapon Damage",
-        "mod": 10
-      }
-    ],
+    "twoPc": {
+      "signature weapon damage": 20
+    },
+    "threePc": {
+      "weapon damage": 10
+    },
     "fourPc": "Aggressive Recon\n\nGetting a Signature Weapon kill gives +15%. Signature Weapon Damage for 10s and +25% Reload Speed for the next reload of the weapon (the bonuses do not stack).\n\nAutomatically regenerate Signature Weapon Ammo every 60s.",
     "chest": "Specialized Destruction\n\nIncrease Aggressive Recon Signature Weapon Damage bonus from 15% to 30%. \nEvery 3rd Signature Weapon kill generates Signature Weapon ammo.",
     "chestDesc": "Signature Moves\n\n+50% Weapon Damage for 15s after fully depleting the Signature Weapon of ammo.\n\nDoubles the amount of ammo generated by Aggressive Recon.",
@@ -529,18 +380,12 @@
     "logo": "",
     "name": "Tipping Scales",
     "core": "weapon damage",
-    "twoPc": [
-      {
-        "stat": "Mag Size",
-        "mod": 30
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "LMG Damage",
-        "mod": 30
-      }
-    ],
+    "twoPc": {
+      "mag size": 30
+    },
+    "threePc": {
+      "lmg damage": 30
+    },
     "fourPc": "Throttle Control\n\n    Shooting builds stacks to a max of 50. Each stack provides +0.5% Weapon Handling and +4% Critical Hit Damage.\n\n    Lose 6 stacks per second while not shooting. No stacks are lost if an enemy is Suppressed.",
     "chest": "Sustainability\n\nIncrease the maximum number of stacks from 50 to 75.",
     "chestDesc": "Snowball\n\nIncrease the Critical Hit Damage received per stack from 4% to 7%.",
@@ -552,18 +397,12 @@
     "logo": "https://i.imgur.com/hAVQM8F.png",
     "name": "True Patriot",
     "core": "armor",
-    "twoPc": [
-      {
-        "stat": "Ammo Capacity",
-        "mod": 30
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Magazine Size",
-        "mod": 30
-      }
-    ],
+    "twoPc": {
+      "ammo capacity": 30
+    },
+    "threePc": {
+      "mag size": 30
+    },
     "fourPc": "Red, White and Blue\n\nEnemies you shoot receive stacking debuffs of Red/White/Blue.\nChanges every 2 seconds.\n\nRed: Amplifies the enemy's damage taken by 8%. \nWhite: Hitting the enemy restores you and your allies' armor by 2%\nonce every second\nBlue: Decreases enemy damage dealt by 8%.\n\nFull Flag: Enemies that die while under the effect of all three debuffs\ncreate a 5m explosion, dealing damage equal to their total health and armor. \nExplosion strength is reduced on Named enemy deaths.",
     "chest": "Waving the Flag\n\nIncreases Red, White, and Blue rotation speed \nto 1.5 seconds. ",
     "chestDesc": "Patriotic Boost\n\nIncreases Red, White, and Blue debuff strength. \n\nRed: From 8% to 12%\nWhite: From 2% to 3%\nBlue: From 8% to 12%.",
@@ -575,18 +414,12 @@
     "logo": "https://i.imgur.com/U1t9PAw.png",
     "name": "Umbra Initiative",
     "core": "weapon damage",
-    "twoPc": [
-      {
-        "stat": "Critical Chance",
-        "mod": 15
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Reload Speed",
-        "mod": 30
-      }
-    ],
+    "twoPc": {
+      "critical hit chance": 15
+    },
+    "threePc": {
+      "reload speed": 30
+    },
     "fourPc": "From the Shadows Into the Light\n\nFrom the Shadows: While out of cover and in combat, gain 10 Stacks per second up to 50. Each stack will give 0.8% Armor regen when it is consumed. Stacks consume, 10 stacks per second, only in cover.\n\nInto the Light: While in cover, gain 10 Stacks per second up to 50. Each stack will give 1.2% Critical damage increase and 0.4% RPM. Buff does not apply while shooting from cover. While out of cover Agents lose 2 stacks per second at normal speed and 1 stack per second if sprinting.\n",
     "chest": "From the Shadows\n\nIncreases Max stacks For Into the Light from 50 to 100, stack gain from 10 to 20 and stack consumption from 10 to 20. \n(buffs the damage talent)",
     "chestDesc": "Into the Light\n\nIncreases Max stacks From the Shadows from 50 to 100, stack gain from 10 to 20.\n(buffs the armor regen talent)",
@@ -598,22 +431,13 @@
     "logo": "",
     "name": "Virtuoso",
     "core": "weapon damage",
-    "twoPc": [
-      {
-        "stat": "Weapon Handling",
-        "mod": 15
-      },
-      {
-        "stat": "Magazine Size",
-        "mod": 15
-      }
-    ],
-    "threePc": [
-      {
-        "stat": "Weapon Damage",
-        "mod": 15
-      }
-    ],
+    "twoPc": {
+      "weapon handling": 15,
+      "mag size": 15
+    },
+    "threePc": {
+      "weapon damage": 15
+    },
     "fourPc": "Symphony\n\nKills Beyond 25 Meters: +40% Weapon Damage to Shotguns, SMGs, and Pistols; +20% Weapon Damage to Assault Rifles and LMGs; and +25% Bonus Armor for 15s.\n\nKills Within 25 Meters: +40% Weapon Damage to Marksman Rifles and Rifles; +20% Weapon Damage to Assault Rifles and LMGs; and +30% Headshot Damage for 15s.\n\nIntermittently killing enemies from both ranges builds up stacks. At 4 stacks, all bonuses are multiplied by 1.5 and triggered simultaneously for 15s. No stacks gained while talent is active.",
     "chest": "Fortissimo\n\nDouble the weapon dmg bonus from symphony",
     "chestDesc": "Accelerando \n\ndecreases the number of stacks needed to proc the symphony double buffs from 4 to 3.",

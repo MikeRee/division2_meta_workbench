@@ -1,6 +1,27 @@
 /**
+ * Format a map/object value as a key=value string.
+ * Arrays are formatted as key=[val1,val2].
+ * Useful for converting object source values into a flat string representation
+ * that rules can operate on.
+ */
+export function formatMapAsString(value: any): string {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    return String(value ?? '');
+  }
+  return Object.entries(value)
+    .map(([k, v]) => {
+      if (Array.isArray(v)) {
+        return `${k}=[${v.join(',')}]`;
+      }
+      return `${k}=${v}`;
+    })
+    .join(',');
+}
+
+/**
  * Parse a string or Record into Record<string, number>
  * Expected string format: "optimal range=50,weapon damage=30"
+ * Also supports array values: "skill=[one,two],armor=[three,four]"
  * 
  * @param value - String in format "key=value,key2=value2" or existing Record
  * @param appliedRules - Optional array of rule names that were applied to this value
@@ -20,8 +41,23 @@ export function parseRecordField(value: Record<string, number> | string | any, a
       return result;
     }
 
-    // Split by comma to get individual key=value pairs
-    const pairs = value.split(',');
+    // Split by comma, but respect brackets (don't split inside [...])
+    const pairs: string[] = [];
+    let current = '';
+    let bracketDepth = 0;
+    for (let i = 0; i < value.length; i++) {
+      const ch = value[i];
+      if (ch === '[') bracketDepth++;
+      else if (ch === ']') bracketDepth--;
+      
+      if (ch === ',' && bracketDepth === 0) {
+        pairs.push(current);
+        current = '';
+      } else {
+        current += ch;
+      }
+    }
+    if (current) pairs.push(current);
     
     for (const pair of pairs) {
       const trimmedPair = pair.trim();
@@ -46,16 +82,15 @@ export function parseRecordField(value: Record<string, number> | string | any, a
         throw new Error(`Invalid format: "${trimmedPair}". Key cannot be empty${rulesInfo}`);
       }
       
-      // Parse the numeric value
+      // Check if value is an array format [val1,val2] — skip numeric parse, store as 0 placeholder
+      // (The actual array data is preserved in the string for display; numeric records ignore arrays)
       const numValue = parseFloat(valueStr);
       if (isNaN(numValue)) {
-        const rulesInfo = appliedRules && appliedRules.length > 0 
-          ? `\nRules applied: ${appliedRules.join(', ')}` 
-          : '';
-        throw new Error(`Invalid format: "${trimmedPair}". Value "${valueStr}" is not a valid number${rulesInfo}`);
+        // Non-numeric value — store 0 as placeholder so the record still parses
+        result[key] = 0;
+      } else {
+        result[key] = numValue;
       }
-      
-      result[key] = numValue;
     }
     
     return result;

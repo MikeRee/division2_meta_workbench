@@ -66,6 +66,19 @@ class Weapon {
     return new Weapon(data);
   }
 
+  /** Returns the list of numeric property names available for Blockly dropdowns */
+  static blocklyProperties(): [string, string][] {
+    return [
+      ['RPM', 'rpm'],
+      ['Base Mag Size', 'baseMagSize'],
+      ['Modded Mag Size', 'moddedMagSize'],
+      ['Reload', 'reload'],
+      ['Damage', 'damage'],
+      ['Optimal Range', 'optimalRange'],
+      ['HSD', 'hsd'],
+    ];
+  }
+
   static normalizeHeaderKey(header: string, columnIndex: number): string {
     // Handle specific column indices for known structure
     if (columnIndex === 0) return 'type'; // Column A is Type

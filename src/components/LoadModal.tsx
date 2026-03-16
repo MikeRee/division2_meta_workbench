@@ -1,11 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './LoadModal.css';
 import { useRawDataStore } from '../stores/useRawDataStore';
 import { useCleanDataStore, getModelFields, CLASS_CONSTRUCTORS } from '../stores/useCleanDataStore';
 import { useRulesStore, SYSTEM_RULES } from '../stores/useRulesStore';
 import { MdDownload, MdEditDocument, MdCleaningServices } from 'react-icons/md';
-import StatModifier from '../models/StatModifier';
 import { applyBindings } from '../utils/dataNormalizer';
+
+/**
+ * Format a value for display in the Source column.
+ * Shows the raw value as-is: strings as strings, objects/arrays as JSON.
+ */
+function formatSourceValue(value: any): string {
+  if (value === null || value === undefined) return '';
+  if (typeof value === 'object') return JSON.stringify(value);
+  return String(value);
+}
 
 interface LoadModalProps {
   isOpen: boolean;
@@ -19,7 +28,13 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
   const [spreadsheetUrl, setSpreadsheetUrl] = useState('');
   const [viewerData, setViewerData] = useState<any>(null);
   const [viewerType, setViewerType] = useState('');
-  const [viewerMode, setViewerMode] = useState<'raw' | 'clean'>('raw');
+  const viewerTypeRef = useRef('');
+  const updateViewerType = (type: string) => {
+    viewerTypeRef.current = type;
+    setViewerType(type);
+  };
+  const [viewerUpdateFn, setViewerUpdateFn] = useState<((data: any) => void) | null>(null);
+  const [viewerActions, setViewerActions] = useState<Array<{ label: string; onClick: () => void }>>([]);
   const [editedJson, setEditedJson] = useState('');
   const [dataExists, setDataExists] = useState<Record<string, boolean>>({});
   const [cleanDataExists, setCleanDataExists] = useState<Record<string, boolean>>({});
@@ -166,6 +181,12 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
 
     if (isOpen) {
       checkDataExists();
+      // Load raw data from /raw/*.json files if not already loaded
+      const rawStore = useRawDataStore.getState();
+      // Always load raw files from disk - cached data may be stale
+      if (!rawStore.hasData(Object.keys(pages)[0] as any)) {
+        rawStore.loadAllRawFiles();
+      }
     }
   }, [isOpen]);
 
@@ -239,8 +260,11 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     }
 
     setViewerData(data);
-    setViewerType(dataType);
-    setViewerMode('raw');
+    updateViewerType(dataType);
+    setViewerUpdateFn(() => (parsed: any) => {
+      const dataArray = Array.isArray(parsed) ? parsed : Object.values(parsed);
+      useRawDataStore.getState().setRawData(dataType as any, dataArray);
+    });
     setEditedJson(JSON.stringify(data, null, 2));
   };
 
@@ -250,9 +274,23 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     const cleanStore = useCleanDataStore.getState();
     let data = cleanStore.getCleanData(dataType as any);
     
+    // Callback that writes to the clean store
+    const cleanUpdateFn = (parsed: any) => {
+      useCleanDataStore.getState().setCleanData(dataType as any, parsed);
+    };
+    
+    // Extra actions for clean data viewer
+    const cleanActions = [
+      { label: 'Import', onClick: () => handleImport() },
+      { label: 'Rules', onClick: () => { setRulesDataKey(dataType); setShowRulesOverlay(true); } },
+    ];
+    
     // If clean data is empty and this is a lookup-based type, try to load from lookups.json
     const lookupTypes = ['weaponAttributes', 'weaponTypeAttributes', 'gearAttributes', 'gearMods', 'keenersWatch', 'statusImmunities', 'specializations'];
     const isLookupType = lookupTypes.includes(dataType);
+    
+    // Lookup types don't need Import/Rules
+    const actions = isLookupType ? [] : cleanActions;
     
     if ((!data || (typeof data === 'object' && Object.keys(data).length === 0) || (Array.isArray(data) && data.length === 0)) && isLookupType) {
       // Attempt to load from lookups.json
@@ -261,16 +299,14 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
         .then(lookups => {
           const lookupData = lookups[dataType];
           if (lookupData) {
-            // Save to clean store in original structure (no conversion to array)
             cleanStore.setCleanData(dataType as any, lookupData);
             
-            // Update viewer with loaded data - show JSON for lookup types
             setViewerData(lookupData);
-            setViewerType(dataType);
-            setViewerMode('raw'); // Show JSON view for lookup types
+            updateViewerType(dataType);
+            setViewerUpdateFn(() => cleanUpdateFn);
+            setViewerActions(actions);
             setEditedJson(JSON.stringify(lookupData, null, 2));
             
-            // Update counts - count based on structure
             let count = 0;
             if (typeof lookupData === 'object') {
               count = Object.keys(lookupData).length;
@@ -278,38 +314,38 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
             setCleanDataExists(prev => ({ ...prev, [dataType]: true }));
             setCleanDataCounts(prev => ({ ...prev, [dataType]: count }));
           } else {
-            // No data in lookups.json either
             const displayData = data || {};
             setViewerData(displayData);
-            setViewerType(dataType);
-            setViewerMode(isLookupType ? 'raw' : 'clean');
+            updateViewerType(dataType);
+            setViewerUpdateFn(() => cleanUpdateFn);
+            setViewerActions(actions);
             setEditedJson(JSON.stringify(displayData, null, 2));
           }
         })
         .catch(error => {
           console.error('Failed to load lookups.json:', error);
-          // Fall back to showing empty data
           const displayData = data || {};
           setViewerData(displayData);
-          setViewerType(dataType);
-          setViewerMode(isLookupType ? 'raw' : 'clean');
+          updateViewerType(dataType);
+          setViewerUpdateFn(() => cleanUpdateFn);
+          setViewerActions(actions);
           setEditedJson(JSON.stringify(displayData, null, 2));
         });
     } else {
-      // Allow viewing even if empty
       const displayData = data || {};
       setViewerData(displayData);
-      setViewerType(dataType);
-      // For lookup types, show JSON view by default
-      setViewerMode(isLookupType ? 'raw' : 'clean');
+      updateViewerType(dataType);
+      setViewerUpdateFn(() => cleanUpdateFn);
+      setViewerActions(actions);
       setEditedJson(JSON.stringify(displayData, null, 2));
     }
   };
 
   const handleCloseViewer = () => {
     setViewerData(null);
-    setViewerType('');
-    setViewerMode('raw');
+    updateViewerType('');
+    setViewerUpdateFn(null);
+    setViewerActions([]);
     setEditedJson('');
   };
 
@@ -322,15 +358,9 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     try {
       const parsed = JSON.parse(editedJson);
       
-      if (viewerMode === 'raw') {
-        // Raw mode - expect array
-        const dataArray = Array.isArray(parsed) ? parsed : Object.values(parsed);
-        useRawDataStore.getState().setRawData(viewerType as any, dataArray);
-        alert(`${viewerType} updated successfully in raw store!`);
-      } else {
-        // Clean mode - update clean data
-        useCleanDataStore.getState().setCleanData(viewerType as any, parsed);
-        alert(`${viewerType} updated successfully in clean store!`);
+      if (viewerUpdateFn) {
+        viewerUpdateFn(parsed);
+        alert(`${viewerType} updated successfully!`);
       }
       
       handleCloseViewer();
@@ -339,85 +369,141 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     }
   };
 
-  const handleImport = () => {
-    if (!viewerType) return;
-    
-    const rawStore = useRawDataStore.getState();
-    const cleanStore = useCleanDataStore.getState();
-    const rulesStore = useRulesStore.getState();
-    
-    // Get raw data
-    const rawData = rawStore.getRawData(viewerType as any);
-    if (!rawData || !Array.isArray(rawData) || rawData.length === 0) {
-      alert('No raw data available to import');
+  const handleImport = async () => {
+    console.log('[handleImport] Called, viewerTypeRef.current:', viewerTypeRef.current);
+    const currentViewerType = viewerTypeRef.current;
+    if (!currentViewerType) {
+      alert('No data type selected. Please open a clean data viewer first.');
       return;
     }
     
-    // Get bindings for this data type
-    const bindings = rulesStore.getBindings(viewerType as any);
-    if (bindings.length === 0) {
-      alert('No bindings configured. Please configure bindings in the Rules section first.');
-      return;
-    }
-    
-    // Apply bindings to transform raw data using shared function
-    const processedData = applyBindings(rawData, bindings, {
-      replaceRules: rulesStore.replaceRules,
-      matchRules: rulesStore.matchRules,
-      mappings: rulesStore.mappings
-    }, { trackRules: true });
-    
-    // Instantiate model classes based on data type using CLASS_CONSTRUCTORS
-    let modelInstances: any[];
-    const Constructor = CLASS_CONSTRUCTORS[viewerType as keyof typeof CLASS_CONSTRUCTORS];
-    
-    if (Constructor) {
-      modelInstances = processedData.map((data: any) => new Constructor(data));
-    } else {
-      // For data types without model classes, use plain objects
-      modelInstances = processedData;
-    }
-    
-    // Get existing clean data
-    const existingCleanData = cleanStore.getCleanData(viewerType as any);
-    
-    // Compare with existing data
-    if (existingCleanData && Array.isArray(existingCleanData) && existingCleanData.length > 0) {
-      const existingJson = JSON.stringify(existingCleanData, null, 2);
-      const newJson = JSON.stringify(modelInstances, null, 2);
+    try {
+      const rawStore = useRawDataStore.getState();
+      const cleanStore = useCleanDataStore.getState();
+      const rulesStore = useRulesStore.getState();
       
-      if (existingJson !== newJson) {
-        const confirmed = confirm(
-          `The processed data is different from the existing clean data.\n\n` +
-          `Existing items: ${existingCleanData.length}\n` +
-          `New items: ${modelInstances.length}\n\n` +
-          `Do you want to replace the existing clean data with the newly processed data?`
-        );
+      // Get raw data - force reload from files if store is empty for this type
+      let rawData = rawStore.getRawData(currentViewerType as any);
+      console.log('[handleImport] Raw data for', currentViewerType, ':', rawData?.length || 0, 'items');
+      
+      if (!rawData || !Array.isArray(rawData) || rawData.length === 0) {
+        console.log('[handleImport] No raw data found, attempting to load from /raw files...');
+        await rawStore.loadAllRawFiles();
+        rawData = rawStore.getRawData(currentViewerType as any);
+        console.log('[handleImport] After loading, raw data for', currentViewerType, ':', rawData?.length || 0, 'items');
+      }
+      
+      if (!rawData || !Array.isArray(rawData) || rawData.length === 0) {
+        alert(`No raw data available to import for "${currentViewerType}". Please load raw data first using the Load button.`);
+        return;
+      }
+      
+      // Get bindings for this data type
+      const bindings = rulesStore.getBindings(currentViewerType as any);
+      console.log('[handleImport] Bindings for', currentViewerType, ':', bindings?.length || 0, 'bindings');
+      console.log('[handleImport] Rules state:', {
+        replaceRules: Object.keys(rulesStore.replaceRules),
+        matchRules: Object.keys(rulesStore.matchRules),
+        mappings: Object.keys(rulesStore.mappings),
+      });
+      if (bindings.length === 0) {
+        alert(`No bindings configured for "${currentViewerType}". Please configure bindings in the Rules section first.`);
+        return;
+      }
+    
+      // Apply bindings to transform raw data using shared function
+      console.log('[handleImport] Bindings detail:', JSON.stringify(bindings.map(b => ({ dest: b.destination, src: b.source, rules: b.rules }))));
+      console.log('[handleImport] Replace rules:', JSON.stringify(rulesStore.replaceRules));
+      console.log('[handleImport] Mappings:', Object.keys(rulesStore.mappings));
+      const processedData = applyBindings(rawData, bindings, {
+        replaceRules: rulesStore.replaceRules,
+        matchRules: rulesStore.matchRules,
+        mappings: rulesStore.mappings
+      }, { trackRules: true });
+      
+      console.log('[handleImport] Processed', processedData?.length || 0, 'items. First item:', processedData?.[0]);
+      console.log('[handleImport] First raw item was:', rawData?.[0]);
+      const firstRaw = rawData?.[0];
+      const firstProcessed = processedData?.[0];
+      if (firstRaw) {
+        console.log('[handleImport] Raw minor1:', firstRaw.minor1, '| minor2:', firstRaw.minor2);
+        console.log('[handleImport] Processed minor1:', firstProcessed?.minor1, '| minor2:', firstProcessed?.minor2);
+      }
+      // Find an item that has "explosive" in minor1 or minor2
+      const explosiveItem = rawData?.find((item: any) => 
+        (item.minor1 && String(item.minor1).toLowerCase().includes('explosive')) ||
+        (item.minor2 && String(item.minor2).toLowerCase().includes('explosive'))
+      );
+      if (explosiveItem) {
+        const idx = rawData.indexOf(explosiveItem);
+        console.log('[handleImport] Found item with explosive at index', idx);
+        console.log('[handleImport] Raw explosive item minor1:', explosiveItem.minor1);
+        console.log('[handleImport] Raw explosive item minor2:', explosiveItem.minor2);
+        console.log('[handleImport] Processed explosive item minor1:', processedData?.[idx]?.minor1);
+        console.log('[handleImport] Processed explosive item minor2:', processedData?.[idx]?.minor2);
+      } else {
+        console.log('[handleImport] No items found with "explosive" in minor1 or minor2');
+      }
+      
+      // Instantiate model classes based on data type using CLASS_CONSTRUCTORS
+      let modelInstances: any[];
+      const Constructor = CLASS_CONSTRUCTORS[currentViewerType as keyof typeof CLASS_CONSTRUCTORS];
+      
+      if (Constructor) {
+        modelInstances = processedData.map((data: any) => new Constructor(data));
+      } else {
+        modelInstances = processedData;
+      }
+      
+      // Get existing clean data
+      const existingCleanData = cleanStore.getCleanData(currentViewerType as any);
+      
+      // Compare with existing data - only prompt if different
+      if (existingCleanData && Array.isArray(existingCleanData) && existingCleanData.length > 0) {
+        const existingJson = JSON.stringify(existingCleanData, null, 2);
+        const newJson = JSON.stringify(modelInstances, null, 2);
         
-        if (!confirmed) {
-          return;
+        if (existingJson === newJson) {
+          console.log('[handleImport] Processed data matches existing clean data, refreshing viewer');
+        } else {
+          console.log('[handleImport] Processed data differs from existing clean data');
+          const confirmed = confirm(
+            `The processed data is different from the existing clean data.\n\n` +
+            `Existing items: ${existingCleanData.length}\n` +
+            `New items: ${modelInstances.length}\n\n` +
+            `Do you want to replace the existing clean data with the newly processed data?`
+          );
+          
+          if (!confirmed) {
+            return;
+          }
         }
       }
+      
+      // Update clean data store
+      cleanStore.setCleanData(currentViewerType as any, modelInstances);
+      
+      // Always update viewer to show processed data
+      setViewerData(modelInstances);
+      setEditedJson(JSON.stringify(modelInstances, null, 2));
+      
+      // Update counts
+      const cleanExists: Record<string, boolean> = {};
+      const cleanCounts: Record<string, number> = {};
+      cleanExists[currentViewerType] = modelInstances && modelInstances.length > 0;
+      cleanCounts[currentViewerType] = modelInstances ? modelInstances.length : 0;
+      setCleanDataExists(prev => ({ ...prev, ...cleanExists }));
+      setCleanDataCounts(prev => ({ ...prev, ...cleanCounts }));
+      
+      console.log('[handleImport] Successfully imported', modelInstances.length, 'items for', currentViewerType);
+    } catch (error: any) {
+      console.error('Import failed:', error);
+      alert(`Import failed: ${error.message || error}`);
     }
-    
-    // Update clean data store
-    cleanStore.setCleanData(viewerType as any, modelInstances);
-    
-    // Update viewer to show new clean data
-    setViewerData(modelInstances);
-    setEditedJson(JSON.stringify(modelInstances, null, 2));
-    
-    // Update counts
-    const cleanExists: Record<string, boolean> = {};
-    const cleanCounts: Record<string, number> = {};
-    cleanExists[viewerType] = modelInstances && modelInstances.length > 0;
-    cleanCounts[viewerType] = modelInstances ? modelInstances.length : 0;
-    setCleanDataExists(prev => ({ ...prev, ...cleanExists }));
-    setCleanDataCounts(prev => ({ ...prev, ...cleanCounts }));
   };
 
   const handleRules = () => {
-    setRulesDataKey(viewerType);
+    setRulesDataKey(viewerTypeRef.current);
     setShowRulesOverlay(true);
   };
 
@@ -1259,121 +1345,21 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
           <div className="json-viewer-overlay" onClick={handleCloseViewer}>
             <div className="json-viewer-content" onClick={(e) => e.stopPropagation()}>
               <div className="json-viewer-header">
-                <h3>{viewerType} Data {viewerMode === 'clean' && '(Clean)'}</h3>
+                <h3>{viewerType} Data</h3>
                 <button className="close-viewer-btn" onClick={handleCloseViewer}>✕</button>
               </div>
-              {(() => {
-                const lookupOnlyTypes = ['weaponAttributes', 'weaponTypeAttributes', 'gearAttributes', 'gearMods', 'keenersWatch', 'statusImmunities'];
-                const isLookupOnly = lookupOnlyTypes.includes(viewerType);
-                
-                // For lookup-only types, always show JSON editor
-                if (isLookupOnly) {
-                  return (
-                    <textarea
-                      className="json-editor"
-                      value={editedJson}
-                      onChange={(e) => setEditedJson(e.target.value)}
-                      spellCheck={false}
-                    />
-                  );
-                }
-                
-                // For other types, show clean viewer or JSON based on mode
-                if (viewerMode === 'clean') {
-                  return (
-                    <div className="clean-data-viewer">
-                      {Array.isArray(viewerData) && viewerData.length === 0 ? (
-                        <div className="empty-state">No clean data available. Use Import or Rules to populate.</div>
-                      ) : (
-                        <div className="object-list">
-                          {Array.isArray(viewerData) ? (
-                            viewerData.map((item, index) => (
-                              <div key={index} className="object-item">
-                                <div className="object-header">Item {index + 1}</div>
-                                <div className="object-properties">
-                                  {Object.entries(item).map(([key, value]) => (
-                                    <div key={key} className="property-row">
-                                      <span className="property-key">{key}:</span>
-                                      <span className="property-value">
-                                        {typeof value === 'object' && value !== null
-                                          ? JSON.stringify(value, null, 2)
-                                          : String(value)}
-                                      </span>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            ))
-                          ) : (
-                            <div className="object-item">
-                              <div className="object-properties">
-                                {Object.entries(viewerData).map(([key, value]) => (
-                                  <div key={key} className="property-row">
-                                    <span className="property-key">{key}:</span>
-                                    <span className="property-value">
-                                      {typeof value === 'object' && value !== null
-                                        ? JSON.stringify(value, null, 2)
-                                        : String(value)}
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                } else {
-                  return (
-                    <textarea
-                      className="json-editor"
-                      value={editedJson}
-                      onChange={(e) => setEditedJson(e.target.value)}
-                      spellCheck={false}
-                    />
-                  );
-                }
-              })()}
+              <textarea
+                className="json-editor"
+                value={editedJson}
+                onChange={(e) => setEditedJson(e.target.value)}
+                spellCheck={false}
+              />
               <div className="json-viewer-actions">
-                {(() => {
-                  // These types should not have Import/Rules buttons
-                  const lookupOnlyTypes = ['weaponAttributes', 'weaponTypeAttributes', 'gearAttributes', 'gearMods', 'keenersWatch', 'statusImmunities'];
-                  const isLookupOnly = lookupOnlyTypes.includes(viewerType);
-                  
-                  console.log('Viewer Type:', viewerType, 'Is Lookup Only:', isLookupOnly, 'Viewer Mode:', viewerMode);
-                  
-                  // For lookup-only types, only show Update/Cancel buttons
-                  if (isLookupOnly) {
-                    return (
-                      <>
-                        <button className="update-btn" onClick={handleUpdateJson}>Update</button>
-                        <button className="cancel-btn" onClick={handleCloseViewer}>Cancel</button>
-                      </>
-                    );
-                  }
-                  
-                  // For other types, show appropriate buttons based on mode
-                  if (viewerMode === 'clean') {
-                    return (
-                      <>
-                        <button className="import-btn" onClick={handleImport}>Import</button>
-                        <button className="rules-btn" onClick={handleRules}>Rules</button>
-                        <button className="cancel-btn" onClick={() => {
-                          setViewerMode('raw');
-                          setEditedJson(JSON.stringify(viewerData, null, 2));
-                        }}>View JSON</button>
-                      </>
-                    );
-                  } else {
-                    return (
-                      <>
-                        <button className="update-btn" onClick={handleUpdateJson}>Update</button>
-                        <button className="cancel-btn" onClick={handleCloseViewer}>Cancel</button>
-                      </>
-                    );
-                  }
-                })()}
+                {viewerActions.map((action, i) => (
+                  <button key={i} className="import-btn" onClick={action.onClick}>{action.label}</button>
+                ))}
+                <button className="update-btn" onClick={handleUpdateJson}>Update</button>
+                <button className="cancel-btn" onClick={handleCloseViewer}>Cancel</button>
               </div>
             </div>
           </div>
@@ -1702,7 +1688,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                     if (expectedType === 'boolean' && typeof value === 'boolean') {
                       return { matches: true, actualType };
                     }
-                    if (expectedType.startsWith('Record<') && typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                    if (expectedType.includes('Record<') && typeof value === 'object' && value !== null && !Array.isArray(value)) {
                       return { matches: true, actualType: expectedType };
                     }
                     if (expectedType.endsWith('[]') && Array.isArray(value)) {
@@ -2010,7 +1996,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                                     {binding.source}
                                   </div>
                                   <div style={{ wordBreak: 'break-word' }}>
-                                    {String(sourceValue || '')}
+                                    {formatSourceValue(sourceValue)}
                                   </div>
                                 </div>
                                 
