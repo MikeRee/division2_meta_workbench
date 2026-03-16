@@ -5,6 +5,9 @@ export default defineConfig({
   plugins: [react()],
   base: './',
   server: {
+    host: '0.0.0.0',
+    port: Number(process.env.WORKER_1),
+    cors: true,
     proxy: {
       '/api/sheets': {
         target: 'https://sheets.googleapis.com',
