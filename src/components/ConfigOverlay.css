@@ -12,17 +12,20 @@
 }
 
 .overlay-content {
-  background: #2c3e50;
+  background: #0a0a0a;
   padding: 2rem;
-  border-radius: 8px;
+  border-radius: 2px;
   min-width: 400px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  border: 1px solid #3a3a3a;
 }
 
 .overlay-content h2 {
-  color: #fff;
+  color: #d4af37;
   margin: 0 0 1.5rem 0;
   font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 
 .config-field {
@@ -31,7 +34,7 @@
 
 .config-field label {
   display: block;
-  color: #ecf0f1;
+  color: #d4af37;
   margin-bottom: 0.5rem;
   font-size: 0.9rem;
 }
@@ -39,17 +42,17 @@
 .config-field input {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #34495e;
-  border-radius: 4px;
-  background: #34495e;
-  color: #fff;
+  border: 1px solid #3a3a3a;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #b0b0b0;
   font-size: 1rem;
   box-sizing: border-box;
 }
 
 .config-field input:focus {
   outline: none;
-  border-color: #e67e22;
+  border-color: #d4af37;
 }
 
 .overlay-actions {
@@ -60,27 +63,32 @@
 
 .overlay-actions button {
   padding: 0.5rem 1.5rem;
-  border: none;
-  border-radius: 4px;
+  border: 1px solid #d4af37;
+  border-radius: 2px;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
 }
 
 .overlay-actions button:first-child {
-  background: #e67e22;
-  color: #fff;
+  background: rgba(212, 175, 55, 0.1);
+  color: #d4af37;
 }
 
 .overlay-actions button:first-child:hover {
-  background: #d35400;
+  background: rgba(212, 175, 55, 0.2);
+  border-color: #e5c060;
+  color: #e5c060;
 }
 
 .overlay-actions button:last-child {
-  background: #7f8c8d;
-  color: #fff;
+  background: transparent;
+  color: #999;
+  border-color: #3a3a3a;
 }
 
 .overlay-actions button:last-child:hover {
-  background: #95a5a6;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #d4af37;
+  color: #d4af37;
 }

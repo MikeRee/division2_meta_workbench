@@ -1,9 +1,9 @@
 .chat-window {
   flex: 1;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 1.5rem;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+  border: 1px solid #2a2a2a;
+  border-radius: 2px;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -15,6 +15,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #3a3a3a;
 }
 
 .chat-header-actions {
@@ -25,23 +27,29 @@
 
 .chat-window h2 {
   margin: 0;
-  color: #333;
+  color: #d4af37;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 
 .config-button,
 .clear-chat-button {
-  background: transparent;
-  border: none;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #3a3a3a;
   font-size: 1.5rem;
   cursor: pointer;
   padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  transition: background 0.2s;
+  border-radius: 2px;
+  color: #999;
+  transition: all 0.2s ease;
 }
 
 .config-button:hover,
 .clear-chat-button:hover {
-  background: #f0f0f0;
+  background: rgba(212, 175, 55, 0.1);
+  border-color: #d4af37;
+  color: #d4af37;
 }
 
 .clear-chat-button {
@@ -65,7 +73,7 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #999;
+  color: #666;
   font-style: italic;
 }
 
@@ -74,20 +82,22 @@
   flex-direction: column;
   gap: 0.25rem;
   padding: 0.75rem;
-  border-radius: 8px;
+  border-radius: 2px;
   max-width: 85%;
 }
 
 .message.user {
   align-self: flex-end;
-  background: #4a90e2;
-  color: white;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid #3a3a3a;
+  color: #d4af37;
 }
 
 .message.assistant {
   align-self: flex-start;
-  background: #f0f0f0;
-  color: #333;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #2a2a2a;
+  color: #b0b0b0;
 }
 
 .message-role {
@@ -100,21 +110,23 @@
 }
 
 .model-applied-badge {
-  background: #28a745;
-  color: white;
+  background: #1a4d2e;
+  color: #34d399;
   padding: 0.15rem 0.5rem;
-  border-radius: 12px;
+  border-radius: 2px;
   font-size: 0.7rem;
   font-weight: 500;
+  border: 1px solid #2a5f40;
 }
 
 .model-applied-badge.clickable {
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .model-applied-badge.clickable:hover {
-  background: #218838;
+  background: #236140;
+  border-color: #34d399;
 }
 
 .json-viewer {
@@ -122,10 +134,10 @@
   min-height: 300px;
   max-height: 500px;
   padding: 1rem;
-  background: #1e1e1e;
+  background: #1a1a1a;
   color: #d4d4d4;
-  border: 1px solid #34495e;
-  border-radius: 4px;
+  border: 1px solid #2a2a2a;
+  border-radius: 2px;
   font-family: 'Courier New', monospace;
   font-size: 0.85rem;
   line-height: 1.5;
@@ -163,32 +175,35 @@
 }
 
 .message-content code {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   padding: 0.15rem 0.4rem;
-  border-radius: 3px;
+  border-radius: 2px;
   font-family: 'Courier New', monospace;
   font-size: 0.85em;
+  color: #d4af37;
 }
 
 .message.assistant .message-content code {
-  background: rgba(0, 0, 0, 0.08);
+  background: rgba(212, 175, 55, 0.05);
 }
 
 .message.user .message-content code {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(212, 175, 55, 0.15);
 }
 
 .message-content pre {
-  background: rgba(0, 0, 0, 0.05);
+  background: #0a0a0a;
   padding: 0.75rem;
-  border-radius: 4px;
+  border-radius: 2px;
   overflow-x: auto;
   margin: 0.5rem 0;
+  border: 1px solid #2a2a2a;
 }
 
 .message-content pre code {
   background: none;
   padding: 0;
+  color: #d4af37;
 }
 
 .message-content strong {
@@ -201,10 +216,10 @@
 
 .llm-status {
   padding: 0.5rem;
-  background: #fff3cd;
-  border: 1px solid #ffc107;
-  border-radius: 4px;
-  color: #856404;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid #3a3a3a;
+  border-radius: 2px;
+  color: #d4af37;
   font-size: 0.85rem;
   text-align: center;
   font-style: italic;
@@ -218,11 +233,11 @@
 
 .model-selector {
   padding: 0.5rem 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: 1px solid #3a3a3a;
+  border-radius: 2px;
   font-size: 0.8rem;
-  background: #f8f9fa;
-  color: #555;
+  background: rgba(0, 0, 0, 0.5);
+  color: #d4af37;
   cursor: pointer;
   align-self: flex-start;
 }
@@ -234,7 +249,7 @@
 
 .model-selector:focus {
   outline: none;
-  border-color: #4a90e2;
+  border-color: #d4af37;
 }
 
 .chat-options {
@@ -248,7 +263,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.85rem;
-  color: #555;
+  color: #999;
   cursor: pointer;
   user-select: none;
 }
@@ -257,16 +272,17 @@
   cursor: pointer;
   width: 16px;
   height: 16px;
+  accent-color: #d4af37;
 }
 
 .seasonal-link {
-  color: #4a90e2;
+  color: #d4af37;
   text-decoration: underline;
   cursor: pointer;
 }
 
 .seasonal-link:hover {
-  color: #357abd;
+  color: #e5c060;
 }
 
 .seasonal-input-container {
@@ -277,17 +293,19 @@
   width: 100%;
   min-height: 60px;
   padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: 1px solid #3a3a3a;
+  border-radius: 2px;
   font-size: 0.85rem;
   font-family: inherit;
   resize: vertical;
   box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.5);
+  color: #b0b0b0;
 }
 
 .seasonal-textarea:focus {
   outline: none;
-  border-color: #4a90e2;
+  border-color: #d4af37;
 }
 
 .chat-input {
@@ -297,19 +315,21 @@
 .chat-input input {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: 1px solid #3a3a3a;
+  border-radius: 2px;
   font-size: 0.9rem;
+  background: rgba(0, 0, 0, 0.5);
+  color: #b0b0b0;
 }
 
 .chat-input input:disabled {
-  background: #f5f5f5;
+  background: rgba(0, 0, 0, 0.3);
   cursor: not-allowed;
 }
 
 .chat-input input:focus {
   outline: none;
-  border-color: #4a90e2;
+  border-color: #d4af37;
 }
 
 /* Overlay styles for Gemini config */
@@ -327,11 +347,12 @@
 }
 
 .overlay-content {
-  background: #2c3e50;
+  background: #0a0a0a;
   padding: 2rem;
-  border-radius: 8px;
+  border-radius: 2px;
   min-width: 400px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  border: 1px solid #3a3a3a;
 }
 
 .overlay-content.config-overlay {
@@ -350,9 +371,11 @@
 }
 
 .overlay-content h2 {
-  color: #fff;
+  color: #d4af37;
   margin: 0 0 1.5rem 0;
   font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 
 .config-field {
@@ -361,7 +384,7 @@
 
 .config-field label {
   display: block;
-  color: #ecf0f1;
+  color: #d4af37;
   margin-bottom: 0.5rem;
   font-size: 0.9rem;
 }
@@ -369,17 +392,17 @@
 .config-field input {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #34495e;
-  border-radius: 4px;
-  background: #34495e;
-  color: #fff;
+  border: 1px solid #3a3a3a;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #b0b0b0;
   font-size: 1rem;
   box-sizing: border-box;
 }
 
 .config-field input:focus {
   outline: none;
-  border-color: #e67e22;
+  border-color: #d4af37;
 }
 
 .config-section {
@@ -387,9 +410,10 @@
 }
 
 .config-section h3 {
-  color: #ecf0f1;
+  color: #d4af37;
   margin: 0 0 1rem 0;
   font-size: 1.1rem;
+  letter-spacing: 0.5px;
 }
 
 .section-header {
@@ -405,19 +429,20 @@
 
 .json-link {
   background: transparent;
-  border: 1px solid #e67e22;
-  color: #e67e22;
+  border: 1px solid #d4af37;
+  color: #d4af37;
   padding: 0.25rem 0.75rem;
-  border-radius: 4px;
+  border-radius: 2px;
   font-size: 0.85rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   font-family: 'Courier New', monospace;
 }
 
 .json-link:hover {
-  background: #e67e22;
-  color: #fff;
+  background: rgba(212, 175, 55, 0.1);
+  border-color: #e5c060;
+  color: #e5c060;
 }
 
 .prompts-list {
@@ -427,9 +452,9 @@
 }
 
 .prompt-item {
-  background: #34495e;
-  border: 1px solid #2c3e50;
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #2a2a2a;
+  border-radius: 2px;
   padding: 0.75rem;
 }
 
@@ -441,28 +466,30 @@
 }
 
 .prompt-label {
-  color: #ecf0f1;
+  color: #d4af37;
   font-weight: 600;
   font-size: 0.9rem;
 }
 
 .prompt-edit-btn {
-  background: #e67e22;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
+  background: rgba(212, 175, 55, 0.1);
+  color: #d4af37;
+  border: 1px solid #d4af37;
+  border-radius: 2px;
   padding: 0.25rem 0.75rem;
   font-size: 0.85rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
 }
 
 .prompt-edit-btn:hover {
-  background: #d35400;
+  background: rgba(212, 175, 55, 0.2);
+  border-color: #e5c060;
+  color: #e5c060;
 }
 
 .prompt-preview {
-  color: #95a5a6;
+  color: #999;
   font-size: 0.85rem;
   font-style: italic;
   line-height: 1.4;
@@ -473,10 +500,10 @@
   width: 100%;
   min-height: 300px;
   padding: 0.75rem;
-  border: 1px solid #34495e;
-  border-radius: 4px;
-  background: #34495e;
-  color: #fff;
+  border: 1px solid #3a3a3a;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #b0b0b0;
   font-size: 0.9rem;
   font-family: 'Courier New', monospace;
   line-height: 1.5;
@@ -492,7 +519,7 @@
 
 .prompt-textarea:focus {
   outline: none;
-  border-color: #e67e22;
+  border-color: #d4af37;
 }
 
 .overlay-actions {
@@ -503,27 +530,32 @@
 
 .overlay-actions button {
   padding: 0.5rem 1.5rem;
-  border: none;
-  border-radius: 4px;
+  border: 1px solid #d4af37;
+  border-radius: 2px;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
 }
 
 .overlay-actions button:first-child {
-  background: #e67e22;
-  color: #fff;
+  background: rgba(212, 175, 55, 0.1);
+  color: #d4af37;
 }
 
 .overlay-actions button:first-child:hover {
-  background: #d35400;
+  background: rgba(212, 175, 55, 0.2);
+  border-color: #e5c060;
+  color: #e5c060;
 }
 
 .overlay-actions button:last-child {
-  background: #7f8c8d;
-  color: #fff;
+  background: transparent;
+  color: #999;
+  border-color: #3a3a3a;
 }
 
 .overlay-actions button:last-child:hover {
-  background: #95a5a6;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #d4af37;
+  color: #d4af37;
 }
