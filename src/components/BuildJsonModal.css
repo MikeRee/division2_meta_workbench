@@ -12,14 +12,15 @@
 }
 
 .build-json-modal-content {
-  background: #1e1e1e;
-  border-radius: 8px;
+  background: #0a0a0a;
+  border-radius: 2px;
   width: 90%;
   max-width: 1200px;
   height: 85vh;
   display: flex;
   flex-direction: column;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  border: 1px solid #3a3a3a;
 }
 
 .build-json-modal-header {
@@ -27,12 +28,12 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #2a2a2a;
 }
 
 .build-json-modal-header h3 {
   margin: 0;
-  color: #fff;
+  color: #d4af37;
   font-size: 1.2rem;
 }
 
@@ -48,16 +49,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s;
+  transition: color 0.2s ease;
 }
 
 .build-json-modal-header .close-btn:hover {
-  color: #fff;
+  color: #d4af37;
 }
 
 .build-json-error {
-  background: #ff4444;
-  color: #fff;
+  background: rgba(255, 68, 68, 0.1);
+  border-left: 3px solid #ff4444;
+  color: #ff6b6b;
   padding: 10px 20px;
   margin: 0;
   font-size: 0.9rem;
@@ -67,10 +69,10 @@
   flex: 1;
   margin: 20px;
   padding: 15px;
-  background: #2d2d2d;
-  color: #d4d4d4;
-  border: 1px solid #444;
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #a0d8b0;
+  border: 1px solid #3a3a3a;
+  border-radius: 2px;
   font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
   font-size: 14px;
   line-height: 1.5;
@@ -80,7 +82,7 @@
 
 .build-json-editor:focus {
   outline: none;
-  border-color: #007acc;
+  border-color: #d4af37;
 }
 
 .build-json-modal-actions {
@@ -88,32 +90,36 @@
   justify-content: flex-end;
   gap: 10px;
   padding: 20px;
-  border-top: 1px solid #333;
+  border-top: 1px solid #2a2a2a;
 }
 
 .build-json-modal-actions button {
   padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
+  border-radius: 2px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .build-json-modal-actions .save-btn {
-  background: #007acc;
-  color: #fff;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid #d4af37;
+  color: #d4af37;
 }
 
 .build-json-modal-actions .save-btn:hover {
-  background: #005a9e;
+  background: rgba(212, 175, 55, 0.2);
+  border-color: #e5c060;
+  color: #e5c060;
 }
 
 .build-json-modal-actions .cancel-btn {
-  background: #444;
-  color: #fff;
+  background: transparent;
+  border: 1px solid #3a3a3a;
+  color: #999;
 }
 
 .build-json-modal-actions .cancel-btn:hover {
-  background: #555;
+  border-color: #d4af37;
+  color: #d4af37;
 }
