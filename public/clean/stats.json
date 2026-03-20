@@ -7,18 +7,18 @@
           "languageVersion": 0,
           "blocks": [
             {
-              "type": "stat_multiply",
-              "id": "?z]#hi0CJOLwNl42j0aF",
-              "x": 90,
-              "y": 90,
+              "type": "stat_add",
+              "id": "9_7(G$=;yV3F$;p5~SJo",
+              "x": 70,
+              "y": 110,
               "extraState": {
-                "inputs": 3
+                "inputs": 2
               },
               "inputs": {
                 "INPUT_0": {
                   "block": {
                     "type": "base_weapon",
-                    "id": "QhgznDfGGV.|~+rd6[vQ",
+                    "id": "a7!M=~gU0JGH#t5LOQ]^",
                     "fields": {
                       "PROP": "damage"
                     }
@@ -26,19 +26,39 @@
                 },
                 "INPUT_1": {
                   "block": {
-                    "type": "stat_core",
-                    "id": "h(WAyD8c[A2sukioW8gu",
-                    "fields": {
-                      "CORE": "weapon damage"
-                    }
-                  }
-                },
-                "INPUT_2": {
-                  "block": {
-                    "type": "stat_constant",
-                    "id": "jBU{SE.P{i|cY%yxT3!x",
-                    "fields": {
-                      "VALUE": ".15"
+                    "type": "stat_multiply",
+                    "id": "?z]#hi0CJOLwNl42j0aF",
+                    "extraState": {
+                      "inputs": 3
+                    },
+                    "inputs": {
+                      "INPUT_0": {
+                        "block": {
+                          "type": "base_weapon",
+                          "id": "QhgznDfGGV.|~+rd6[vQ",
+                          "fields": {
+                            "PROP": "damage"
+                          }
+                        }
+                      },
+                      "INPUT_1": {
+                        "block": {
+                          "type": "stat_core",
+                          "id": "h(WAyD8c[A2sukioW8gu",
+                          "fields": {
+                            "CORE": "weapon damage"
+                          }
+                        }
+                      },
+                      "INPUT_2": {
+                        "block": {
+                          "type": "stat_constant",
+                          "id": "jBU{SE.P{i|cY%yxT3!x",
+                          "fields": {
+                            "VALUE": ".15"
+                          }
+                        }
+                      }
                     }
                   }
                 }
@@ -48,7 +68,7 @@
         }
       },
       "type": "number",
-      "formula": "(getBaseWeapon(\"damage\") * getCore(\"weapon damage\") * 0.15);\n"
+      "formula": "(getBaseWeapon(\"damage\") + (getBaseWeapon(\"damage\") * getCore(\"weapon damage\") * 0.15));\n"
     },
     {
       "label": "PvP Weapon Damage",
