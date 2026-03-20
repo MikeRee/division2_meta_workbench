@@ -1,0 +1,12 @@
+Classification,Attribute,Max
+Offensive,Critical Hit Chance,6%
+Offensive,Critical Hit Damage,12%
+Offensive,Headshot Damage,10%
+Defensive,Protection from Elites,13%
+Defensive,Armor on Kill,"18,935"
+Defensive,Status Effect Resistance,10%
+Defensive,Pulse Resistance,10%
+Defensive,Incoming Repairs,20%
+Skill,Skill Haste,12%
+Skill,Skill Duration,10%
+Skill,Repair Skills,20%

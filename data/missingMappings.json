@@ -1,0 +1,10 @@
+{
+    "damage to out of cover": "offensive",
+    "armor on kill": "defensive",
+    "damage to armor": "defensive",
+    "explosive resist": "defensive",
+    "armor regen": "defensive",
+    "reduced threat": "defensive",
+    "skill health": "skill",
+    "skill repair": "skill"
+}

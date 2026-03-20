@@ -1,0 +1,42 @@
+[
+  {
+    "Status Effect": "Bleed",
+    "Required %": "93.8%"
+  },
+  {
+    "Status Effect": "Blind/Deaf",
+    "Required %": "91%"
+  },
+  {
+    "Status Effect": "Burn",
+    "Required %": "91.4%"
+  },
+  {
+    "Status Effect": "Disorient",
+    "Required %": "93.8%"
+  },
+  {
+    "Status Effect": "Disrupt",
+    "Required %": "95.8%"
+  },
+  {
+    "Status Effect": "Ensnare",
+    "Required %": "93.8%"
+  },
+  {
+    "Status Effect": "Poison",
+    "Required %": "89.2%"
+  },
+  {
+    "Status Effect": "Shock",
+    "Required %": "86%"
+  },
+  {
+    "Status Effect": "Pulse",
+    "Required %": "100%"
+  },
+  {
+    "Status Effect": "Napalm (cleaners)",
+    "Required %": "88.9%"
+  }
+]

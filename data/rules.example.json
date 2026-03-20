@@ -1,0 +1,111 @@
+{
+  "replaceRules": {
+    "lowercase": [".*", "{{lowercase}}"],
+    "uppercase": [".*", "{{uppercase}}"],
+    "trim": ["^\\s+|\\s+$", ""],
+    "removeSpaces": ["\\s+", ""],
+    "cleanModType": [" rail| slot", ""],
+    "cleanModBonus": ["pulses targets at which it's aimed|illuminates dark areas", ""],
+    "cleanModPenalty": ["pulses targets at which it's aimed|illuminates dark areas", ""],
+    "cleanExoticMods": ["magazine: mag of holding|[\\s\\u00A0]+", " "],
+    "removePercentSign": ["%", ""],
+    "removeCommas": [",", ""]
+  },
+  "matchRules": {
+    "validateFlag": "^[NE]$",
+    "isNumber": "^\\d+\\.?\\d*$",
+    "isPercentage": "^\\d+\\.?\\d*%$"
+  },
+  "mappings": {
+    "mapModSlots": {
+      "4\\": ["optics rail", "magazine slot", "muzzle slot", "underbarrel"],
+      "4": ["optics", "magazine slot", "muzzle slot", "underbarrel"],
+      "(Empty/NaN)": [],
+      "3!": ["optics", "magazine slot", "underbarrel"],
+      "3!\\": ["optics rail", "magazine slot", "underbarrel"],
+      "3#": ["optics", "magazine slot", "muzzle slot"],
+      "0": [],
+      "2$!": ["optics", "underbarrel"],
+      "4/": ["optics", "magazine slot", "muzzle slot", "underbarrel"],
+      "2$#": ["optics", "muzzle slot"],
+      "3&": ["magazine slot", "muzzle slot", "underbarrel"],
+      "2!#": ["optics", "magazine slot"],
+      "1#&!": ["muzzle slot"],
+      "1$#!": ["optics"],
+      "1#!&": ["muzzle slot"],
+      "3": ["optics", "magazine slot", "muzzle slot"],
+      "4*": ["optics", "magazine slot", "muzzle slot", "underbarrel"],
+      "2&#": ["magazine slot", "muzzle slot"],
+      "2#&": ["magazine slot", "muzzle slot"],
+      "2&!": ["magazine slot", "underbarrel"],
+      "1&!#": ["magazine slot"],
+      "3!*": ["optics", "magazine slot", "underbarrel"],
+      "1!#$": ["optics"],
+      "2!&": ["magazine slot", "underbarrel"]
+    }
+  },
+  "bindings": {
+    "weapons": [
+      {
+        "destination": "type",
+        "source": "weaponType",
+        "rules": ["lowercase", "trim"]
+      },
+      {
+        "destination": "variant",
+        "source": "weaponVariant",
+        "rules": ["lowercase", "trim"]
+      },
+      {
+        "destination": "name",
+        "source": "weaponName",
+        "rules": ["trim"]
+      },
+      {
+        "destination": "flag",
+        "source": "flag",
+        "rules": ["uppercase", "validateFlag"]
+      },
+      {
+        "destination": "rpm",
+        "source": "roundsPerMinute",
+        "rules": []
+      },
+      {
+        "destination": "baseMagSize",
+        "source": "baseMagazine",
+        "rules": []
+      },
+      {
+        "destination": "moddedMagSize",
+        "source": "moddedMagazine",
+        "rules": []
+      },
+      {
+        "destination": "reload",
+        "source": "emptyReloadSecs",
+        "rules": []
+      },
+      {
+        "destination": "damage",
+        "source": "level40Damage",
+        "rules": []
+      },
+      {
+        "destination": "optimalRange",
+        "source": "optimalRange",
+        "rules": []
+      },
+      {
+        "destination": "modSlots",
+        "source": "modificationSlots",
+        "rules": ["mapModSlots"]
+      },
+      {
+        "destination": "hsd",
+        "source": "hsd",
+        "rules": []
+      }
+    ]
+  }
+}

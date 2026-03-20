@@ -1,0 +1,482 @@
+[
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Breadbasket",
+    "icon": "https://i.imgur.com/LOrtL7L.png",
+    "perfect": "Perfect Breadbasket",
+    "description": "Landing body shots adds a stack of bonus +55% (70%) headshot damage to the next headshot for 10s.\nMax stack is 3 (2).",
+    "multiplier": "Headshot Damage"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Killer",
+    "icon": "https://i.imgur.com/QtgJMjd.png",
+    "perfect": "Perfect Killer",
+    "description": "Killing an enemy with a critical hit grants +70% (90%) critical hit damage for 10s.",
+    "multiplier": "Critical hit damage"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Preservation",
+    "icon": "https://i.imgur.com/uVagyZs.png",
+    "perfect": "Perfect Preservation",
+    "description": "Killing an enemy repairs 10% (15%) armor over 5s. Headshot kills improve the repair by an additional 10% (15%)",
+    "multiplier": "Utility"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Optimist",
+    "icon": "https://i.imgur.com/sdMrsGu.png",
+    "perfect": "Perfect Optimist",
+    "description": "Weapon damage is increased by +3.5% (4.5%) for every 10% ammo missing from the magazine. ",
+    "multiplier": "Weapon Damage"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Strained",
+    "icon": "https://i.imgur.com/NYoi74n.png",
+    "perfect": "Perfect Strained",
+    "description": "Gain 10% critical hit damage for every 0.5s you are firing.\nStacks up to 5 (8) times.",
+    "multiplier": "Critical hit damage"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Close & Personal",
+    "icon": "https://i.imgur.com/gSboh85.png",
+    "perfect": "Perfectly Close & Personal",
+    "description": "Killing a target within 7m grants +30% (38%) weapon damage for 10s. ",
+    "multiplier": "Weapon Damage"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Fast Hands",
+    "icon": "https://i.imgur.com/xfP7k0S.png",
+    "perfect": "Perfect Fast Hands",
+    "description": "Critical hits add a stack of 3% (5%) reload speed bonus. Max stack is 40. ",
+    "multiplier": "Utility"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Sadist",
+    "icon": "https://i.imgur.com/1ouIjYr.png",
+    "perfect": "Perfect Sadist",
+    "description": "Amplifies +30% (35%) weapon damage to bleeding enemies.\nAfter 4 (3) kills, applies bleed to the next enemy you hit.",
+    "multiplier": "Amplifier"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Eyeless",
+    "icon": "https://i.imgur.com/9AAnXuh.png",
+    "perfect": "Perfect Eyeless",
+    "description": "Amplifies +30% (35%) weapon damage to blinded enemies.\nAfter 4 (3) kills, applies blind to the next enemy you hit. ",
+    "multiplier": "Amplifier"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Ignited",
+    "icon": "https://i.imgur.com/j9P3Rk6.png",
+    "perfect": "Perfect Ignited",
+    "description": "Amplifies +25% (30%) weapon damage to burning enemies. \nAfter 4 (3) kills, applies burning to the next enemy you hit. ",
+    "multiplier": "Amplifier"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Vindictive",
+    "icon": "https://i.imgur.com/HWTKE0F.png",
+    "perfect": "Perfect Vindictive",
+    "description": "Killing an enemy with a status effect applied grants you and all allies within 15m (20m) 16% (21%) Critical hit chance and 16% (21%) critical hit damage for 20s.",
+    "multiplier": "Critical Chance / Hit damage"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Ranger",
+    "icon": "https://i.imgur.com/nmkLwe5.png",
+    "perfect": "Perfect Ranger",
+    "description": "Amplifies weapon damage by 2% for every 4m (3m) you are away from your target.",
+    "multiplier": "Amplifier"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Steady Handed",
+    "icon": "https://i.imgur.com/jZYxFrL.png",
+    "perfect": "Perfect Steady Handed",
+    "description": "Hits grant a stack of +1% Accuracy and Stability.\nAt 100 (75) stacks, consumes stacks to refill the magazine. ",
+    "multiplier": "Utility"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Spike",
+    "icon": "https://i.imgur.com/FmGCsbb.png",
+    "perfect": "Perfect Spike",
+    "description": "Headshots grant +20% (25%) skill damage for 15s. ",
+    "multiplier": "Skill damage"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Perpetuation",
+    "icon": "https://i.imgur.com/eWeuILj.png",
+    "perfect": "Perfect Perpetuation",
+    "description": "Headshots grant +75% status effect damage and duration to the next status effect you apply. Cooldown: 20s (16s). ",
+    "multiplier": "Status Effect"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Reformation",
+    "icon": "https://i.imgur.com/oc7l7S6.png",
+    "perfect": "Perfect Reformation",
+    "description": "Headshots grant +60% (80%) skill repair for 15s. ",
+    "multiplier": "Skill Repair"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Future Perfect ",
+    "icon": "https://i.imgur.com/MxJlD1T.png",
+    "perfect": "Future Perfection",
+    "description": "Weapon kills grant +1 skill tier for 15s (19s). Stacks up to 3 (4) times.\nWeapon kills at skill tier 6 grant overcharge for 15s.\nOvercharge Cooldown: 90s",
+    "multiplier": "Utility"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Flatline",
+    "icon": "https://i.imgur.com/Aqkylqc.png",
+    "perfect": "Perfect Flatline",
+    "description": "Amplifies weapon damage by 15% (20%) to pulsed enemies. After 4 (3) kills, applies pulse to the next enemy you hit.",
+    "multiplier": "Amplifier"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Sledgehammer",
+    "icon": "https://i.imgur.com/pS22zT5.png",
+    "perfect": "Perfect Sledgehammer",
+    "description": "Dealing damage with a grenade applies a mark on target.\nTargets with mark will take 15% (20%) more damage to armor from the agent that applied the mark and have a -20% (30%) movement speed.\nMark will disappear after 10 seconds. (As of TU 22.2 the marked targets take the Amp damage from all sources including other agents)",
+    "multiplier": "Amplifier but only vs Armor/ armor plates"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Thunder Strike",
+    "icon": "https://i.imgur.com/fFXsbwK.png",
+    "perfect": "Perfect Thunder Strike",
+    "description": "Amplifies 30% (35%) extra damage to shocked targets. After 4 (3) kills, applies shock to the next enemy you hit. ",
+    "multiplier": "Amplifier"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "In Sync",
+    "icon": "https://i.imgur.com/MqDpM6T.png",
+    "perfect": "Perfectly In Sync",
+    "description": "Hitting an enemy grants +15% (20%) skill damage for 5s.\nUsing a skill or damaging an enemy with a skill grants +15% (20%) weapon damage for 5s.\nDamage increases are doubled while both buffs are active at the same time.",
+    "multiplier": "Weapon Damage/ Skill damage"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Pressure Point",
+    "icon": "https://i.imgur.com/jqygIOf.png",
+    "perfect": "Perfect Pressure Point",
+    "description": "Amplifies weapon damage by 15% (20%) to enemies under status effects.",
+    "multiplier": "Amplifier"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Streamline",
+    "icon": "https://i.imgur.com/A2iFPT1.png",
+    "perfect": "Perfect Streamline",
+    "description": "Increase Weapon Damage by 42% (47%)  (32%/37%) when no Skills are Deployed or on Cooldown.",
+    "multiplier": "Weapon Damage"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Immobilize",
+    "icon": "",
+    "perfect": "Perfect Immobilize",
+    "description": "Amplifies weapon damage by 20% (25%) to ensared enemies. After 4 (3) kills applies Ensnare to the next enemy you hit.",
+    "multiplier": "Amplifier"
+  },
+  {
+    "weaponCategory": "ALL WEAPONS",
+    "name": "Soft Spot",
+    "icon": "",
+    "perfect": "Perfect Soft Spot",
+    "description": "Destroying a Weakpoint grants 19% (24%) Weapon Damage for 15s.",
+    "multiplier": "Weapon Damage"
+  },
+  {
+    "weaponCategory": "RIFLES",
+    "name": "Rifleman",
+    "icon": "https://i.imgur.com/xXehgeV.png",
+    "perfect": " Perfect Rifleman",
+    "description": "Landing headshots adds a stack of bonus +10% (11%) weapon damage for 5s. \nMax stack is 5 (6).\nAdditional headshots refresh the duration.",
+    "multiplier": "Weapon Damage"
+  },
+  {
+    "weaponCategory": "RIFLES",
+    "name": "Boomerang",
+    "icon": "https://i.imgur.com/GLW0JwQ.png",
+    "perfect": "Perfect Boomerang",
+    "description": "Critical hits have a 50% (75%) chance to return the bullet to the magazine.\nIf a bullet is returned to the magazine the next shot gains 40% (50%) increased damage.",
+    "multiplier": "Weapon Damage"
+  },
+  {
+    "weaponCategory": "RIFLES",
+    "name": "Lucky Shot",
+    "icon": "https://i.imgur.com/Fuv0RTW.png",
+    "perfect": "Perfect Lucky Shot",
+    "description": "Magazine capacity is increased by 20% (30%).\nMissed shots from cover have a 100% chance to return to the magazine. ",
+    "multiplier": "Utility"
+  },
+  {
+    "weaponCategory": "RIFLES",
+    "name": "Determined",
+    "icon": "https://i.imgur.com/v9eREAG.png",
+    "perfect": "Perfectly Determined",
+    "description": "After killing an enemy with a headshot the next shot landed on any enemy will be a guaranteed (critical) headshot. ",
+    "multiplier": "Utility"
+  },
+  {
+    "weaponCategory": "RIFLES",
+    "name": "Behind You",
+    "icon": "https://i.imgur.com/CMw1lY7.png",
+    "perfect": "Perfectly Behind You",
+    "description": "Amplifies weapon damage by +20% (25%) to enemies that are not targeting you.",
+    "multiplier": "Amplifier"
+  },
+  {
+    "weaponCategory": "RIFLES",
+    "name": "Precision Strike",
+    "icon": "https://imgur.com/HMfmJnA.png",
+    "perfect": "Perfect Precision Strike",
+    "description": "Killing enemies farther than 20m builds up stacks. Max stack is 3. Hittting an enemy within 20m will use all stacks to provide 20% amplified damage to enemies within 20m for 5s.",
+    "multiplier": "Amplifier"
+  },
+  {
+    "weaponCategory": "ASSAULT RIFLES",
+    "name": "Near Sighted",
+    "icon": "https://i.imgur.com/2nLY70q.png",
+    "perfect": "Perfect Near Sighted",
+    "description": "Receive +80% (100%) stability at the cost of -35% optimal range.",
+    "multiplier": "Utility"
+  },
+  {
+    "weaponCategory": "ASSAULT RIFLES",
+    "name": "On Empty",
+    "icon": "https://i.imgur.com/YLjVkc2.png",
+    "perfect": "Perfect On Empty",
+    "description": "Reloading from empty grants +60% (80%) weapon handling for 10s. ",
+    "multiplier": "Utility"
+  },
+  {
+    "weaponCategory": "ASSAULT RIFLES",
+    "name": "Measured",
+    "icon": "https://i.imgur.com/I0tOnyn.png",
+    "perfect": "Perfectly Measured",
+    "description": "The top half of the magazine has 25% rate of fire and -25% (30%) weapon damage.\nThe bottom half of the magazine has -18% rate of fire and +30% (38%) total weapon damage. ",
+    "multiplier": "1) ROF / Weapon Damage\n2) ROF / Total Weapon Damage"
+  },
+  {
+    "weaponCategory": "ASSAULT RIFLES",
+    "name": "Overflowing",
+    "icon": "https://i.imgur.com/ifIQaXI.png",
+    "perfect": "Perfect Overflowing",
+    "description": "Every 3 (2) reloads from empty increases your base magazine capacity by 100%. ",
+    "multiplier": "Utility"
+  },
+  {
+    "weaponCategory": "ASSAULT RIFLES",
+    "name": "Stabilize ",
+    "icon": "",
+    "perfect": "Perfect Stabilize ",
+    "description": "Firing your weapon increases Weapon Accuracy by 1% and Weapon Stability by 1% per shot up to 60%. If you stop firing, the bonuses reset after 4 seconds.",
+    "multiplier": "Utility"
+  },
+  {
+    "weaponCategory": "ASSAULT RIFLES",
+    "name": "Precision Strike",
+    "icon": "https://imgur.com/HMfmJnA.png",
+    "perfect": "Perfect Precision Strike",
+    "description": "Killing enemies farther than 20m builds up stacks. Max stack is 3. Hittting an enemy within 20m will use all stacks to provide 20% amplified damage to enemies within 20m for 5s.",
+    "multiplier": "Amplifier"
+  },
+  {
+    "weaponCategory": "MARKSMAN RIFLES",
+    "name": "Naked",
+    "icon": "https://i.imgur.com/sE7WfvZ.png",
+    "perfect": "Perfectly Naked",
+    "description": "Hitting an enemy with no armor grants +50% headshot damage for 5s (8s). ",
+    "multiplier": "Head Shot Damage"
+  },
+  {
+    "weaponCategory": "MARKSMAN RIFLES",
+    "name": "First Blood",
+    "icon": "https://i.imgur.com/SqNh85l.png",
+    "perfect": "Perfect First Blood",
+    "description": "If scoped, your first (2) shot fired(s) from out of combat or after fully reloading from empty deals headshot damage to any part of the body hit.\nRequires a Scope with 8x magnification or higher. ",
+    "multiplier": "Utility"
+  },
+  {
+    "weaponCategory": "MARKSMAN RIFLES",
+    "name": "Lucky Shot",
+    "icon": "https://i.imgur.com/Fuv0RTW.png",
+    "perfect": "Perfect Lucky Shot",
+    "description": "Magazine capacity is increased by 20% (30%).\nMissed shots from cover have a 100% chance to return to the magazine. ",
+    "multiplier": "Utility"
+  },
+  {
+    "weaponCategory": "MARKSMAN RIFLES",
+    "name": "Determined",
+    "icon": "https://i.imgur.com/v9eREAG.png",
+    "perfect": "Perfectly Determined",
+    "description": "After killing an enemy with a headshot the next shot landed on any enemy will be a guaranteed (critical) headshot. ",
+    "multiplier": "Utility"
+  },
+  {
+    "weaponCategory": "MARKSMAN RIFLES",
+    "name": "Behind You",
+    "icon": "https://i.imgur.com/CMw1lY7.png",
+    "perfect": "Perfectly Behind You",
+    "description": "Amplifies weapon damage by +20% (25%) to enemies that are not targeting you.",
+    "multiplier": "Amplifier"
+  },
+  {
+    "weaponCategory": "MARKSMAN RIFLES",
+    "name": "Precision Strike",
+    "icon": "https://imgur.com/HMfmJnA.png",
+    "perfect": "Perfect Precision Strike",
+    "description": "Killing enemies farther than 20m builds up stacks. Max stack is 3. Hittting an enemy within 20m will use all stacks to provide 20% amplified damage to enemies within 20m for 5s.",
+    "multiplier": "Amplifier"
+  },
+  {
+    "weaponCategory": "SUBMACHINE GUNS",
+    "name": "Outsider",
+    "icon": "https://i.imgur.com/JUwPM9x.png",
+    "perfect": "Perfect Outsider",
+    "description": "After killing an enemy, gain 100% (150%) optimal range and +100% (125%) accuracy for 10s. ",
+    "multiplier": "Utility"
+  },
+  {
+    "weaponCategory": "SUBMACHINE GUNS",
+    "name": "Unwavering",
+    "icon": "https://i.imgur.com/kpMDGGH.png",
+    "perfect": "Perfect Unwavering",
+    "description": "Swapping to this weapon grants +300% (400%) weapon handling for 5s.\nKills refresh the buff.\nSwapping away disables this from all weapons for 5s. ",
+    "multiplier": "Utility"
+  },
+  {
+    "weaponCategory": "SUBMACHINE GUNS",
+    "name": "Measured",
+    "icon": "https://i.imgur.com/I0tOnyn.png",
+    "perfect": "Perfectly Measured",
+    "description": "The top half of the magazine has 25% rate of fire and -25% (30%) weapon damage.\nThe bottom half of the magazine has -18% rate of fire and +30% (38%) total weapon damage. ",
+    "multiplier": "1) ROF / Weapon Damage\n2) ROF / Total Weapon Damage"
+  },
+  {
+    "weaponCategory": "SUBMACHINE GUNS",
+    "name": "Stabilize ",
+    "icon": "",
+    "perfect": "Perfect Stabilize ",
+    "description": "Firing your weapon increases Weapon Accuracy by 1% and Weapon Stability by 1% per shot up to 60%. If you stop firing, the bonuses reset after 4 seconds.",
+    "multiplier": "Utility"
+  },
+  {
+    "weaponCategory": "LIGHT MACHINE GUNS",
+    "name": "Unhinged",
+    "icon": "https://i.imgur.com/VUz8qi9.png",
+    "perfect": "Perfect Unhinged",
+    "description": "Grants +18% (22%) weapon damage at the cost of -25% Stability and -25% Accuracy. ",
+    "multiplier": "Weapon Damage"
+  },
+  {
+    "weaponCategory": "LIGHT MACHINE GUNS",
+    "name": "Frenzy",
+    "icon": "https://i.imgur.com/powbevH.png",
+    "perfect": "Perfect Frenzy",
+    "description": "For every 10 (8) bullets in the magazine capacity, gain +3% rate of fire and +3% weapon damage for 9s when reloading from empty.",
+    "multiplier": "ROF / Weapon Damage"
+  },
+  {
+    "weaponCategory": "LIGHT MACHINE GUNS",
+    "name": "Measured",
+    "icon": "https://i.imgur.com/I0tOnyn.png",
+    "perfect": "Perfect Measured",
+    "description": "The top half of the magazine has 25% rate of fire and -25% (30%) weapon damage.\nThe bottom half of the magazine has -18% rate of fire and +30% (38%) total weapon damage. ",
+    "multiplier": "1) ROF / Weapon Damage\n2) ROF / Total Weapon Damage"
+  },
+  {
+    "weaponCategory": "LIGHT MACHINE GUNS",
+    "name": "Overwhelm",
+    "icon": "https://i.imgur.com/jGGKdZG.png",
+    "perfect": "Perfect Overwhelm",
+    "description": "Suppressing an enemy, that is not currently suppressed, grants +10% (12%) weapon damage for 12 seconds.\nMax stack is 4. ",
+    "multiplier": "Weapon Damage"
+  },
+  {
+    "weaponCategory": "LIGHT MACHINE GUNS",
+    "name": "Precision Strike",
+    "icon": "https://imgur.com/HMfmJnA.png",
+    "perfect": "Perfect Precision Strike",
+    "description": "Killing enemies farther than 20m builds up stacks. Max stack is 3. Hittting an enemy within 20m will use all stacks to provide 20% amplified damage to enemies within 20m for 5s.",
+    "multiplier": "Amplifier"
+  },
+  {
+    "weaponCategory": "LIGHT MACHINE GUNS",
+    "name": "Stabilize ",
+    "icon": "",
+    "perfect": "Perfect Stabilize ",
+    "description": "Firing your weapon increases Weapon Accuracy by 1% and Weapon Stability by 1% per shot up to 60%. If you stop firing, the bonuses reset after 4 seconds.",
+    "multiplier": "Utility"
+  },
+  {
+    "weaponCategory": "SHOTGUNS",
+    "name": "Pummel",
+    "icon": "https://i.imgur.com/5eLdrHd.png",
+    "perfect": "Perfect Pummel",
+    "description": "3 (2) consecutive kills refills the magazine and grants +40% weapon damage for 10s. ",
+    "multiplier": "Weapon Damage"
+  },
+  {
+    "weaponCategory": "SHOTGUNS",
+    "name": "Pumped Up",
+    "icon": "https://i.imgur.com/7AtNkrX.png",
+    "perfect": "Perfect Pumped Up",
+    "description": "Reloading grants +1.2% (6%) weapon damage for 10s. Stacks up to 25 (5) times. ",
+    "multiplier": "Weapon Damage"
+  },
+  {
+    "weaponCategory": "SHOTGUNS",
+    "name": "Brazen",
+    "icon": "https://imgur.com/R64PlXC.png",
+    "perfect": "Perfect Brazen",
+    "description": "Receive +3.5% (2%/3%) Amplified Damage on the next shot with the weapon for each pellet that hits the target, if at least 6 (4) pellets hit.",
+    "multiplier": "Amplifier, stacks additively\n1 + 0.035 * n, n is from 6 (4) to 8"
+  },
+  {
+    "weaponCategory": "PISTOLS",
+    "name": "Salvage",
+    "icon": "https://i.imgur.com/47BtY1m.png",
+    "perfect": "Perfect Salvage",
+    "description": "Killing a target has a +70% (85%) chance to refill the magazine. ",
+    "multiplier": "Utility"
+  },
+  {
+    "weaponCategory": "PISTOLS",
+    "name": "Finisher",
+    "icon": "https://i.imgur.com/9sXWCOH.png",
+    "perfect": "Perfect Finisher",
+    "description": "Swapping from this weapon within 10s of killing an enemy grants 30% (35%) critical hit chance and 30% (40%) critical hit damage for 15s. ",
+    "multiplier": "Critical Chance / Hit damage"
+  },
+  {
+    "weaponCategory": "PISTOLS",
+    "name": "Lucky Shot",
+    "icon": "https://i.imgur.com/Fuv0RTW.png",
+    "perfect": "Perfect Lucky Shot",
+    "description": "Magazine capacity is increased by 20% (30%).\nMissed shots from cover have a 100% chance to return to the magazine. ",
+    "multiplier": "Utility"
+  },
+  {
+    "weaponCategory": "PISTOLS",
+    "name": "Determined",
+    "icon": "https://i.imgur.com/v9eREAG.png",
+    "perfect": "Perfectly Determined",
+    "description": "After killing an enemy with a headshot the next shot landed on any enemy will be a guaranteed (critical) headshot. ",
+    "multiplier": "Utility"
+  }
+]
