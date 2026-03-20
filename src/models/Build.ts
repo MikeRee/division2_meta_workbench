@@ -2,6 +2,31 @@ import BuildGear from './BuildGear';
 import { BuildWeapon } from './BuildWeapon';
 import { KeenersWatchStats } from './KeenersWatchStats';
 import LlmBuild from './LlmBuild';
+import { useLookupStore } from '../stores/useLookupStore';
+
+function getDefaultWatchStats(): KeenersWatchStats {
+  const keenersWatchData = useLookupStore.getState().keenersWatch;
+  const defaults: KeenersWatchStats = {
+    Offensive: {},
+    Defensive: {},
+    Utility: {},
+    Handling: {},
+  };
+  if (keenersWatchData instanceof Map && keenersWatchData.size > 0) {
+    keenersWatchData.forEach((attr: any) => {
+      const rawCategory = attr.category;
+      const category = rawCategory
+        ? ((rawCategory.charAt(0).toUpperCase() + rawCategory.slice(1)) as keyof KeenersWatchStats)
+        : null;
+      const statName = attr.attribute;
+      const maxValue = parseFloat(attr.max.toString().replace('%', '')) || 0;
+      if (category && statName && defaults[category]) {
+        defaults[category][statName] = maxValue;
+      }
+    });
+  }
+  return defaults;
+}
 
 class Build {
   id: string;
@@ -73,7 +98,12 @@ class Build {
     this.kneepads = kneepads;
     this.skill1 = skill1;
     this.skill2 = skill2;
-    this.watch = watch || null;
+    this.watch =
+      watch &&
+      typeof watch === 'object' &&
+      Object.values(watch).some((cat: any) => cat && Object.keys(cat).length > 0)
+        ? watch
+        : getDefaultWatchStats();
     this.createdAt = createdAt || Date.now();
     this.updatedAt = updatedAt || Date.now();
   }
@@ -145,6 +175,18 @@ class Build {
       gloves: convertGear(this.gloves),
       kneepads: convertGear(this.kneepads),
     });
+  }
+
+  toView(): Record<string, any> {
+    const llm = this.toLlm();
+    const result: Record<string, any> = llm.toJSON();
+    const defaults = getDefaultWatchStats();
+    const merged: KeenersWatchStats = { ...defaults };
+    for (const cat of Object.keys(merged) as (keyof KeenersWatchStats)[]) {
+      merged[cat] = { ...defaults[cat], ...(this.watch?.[cat] || {}) };
+    }
+    result.watch = merged;
+    return result;
   }
 
   static fromLlm(llmBuild: LlmBuild): Partial<Build> {

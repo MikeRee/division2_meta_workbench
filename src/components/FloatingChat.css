@@ -57,7 +57,7 @@
   max-width: 600px;
   height: 80vh;
   max-height: 700px;
-  background: white;
+  background: #0a0a0a;
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   display: flex;
@@ -76,30 +76,6 @@
     transform: translateY(0);
     opacity: 1;
   }
-}
-
-.floating-chat-header {
-  display: flex;
-  justify-content: flex-end;
-  padding: 0.5rem;
-  background: #f8f9fa;
-  border-bottom: 1px solid #ddd;
-}
-
-.floating-chat-close {
-  background: transparent;
-  border: none;
-  font-size: 1.5rem;
-  color: #666;
-  cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  transition: all 0.2s;
-}
-
-.floating-chat-close:hover {
-  background: #e9ecef;
-  color: #333;
 }
 
 .floating-chat-window .chat-window {

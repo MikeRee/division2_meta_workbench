@@ -62,7 +62,7 @@ class LlmBuild {
 
   toJSON() {
     const result: any = {};
-    
+
     if (this.primaryWeapon) result.primaryWeapon = this.primaryWeapon;
     if (this.secondaryWeapon) result.secondaryWeapon = this.secondaryWeapon;
     if (this.pistol) result.pistol = this.pistol;
@@ -72,7 +72,7 @@ class LlmBuild {
     if (this.backpack) result.backpack = this.backpack;
     if (this.gloves) result.gloves = this.gloves;
     if (this.kneepads) result.kneepads = this.kneepads;
-    
+
     return result;
   }
 }
@@ -93,13 +93,13 @@ class LlmGear {
   gearAttrib1?: string | null;
   gearAttrib2?: string | null;
   gearMod?: string | null;
-  
+
   constructor(
     name: string,
     core: CoreType[],
     gearAttrib1?: string | null,
     gearAttrib2?: string | null,
-    gearMod?: string | null
+    gearMod?: string | null,
   ) {
     this.name = name;
     this.core = core;
@@ -115,7 +115,7 @@ class LlmAttachments {
     public underbarrelIfOption: string | null,
     public magazineIfOption: string | null,
     public opticsIfOption: string | null,
-  ) {}}
-
+  ) {}
+}
 
 export default LlmBuild;

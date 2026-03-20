@@ -48,7 +48,7 @@ function ChatWindow() {
         // Convert timestamp strings back to Date objects
         return parsed.map((msg: any) => ({
           ...msg,
-          timestamp: new Date(msg.timestamp)
+          timestamp: new Date(msg.timestamp),
         }));
       } catch (error) {
         console.error('Failed to load chat messages:', error);
@@ -62,29 +62,29 @@ function ChatWindow() {
   const [llmStatus, setLlmStatus] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const jsonViewerRef = useRef<HTMLPreElement>(null);
-  
+
   // Checkbox states
   const [includeBuild, setIncludeBuild] = useState(true);
   const [includeSeasonalModifiers, setIncludeSeasonalModifiers] = useState(true);
   const [seasonalModifierText, setSeasonalModifierText] = useState('');
   const [showSeasonalInput, setShowSeasonalInput] = useState(false);
-  
+
   // JSON viewer state
   const [showJsonViewer, setShowJsonViewer] = useState(false);
   const [viewingJson, setViewingJson] = useState<string>('');
-  
+
   // Prompts state
   const [prompts, setPrompts] = useState<Prompts>({
     system: '',
     query: '',
     seasonal: '',
-    existing: ''
+    existing: '',
   });
   const [tempPrompts, setTempPrompts] = useState<Prompts>({
     system: '',
     query: '',
     seasonal: '',
-    existing: ''
+    existing: '',
   });
   const [editingPrompt, setEditingPrompt] = useState<keyof Prompts | null>(null);
   const [jsonEditorOpen, setJsonEditorOpen] = useState(false);
@@ -100,22 +100,24 @@ function ChatWindow() {
     if (savedModel) {
       setSelectedModel(savedModel);
     }
-    
+
     // Load prompts from file and localStorage
     const loadPrompts = async () => {
       try {
         const response = await fetch('/clean/prompts.json');
         if (response.ok) {
           const defaultPrompts = await response.json();
-          
+
           // Load saved prompts from localStorage or use defaults
           const savedPrompts: Prompts = {
             system: localStorage.getItem('geminiPrompt_system') || defaultPrompts.system || '',
             query: localStorage.getItem('geminiPrompt_query') || defaultPrompts.query || '',
-            seasonal: localStorage.getItem('geminiPrompt_seasonal') || defaultPrompts.seasonal || '',
-            existing: localStorage.getItem('geminiPrompt_existing') || defaultPrompts.existing || ''
+            seasonal:
+              localStorage.getItem('geminiPrompt_seasonal') || defaultPrompts.seasonal || '',
+            existing:
+              localStorage.getItem('geminiPrompt_existing') || defaultPrompts.existing || '',
           };
-          
+
           setPrompts(savedPrompts);
           setTempPrompts(savedPrompts);
         }
@@ -123,9 +125,18 @@ function ChatWindow() {
         console.error('Failed to load prompts:', error);
       }
     };
-    
+
     loadPrompts();
   }, []);
+
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const autoResize = (el: HTMLTextAreaElement) => {
+    el.style.height = 'auto';
+    const lineHeight = parseFloat(getComputedStyle(el).lineHeight) || 20;
+    const maxHeight = lineHeight * 7;
+    el.style.height = Math.min(el.scrollHeight, maxHeight) + 'px';
+  };
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -140,26 +151,24 @@ function ChatWindow() {
 
   const fetchAvailableModels = async (apiKey: string) => {
     if (!apiKey) return;
-    
+
     setIsLoadingModels(true);
     try {
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`
+        `https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`,
       );
-      
+
       if (response.ok) {
         const data = await response.json();
         const models = data.models
-          .filter((model: any) => 
-            model.supportedGenerationMethods?.includes('generateContent')
-          )
+          .filter((model: any) => model.supportedGenerationMethods?.includes('generateContent'))
           .map((model: any) => ({
             name: model.name, // Keep full name like "models/gemini-1.5-flash"
             displayName: model.displayName || model.name.replace('models/', ''),
-            supportedGenerationMethods: model.supportedGenerationMethods
+            supportedGenerationMethods: model.supportedGenerationMethods,
           }));
         setAvailableModels(models);
-        
+
         // Update selected model if it's not in the list
         if (models.length > 0 && !models.find((m: any) => m.name === selectedModel)) {
           setSelectedModel(models[0].name);
@@ -173,46 +182,48 @@ function ChatWindow() {
     }
   };
 
-  const parseAndApplyModel = (responseText: string): { message: string; modelApplied: boolean; modelJson?: string } => {
+  const parseAndApplyModel = (
+    responseText: string,
+  ): { message: string; modelApplied: boolean; modelJson?: string } => {
     console.log('=== PARSING RESPONSE ===');
     console.log('Response Text Length:', responseText.length);
     console.log('Response Text:', responseText);
-    
+
     // Check if response contains the two-part format
     const messageMatch = responseText.match(/---MESSAGE---\s*([\s\S]*?)(?=---MODEL---|$)/);
     const modelMatch = responseText.match(/---MODEL---\s*([\s\S]*?)$/);
-    
+
     console.log('Message Match Found:', !!messageMatch);
     console.log('Model Match Found:', !!modelMatch);
-    
+
     if (!messageMatch) {
       // No structured format, return as-is
       console.log('No structured format detected, returning raw text');
       return { message: responseText, modelApplied: false };
     }
-    
+
     const message = messageMatch[1].trim();
     console.log('Extracted Message Length:', message.length);
-    
+
     if (!modelMatch) {
       // Has MESSAGE but no MODEL
       console.log('Has MESSAGE but no MODEL section');
       return { message, modelApplied: false };
     }
-    
+
     // Try to parse and apply the MODEL
     try {
       let modelJson = modelMatch[1].trim();
       console.log('Model JSON:', modelJson);
-      
+
       // Strip markdown code fences if present
       if (modelJson.startsWith('```')) {
         modelJson = modelJson.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
       }
-      
+
       const llmBuild = JSON.parse(modelJson);
       console.log('Parsed LlmBuild:', llmBuild);
-      
+
       // Get data stores
       const cleanDataStore = useCleanDataStore.getState();
       const weapons = cleanDataStore.getCleanData('weapons');
@@ -221,7 +232,7 @@ function ChatWindow() {
       const brandsets = cleanDataStore.getCleanData('brandsets');
       const weaponMods = cleanDataStore.getCleanData('weaponMods');
       const { updateCurrentBuild } = useBuildStore.getState();
-      
+
       // Validate data is loaded
       if (!weapons || !Array.isArray(weapons) || weapons.length === 0) {
         console.error('Weapons data not loaded');
@@ -239,31 +250,40 @@ function ChatWindow() {
         console.error('Brandsets data not loaded');
         throw new Error('Brandsets data not loaded. Please wait for data to load and try again.');
       }
-      
-      console.log('Data stores validated - weapons:', weapons.length, 'namedGear:', namedGear.length, 'gearsets:', gearsets.length, 'brandsets:', brandsets.length);
-      
+
+      console.log(
+        'Data stores validated - weapons:',
+        weapons.length,
+        'namedGear:',
+        namedGear.length,
+        'gearsets:',
+        gearsets.length,
+        'brandsets:',
+        brandsets.length,
+      );
+
       // Reconstruct BuildWeapon instances
       const reconstructWeapon = (llmWeapon: any): BuildWeapon | null => {
         if (!llmWeapon || !llmWeapon.name) return null;
-        
+
         // Try exact match first
-        let weapon = (weapons as Weapon[]).find(w => w.name === llmWeapon.name);
-        
+        let weapon = (weapons as Weapon[]).find((w) => w.name === llmWeapon.name);
+
         // If no exact match, try fuzzy search
         if (!weapon) {
-          weapon = fuzzyFind(llmWeapon.name, weapons as Weapon[], w => w.name, 0.75) ?? undefined;
+          weapon = fuzzyFind(llmWeapon.name, weapons as Weapon[], (w) => w.name, 0.75) ?? undefined;
           if (weapon) {
             console.log(`Fuzzy matched weapon "${llmWeapon.name}" to "${weapon.name}"`);
           }
         }
-        
+
         if (!weapon) {
           console.warn(`Weapon not found: ${llmWeapon.name}`);
           return null;
         }
-        
+
         const configuredModSlots: Record<string, Record<string, number>> = {};
-        
+
         // Handle both old format and new attachments format
         if (llmWeapon.attachments) {
           if (llmWeapon.attachments.muzzleIfOption) {
@@ -293,99 +313,101 @@ function ChatWindow() {
             configuredModSlots.optics = { [llmWeapon.opticsIfOption]: 0 };
           }
         }
-        
+
         return new BuildWeapon(weapon, configuredModSlots, weaponMods);
       };
-      
+
       // Reconstruct BuildGear instances
       const reconstructGear = (llmGear: any, gearType: GearType): BuildGear | null => {
         if (!llmGear || !llmGear.name) return null;
-        
+
         // Try exact match first
-        let namedGearItem = (namedGear as NamedGear[]).find(g => g.name === llmGear.name);
-        let gearsetItem = gearsets.find(g => g.name === llmGear.name);
-        let brandsetItem = brandsets.find(b => b.brand === llmGear.name);
-        
+        let namedGearItem = (namedGear as NamedGear[]).find((g) => g.name === llmGear.name);
+        let gearsetItem = gearsets.find((g) => g.name === llmGear.name);
+        let brandsetItem = brandsets.find((b) => b.brand === llmGear.name);
+
         // If no exact match, try fuzzy search
         if (!namedGearItem && !gearsetItem && !brandsetItem) {
-          namedGearItem = fuzzyFind(llmGear.name, namedGear as NamedGear[], g => g.name, 0.75) ?? undefined;
-          gearsetItem = fuzzyFind(llmGear.name, gearsets, g => g.name, 0.75) ?? undefined;
-          brandsetItem = fuzzyFind(llmGear.name, brandsets, b => b.brand, 0.75) ?? undefined;
-          
+          namedGearItem =
+            fuzzyFind(llmGear.name, namedGear as NamedGear[], (g) => g.name, 0.75) ?? undefined;
+          gearsetItem = fuzzyFind(llmGear.name, gearsets, (g) => g.name, 0.75) ?? undefined;
+          brandsetItem = fuzzyFind(llmGear.name, brandsets, (b) => b.brand, 0.75) ?? undefined;
+
           if (namedGearItem || gearsetItem || brandsetItem) {
             const matchedName = namedGearItem?.name || gearsetItem?.name || brandsetItem?.brand;
             console.log(`Fuzzy matched "${llmGear.name}" to "${matchedName}"`);
           }
         }
-        
+
         const foundItem = namedGearItem || gearsetItem || brandsetItem;
-        
+
         if (!foundItem) {
           console.warn(`Gear not found: ${llmGear.name}`);
           return null;
         }
-        
+
         // Create BuildGear from the found item
-        const buildGear = gearsetItem || brandsetItem 
-          ? new BuildGear(foundItem, gearType)
-          : new BuildGear(foundItem);
-        
+        const buildGear =
+          gearsetItem || brandsetItem
+            ? new BuildGear(foundItem, gearType)
+            : new BuildGear(foundItem);
+
         // Apply core attributes from LlmGear if specified
         if (llmGear.core && Array.isArray(llmGear.core) && llmGear.core.length > 0) {
           buildGear.core = llmGear.core.map((coreType: string) => ({
             type: parseCoreType(coreType),
-            value: getDefaultCoreValue(parseCoreType(coreType))
+            value: getDefaultCoreValue(parseCoreType(coreType)),
           }));
         }
-        
+
         // Apply gear attributes from LlmGear if they exist
         const gearAttributesMap = useLookupStore.getState().gearAttributes;
-        
+
         if (llmGear.gearAttrib1 && buildGear.minor1 && gearAttributesMap) {
           const allGearAttrs = gearAttributesMap.toArray();
-          const mod = allGearAttrs.find(m => m.attribute === llmGear.gearAttrib1);
+          const mod = allGearAttrs.find((m) => m.attribute === llmGear.gearAttrib1);
           if (mod) {
             buildGear.minor1 = new GearModValue(
               { [mod.attribute]: mod.max },
               mod.classification,
               mod.attribute,
-              mod.max
+              mod.max,
             );
           }
         }
-        
+
         if (llmGear.gearAttrib2 && buildGear.minor2 && gearAttributesMap) {
           const allGearAttrs = gearAttributesMap.toArray();
-          const mod = allGearAttrs.find(m => m.attribute === llmGear.gearAttrib2);
+          const mod = allGearAttrs.find((m) => m.attribute === llmGear.gearAttrib2);
           if (mod) {
             buildGear.minor2 = new GearModValue(
               { [mod.attribute]: mod.max },
               mod.classification,
               mod.attribute,
-              mod.max
+              mod.max,
             );
           }
         }
-        
+
         if (llmGear.gearMod && buildGear.minor3 && gearAttributesMap) {
           const allGearAttrs = gearAttributesMap.toArray();
-          const mod = allGearAttrs.find(m => m.attribute === llmGear.gearMod);
+          const mod = allGearAttrs.find((m) => m.attribute === llmGear.gearMod);
           if (mod) {
             buildGear.minor3 = new GearModValue(
               { [mod.attribute]: mod.max },
               mod.classification,
               mod.attribute,
-              mod.max
+              mod.max,
             );
           }
         }
-        
+
         return buildGear;
       };
-      
+
       // Apply the reconstructed build
       const updates: any = {};
-      
+
       if (llmBuild.primaryWeapon !== undefined) {
         updates.primaryWeapon = reconstructWeapon(llmBuild.primaryWeapon);
         console.log('Reconstructed primaryWeapon:', updates.primaryWeapon);
@@ -422,10 +444,10 @@ function ChatWindow() {
         updates.kneepads = reconstructGear(llmBuild.kneepads, GearType.Kneepads);
         console.log('Reconstructed kneepads:', updates.kneepads);
       }
-      
+
       console.log('Applying updates to build:', updates);
       updateCurrentBuild(updates);
-      
+
       console.log('Build updated successfully');
       return { message, modelApplied: true, modelJson };
     } catch (error) {
@@ -437,15 +459,15 @@ function ChatWindow() {
   const formatMessage = (text: string): string => {
     // Simple formatting to improve readability without breaking sentences
     let formatted = text;
-    
+
     // Only add breaks after periods that are followed by TWO spaces or newline and a capital letter
     // This preserves normal sentences but adds spacing between paragraphs
     formatted = formatted.replace(/\.\s\s+([A-Z])/g, '.\n\n$1');
     formatted = formatted.replace(/\.\n([A-Z])/g, '.\n\n$1');
-    
+
     // Normalize multiple line breaks (3 or more) to double spacing
     formatted = formatted.replace(/\n{3,}/g, '\n\n');
-    
+
     return formatted;
   };
 
@@ -460,7 +482,10 @@ function ChatWindow() {
       if (currentParagraph.length > 0) {
         const paragraphText = currentParagraph.join(' ');
         elements.push(
-          <p key={elements.length} dangerouslySetInnerHTML={{ __html: formatInlineMarkdown(paragraphText) }} />
+          <p
+            key={elements.length}
+            dangerouslySetInnerHTML={{ __html: formatInlineMarkdown(paragraphText) }}
+          />,
         );
         currentParagraph = [];
       }
@@ -473,7 +498,7 @@ function ChatWindow() {
             {listItems.map((item, i) => (
               <li key={i} dangerouslySetInnerHTML={{ __html: formatInlineMarkdown(item) }} />
             ))}
-          </ul>
+          </ul>,
         );
         listItems = [];
         inList = false;
@@ -484,14 +509,14 @@ function ChatWindow() {
       // Bold: **text** or __text__
       text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
       text = text.replace(/__(.+?)__/g, '<strong>$1</strong>');
-      
+
       // Italic: *text* or _text_
       text = text.replace(/\*(.+?)\*/g, '<em>$1</em>');
       text = text.replace(/_(.+?)_/g, '<em>$1</em>');
-      
+
       // Inline code: `code`
       text = text.replace(/`(.+?)`/g, '<code>$1</code>');
-      
+
       return text;
     };
 
@@ -546,14 +571,14 @@ function ChatWindow() {
 
     // Build the complete prompt
     let userPrompt = prompts.query + inputValue;
-    
+
     // Add build if checkbox is checked
     if (includeBuild) {
       const currentBuild = useBuildStore.getState().currentBuild;
       const llmBuild = currentBuild.toLlm(); // Convert to LlmBuild format
       userPrompt += '\n\n' + prompts.existing + JSON.stringify(llmBuild, null, 2);
     }
-    
+
     // Add seasonal modifiers if checkbox is checked
     if (includeSeasonalModifiers && seasonalModifierText.trim()) {
       userPrompt += '\n\n' + prompts.seasonal + seasonalModifierText;
@@ -569,74 +594,82 @@ function ChatWindow() {
     const userMessage: ChatMessage = {
       role: 'user',
       content: inputValue,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInputValue('');
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto';
+    }
     setIsGenerating(true);
     setLlmStatus('Connecting to Gemini...');
 
     // Add placeholder for assistant message
-    setMessages(prev => [...prev, {
-      role: 'assistant',
-      content: '',
-      timestamp: new Date()
-    }]);
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: 'assistant',
+        content: '',
+        timestamp: new Date(),
+      },
+    ]);
 
     try {
       // Prepend system prompt to user prompt for models that don't support system_instruction
       const fullPrompt = prompts.system + '\n\n' + userPrompt;
-      
+
       console.log('System Prompt:', prompts.system);
       console.log('System Prompt Length:', prompts.system.length);
       console.log('Total Prompt Length:', fullPrompt.length);
-      
+
       // Build conversation history for Gemini
       // First message includes system prompt + user prompt
       // Subsequent messages are user/model pairs
       const contents = [];
-      
+
       if (messages.length === 0) {
         // First message - include system prompt with user prompt
         contents.push({
           role: 'user',
-          parts: [{ text: fullPrompt }]
+          parts: [{ text: fullPrompt }],
         });
       } else {
         // Build history from previous messages
         // First user message should include system prompt
         let isFirstUserMessage = true;
-        
+
         for (const msg of messages) {
           if (msg.role === 'user') {
             contents.push({
               role: 'user',
-              parts: [{
-                text: isFirstUserMessage 
-                  ? prompts.system + '\n\n' + prompts.query + msg.content
-                  : prompts.query + msg.content
-              }]
+              parts: [
+                {
+                  text: isFirstUserMessage
+                    ? prompts.system + '\n\n' + prompts.query + msg.content
+                    : prompts.query + msg.content,
+                },
+              ],
             });
             isFirstUserMessage = false;
           } else if (msg.role === 'assistant' && msg.content) {
             contents.push({
               role: 'model',
-              parts: [{ text: msg.content }]
+              parts: [{ text: msg.content }],
             });
           }
         }
-        
+
         // Add current message
         contents.push({
           role: 'user',
-          parts: [{ text: userPrompt }]
+          parts: [{ text: userPrompt }],
         });
       }
-      
+
       console.log('Conversation History Length:', contents.length);
       console.log('Conversation Contents:', contents);
-      
+
       // Use non-streaming endpoint
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1/${selectedModel}:generateContent?key=${geminiApiKey}`,
@@ -649,10 +682,10 @@ function ChatWindow() {
             contents: contents,
             generationConfig: {
               temperature: 0.7,
-              maxOutputTokens: 8192  // Increased from 2048 to allow full responses
-            }
-          })
-        }
+              maxOutputTokens: 8192, // Increased from 2048 to allow full responses
+            },
+          }),
+        },
       );
 
       if (!response.ok) {
@@ -666,31 +699,31 @@ function ChatWindow() {
       setLlmStatus('Generating response...');
 
       const data = await response.json();
-      
+
       console.log('=== GEMINI RESPONSE ===');
       console.log('Full Response:', JSON.stringify(data, null, 2));
-      
+
       // Extract text from the response
       const candidates = data.candidates;
       if (candidates && candidates.length > 0) {
         const content = candidates[0].content;
         console.log('Candidate Content:', content);
         console.log('Finish Reason:', candidates[0].finishReason);
-        
+
         if (content && content.parts && content.parts.length > 0) {
           const text = content.parts[0].text;
           console.log('Extracted Text Length:', text?.length);
           console.log('Extracted Text:', text);
-          
+
           if (text) {
             // Parse the response and apply model if present
             const { message, modelApplied, modelJson } = parseAndApplyModel(text);
-            
+
             console.log('=== PARSED RESPONSE ===');
             console.log('Message:', message);
             console.log('Model Applied:', modelApplied);
-            
-            setMessages(prev => {
+
+            setMessages((prev) => {
               const newMessages = [...prev];
               const lastMessage = newMessages[newMessages.length - 1];
               if (lastMessage?.role === 'assistant') {
@@ -700,7 +733,7 @@ function ChatWindow() {
               }
               return [...newMessages];
             });
-            
+
             if (modelApplied) {
               setLlmStatus('Build updated successfully!');
               setTimeout(() => setLlmStatus(''), 2000);
@@ -721,8 +754,8 @@ function ChatWindow() {
       console.error('Error sending message:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to generate response';
       setLlmStatus(`Error: ${errorMessage}`);
-      
-      setMessages(prev => {
+
+      setMessages((prev) => {
         const newMessages = [...prev];
         const lastMessage = newMessages[newMessages.length - 1];
         if (lastMessage?.role === 'assistant' && !lastMessage.content) {
@@ -736,7 +769,7 @@ function ChatWindow() {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
@@ -747,13 +780,13 @@ function ChatWindow() {
     localStorage.setItem('geminiApiKey', tempApiKey);
     setGeminiApiKey(tempApiKey);
     fetchAvailableModels(tempApiKey);
-    
+
     // Save prompts
     Object.entries(tempPrompts).forEach(([key, value]) => {
       localStorage.setItem(`geminiPrompt_${key}`, value);
     });
     setPrompts(tempPrompts);
-    
+
     setIsConfigOpen(false);
   };
 
@@ -783,9 +816,9 @@ function ChatWindow() {
   };
 
   const handlePromptChange = (key: keyof Prompts, value: string) => {
-    setTempPrompts(prev => ({
+    setTempPrompts((prev) => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }));
   };
 
@@ -794,7 +827,7 @@ function ChatWindow() {
       system: 'System Prompt',
       query: 'Query Template',
       seasonal: 'Seasonal Template',
-      existing: 'Existing Build Template'
+      existing: 'Existing Build Template',
     };
     return labels[key];
   };
@@ -807,24 +840,24 @@ function ChatWindow() {
   const handleSaveJsonEditor = () => {
     try {
       const parsed = JSON.parse(jsonEditorValue);
-      
+
       // Validate that all required keys exist
       const requiredKeys: Array<keyof Prompts> = ['system', 'query', 'seasonal', 'existing'];
-      const missingKeys = requiredKeys.filter(key => !(key in parsed));
-      
+      const missingKeys = requiredKeys.filter((key) => !(key in parsed));
+
       if (missingKeys.length > 0) {
         alert(`Missing required keys: ${missingKeys.join(', ')}`);
         return;
       }
-      
+
       // Update tempPrompts with parsed values
       setTempPrompts({
         system: parsed.system || '',
         query: parsed.query || '',
         seasonal: parsed.seasonal || '',
-        existing: parsed.existing || ''
+        existing: parsed.existing || '',
       });
-      
+
       setJsonEditorOpen(false);
     } catch (error) {
       alert('Invalid JSON format. Please check your syntax.');
@@ -842,8 +875,8 @@ function ChatWindow() {
         <h2>Chat</h2>
         <div className="chat-header-actions">
           {messages.length > 0 && (
-            <button 
-              className="clear-chat-button" 
+            <button
+              className="clear-chat-button"
               onClick={() => {
                 if (confirm('Clear all chat messages?')) {
                   setMessages([]);
@@ -863,7 +896,9 @@ function ChatWindow() {
       <div className="chat-messages">
         {messages.length === 0 ? (
           <div className="empty-state">
-            {geminiApiKey ? 'Start a conversation...' : 'Configure your Gemini API key to start chatting'}
+            {geminiApiKey
+              ? 'Start a conversation...'
+              : 'Configure your Gemini API key to start chatting'}
           </div>
         ) : (
           messages.map((message, index) => (
@@ -871,7 +906,7 @@ function ChatWindow() {
               <div className="message-role">
                 {message.role === 'user' ? 'You' : 'Gemini'}
                 {message.modelApplied && message.modelJson && (
-                  <span 
+                  <span
                     className="model-applied-badge clickable"
                     onClick={() => {
                       setViewingJson(message.modelJson || '');
@@ -887,50 +922,48 @@ function ChatWindow() {
             </div>
           ))
         )}
-        {llmStatus && (
-          <div className="llm-status">{llmStatus}</div>
-        )}
+        {llmStatus && <div className="llm-status">{llmStatus}</div>}
         <div ref={messagesEndRef} />
       </div>
       <div className="chat-input-area">
-        <select 
-          className="model-selector" 
-          value={selectedModel} 
-          onChange={handleModelChange}
-          disabled={isLoadingModels || availableModels.length === 0 || isGenerating}
-        >
-          {isLoadingModels ? (
-            <option>Loading models...</option>
-          ) : availableModels.length > 0 ? (
-            availableModels.map((model) => (
-              <option key={model.name} value={model.name}>
-                {model.displayName}
-              </option>
-            ))
-          ) : (
-            <>
-              <option value="models/gemini-1.5-flash">Gemini 1.5 Flash</option>
-              <option value="models/gemini-1.5-pro">Gemini 1.5 Pro</option>
-              <option value="models/gemini-2.0-flash-exp">Gemini 2.0 Flash (Exp)</option>
-            </>
-          )}
-        </select>
-        <div className="chat-options">
+        <div className="chat-controls-row">
+          <select
+            className="model-selector"
+            value={selectedModel}
+            onChange={handleModelChange}
+            disabled={isLoadingModels || availableModels.length === 0 || isGenerating}
+          >
+            {isLoadingModels ? (
+              <option>Loading models...</option>
+            ) : availableModels.length > 0 ? (
+              availableModels.map((model) => (
+                <option key={model.name} value={model.name}>
+                  {model.displayName}
+                </option>
+              ))
+            ) : (
+              <>
+                <option value="models/gemini-1.5-flash">Gemini 1.5 Flash</option>
+                <option value="models/gemini-1.5-pro">Gemini 1.5 Pro</option>
+                <option value="models/gemini-2.0-flash-exp">Gemini 2.0 Flash (Exp)</option>
+              </>
+            )}
+          </select>
           <label className="chat-checkbox">
-            <input 
-              type="checkbox" 
+            <input
+              type="checkbox"
               checked={includeBuild}
               onChange={(e) => setIncludeBuild(e.target.checked)}
             />
             Include Build
           </label>
           <label className="chat-checkbox">
-            <input 
-              type="checkbox" 
+            <input
+              type="checkbox"
               checked={includeSeasonalModifiers}
               onChange={(e) => setIncludeSeasonalModifiers(e.target.checked)}
             />
-            <span 
+            <span
               className="seasonal-link"
               onClick={(e) => {
                 e.preventDefault();
@@ -952,13 +985,18 @@ function ChatWindow() {
           </div>
         )}
         <div className="chat-input">
-          <input 
-            type="text" 
-            placeholder="Type a message..." 
+          <textarea
+            ref={inputRef}
+            className="chat-input-textarea"
+            placeholder="Type a message..."
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+              autoResize(e.target);
+            }}
             onKeyPress={handleKeyPress}
             disabled={isGenerating}
+            rows={1}
           />
         </div>
       </div>
@@ -977,14 +1015,11 @@ function ChatWindow() {
                 placeholder="Enter your Gemini API Key"
               />
             </div>
-            
+
             <div className="config-section">
               <div className="section-header">
                 <h3>Prompts</h3>
-                <button 
-                  className="json-link"
-                  onClick={handleOpenJsonEditor}
-                >
+                <button className="json-link" onClick={handleOpenJsonEditor}>
                   json
                 </button>
               </div>
@@ -993,21 +1028,21 @@ function ChatWindow() {
                   <div key={key} className="prompt-item">
                     <div className="prompt-header">
                       <span className="prompt-label">{getPromptLabel(key)}</span>
-                      <button 
-                        className="prompt-edit-btn"
-                        onClick={() => handleEditPrompt(key)}
-                      >
+                      <button className="prompt-edit-btn" onClick={() => handleEditPrompt(key)}>
                         ✏️ Edit
                       </button>
                     </div>
                     <div className="prompt-preview">
-                      {tempPrompts[key] ? tempPrompts[key].substring(0, 100) + (tempPrompts[key].length > 100 ? '...' : '') : 'Not set'}
+                      {tempPrompts[key]
+                        ? tempPrompts[key].substring(0, 100) +
+                          (tempPrompts[key].length > 100 ? '...' : '')
+                        : 'Not set'}
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-            
+
             <div className="overlay-actions">
               <button onClick={handleSaveConfig}>Save</button>
               <button onClick={() => setIsConfigOpen(false)}>Cancel</button>
@@ -1018,7 +1053,10 @@ function ChatWindow() {
 
       {editingPrompt && (
         <div className="overlay-backdrop" onClick={handleCancelPromptEdit}>
-          <div className="overlay-content prompt-editor-overlay" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="overlay-content prompt-editor-overlay"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h2>Edit {getPromptLabel(editingPrompt)}</h2>
             <textarea
               className="prompt-textarea"
@@ -1037,7 +1075,10 @@ function ChatWindow() {
 
       {jsonEditorOpen && (
         <div className="overlay-backdrop" onClick={handleCancelJsonEditor}>
-          <div className="overlay-content prompt-editor-overlay" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="overlay-content prompt-editor-overlay"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h2>Edit Prompts (JSON)</h2>
             <textarea
               className="prompt-textarea json-editor"
@@ -1056,7 +1097,10 @@ function ChatWindow() {
 
       {showJsonViewer && (
         <div className="overlay-backdrop" onClick={() => setShowJsonViewer(false)}>
-          <div className="overlay-content prompt-editor-overlay" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="overlay-content prompt-editor-overlay"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h2>Applied Build Model (JSON)</h2>
             <textarea
               className="prompt-textarea json-viewer"
@@ -1065,27 +1109,31 @@ function ChatWindow() {
               onFocus={(e) => e.target.select()}
             />
             <div className="overlay-actions">
-              <button onClick={() => {
-                try {
-                  // Parse and validate JSON
-                  const parsed = JSON.parse(viewingJson);
-                  
-                  // Use the same parseAndApplyModel logic by wrapping in MODEL format
-                  const wrappedJson = `---MESSAGE---\nBuild applied from JSON viewer\n\n---MODEL---\n${viewingJson}`;
-                  const { modelApplied } = parseAndApplyModel(wrappedJson);
-                  
-                  if (modelApplied) {
-                    setLlmStatus('Build applied successfully!');
-                    setTimeout(() => setLlmStatus(''), 2000);
-                    setShowJsonViewer(false);
-                  } else {
-                    alert('Failed to apply build. Check console for errors.');
+              <button
+                onClick={() => {
+                  try {
+                    // Parse and validate JSON
+                    const parsed = JSON.parse(viewingJson);
+
+                    // Use the same parseAndApplyModel logic by wrapping in MODEL format
+                    const wrappedJson = `---MESSAGE---\nBuild applied from JSON viewer\n\n---MODEL---\n${viewingJson}`;
+                    const { modelApplied } = parseAndApplyModel(wrappedJson);
+
+                    if (modelApplied) {
+                      setLlmStatus('Build applied successfully!');
+                      setTimeout(() => setLlmStatus(''), 2000);
+                      setShowJsonViewer(false);
+                    } else {
+                      alert('Failed to apply build. Check console for errors.');
+                    }
+                  } catch (error) {
+                    alert('Invalid JSON format. Please check your syntax.');
+                    console.error('JSON parse error:', error);
                   }
-                } catch (error) {
-                  alert('Invalid JSON format. Please check your syntax.');
-                  console.error('JSON parse error:', error);
-                }
-              }}>Apply</button>
+                }}
+              >
+                Apply
+              </button>
               <button onClick={() => setShowJsonViewer(false)}>Close</button>
             </div>
           </div>
