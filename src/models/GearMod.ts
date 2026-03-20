@@ -70,6 +70,7 @@ class GearMod {
 class GearModValue {
   options: Record<string, number>;
   classification?: GearModClassification;
+  isAttribute: boolean;
   core?: CoreType;
   key?: string;
   value?: number;
@@ -84,6 +85,7 @@ class GearModValue {
       this.classification = type as GearModClassification;
     }
     
+    this.isAttribute = true;
     this.key = key;
     this.value = value;
   }

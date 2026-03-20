@@ -332,6 +332,17 @@
   flex-shrink: 0;
 }
 
+.formula-item-result {
+  color: #d4af37;
+  font-size: 0.85rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.formula-item-result-invalid {
+  color: #e85a5a;
+}
+
 .formula-item-code {
   color: #a0d8b0;
   font-size: 0.75rem;

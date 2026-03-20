@@ -1,12 +1,12 @@
-import { CoreType } from "./CoreValue";
-import Weapon from "./Weapon";
-import WeaponMod from "./WeaponMod";
+import { CoreType } from './CoreValue';
+import Weapon from './Weapon';
+import WeaponMod from './WeaponMod';
 
 export class BuildWeapon {
   // Static property to hold weapon attributes loaded from lookups
   private static weaponAttributeOptions: Record<string, number> = {};
   private static isInitialized = false;
-  
+
   weapon: Weapon;
   core1: WeaponModValue;
   core2?: WeaponModValue;
@@ -50,23 +50,23 @@ export class BuildWeapon {
   constructor(
     weapon: Weapon,
     configuredModSlots: Record<string, Record<string, number>> = {},
-    allWeaponMods?: WeaponMod[]
+    allWeaponMods?: WeaponMod[],
   ) {
     this.weapon = weapon;
-    
+
     // Get weapon attributes (will load from localStorage if not initialized)
     const weaponAttrs = BuildWeapon.getWeaponAttributes();
-    
+
     // Set core1 with weapon type damage
-    const core1Key = weapon.type.toLowerCase() + " damage";
+    const core1Key = weapon.type.toLowerCase() + ' damage';
     this.core1 = new WeaponModValue({ [core1Key]: 15 }, core1Key, 15);
-    
+
     // If core2 is undefined and weapon type is not pistol, create with all weapon attributes as options
     if (weapon.type.toLowerCase() !== 'pistol') {
       const firstKey = Object.keys(weaponAttrs)[0];
       this.core2 = new WeaponModValue(weaponAttrs, firstKey);
     }
-    
+
     const secondKey = Object.keys(weaponAttrs)[1];
     this.attrib = new WeaponModValue(weaponAttrs, secondKey);
     this.configuredModSlots = configuredModSlots;
@@ -81,6 +81,7 @@ class WeaponModValue {
   constructor(options: Record<string, number> = {}, key?: string, value?: number) {
     this.options = options;
     this.key = key;
-    this.value = value;
+    // Default to the max value from options when a key is provided but no value
+    this.value = value ?? (key != null ? options[key] : undefined);
   }
 }

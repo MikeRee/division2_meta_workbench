@@ -65,7 +65,7 @@ export const getModelFields = (dataKey: MainDataKey): string[] => {
   if (!Constructor) {
     return [];
   }
-  
+
   try {
     const instance = new Constructor({});
     return Object.keys(instance);
@@ -132,10 +132,11 @@ const useCleanDataStore = create<CleanDataState>()(
         });
       },
 
-      clearAll: () => set({
-        data: {},
-        lastUpdated: {} as Record<MainDataKey, number>,
-      }),
+      clearAll: () =>
+        set({
+          data: {},
+          lastUpdated: {} as Record<MainDataKey, number>,
+        }),
 
       setProcessing: (isProcessing) => set({ isProcessing }),
 
@@ -210,16 +211,14 @@ const useCleanDataStore = create<CleanDataState>()(
         if (state?.data) {
           const restoredData: any = {};
           for (const [dataKey, dataValue] of Object.entries(state.data)) {
-            restoredData[dataKey] = restoreClassInstances(
-              dataKey as MainDataKey,
-              dataValue
-            );
+            restoredData[dataKey] = restoreClassInstances(dataKey as MainDataKey, dataValue);
           }
           state.data = restoredData;
         }
       },
-    }
-  )
+      skipHydration: true,
+    },
+  ),
 );
 
 export default useCleanDataStore;
