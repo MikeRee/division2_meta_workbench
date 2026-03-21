@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './Build.css';
-import { MdSave, MdFolderOpen, MdRefresh } from 'react-icons/md';
+import { MdWatch, MdFolderOpen, MdRefresh } from 'react-icons/md';
 import { useBuildStore } from '../stores/useBuildStore';
 import { useLookupStore } from '../stores/useLookupStore';
 import Weapon from '../models/Weapon';
@@ -23,22 +23,23 @@ function Build() {
   const [overlayType, setOverlayType] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [showJsonModal, setShowJsonModal] = useState(false);
-  
-  const currentBuild = useBuildStore(state => state.currentBuild);
-  const updateCurrentBuild = useBuildStore(state => state.updateCurrentBuild);
-  const saveCurrentBuild = useBuildStore(state => state.saveCurrentBuild);
-  const newBuild = useBuildStore(state => state.newBuild);
-  
-  const specializationsMap = useLookupStore(state => state.specializations);
-  const weaponsMap = useLookupStore(state => state.weapons);
-  const skillsMap = useLookupStore(state => state.skills);
-  const namedGearMap = useLookupStore(state => state.namedGear);
-  const brandsetsMap = useLookupStore(state => state.brandsets);
-  const gearsetsMap = useLookupStore(state => state.gearsets);
-  const gearAttributesMap = useLookupStore(state => state.gearAttributes);
-  const weaponModsMap = useLookupStore(state => state.weaponMods);
-  
-  const specializations = specializationsMap instanceof Map ? Array.from(specializationsMap.values()) : [];
+  const [showWatchOverlay, setShowWatchOverlay] = useState(false);
+
+  const currentBuild = useBuildStore((state) => state.currentBuild);
+  const updateCurrentBuild = useBuildStore((state) => state.updateCurrentBuild);
+  const newBuild = useBuildStore((state) => state.newBuild);
+
+  const specializationsMap = useLookupStore((state) => state.specializations);
+  const weaponsMap = useLookupStore((state) => state.weapons);
+  const skillsMap = useLookupStore((state) => state.skills);
+  const namedGearMap = useLookupStore((state) => state.namedGear);
+  const brandsetsMap = useLookupStore((state) => state.brandsets);
+  const gearsetsMap = useLookupStore((state) => state.gearsets);
+  const gearAttributesMap = useLookupStore((state) => state.gearAttributes);
+  const weaponModsMap = useLookupStore((state) => state.weaponMods);
+
+  const specializations =
+    specializationsMap instanceof Map ? Array.from(specializationsMap.values()) : [];
   const weapons = weaponsMap instanceof Map ? Array.from(weaponsMap.values()) : [];
   const skills = skillsMap instanceof Map ? Array.from(skillsMap.values()) : [];
   const namedGear = namedGearMap instanceof Map ? Array.from(namedGearMap.values()) : [];
@@ -64,7 +65,7 @@ function Build() {
   const processMinorAttribute = (
     minorAttr: MinorAttribute,
     defaultMinorKey: string | null,
-    allGearMods: Record<string, number>
+    allGearMods: Record<string, number>,
   ): GearModValue => {
     if (minorAttr === 'mod') {
       return new GearModValue(allGearMods);
@@ -77,16 +78,23 @@ function Build() {
       if (Object.values(CoreType).includes(key as CoreType)) {
         return new GearModValue(minorAttr, key as CoreType, key, value);
       }
-      
+
       // Check missingMappings first, then gearModCollection
       const missingMapping = useLookupStore.getState().getMissingMapping(key);
-      const classification = missingMapping || useLookupStore.getState().gearAttributes?.getClassification(key);
-      
+      const classification =
+        missingMapping || useLookupStore.getState().gearAttributes?.getClassification(key);
+
       return new GearModValue(minorAttr, classification!, key, value);
-    } else if (typeof minorAttr === 'object' && defaultMinorKey !== null && minorAttr[defaultMinorKey] !== undefined) {
+    } else if (
+      typeof minorAttr === 'object' &&
+      defaultMinorKey !== null &&
+      minorAttr[defaultMinorKey] !== undefined
+    ) {
       // Check missingMappings first, then gearModCollection
       const missingMapping = useLookupStore.getState().getMissingMapping(defaultMinorKey);
-      const classification = missingMapping || useLookupStore.getState().gearAttributes?.getClassification(defaultMinorKey);
+      const classification =
+        missingMapping ||
+        useLookupStore.getState().gearAttributes?.getClassification(defaultMinorKey);
 
       return new GearModValue(
         minorAttr,
@@ -108,32 +116,33 @@ function Build() {
     console.log('Brandsets count:', brandsets.length);
 
     // 1. Add NamedGear items of this type
-    const namedGearItems = (namedGear as NamedGear[]).filter(gear => 
-      gear.type === gearType || 
-      (gearType === GearType.Kneepads && gear.type === GearType.Kneepads)
+    const namedGearItems = (namedGear as NamedGear[]).filter(
+      (gear) =>
+        gear.type === gearType ||
+        (gearType === GearType.Kneepads && gear.type === GearType.Kneepads),
     );
-    
+
     console.log('Filtered NamedGear items:', namedGearItems.length);
-    
-    namedGearItems.forEach(gear => {
+
+    namedGearItems.forEach((gear) => {
       if (!gear.core) {
         console.warn(`NamedGear item "${gear.name}" has no core attribute defined, skipping`);
         return;
       }
-      
+
       // Validate core type matches enum
       const validCoreTypes = Object.values(CoreType);
       if (!validCoreTypes.includes(gear.core)) {
         console.error(
           `NamedGear item "${gear.name}" has invalid core type: "${gear.core}". ` +
-          `Expected one of: ${validCoreTypes.join(', ')}. ` +
-          `Fix the data in namedGear.json`
+            `Expected one of: ${validCoreTypes.join(', ')}. ` +
+            `Fix the data in namedGear.json`,
         );
         return;
       }
-      
+
       const defaultMinors = getDefaultMinorAttributes(gear.core);
-      
+
       // Get all possible gear mods as a Record<string, number>
       const allGearMods: Record<string, number> = {};
       if (gearAttributesMap instanceof Map) {
@@ -141,13 +150,13 @@ function Build() {
           allGearMods[gearMod.attribute] = gearMod.max;
         }
       }
-      
+
       // Process minor attributes
       buildGearList.push(new BuildGear(gear));
     });
 
     // 2. Add Gearset items for this gear type
-    gearsets.forEach(gearset => {
+    gearsets.forEach((gearset) => {
       if (!gearset.core) {
         console.warn(`Gearset "${gearset.name}" has no core attribute defined, skipping`);
         return;
@@ -156,7 +165,7 @@ function Build() {
     });
 
     // 3. Add Brandset items for this gear type
-    brandsets.forEach(brandset => {
+    brandsets.forEach((brandset) => {
       if (!brandset.core) {
         console.warn(`Brandset "${brandset.brand}" has no core attribute defined, skipping`);
         return;
@@ -172,19 +181,11 @@ function Build() {
     return buildGearList;
   };
 
-const handleSelect = (value: string | BuildGear | BuildWeapon) => {
-  if (overlayType) {
-    updateCurrentBuild({ [overlayType]: value } as any);
-  }
-  setShowOverlay(false);
-};
-
-  const handleSave = () => {
-    const name = prompt('Enter build name:', currentBuild.name || 'Untitled Build');
-    if (name) {
-      saveCurrentBuild(name);
-      alert('Build saved successfully!');
+  const handleSelect = (value: string | BuildGear | BuildWeapon) => {
+    if (overlayType) {
+      updateCurrentBuild({ [overlayType]: value } as any);
     }
+    setShowOverlay(false);
   };
 
   const handleLoad = () => {
@@ -200,18 +201,18 @@ const handleSelect = (value: string | BuildGear | BuildWeapon) => {
   const handleJsonSave = (jsonString: string) => {
     try {
       const llmBuild = JSON.parse(jsonString);
-      
+
       // Reconstruct BuildWeapon instances by looking up weapons by name
       const reconstructWeapon = (llmWeapon: any): BuildWeapon | null => {
         if (!llmWeapon || !llmWeapon.name) return null;
-        
+
         // Find the weapon by name
-        const weapon = (weapons as Weapon[]).find(w => w.name === llmWeapon.name);
+        const weapon = (weapons as Weapon[]).find((w) => w.name === llmWeapon.name);
         if (!weapon) {
           console.warn(`Weapon not found: ${llmWeapon.name}`);
           return null;
         }
-        
+
         // Reconstruct mod slots
         const configuredModSlots: Record<string, Record<string, number>> = {};
         if (llmWeapon.muzzleIfOption) {
@@ -226,83 +227,84 @@ const handleSelect = (value: string | BuildGear | BuildWeapon) => {
         if (llmWeapon.opticsIfOption) {
           configuredModSlots.optics = { [llmWeapon.opticsIfOption]: 0 };
         }
-        
+
         return new BuildWeapon(weapon, configuredModSlots, weaponMods);
       };
-      
+
       // Reconstruct BuildGear instances by looking up gear by name
       const reconstructGear = (llmGear: any, gearType: GearType): BuildGear | null => {
         if (!llmGear || !llmGear.name) return null;
-        
+
         // Find the gear in namedGear, gearsets, or brandsets
-        const namedGearItem = (namedGear as NamedGear[]).find(g => g.name === llmGear.name);
-        const gearsetItem = gearsets.find(g => g.name === llmGear.name);
-        const brandsetItem = brandsets.find(b => b.brand === llmGear.name);
-        
+        const namedGearItem = (namedGear as NamedGear[]).find((g) => g.name === llmGear.name);
+        const gearsetItem = gearsets.find((g) => g.name === llmGear.name);
+        const brandsetItem = brandsets.find((b) => b.brand === llmGear.name);
+
         const foundItem = namedGearItem || gearsetItem || brandsetItem;
-        
+
         if (!foundItem) {
           console.warn(`Gear not found: ${llmGear.name}`);
           return null;
         }
-        
+
         // Create BuildGear from the found item
-        const buildGear = gearsetItem || brandsetItem 
-          ? new BuildGear(foundItem, gearType)
-          : new BuildGear(foundItem);
-        
+        const buildGear =
+          gearsetItem || brandsetItem
+            ? new BuildGear(foundItem, gearType)
+            : new BuildGear(foundItem);
+
         // Apply attributes from LlmGear if they exist
         if (llmGear.gearAttrib1 && buildGear.minor1 && gearAttributesMap) {
           // Find the attribute in gearAttributesMap and update minor1
           const allGearAttrs = gearAttributesMap.toArray();
-          const mod = allGearAttrs.find(m => m.attribute === llmGear.gearAttrib1);
+          const mod = allGearAttrs.find((m) => m.attribute === llmGear.gearAttrib1);
           if (mod) {
             buildGear.minor1 = new GearModValue(
               { [mod.attribute]: mod.max },
               mod.classification,
               mod.attribute,
-              mod.max
+              mod.max,
             );
           }
         }
-        
+
         if (llmGear.gearAttrib2 && buildGear.minor2 && gearAttributesMap) {
           // Find the attribute in gearAttributesMap and update minor2
           const allGearAttrs = gearAttributesMap.toArray();
-          const mod = allGearAttrs.find(m => m.attribute === llmGear.gearAttrib2);
+          const mod = allGearAttrs.find((m) => m.attribute === llmGear.gearAttrib2);
           if (mod) {
             buildGear.minor2 = new GearModValue(
               { [mod.attribute]: mod.max },
               mod.classification,
               mod.attribute,
-              mod.max
+              mod.max,
             );
           }
         }
-        
+
         if (llmGear.gearMod && buildGear.minor3 && gearAttributesMap) {
           // Find the mod in gearAttributesMap and update minor3
           const allGearAttrs = gearAttributesMap.toArray();
-          const mod = allGearAttrs.find(m => m.attribute === llmGear.gearMod);
+          const mod = allGearAttrs.find((m) => m.attribute === llmGear.gearMod);
           if (mod) {
             buildGear.minor3 = new GearModValue(
               { [mod.attribute]: mod.max },
               mod.classification,
               mod.attribute,
-              mod.max
+              mod.max,
             );
           }
         }
-        
+
         return buildGear;
       };
-      
+
       // Build the updates object
       const updates: any = {
         specialization: llmBuild.specialization || '',
         skill1: llmBuild.skill1 || '',
         skill2: llmBuild.skill2 || '',
-        watch: llmBuild.watch || null,
+        watch: llmBuild.watch || currentBuild.watch || undefined,
         primaryWeapon: reconstructWeapon(llmBuild.primaryWeapon),
         secondaryWeapon: reconstructWeapon(llmBuild.secondaryWeapon),
         pistol: reconstructWeapon(llmBuild.pistol),
@@ -313,7 +315,7 @@ const handleSelect = (value: string | BuildGear | BuildWeapon) => {
         gloves: reconstructGear(llmBuild.gloves, GearType.Gloves),
         kneepads: reconstructGear(llmBuild.kneepads, GearType.Kneepads),
       };
-      
+
       updateCurrentBuild(updates);
       alert('Build updated successfully!');
     } catch (error: any) {
@@ -325,8 +327,8 @@ const handleSelect = (value: string | BuildGear | BuildWeapon) => {
   const getFilteredItems = () => {
     let items: any[] = [];
     const displayKey = 'name';
-    
-    switch(overlayType) {
+
+    switch (overlayType) {
       case 'specialization':
         items = specializations;
         break;
@@ -334,18 +336,14 @@ const handleSelect = (value: string | BuildGear | BuildWeapon) => {
       case 'secondaryWeapon':
         // Filter out pistols for primary and secondary weapons, wrap in BuildWeapon
         items = (weapons as Weapon[])
-          .filter(weapon =>
-            weapon.type?.toLowerCase() !== 'pistol'
-          )
-          .map(weapon => new BuildWeapon(weapon, {}, weaponMods));
+          .filter((weapon) => weapon.type?.toLowerCase() !== 'pistol')
+          .map((weapon) => new BuildWeapon(weapon, {}, weaponMods));
         break;
       case 'pistol':
         // Only show pistols, wrap in BuildWeapon
         items = (weapons as Weapon[])
-          .filter(weapon =>
-            weapon.type?.toLowerCase() === 'pistol'
-          )
-          .map(weapon => new BuildWeapon(weapon, {}, weaponMods));
+          .filter((weapon) => weapon.type?.toLowerCase() === 'pistol')
+          .map((weapon) => new BuildWeapon(weapon, {}, weaponMods));
         break;
       case 'mask':
         items = createBuildGearList(GearType.Mask);
@@ -374,23 +372,25 @@ const handleSelect = (value: string | BuildGear | BuildWeapon) => {
     }
 
     if (!searchTerm) return items;
-    
+
     // Handle search for BuildWeapon objects
     if (items.length > 0 && items[0] instanceof BuildWeapon) {
-      return items.filter(item => 
-        (item as BuildWeapon).weapon.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      return items.filter((item) =>
+        (item as BuildWeapon).weapon.name?.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
-    
-    return items.filter(item => 
-      (item as any)[displayKey]?.toLowerCase().includes(searchTerm.toLowerCase())
+
+    return items.filter((item) =>
+      (item as any)[displayKey]?.toLowerCase().includes(searchTerm.toLowerCase()),
     );
   };
 
   const filteredItems = getFilteredItems();
-  
+
   // Check if current overlay is for gear or weapon selection
-  const isGearSelection = ['mask', 'chest', 'holster', 'backpack', 'gloves', 'kneepads'].includes(overlayType);
+  const isGearSelection = ['mask', 'chest', 'holster', 'backpack', 'gloves', 'kneepads'].includes(
+    overlayType,
+  );
   const isWeaponSelection = ['primaryWeapon', 'secondaryWeapon', 'pistol'].includes(overlayType);
 
   const getSpecializationImage = (name: string) => {
@@ -402,8 +402,12 @@ const handleSelect = (value: string | BuildGear | BuildWeapon) => {
       <div className="build-header">
         <h2>Build</h2>
         <div className="build-actions">
-          <button className="icon-button" onClick={handleSave} title="Save Build">
-            <MdSave />
+          <button
+            className="icon-button"
+            onClick={() => setShowWatchOverlay(true)}
+            title="Keener's Watch"
+          >
+            <MdWatch />
           </button>
           <button className="icon-button" onClick={handleLoad} title="Load Build">
             <MdFolderOpen />
@@ -417,35 +421,26 @@ const handleSelect = (value: string | BuildGear | BuildWeapon) => {
       <div className="build-content">
         <div className="build-row">
           {currentBuild.specialization ? (
-            <div 
-              className="specialization-cell" 
-              onClick={() => handleCellClick('specialization')}
-            >
-              <img 
-                src={getSpecializationImage(currentBuild.specialization)} 
+            <div className="specialization-cell" onClick={() => handleCellClick('specialization')}>
+              <img
+                src={getSpecializationImage(currentBuild.specialization)}
                 alt={currentBuild.specialization}
                 className="specialization-image"
               />
             </div>
           ) : (
-            <div 
-              className="build-cell" 
-              onClick={() => handleCellClick('specialization')}
-            >
+            <div className="build-cell" onClick={() => handleCellClick('specialization')}>
               <span className="cell-label">Specialization</span>
               <span className="cell-value">Select...</span>
             </div>
           )}
           {currentBuild.pistol ? (
-            <WeaponTacticalCard 
-              buildWeapon={currentBuild.pistol} 
+            <WeaponTacticalCard
+              buildWeapon={currentBuild.pistol}
               onClick={() => handleCellClick('pistol')}
             />
           ) : (
-            <div 
-              className="build-cell" 
-              onClick={() => handleCellClick('pistol')}
-            >
+            <div className="build-cell" onClick={() => handleCellClick('pistol')}>
               <span className="cell-label">Pistol</span>
               <span className="cell-value">Select...</span>
             </div>
@@ -454,29 +449,23 @@ const handleSelect = (value: string | BuildGear | BuildWeapon) => {
 
         <div className="build-row weapons-row">
           {currentBuild.primaryWeapon ? (
-            <WeaponTacticalCard 
-              buildWeapon={currentBuild.primaryWeapon} 
+            <WeaponTacticalCard
+              buildWeapon={currentBuild.primaryWeapon}
               onClick={() => handleCellClick('primaryWeapon')}
             />
           ) : (
-            <div 
-              className="build-cell" 
-              onClick={() => handleCellClick('primaryWeapon')}
-            >
+            <div className="build-cell" onClick={() => handleCellClick('primaryWeapon')}>
               <span className="cell-label">Weapon 1</span>
               <span className="cell-value">Select...</span>
             </div>
           )}
           {currentBuild.secondaryWeapon ? (
-            <WeaponTacticalCard 
-              buildWeapon={currentBuild.secondaryWeapon} 
+            <WeaponTacticalCard
+              buildWeapon={currentBuild.secondaryWeapon}
               onClick={() => handleCellClick('secondaryWeapon')}
             />
           ) : (
-            <div 
-              className="build-cell" 
-              onClick={() => handleCellClick('secondaryWeapon')}
-            >
+            <div className="build-cell" onClick={() => handleCellClick('secondaryWeapon')}>
               <span className="cell-label">Weapon 2</span>
               <span className="cell-value">Select...</span>
             </div>
@@ -485,29 +474,20 @@ const handleSelect = (value: string | BuildGear | BuildWeapon) => {
 
         <div className="build-row gear-row">
           {currentBuild.mask ? (
-            <TacticalCard 
-              buildGear={currentBuild.mask} 
-              onClick={() => handleCellClick('mask')}
-            />
+            <TacticalCard buildGear={currentBuild.mask} onClick={() => handleCellClick('mask')} />
           ) : (
-            <div 
-              className="build-cell" 
-              onClick={() => handleCellClick('mask')}
-            >
+            <div className="build-cell" onClick={() => handleCellClick('mask')}>
               <span className="cell-label">Mask</span>
               <span className="cell-value">Select...</span>
             </div>
           )}
           {currentBuild.backpack ? (
-            <TacticalCard 
-              buildGear={currentBuild.backpack} 
+            <TacticalCard
+              buildGear={currentBuild.backpack}
               onClick={() => handleCellClick('backpack')}
             />
           ) : (
-            <div 
-              className="build-cell" 
-              onClick={() => handleCellClick('backpack')}
-            >
+            <div className="build-cell" onClick={() => handleCellClick('backpack')}>
               <span className="cell-label">Backpack</span>
               <span className="cell-value">Select...</span>
             </div>
@@ -516,29 +496,20 @@ const handleSelect = (value: string | BuildGear | BuildWeapon) => {
 
         <div className="build-row gear-row">
           {currentBuild.chest ? (
-            <TacticalCard 
-              buildGear={currentBuild.chest} 
-              onClick={() => handleCellClick('chest')}
-            />
+            <TacticalCard buildGear={currentBuild.chest} onClick={() => handleCellClick('chest')} />
           ) : (
-            <div 
-              className="build-cell" 
-              onClick={() => handleCellClick('chest')}
-            >
+            <div className="build-cell" onClick={() => handleCellClick('chest')}>
               <span className="cell-label">Chest</span>
               <span className="cell-value">Select...</span>
             </div>
           )}
           {currentBuild.gloves ? (
-            <TacticalCard 
-              buildGear={currentBuild.gloves} 
+            <TacticalCard
+              buildGear={currentBuild.gloves}
               onClick={() => handleCellClick('gloves')}
             />
           ) : (
-            <div 
-              className="build-cell" 
-              onClick={() => handleCellClick('gloves')}
-            >
+            <div className="build-cell" onClick={() => handleCellClick('gloves')}>
               <span className="cell-label">Gloves</span>
               <span className="cell-value">Select...</span>
             </div>
@@ -547,29 +518,23 @@ const handleSelect = (value: string | BuildGear | BuildWeapon) => {
 
         <div className="build-row gear-row">
           {currentBuild.holster ? (
-            <TacticalCard 
-              buildGear={currentBuild.holster} 
+            <TacticalCard
+              buildGear={currentBuild.holster}
               onClick={() => handleCellClick('holster')}
             />
           ) : (
-            <div 
-              className="build-cell" 
-              onClick={() => handleCellClick('holster')}
-            >
+            <div className="build-cell" onClick={() => handleCellClick('holster')}>
               <span className="cell-label">Holster</span>
               <span className="cell-value">Select...</span>
             </div>
           )}
           {currentBuild.kneepads ? (
-            <TacticalCard 
-              buildGear={currentBuild.kneepads} 
+            <TacticalCard
+              buildGear={currentBuild.kneepads}
               onClick={() => handleCellClick('kneepads')}
             />
           ) : (
-            <div 
-              className="build-cell" 
-              onClick={() => handleCellClick('kneepads')}
-            >
+            <div className="build-cell" onClick={() => handleCellClick('kneepads')}>
               <span className="cell-label">Kneepads</span>
               <span className="cell-value">Select...</span>
             </div>
@@ -577,26 +542,15 @@ const handleSelect = (value: string | BuildGear | BuildWeapon) => {
         </div>
 
         <div className="build-row skills-row">
-          <div 
-            className="build-cell" 
-            onClick={() => handleCellClick('skill1')}
-          >
+          <div className="build-cell" onClick={() => handleCellClick('skill1')}>
             <span className="cell-label">Skill 1</span>
             <span className="cell-value">{currentBuild.skill1 || 'Select...'}</span>
           </div>
-          <div 
-            className="build-cell" 
-            onClick={() => handleCellClick('skill2')}
-          >
+          <div className="build-cell" onClick={() => handleCellClick('skill2')}>
             <span className="cell-label">Skill 2</span>
             <span className="cell-value">{currentBuild.skill2 || 'Select...'}</span>
           </div>
         </div>
-
-        <KeenersWatch 
-          stats={currentBuild.watch}
-          onChange={(stats: KeenersWatchStats) => updateCurrentBuild({ watch: stats })}
-        />
       </div>
 
       {showOverlay && (
@@ -604,9 +558,11 @@ const handleSelect = (value: string | BuildGear | BuildWeapon) => {
           <div className="overlay-content" onClick={(e) => e.stopPropagation()}>
             <div className="overlay-header">
               <h3>Select {overlayType}</h3>
-              <button className="close-btn" onClick={() => setShowOverlay(false)}>✕</button>
+              <button className="close-btn" onClick={() => setShowOverlay(false)}>
+                ✕
+              </button>
             </div>
-            
+
             <input
               type="text"
               className="overlay-search"
@@ -616,7 +572,9 @@ const handleSelect = (value: string | BuildGear | BuildWeapon) => {
               autoFocus
             />
 
-            <div className={`overlay-list ${overlayType === 'specialization' ? 'specialization-grid' : !isGearSelection && !isWeaponSelection ? 'single-column' : ''}`}>
+            <div
+              className={`overlay-list ${overlayType === 'specialization' ? 'specialization-grid' : !isGearSelection && !isWeaponSelection ? 'single-column' : ''}`}
+            >
               {filteredItems.length > 0 ? (
                 isGearSelection ? (
                   // Render TacticalCards for gear items
@@ -641,7 +599,7 @@ const handleSelect = (value: string | BuildGear | BuildWeapon) => {
                   filteredItems.map((item, index) => (
                     <img
                       key={index}
-                      src={getSpecializationImage(item.name)} 
+                      src={getSpecializationImage(item.name)}
                       alt={item.name}
                       className="specialization-item"
                       onClick={() => handleSelect(item.name)}
@@ -663,6 +621,23 @@ const handleSelect = (value: string | BuildGear | BuildWeapon) => {
                 <div className="overlay-empty">No items found</div>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {showWatchOverlay && (
+        <div className="overlay-backdrop" onClick={() => setShowWatchOverlay(false)}>
+          <div className="overlay-content" onClick={(e) => e.stopPropagation()}>
+            <div className="overlay-header">
+              <h3>Keener's Watch</h3>
+              <button className="close-btn" onClick={() => setShowWatchOverlay(false)}>
+                ✕
+              </button>
+            </div>
+            <KeenersWatch
+              stats={currentBuild.watch}
+              onChange={(stats: KeenersWatchStats) => updateCurrentBuild({ watch: stats })}
+            />
           </div>
         </div>
       )}

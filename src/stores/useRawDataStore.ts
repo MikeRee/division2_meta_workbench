@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { MAIN_DATA_KEYS, type MainDataKey } from '../constants/dataKeys';
+import { getBasePath } from '../utils/basePath';
 
 interface RawDataState {
   // Store everything as raw arrays of objects
@@ -48,7 +49,7 @@ const downloadRawDataFile = (key: string, data: any[]) => {
  * Convert camelCase to snake_case
  */
 const camelToSnake = (str: string): string => {
-  return str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+  return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
 };
 
 /**
@@ -63,7 +64,7 @@ const snakeToCamel = (str: string): string => {
  */
 const loadRawFile = async (filename: string): Promise<any[] | null> => {
   try {
-    const response = await fetch(`/raw/${filename}`);
+    const response = await fetch(`${getBasePath()}/raw/${filename}`);
     if (!response.ok) {
       console.warn(`Failed to load /raw/${filename}: ${response.status}`);
       return null;
@@ -128,7 +129,7 @@ export const useRawDataStore = create<RawDataState>()(
               const filename = `${camelToSnake(key)}.json`;
               const data = await loadRawFile(filename);
               return { key, data };
-            })
+            }),
           );
 
           const newSheets: Partial<Record<MainDataKey, any[]>> = {};
@@ -164,8 +165,8 @@ export const useRawDataStore = create<RawDataState>()(
         downloadRawDataFile(filename, data);
       },
     }),
-    { name: 'raw-sheets-cache' }
-  )
+    { name: 'raw-sheets-cache' },
+  ),
 );
 
 export default useRawDataStore;

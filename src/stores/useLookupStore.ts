@@ -23,7 +23,7 @@ interface LookupState {
   skills: Map<string, Skill>;
   weaponMods: Map<string, WeaponMod>;
   specializations: Map<string, any>;
-  
+
   weaponAttributes: Map<string, Attribute>;
   weaponTypeAttributes: Map<string, Attribute>;
   gearAttributes: GearModCollection | null;
@@ -46,7 +46,7 @@ interface LookupState {
   setSkills: (skillList: Skill[]) => void;
   setWeaponMods: (weaponModList: WeaponMod[]) => void;
   setSpecializations: (specializationList: any[]) => void;
-  
+
   setWeaponAttributes: (attributeList: Attribute[]) => void;
   setWeaponTypeAttributes: (attributeList: Attribute[]) => void;
   setGearAttributes: (attributeList: GearMod[]) => void;
@@ -68,7 +68,7 @@ interface LookupState {
   getSkill: (name: string) => Skill | undefined;
   getWeaponMod: (name: string) => WeaponMod | undefined;
   getSpecialization: (name: string) => any | undefined;
-  
+
   getWeaponAttribute: (key: string) => Attribute | undefined;
   getWeaponTypeAttribute: (key: string) => Attribute | undefined;
   getGearAttributes: () => GearModCollection | null;
@@ -88,7 +88,7 @@ interface LookupState {
   getAllSkills: () => Skill[];
   getAllWeaponMods: () => WeaponMod[];
   getAllSpecializations: () => any[];
-  
+
   getAllWeaponAttributes: () => Attribute[];
   getAllWeaponTypeAttributes: () => Attribute[];
   getAllGearAttributes: () => GearMod[];
@@ -124,7 +124,7 @@ const useLookupStore = create<LookupState>()(
       skills: new Map<string, Skill>(),
       weaponMods: new Map<string, WeaponMod>(),
       specializations: new Map<string, any>(),
-      
+
       // CSV data maps
       weaponAttributes: new Map<string, Attribute>(),
       weaponTypeAttributes: new Map<string, Attribute>(),
@@ -142,7 +142,7 @@ const useLookupStore = create<LookupState>()(
       // Actions
       setWeapons: (weaponList) => {
         const weaponMap = new Map<string, Weapon>();
-        weaponList.forEach(weapon => {
+        weaponList.forEach((weapon) => {
           if (weapon.name) {
             weaponMap.set(weapon.name, weapon);
           }
@@ -152,7 +152,7 @@ const useLookupStore = create<LookupState>()(
 
       setWeaponTalents: (talentList) => {
         const talentMap = new Map<string, WeaponTalent>();
-        talentList.forEach(talent => {
+        talentList.forEach((talent) => {
           if (talent.name) {
             talentMap.set(talent.name, talent);
           }
@@ -162,7 +162,7 @@ const useLookupStore = create<LookupState>()(
 
       setExoticWeapons: (exoticList) => {
         const exoticMap = new Map<string, ExoticWeapon>();
-        exoticList.forEach(exotic => {
+        exoticList.forEach((exotic) => {
           if (exotic.name) {
             exoticMap.set(exotic.name, exotic);
           }
@@ -172,7 +172,7 @@ const useLookupStore = create<LookupState>()(
 
       setGearsets: (gearsetList) => {
         const gearsetMap = new Map<string, Gearset>();
-        gearsetList.forEach(gearset => {
+        gearsetList.forEach((gearset) => {
           if (gearset.name) {
             gearsetMap.set(gearset.name, gearset);
           }
@@ -182,7 +182,7 @@ const useLookupStore = create<LookupState>()(
 
       setBrandsets: (brandsetList) => {
         const brandsetMap = new Map<string, Brandset>();
-        brandsetList.forEach(brandset => {
+        brandsetList.forEach((brandset) => {
           if (brandset.brand) {
             brandsetMap.set(brandset.brand, brandset);
           }
@@ -192,7 +192,7 @@ const useLookupStore = create<LookupState>()(
 
       setGearTalents: (talentList) => {
         const gearTalentMap = new Map<string, any>();
-        talentList.forEach(talent => {
+        talentList.forEach((talent) => {
           const talentName = (talent as any).talent || (talent as any).name;
           if (talentName) {
             gearTalentMap.set(talentName, talent);
@@ -203,7 +203,7 @@ const useLookupStore = create<LookupState>()(
 
       setNamedGear: (namedGearList) => {
         const namedGearMap = new Map<string, NamedGear>();
-        namedGearList.forEach(gear => {
+        namedGearList.forEach((gear) => {
           if (gear.name) {
             namedGearMap.set(gear.name, gear);
           }
@@ -213,7 +213,7 @@ const useLookupStore = create<LookupState>()(
 
       setSkills: (skillList) => {
         const skillMap = new Map<string, Skill>();
-        skillList.forEach(skill => {
+        skillList.forEach((skill) => {
           if (skill.name) {
             skillMap.set(skill.name, skill);
           }
@@ -223,7 +223,7 @@ const useLookupStore = create<LookupState>()(
 
       setWeaponMods: (weaponModList) => {
         const weaponModMap = new Map<string, WeaponMod>();
-        weaponModList.forEach(mod => {
+        weaponModList.forEach((mod) => {
           if (mod.name) {
             weaponModMap.set(mod.name, mod);
           }
@@ -233,7 +233,7 @@ const useLookupStore = create<LookupState>()(
 
       setSpecializations: (specializationList) => {
         const specializationMap = new Map<string, any>();
-        specializationList.forEach(spec => {
+        specializationList.forEach((spec) => {
           if (spec.name) {
             specializationMap.set(spec.name, spec);
           }
@@ -244,7 +244,7 @@ const useLookupStore = create<LookupState>()(
       // CSV data setters
       setWeaponAttributes: (attributeList) => {
         const attributeMap = new Map<string, Attribute>();
-        attributeList.forEach(attr => {
+        attributeList.forEach((attr) => {
           const key = attr.getKey();
           attributeMap.set(key, attr);
         });
@@ -253,7 +253,7 @@ const useLookupStore = create<LookupState>()(
 
       setWeaponTypeAttributes: (attributeList) => {
         const attributeMap = new Map<string, Attribute>();
-        attributeList.forEach(attr => {
+        attributeList.forEach((attr) => {
           const key = attr.getKey();
           attributeMap.set(key, attr);
         });
@@ -267,7 +267,7 @@ const useLookupStore = create<LookupState>()(
 
       setGearModAttributes: (attributeList) => {
         const attributeMap = new Map<string, GearMod>();
-        attributeList.forEach(attr => {
+        attributeList.forEach((attr) => {
           const key = attr.getKey();
           attributeMap.set(key, attr);
         });
@@ -276,7 +276,7 @@ const useLookupStore = create<LookupState>()(
 
       setKeenersWatch: (attributeList) => {
         const attributeMap = new Map<string, Attribute>();
-        attributeList.forEach(attr => {
+        attributeList.forEach((attr) => {
           const key = attr.getKey();
           attributeMap.set(key, attr);
         });
@@ -285,7 +285,7 @@ const useLookupStore = create<LookupState>()(
 
       setStatusImmunities: (immunityList) => {
         const immunityMap = new Map<string, StatusImmunity>();
-        immunityList.forEach(immunity => {
+        immunityList.forEach((immunity) => {
           if (immunity.statusEffect) {
             immunityMap.set(immunity.statusEffect, immunity);
           }
@@ -318,7 +318,7 @@ const useLookupStore = create<LookupState>()(
       getSkill: (name) => get().skills.get(name),
       getWeaponMod: (name) => get().weaponMods.get(name),
       getSpecialization: (name) => get().specializations.get(name),
-      
+
       // CSV data lookup methods
       getWeaponAttribute: (key) => get().weaponAttributes.get(key),
       getWeaponTypeAttribute: (key) => get().weaponTypeAttributes.get(key),
@@ -370,7 +370,7 @@ const useLookupStore = create<LookupState>()(
         const specs = get().specializations;
         return specs instanceof Map ? Array.from(specs.values()) : [];
       },
-      
+
       // CSV data get all methods
       getAllWeaponAttributes: () => Array.from(get().weaponAttributes.values()),
       getAllWeaponTypeAttributes: () => Array.from(get().weaponTypeAttributes.values()),
@@ -381,7 +381,7 @@ const useLookupStore = create<LookupState>()(
         return [
           ...collection.getAttributes(GearModClassification.Offensive),
           ...collection.getAttributes(GearModClassification.Defensive),
-          ...collection.getAttributes(GearModClassification.Skill)
+          ...collection.getAttributes(GearModClassification.Skill),
         ];
       },
       getAllGearModAttributes: () => Array.from(get().gearModAttributes.values()),
@@ -448,72 +448,96 @@ const useLookupStore = create<LookupState>()(
       },
 
       // Clear all data
-      clearAll: () => set({
-        weapons: new Map(),
-        weaponTalents: new Map(),
-        exoticWeapons: new Map(),
-        gearsets: new Map(),
-        brandsets: new Map(),
-        gearTalents: new Map(),
-        namedGear: new Map(),
-        skills: new Map(),
-        weaponMods: new Map(),
-        specializations: new Map(),
-        weaponAttributes: new Map(),
-        weaponTypeAttributes: new Map(),
-        gearAttributes: null,
-        gearModAttributes: new Map(),
-        keenersWatch: new Map(),
-        statusImmunities: new Map(),
-        missingMappings: {},
-        prompts: new Map(),
-        lastUpdated: null,
-      }),
+      clearAll: () =>
+        set({
+          weapons: new Map(),
+          weaponTalents: new Map(),
+          exoticWeapons: new Map(),
+          gearsets: new Map(),
+          brandsets: new Map(),
+          gearTalents: new Map(),
+          namedGear: new Map(),
+          skills: new Map(),
+          weaponMods: new Map(),
+          specializations: new Map(),
+          weaponAttributes: new Map(),
+          weaponTypeAttributes: new Map(),
+          gearAttributes: null,
+          gearModAttributes: new Map(),
+          keenersWatch: new Map(),
+          statusImmunities: new Map(),
+          missingMappings: {},
+          prompts: new Map(),
+          lastUpdated: null,
+        }),
     }),
     {
       name: 'lookup-store',
       storage: createJSONStorage(() => localStorage, {
         reviver: (key, value: any) => {
           const mapKeys = [
-            'weapons', 'weaponTalents', 'exoticWeapons', 'gearsets', 'brandsets',
-            'gearTalents', 'namedGear', 'skills', 'weaponMods', 'specializations',
-            'weaponAttributes', 'weaponTypeAttributes',
-            'gearModAttributes', 'keenersWatch', 'statusImmunities', 'prompts'
+            'weapons',
+            'weaponTalents',
+            'exoticWeapons',
+            'gearsets',
+            'brandsets',
+            'gearTalents',
+            'namedGear',
+            'skills',
+            'weaponMods',
+            'specializations',
+            'weaponAttributes',
+            'weaponTypeAttributes',
+            'gearModAttributes',
+            'keenersWatch',
+            'statusImmunities',
+            'prompts',
           ];
-          
+
           if (mapKeys.includes(key) && Array.isArray(value)) {
             // Re-instantiate models if needed
             const rehydrate = (item: any) => {
               if (!item) return item;
               switch (key) {
-                case 'weapons': return new Weapon(item);
-                case 'weaponTalents': return new WeaponTalent(item);
-                case 'exoticWeapons': return new ExoticWeapon(item);
-                case 'gearsets': return new Gearset(item);
-                case 'brandsets': return new Brandset(item);
-                case 'namedGear': return new NamedGear(item);
-                case 'skills': return new Skill(item);
-                case 'weaponMods': return new WeaponMod(item);
+                case 'weapons':
+                  return new Weapon(item);
+                case 'weaponTalents':
+                  return new WeaponTalent(item);
+                case 'exoticWeapons':
+                  return new ExoticWeapon(item);
+                case 'gearsets':
+                  return new Gearset(item);
+                case 'brandsets':
+                  return new Brandset(item);
+                case 'namedGear':
+                  return new NamedGear(item);
+                case 'skills':
+                  return new Skill(item);
+                case 'weaponMods':
+                  return new WeaponMod(item);
                 case 'weaponAttributes':
                 case 'weaponTypeAttributes':
                 case 'keenersWatch':
                   return new Attribute(item);
                 case 'gearModAttributes':
                   return new GearMod(item);
-                case 'statusImmunities': return new StatusImmunity(item);
-                case 'prompts': return item; // prompts are just strings
-                default: return item;
+                case 'statusImmunities':
+                  return new StatusImmunity(item);
+                case 'prompts':
+                  return item; // prompts are just strings
+                default:
+                  return item;
               }
             };
             return new Map(value.map(([k, v]) => [k, rehydrate(v)]));
           }
-          
+
           // Handle GearModCollection
           if (key === 'gearAttributes' && Array.isArray(value)) {
-            const mods = value.map(item => new GearMod(item));
+            const mods = value.map((item) => new GearMod(item));
             return new GearModCollection(mods);
           }
-          
+
           return value;
         },
         replacer: (key, value) => {
@@ -524,10 +548,11 @@ const useLookupStore = create<LookupState>()(
             return value.toArray();
           }
           return value;
-        }
-      })
-    }
-  )
+        },
+      }),
+      skipHydration: true,
+    },
+  ),
 );
 
 export default useLookupStore;

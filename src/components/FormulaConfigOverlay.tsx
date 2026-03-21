@@ -7,12 +7,21 @@ import { useFormulaStore } from '../stores/useFormulaStore';
 import { useLookupStore } from '../stores/useLookupStore';
 import { useCleanDataStore } from '../stores/useCleanDataStore';
 import useBuildStore from '../stores/useBuildStore';
-import { Formula, FormulaType } from '../models/Formula';
+import { Formula, FormulaType, StatCalculator } from '../models/Formula';
 import FormulaJsonModal from './FormulaJsonModal';
 import Weapon from '../models/Weapon';
-import BuildGear from '../models/BuildGear';
+import BuildGear, { GearSource } from '../models/BuildGear';
 import { CoreType } from '../models/CoreValue';
-import { MdAdd, MdDelete, MdEdit, MdArrowUpward, MdArrowDownward, MdCode, MdCheck, MdClose } from 'react-icons/md';
+import {
+  MdAdd,
+  MdDelete,
+  MdEdit,
+  MdArrowUpward,
+  MdArrowDownward,
+  MdCode,
+  MdCheck,
+  MdClose,
+} from 'react-icons/md';
 import './FormulaConfigOverlay.css';
 
 interface FormulaConfigOverlayProps {
@@ -26,10 +35,194 @@ const gearProps = BuildGear.blocklyProperties();
 
 // Module-level state for aggregated values that Blockly callbacks can access
 let currentAggregatedValues: Record<string, number> = {};
+// Module-level state for the selected weapon's base stats
+let currentWeaponValues: Record<string, number> = {};
+// Module-level ref to the active Blockly workspace for forcing re-renders
+let activeBlocklyWorkspace: Blockly.WorkspaceSvg | null = null;
+
+/**
+ * BlockValueRef tracks which block fields are bound to which data keys.
+ * When aggregated/weapon values change, we diff against previous values
+ * and push label updates only to the blocks whose keys actually changed.
+ */
+interface BlockFieldBinding {
+  blockId: string;
+  fieldName: string;
+  dataKey: string;
+  source: 'aggregated' | 'weapon';
+}
+
+let blockFieldBindings: BlockFieldBinding[] = [];
+let previousAggregatedValues: Record<string, number> = {};
+let previousWeaponValues: Record<string, number> = {};
+
+/** Register a binding between a placed block's field and a data key */
+function registerBlockFieldBinding(
+  blockId: string,
+  fieldName: string,
+  dataKey: string,
+  source: 'aggregated' | 'weapon',
+) {
+  // Avoid duplicates
+  const exists = blockFieldBindings.some((b) => b.blockId === blockId && b.fieldName === fieldName);
+  if (!exists) {
+    blockFieldBindings.push({ blockId, fieldName, dataKey, source });
+
+    // If values already exist for this key, push an immediate update
+    const value =
+      source === 'weapon' ? currentWeaponValues[dataKey] : currentAggregatedValues[dataKey];
+    if (value !== undefined && activeBlocklyWorkspace) {
+      const block = activeBlocklyWorkspace.getBlockById(blockId);
+      const field = block?.getField(fieldName);
+      if (field) {
+        const suffix = ` [${formatBlocklyValue(value)}]`;
+        if (field instanceof Blockly.FieldDropdown) {
+          console.log(
+            `[BlockValueRef] init dropdown ${source} "${dataKey}" on block ${blockId}: ${value}`,
+          );
+          field.getOptions(false);
+          field.forceRerender();
+        } else {
+          console.log(
+            `[BlockValueRef] init label ${source} "${dataKey}" on block ${blockId}: ${value}`,
+          );
+          field.setValue(`${dataKey}${suffix}`);
+        }
+      }
+    }
+  }
+}
+
+/** Remove all bindings for a block (e.g. when deleted) */
+function unregisterBlockBindings(blockId: string) {
+  blockFieldBindings = blockFieldBindings.filter((b) => b.blockId !== blockId);
+}
+
+/** Diff values and update only the block fields whose keys changed */
+function pushChangedLabels() {
+  if (!activeBlocklyWorkspace) {
+    console.log('[BlockValueRef] pushChangedLabels skipped: no active workspace');
+    return;
+  }
+
+  const aggChanges = new Set<string>();
+  const wpnChanges = new Set<string>();
+
+  // Detect which aggregated keys changed
+  const allAggKeys = new Set([
+    ...Object.keys(currentAggregatedValues),
+    ...Object.keys(previousAggregatedValues),
+  ]);
+  for (const key of allAggKeys) {
+    if (currentAggregatedValues[key] !== previousAggregatedValues[key]) {
+      aggChanges.add(key);
+    }
+  }
+
+  // Detect which weapon keys changed
+  const allWpnKeys = new Set([
+    ...Object.keys(currentWeaponValues),
+    ...Object.keys(previousWeaponValues),
+  ]);
+  for (const key of allWpnKeys) {
+    if (currentWeaponValues[key] !== previousWeaponValues[key]) {
+      wpnChanges.add(key);
+    }
+  }
+
+  if (aggChanges.size === 0 && wpnChanges.size === 0) {
+    console.log('[BlockValueRef] pushChangedLabels: no value changes detected');
+    return;
+  }
+
+  for (const key of aggChanges) {
+    console.log(
+      `[BlockValueRef] aggregated "${key}": ${previousAggregatedValues[key] ?? 'undefined'} → ${currentAggregatedValues[key] ?? 'undefined'}`,
+    );
+  }
+  for (const key of wpnChanges) {
+    console.log(
+      `[BlockValueRef] weapon "${key}": ${previousWeaponValues[key] ?? 'undefined'} → ${currentWeaponValues[key] ?? 'undefined'}`,
+    );
+  }
+
+  for (const binding of blockFieldBindings) {
+    const changed =
+      (binding.source === 'aggregated' && aggChanges.has(binding.dataKey)) ||
+      (binding.source === 'weapon' && wpnChanges.has(binding.dataKey));
+    if (!changed) continue;
+
+    const block = activeBlocklyWorkspace.getBlockById(binding.blockId);
+    if (!block) continue;
+
+    const field = block.getField(binding.fieldName);
+    if (!field) continue;
+
+    const prevValue =
+      binding.source === 'weapon'
+        ? previousWeaponValues[binding.dataKey]
+        : previousAggregatedValues[binding.dataKey];
+    const newValue =
+      binding.source === 'weapon'
+        ? currentWeaponValues[binding.dataKey]
+        : currentAggregatedValues[binding.dataKey];
+
+    const suffix = newValue !== undefined ? ` [${formatBlocklyValue(newValue)}]` : '';
+    // For dropdown fields, the selected value stays the same — we just force
+    // a re-render so the dynamic label generator picks up the new suffix.
+    if (field instanceof Blockly.FieldDropdown) {
+      console.log(
+        `[BlockValueRef] dropdown ${binding.source} "${binding.dataKey}" on block ${binding.blockId}: ${prevValue ?? 'undefined'} → ${newValue ?? 'undefined'}`,
+      );
+      field.getOptions(false);
+      // Re-set the value to itself so Blockly re-resolves the display text
+      // from the updated options list — forceRerender alone doesn't do this.
+      const currentVal = field.getValue();
+      field.setValue(null as any);
+      field.setValue(currentVal);
+    } else {
+      console.log(
+        `[BlockValueRef] label ${binding.source} "${binding.dataKey}" on block ${binding.blockId}: ${prevValue ?? 'undefined'} → ${newValue ?? 'undefined'}`,
+      );
+      // For plain label fields, push the new text directly
+      field.setValue(`${binding.dataKey}${suffix}`);
+    }
+  }
+}
+
+// Force all blocks in the workspace to re-render their dropdown labels
+function refreshBlocklyDropdowns() {
+  if (!activeBlocklyWorkspace) return;
+  const allBlocks = activeBlocklyWorkspace.getAllBlocks(false);
+  allBlocks.forEach((block) => {
+    block.inputList.forEach((input) => {
+      input.fieldRow.forEach((field) => {
+        if (field instanceof Blockly.FieldDropdown && field.isOptionListDynamic()) {
+          // Bust the cached options then force re-render of the field text
+          field.getOptions(false);
+          field.forceRerender();
+        }
+      });
+    });
+  });
+}
 
 // Function to update the aggregated values (called from React component)
 function setBlocklyAggregatedValues(values: Record<string, number>) {
+  previousAggregatedValues = { ...currentAggregatedValues };
   currentAggregatedValues = values;
+  console.log('[BlockValueRef] setBlocklyAggregatedValues', Object.keys(values).length, 'keys');
+  pushChangedLabels();
+  refreshBlocklyDropdowns();
+}
+
+// Function to update the weapon base values (called from React component)
+function setBlocklyWeaponValues(values: Record<string, number>) {
+  previousWeaponValues = { ...currentWeaponValues };
+  currentWeaponValues = values;
+  console.log('[BlockValueRef] setBlocklyWeaponValues', values);
+  pushChangedLabels();
+  refreshBlocklyDropdowns();
 }
 
 // Helper to format value for display in dropdown
@@ -50,6 +243,42 @@ function getValueSuffix(key: string): string {
   return '';
 }
 
+// Helper to get weapon value suffix for base_weapon dropdown
+function getWeaponValueSuffix(key: string): string {
+  const value = currentWeaponValues[key];
+  if (value !== undefined) {
+    return ` [${formatBlocklyValue(value)}]`;
+  }
+  return '';
+}
+
+const MATH_BLOCK_TYPES = ['stat_add', 'stat_subtract', 'stat_multiply', 'stat_divide'];
+
+/**
+ * Walk every math block in the active workspace, evaluate its sub-expression,
+ * and push the result into the block's RESULT label field.
+ */
+function updateMathBlockResults(
+  aggregatedValues: Record<string, number>,
+  weaponBaseValues: Record<string, number>,
+  coreValues: Record<string, number>,
+) {
+  if (!activeBlocklyWorkspace) return;
+  for (const block of activeBlocklyWorkspace.getAllBlocks(false)) {
+    if (!MATH_BLOCK_TYPES.includes(block.type)) continue;
+    const resultField = block.getField('RESULT');
+    if (!resultField) continue;
+    try {
+      const code = javascriptGenerator.blockToCode(block);
+      const expr = Array.isArray(code) ? code[0] : code;
+      const result = evaluateFormula(expr, aggregatedValues, weaponBaseValues, coreValues);
+      resultField.setValue(result !== null ? `= ${formatBlocklyValue(result)}` : '= ?');
+    } catch {
+      resultField.setValue('= ?');
+    }
+  }
+}
+
 // Register custom blocks for stat formulas
 function registerCustomBlocks() {
   if (Blockly.Blocks['base_weapon']) return; // already registered
@@ -58,13 +287,18 @@ function registerCustomBlocks() {
     init(this: Blockly.Block) {
       this.appendDummyInput()
         .appendField('base weapon')
-        .appendField(new Blockly.FieldDropdown(() => {
-          return weaponProps.map(([label, value]) => [label + getValueSuffix(value), value] as [string, string]);
-        }), 'PROP');
+        .appendField(
+          new Blockly.FieldDropdown(() => {
+            return weaponProps.map(
+              ([label, value]) => [label + getWeaponValueSuffix(value), value] as [string, string],
+            );
+          }),
+          'PROP',
+        );
       this.setOutput(true, 'Number');
       this.setColour(30);
       this.setTooltip('Get a base weapon property value');
-    }
+    },
   };
   javascriptGenerator.forBlock['base_weapon'] = function (block: Blockly.Block) {
     const prop = block.getFieldValue('PROP');
@@ -79,7 +313,7 @@ function registerCustomBlocks() {
       this.setOutput(true, 'Number');
       this.setColour(60);
       this.setTooltip('Get a base gear property value');
-    }
+    },
   };
   javascriptGenerator.forBlock['base_gear'] = function (block: Blockly.Block) {
     const prop = block.getFieldValue('PROP');
@@ -94,7 +328,7 @@ function registerCustomBlocks() {
       this.setOutput(true, null);
       this.setColour(160);
       this.setTooltip('A constant value (number or string)');
-    }
+    },
   };
   javascriptGenerator.forBlock['stat_constant'] = function (block: Blockly.Block) {
     const value = block.getFieldValue('VALUE');
@@ -105,91 +339,160 @@ function registerCustomBlocks() {
     return [`"${value}"`, 0];
   };
 
-  Blockly.Blocks['stat_add'] = {
-    init(this: Blockly.Block) {
-      this.appendValueInput('A').setCheck('Number');
-      this.appendDummyInput().appendField('+');
-      this.appendValueInput('B').setCheck('Number');
-      this.setOutput(true, 'Number');
-      this.setColour(120);
-      this.setInputsInline(true);
-      this.setTooltip('Add two values');
-    }
-  };
-  javascriptGenerator.forBlock['stat_add'] = function (block: Blockly.Block) {
-    const a = javascriptGenerator.valueToCode(block, 'A', 0) || '0';
-    const b = javascriptGenerator.valueToCode(block, 'B', 0) || '0';
-    return [`(${a} + ${b})`, 0];
+  // --- SVG data URIs for +/− buttons on math blocks ---
+  const PLUS_SVG =
+    'data:image/svg+xml,' +
+    encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16">' +
+        '<rect width="16" height="16" rx="3" fill="#3a3a3a"/>' +
+        '<path d="M4 8h8M8 4v8" stroke="#d4af37" stroke-width="2" stroke-linecap="round"/>' +
+        '</svg>',
+    );
+  const MINUS_SVG =
+    'data:image/svg+xml,' +
+    encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16">' +
+        '<rect width="16" height="16" rx="3" fill="#3a3a3a"/>' +
+        '<path d="M4 8h8" stroke="#d4af37" stroke-width="2" stroke-linecap="round"/>' +
+        '</svg>',
+    );
+
+  const OP_SYMBOLS: Record<string, string> = {
+    stat_add: '+',
+    stat_subtract: '−',
+    stat_multiply: '×',
+    stat_divide: '÷',
   };
 
-  Blockly.Blocks['stat_subtract'] = {
-    init(this: Blockly.Block) {
-      this.appendValueInput('A').setCheck('Number');
-      this.appendDummyInput().appendField('−');
-      this.appendValueInput('B').setCheck('Number');
-      this.setOutput(true, 'Number');
-      this.setColour(120);
-      this.setInputsInline(true);
-      this.setTooltip('Subtract two values');
-    }
-  };
-  javascriptGenerator.forBlock['stat_subtract'] = function (block: Blockly.Block) {
-    const a = javascriptGenerator.valueToCode(block, 'A', 0) || '0';
-    const b = javascriptGenerator.valueToCode(block, 'B', 0) || '0';
-    return [`(${a} - ${b})`, 0];
-  };
+  /** Rebuild inputs on a math block to match targetCount, preserving connections. */
+  function rebuildMathInputs(block: any, targetCount: number): void {
+    const symbol = OP_SYMBOLS[block.type] || '+';
 
-  Blockly.Blocks['stat_multiply'] = {
-    init(this: Blockly.Block) {
-      this.appendValueInput('A').setCheck('Number');
-      this.appendDummyInput().appendField('×');
-      this.appendValueInput('B').setCheck('Number');
-      this.setOutput(true, 'Number');
-      this.setColour(120);
-      this.setInputsInline(true);
-      this.setTooltip('Multiply two values');
+    // Save existing connections
+    const saved: (Blockly.Connection | null)[] = [];
+    for (let i = 0; i < block.inputCount_; i++) {
+      const input = block.getInput(`INPUT_${i}`);
+      saved.push(input?.connection?.targetConnection ?? null);
     }
-  };
-  javascriptGenerator.forBlock['stat_multiply'] = function (block: Blockly.Block) {
-    const a = javascriptGenerator.valueToCode(block, 'A', 0) || '0';
-    const b = javascriptGenerator.valueToCode(block, 'B', 0) || '0';
-    return [`(${a} * ${b})`, 0];
-  };
 
-  Blockly.Blocks['stat_divide'] = {
-    init(this: Blockly.Block) {
-      this.appendValueInput('A').setCheck('Number');
-      this.appendDummyInput().appendField('÷');
-      this.appendValueInput('B').setCheck('Number');
-      this.setOutput(true, 'Number');
-      this.setColour(120);
-      this.setInputsInline(true);
-      this.setTooltip('Divide two values');
+    // Remove result row
+    if (block.getInput('RESULT_ROW')) block.removeInput('RESULT_ROW');
+
+    // Remove all current value inputs
+    for (let i = block.inputCount_ - 1; i >= 0; i--) {
+      if (block.getInput(`INPUT_${i}`)) block.removeInput(`INPUT_${i}`);
     }
-  };
-  javascriptGenerator.forBlock['stat_divide'] = function (block: Blockly.Block) {
-    const a = javascriptGenerator.valueToCode(block, 'A', 0) || '0';
-    const b = javascriptGenerator.valueToCode(block, 'B', 0) || '1';
-    return [`(${a} / ${b})`, 0];
-  };
+
+    // Create new inputs
+    for (let i = 0; i < targetCount; i++) {
+      const inp = block.appendValueInput(`INPUT_${i}`).setCheck('Number');
+      if (i > 0) inp.appendField(symbol);
+    }
+    block.inputCount_ = targetCount;
+
+    // Reconnect saved connections
+    for (let i = 0; i < Math.min(saved.length, targetCount); i++) {
+      if (saved[i]) {
+        const input = block.getInput(`INPUT_${i}`);
+        input?.connection?.connect(saved[i]);
+      }
+    }
+
+    // Re-add result row with +/− buttons
+    const resultRow = block.appendDummyInput('RESULT_ROW');
+    resultRow.appendField(new Blockly.FieldLabel('= ?'), 'RESULT');
+    resultRow.appendField(
+      new Blockly.FieldImage(PLUS_SVG, 16, 16, '+', () => {
+        rebuildMathInputs(block, block.inputCount_ + 1);
+      }),
+    );
+    if (targetCount > 2) {
+      resultRow.appendField(
+        new Blockly.FieldImage(MINUS_SVG, 16, 16, '−', () => {
+          if (block.inputCount_ > 2) {
+            rebuildMathInputs(block, block.inputCount_ - 1);
+          }
+        }),
+      );
+    }
+  }
+
+  // Helper to create a math block definition with variable inputs
+  function defineMathBlock(type: string, symbol: string, tooltip: string) {
+    Blockly.Blocks[type] = {
+      init(this: any) {
+        this.inputCount_ = 2;
+        this.appendValueInput('INPUT_0').setCheck('Number');
+        this.appendValueInput('INPUT_1').setCheck('Number').appendField(symbol);
+        const resultRow = this.appendDummyInput('RESULT_ROW');
+        resultRow.appendField(new Blockly.FieldLabel('= ?'), 'RESULT');
+        resultRow.appendField(
+          new Blockly.FieldImage(PLUS_SVG, 16, 16, '+', () => {
+            rebuildMathInputs(this, this.inputCount_ + 1);
+          }),
+        );
+        this.setOutput(true, 'Number');
+        this.setColour(120);
+        this.setInputsInline(false);
+        this.setTooltip(tooltip);
+      },
+
+      saveExtraState(this: any): { inputs: number } {
+        return { inputs: this.inputCount_ };
+      },
+
+      loadExtraState(this: any, state: { inputs: number }): void {
+        const count = state.inputs || 2;
+        if (count !== this.inputCount_) {
+          rebuildMathInputs(this, count);
+        }
+      },
+    };
+  }
+
+  defineMathBlock('stat_add', '+', 'Add values');
+  defineMathBlock('stat_subtract', '−', 'Subtract values');
+  defineMathBlock('stat_multiply', '×', 'Multiply values');
+  defineMathBlock('stat_divide', '÷', 'Divide values');
+
+  // Helper to generate code for a variable-input math block
+  function mathBlockGenerator(operator: string, defaultVal: string) {
+    return function (block: any): [string, number] {
+      const parts: string[] = [];
+      for (let i = 0; i < block.inputCount_; i++) {
+        const val = javascriptGenerator.valueToCode(block, `INPUT_${i}`, 0) || defaultVal;
+        parts.push(val);
+      }
+      if (parts.length === 0) return [defaultVal, 0];
+      return [`(${parts.join(` ${operator} `)})`, 0];
+    };
+  }
+
+  javascriptGenerator.forBlock['stat_add'] = mathBlockGenerator('+', '0');
+  javascriptGenerator.forBlock['stat_subtract'] = mathBlockGenerator('-', '0');
+  javascriptGenerator.forBlock['stat_multiply'] = mathBlockGenerator('*', '0');
+  javascriptGenerator.forBlock['stat_divide'] = mathBlockGenerator('/', '1');
 
   Blockly.Blocks['stat_sum_all'] = {
     init(this: Blockly.Block) {
       this.appendDummyInput()
         .appendField('sum all')
-        .appendField(new Blockly.FieldDropdown(() => {
-          const lookupVocab = useLookupStore.getState().getAttributeVocabulary();
-          const cleanVocab = useCleanDataStore.getState().getAttributeVocabulary();
-          const merged = new Map<string, string>([...lookupVocab, ...cleanVocab]);
-          const vocab = Array.from(merged.entries())
-            .map(([k, v]) => [k + getValueSuffix(k), v] as [string, string])
-            .sort((a, b) => a[0].localeCompare(b[0]));
-          return vocab.length > 0 ? vocab : [['(no data loaded)', '']];
-        }), 'ATTR');
+        .appendField(
+          new Blockly.FieldDropdown(() => {
+            const lookupVocab = useLookupStore.getState().getAttributeVocabulary();
+            const cleanVocab = useCleanDataStore.getState().getAttributeVocabulary();
+            const merged = new Map<string, string>([...lookupVocab, ...cleanVocab]);
+            const vocab = Array.from(merged.entries())
+              .map(([k, v]) => [k + getValueSuffix(k), v] as [string, string])
+              .sort((a, b) => a[0].localeCompare(b[0]));
+            return vocab.length > 0 ? vocab : [['(no data loaded)', '']];
+          }),
+          'ATTR',
+        );
       this.setOutput(true, 'Number');
       this.setColour(260);
       this.setTooltip('Sum all instances of an attribute across the build');
-    }
+    },
   };
   javascriptGenerator.forBlock['stat_sum_all'] = function (block: Blockly.Block) {
     const attr = block.getFieldValue('ATTR');
@@ -200,40 +503,49 @@ function registerCustomBlocks() {
     init(this: Blockly.Block) {
       this.appendDummyInput()
         .appendField('percent all')
-        .appendField(new Blockly.FieldDropdown(() => {
-          const lookupVocab = useLookupStore.getState().getAttributeVocabulary();
-          const cleanVocab = useCleanDataStore.getState().getAttributeVocabulary();
-          const merged = new Map<string, string>([...lookupVocab, ...cleanVocab]);
-          const vocab = Array.from(merged.entries())
-            .map(([k, v]) => [k + getValueSuffix(k), v] as [string, string])
-            .sort((a, b) => a[0].localeCompare(b[0]));
-          return vocab.length > 0 ? vocab : [['(no data loaded)', '']];
-        }), 'ATTR');
+        .appendField(
+          new Blockly.FieldDropdown(() => {
+            const lookupVocab = useLookupStore.getState().getAttributeVocabulary();
+            const cleanVocab = useCleanDataStore.getState().getAttributeVocabulary();
+            const merged = new Map<string, string>([...lookupVocab, ...cleanVocab]);
+            const vocab = Array.from(merged.entries())
+              .map(([k, v]) => [k + getValueSuffix(k), v] as [string, string])
+              .sort((a, b) => a[0].localeCompare(b[0]));
+            return vocab.length > 0 ? vocab : [['(no data loaded)', '']];
+          }),
+          'ATTR',
+        );
       this.setOutput(true, 'Number');
       this.setColour(290);
       this.setTooltip('Sum all instances of an attribute as a percentage (value / 100)');
-    }
+    },
   };
   javascriptGenerator.forBlock['stat_percent_all'] = function (block: Blockly.Block) {
     const attr = block.getFieldValue('ATTR');
     return [`(sumAll("${attr}") / 100)`, 0];
   };
 
-  const coreTypeOptions: [string, string][] = Object.entries(CoreType).map(
-    ([label, value]) => [label.replace(/([A-Z])/g, ' $1').trim(), value]
-  );
+  const coreTypeOptions: [string, string][] = Object.entries(CoreType).map(([label, value]) => [
+    label.replace(/([A-Z])/g, ' $1').trim(),
+    value,
+  ]);
 
   Blockly.Blocks['stat_core'] = {
     init(this: Blockly.Block) {
       this.appendDummyInput()
         .appendField('core')
-        .appendField(new Blockly.FieldDropdown(() => {
-          return coreTypeOptions.map(([label, value]) => [label + getValueSuffix(value), value] as [string, string]);
-        }), 'CORE');
+        .appendField(
+          new Blockly.FieldDropdown(() => {
+            return coreTypeOptions.map(
+              ([label, value]) => [label + getValueSuffix(value), value] as [string, string],
+            );
+          }),
+          'CORE',
+        );
       this.setOutput(true, 'Number');
       this.setColour(0);
       this.setTooltip('Get the sum of a core attribute type across all gear');
-    }
+    },
   };
   javascriptGenerator.forBlock['stat_core'] = function (block: Blockly.Block) {
     const core = block.getFieldValue('CORE');
@@ -250,7 +562,7 @@ function registerCustomBlocks() {
       this.setColour(210);
       this.setInputsInline(false);
       this.setTooltip('If condition is true, return then value, otherwise else value');
-    }
+    },
   };
   javascriptGenerator.forBlock['logic_if_then_else'] = function (block: Blockly.Block) {
     const cond = javascriptGenerator.valueToCode(block, 'COND', 0) || 'false';
@@ -262,21 +574,23 @@ function registerCustomBlocks() {
   Blockly.Blocks['logic_compare'] = {
     init(this: Blockly.Block) {
       this.appendValueInput('A');
-      this.appendDummyInput()
-        .appendField(new Blockly.FieldDropdown([
+      this.appendDummyInput().appendField(
+        new Blockly.FieldDropdown([
           ['=', '==='],
           ['≠', '!=='],
           ['<', '<'],
           ['>', '>'],
           ['≤', '<='],
           ['≥', '>='],
-        ]), 'OP');
+        ]),
+        'OP',
+      );
       this.appendValueInput('B');
       this.setOutput(true, 'Boolean');
       this.setColour(210);
       this.setInputsInline(true);
       this.setTooltip('Compare two values');
-    }
+    },
   };
   javascriptGenerator.forBlock['logic_compare'] = function (block: Blockly.Block) {
     const a = javascriptGenerator.valueToCode(block, 'A', 0) || '0';
@@ -288,17 +602,19 @@ function registerCustomBlocks() {
   Blockly.Blocks['logic_and_or'] = {
     init(this: Blockly.Block) {
       this.appendValueInput('A').setCheck('Boolean');
-      this.appendDummyInput()
-        .appendField(new Blockly.FieldDropdown([
+      this.appendDummyInput().appendField(
+        new Blockly.FieldDropdown([
           ['and', '&&'],
           ['or', '||'],
-        ]), 'OP');
+        ]),
+        'OP',
+      );
       this.appendValueInput('B').setCheck('Boolean');
       this.setOutput(true, 'Boolean');
       this.setColour(210);
       this.setInputsInline(true);
       this.setTooltip('Combine two conditions with AND / OR');
-    }
+    },
   };
   javascriptGenerator.forBlock['logic_and_or'] = function (block: Blockly.Block) {
     const a = javascriptGenerator.valueToCode(block, 'A', 0) || 'false';
@@ -314,7 +630,7 @@ function registerCustomBlocks() {
       this.setColour(210);
       this.setInputsInline(true);
       this.setTooltip('Negate a condition');
-    }
+    },
   };
   javascriptGenerator.forBlock['logic_not'] = function (block: Blockly.Block) {
     const val = javascriptGenerator.valueToCode(block, 'VAL', 0) || 'false';
@@ -323,15 +639,17 @@ function registerCustomBlocks() {
 
   Blockly.Blocks['logic_boolean'] = {
     init(this: Blockly.Block) {
-      this.appendDummyInput()
-        .appendField(new Blockly.FieldDropdown([
+      this.appendDummyInput().appendField(
+        new Blockly.FieldDropdown([
           ['true', 'true'],
           ['false', 'false'],
-        ]), 'BOOL');
+        ]),
+        'BOOL',
+      );
       this.setOutput(true, 'Boolean');
       this.setColour(210);
       this.setTooltip('A boolean constant');
-    }
+    },
   };
   javascriptGenerator.forBlock['logic_boolean'] = function (block: Blockly.Block) {
     return [block.getFieldValue('BOOL'), 0];
@@ -348,7 +666,7 @@ function registerCustomBlocks() {
       this.setColour(160);
       this.setInputsInline(true);
       this.setTooltip('Round a value to N decimal places');
-    }
+    },
   };
   javascriptGenerator.forBlock['stat_round'] = function (block: Blockly.Block) {
     const value = javascriptGenerator.valueToCode(block, 'VALUE', 0) || '0';
@@ -400,19 +718,29 @@ const TOOLBOX: Blockly.utils.toolbox.ToolboxDefinition = {
   ],
 };
 
-
 // --- Blockly Editor for a single formula ---
 interface BlocklyEditorProps {
   formula: Formula;
   onSave: (formula: Formula) => void;
   onCancel: () => void;
+  aggregatedValues: Record<string, number>;
+  weaponBaseValues: Record<string, number>;
+  coreValues: Record<string, number>;
 }
 
-function BlocklyEditor({ formula, onSave, onCancel }: BlocklyEditorProps) {
+function BlocklyEditor({
+  formula,
+  onSave,
+  onCancel,
+  aggregatedValues,
+  weaponBaseValues,
+  coreValues,
+}: BlocklyEditorProps) {
   const blocklyDiv = useRef<HTMLDivElement>(null);
   const workspaceRef = useRef<Blockly.WorkspaceSvg | null>(null);
   const [label, setLabel] = useState(formula.label);
   const [formulaType, setFormulaType] = useState<FormulaType>(formula.type);
+  const [liveResult, setLiveResult] = useState<number | null>(null);
 
   useEffect(() => {
     registerCustomBlocks();
@@ -440,6 +768,7 @@ function BlocklyEditor({ formula, onSave, onCancel }: BlocklyEditorProps) {
     });
 
     workspaceRef.current = workspace;
+    activeBlocklyWorkspace = workspace;
 
     // Load existing block state
     if (formula.block) {
@@ -450,9 +779,73 @@ function BlocklyEditor({ formula, onSave, onCancel }: BlocklyEditorProps) {
       }
     }
 
+    // Register bindings for all existing blocks after load
+    const registerBindingsForBlock = (block: Blockly.Block) => {
+      const type = block.type;
+      if (type === 'base_weapon') {
+        const prop = block.getFieldValue('PROP');
+        if (prop) registerBlockFieldBinding(block.id, 'PROP', prop, 'weapon');
+      } else if (type === 'stat_sum_all' || type === 'stat_percent_all') {
+        const attr = block.getFieldValue('ATTR');
+        if (attr) registerBlockFieldBinding(block.id, 'ATTR', attr.toLowerCase(), 'aggregated');
+      } else if (type === 'stat_core') {
+        const core = block.getFieldValue('CORE');
+        if (core) registerBlockFieldBinding(block.id, 'CORE', core.toLowerCase(), 'aggregated');
+      }
+    };
+
+    workspace.getAllBlocks(false).forEach(registerBindingsForBlock);
+
+    // Listen for block changes to maintain bindings
+    const bindingListener = (event: Blockly.Events.Abstract) => {
+      if (event.type === Blockly.Events.BLOCK_DELETE) {
+        const deleteEvent = event as Blockly.Events.BlockDelete;
+        if (deleteEvent.blockId) {
+          unregisterBlockBindings(deleteEvent.blockId);
+        }
+      } else if (event.type === Blockly.Events.BLOCK_CREATE) {
+        const createEvent = event as Blockly.Events.BlockCreate;
+        if (createEvent.blockId) {
+          const block = workspace.getBlockById(createEvent.blockId);
+          if (block) registerBindingsForBlock(block);
+        }
+      } else if (event.type === Blockly.Events.BLOCK_CHANGE) {
+        const changeEvent = event as Blockly.Events.BlockChange;
+        if (changeEvent.blockId && changeEvent.element === 'field') {
+          // Re-register with the new field value
+          const block = workspace.getBlockById(changeEvent.blockId);
+          if (block) {
+            unregisterBlockBindings(block.id);
+            registerBindingsForBlock(block);
+          }
+        }
+      }
+    };
+    workspace.addChangeListener(bindingListener);
+
+    // Evaluate on every workspace change
+    const updateLiveResult = () => {
+      try {
+        const code = javascriptGenerator.workspaceToCode(workspace);
+        setLiveResult(evaluateFormula(code, aggregatedValues, weaponBaseValues, coreValues));
+      } catch {
+        setLiveResult(null);
+      }
+      updateMathBlockResults(aggregatedValues, weaponBaseValues, coreValues);
+    };
+    updateLiveResult();
+    workspace.addChangeListener(updateLiveResult);
+
     return () => {
+      workspace.removeChangeListener(updateLiveResult);
+      workspace.removeChangeListener(bindingListener);
+      // Clear bindings for all blocks in this workspace
+      workspace.getAllBlocks(false).forEach((block) => unregisterBlockBindings(block.id));
       workspace.dispose();
       workspaceRef.current = null;
+      if (activeBlocklyWorkspace === workspace) {
+        activeBlocklyWorkspace = null;
+      }
     };
   }, []);
 
@@ -482,6 +875,13 @@ function BlocklyEditor({ formula, onSave, onCancel }: BlocklyEditorProps) {
           onChange={(e) => setLabel(e.target.value)}
           placeholder="Formula label..."
         />
+        {liveResult !== null ? (
+          <span className="formula-item-result">
+            {formatFormulaResult(liveResult, formulaType)}
+          </span>
+        ) : (
+          <span className="formula-item-result formula-item-result-invalid">N/A</span>
+        )}
         <select
           className="blockly-type-select"
           value={formulaType}
@@ -503,7 +903,6 @@ function BlocklyEditor({ formula, onSave, onCancel }: BlocklyEditorProps) {
   );
 }
 
-
 // Format an aggregated value for display
 function formatAggValue(value: number): string {
   if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
@@ -512,85 +911,60 @@ function formatAggValue(value: number): string {
   return value.toString();
 }
 
+function formatFormulaResult(value: number, type: FormulaType): string {
+  if (type === FormulaType.Percent) {
+    const pct = value * 100;
+    return `${!Number.isInteger(pct) ? pct.toFixed(1) : pct}%`;
+  }
+  return formatAggValue(value);
+}
+
+/**
+ * Evaluate a Blockly-generated formula code string against the current build context.
+ * Returns the numeric result, or null if the formula is empty/invalid.
+ */
+function evaluateFormula(
+  formulaCode: string,
+  aggregatedValues: Record<string, number>,
+  weaponBaseValues: Record<string, number>,
+  coreValues: Record<string, number>,
+): number | null {
+  if (!formulaCode || !formulaCode.trim()) return null;
+  try {
+    // Blockly's workspaceToCode may produce trailing semicolons/newlines — strip them
+    const cleanCode = formulaCode.trim().replace(/;+\s*$/, '');
+    if (!cleanCode) return null;
+    const sumAll = (attr: string) => aggregatedValues[attr.toLowerCase()] ?? 0;
+    const getBaseWeapon = (prop: string) => weaponBaseValues[prop] ?? 0;
+    const getBaseGear = (prop: string) => aggregatedValues[prop.toLowerCase()] ?? 0;
+    const getCore = (core: string) => coreValues[core.toLowerCase()] ?? 0;
+    const round = (value: number, decimals: number) => {
+      const factor = Math.pow(10, decimals);
+      return Math.round(value * factor) / factor;
+    };
+    const fn = new Function(
+      'sumAll',
+      'getBaseWeapon',
+      'getBaseGear',
+      'getCore',
+      'round',
+      `return (${cleanCode});`,
+    );
+    const result = fn(sumAll, getBaseWeapon, getBaseGear, getCore, round);
+    if (typeof result === 'number' && isFinite(result)) return result;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 // Helper function to compute aggregated attribute values from all gear + selected weapon slot
-function useAggregatedValues(weaponSlot: 'primary' | 'secondary' | 'pistol') {
+function useAggregatedValues(weaponSlot: 'primaryWeapon' | 'secondaryWeapon' | 'pistol') {
   const currentBuild = useBuildStore((s) => s.currentBuild);
-  
+
   return useMemo(() => {
-    const values: Record<string, number> = {};
-    
-    // Get the selected build weapon
-    const buildWeapon = weaponSlot === 'primary' ? currentBuild.primaryWeapon
-      : weaponSlot === 'secondary' ? currentBuild.secondaryWeapon
-      : currentBuild.pistol;
-    
-    // Add weapon base stats from the selected slot
-    if (buildWeapon) {
-      const base = buildWeapon.weapon;
-      values['weapon damage'] = base.damage || 0;
-      values['rpm'] = base.rpm || 0;
-      values['base mag size'] = base.baseMagSize || 0;
-      values['modded mag size'] = base.moddedMagSize || 0;
-      values['reload'] = base.reload || 0;
-      values['optimal range'] = base.optimalRange || 0;
-      values['hsd'] = base.hsd || 0;
-      
-      // Add weapon core/attrib values
-      if (buildWeapon.core1?.key && buildWeapon.core1?.value !== undefined) {
-        const key = buildWeapon.core1.key.toLowerCase();
-        values[key] = (values[key] || 0) + buildWeapon.core1.value;
-      }
-      if (buildWeapon.core2?.key && buildWeapon.core2?.value !== undefined) {
-        const key = buildWeapon.core2.key.toLowerCase();
-        values[key] = (values[key] || 0) + buildWeapon.core2.value;
-      }
-      if (buildWeapon.attrib?.key && buildWeapon.attrib?.value !== undefined) {
-        const key = buildWeapon.attrib.key.toLowerCase();
-        values[key] = (values[key] || 0) + buildWeapon.attrib.value;
-      }
-      
-      // Add weapon mod slot values
-      if (buildWeapon.configuredModSlots) {
-        Object.values(buildWeapon.configuredModSlots).forEach(modSlot => {
-          Object.entries(modSlot).forEach(([statKey, statValue]) => {
-            const key = statKey.toLowerCase();
-            values[key] = (values[key] || 0) + statValue;
-          });
-        });
-      }
-    }
-    
-    // Aggregate values from all gear pieces
-    const gearPieces = [
-      currentBuild.mask,
-      currentBuild.chest,
-      currentBuild.holster,
-      currentBuild.backpack,
-      currentBuild.gloves,
-      currentBuild.kneepads
-    ];
-    
-    gearPieces.forEach(gear => {
-      if (!gear) return;
-      
-      // Add core values
-      if (gear.core) {
-        gear.core.forEach(coreValue => {
-          const key = coreValue.type.toLowerCase();
-          values[key] = (values[key] || 0) + (coreValue.value || 0);
-        });
-      }
-      
-      // Add minor attributes
-      [gear.minor1, gear.minor2, gear.minor3].forEach(minor => {
-        if (minor?.key && minor?.value !== undefined) {
-          const key = minor.key.toLowerCase();
-          values[key] = (values[key] || 0) + minor.value;
-        }
-      });
-    });
-    
-    return values;
+    if (!currentBuild) return new StatCalculator();
+    return StatCalculator.forBuild(currentBuild, weaponSlot);
   }, [currentBuild, weaponSlot]);
 }
 
@@ -604,31 +978,73 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
   const updateFormula = useFormulaStore((s) => s.updateFormula);
   const removeFormula = useFormulaStore((s) => s.removeFormula);
   const reorderFormula = useFormulaStore((s) => s.reorderFormula);
-  
+
   const currentBuild = useBuildStore((s) => s.currentBuild);
 
   const [newCategoryName, setNewCategoryName] = useState('');
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
   const [editCategoryName, setEditCategoryName] = useState('');
-  const [editingFormula, setEditingFormula] = useState<{ category: string; index: number } | null>(null);
+  const [editingFormula, setEditingFormula] = useState<{ category: string; index: number } | null>(
+    null,
+  );
   const [addingToCategory, setAddingToCategory] = useState<string | null>(null);
   const [showJsonModal, setShowJsonModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedWeaponSlot, setSelectedWeaponSlot] = useState<'primary' | 'secondary' | 'pistol'>('primary');
-  
+  const [selectedWeaponSlot, setSelectedWeaponSlot] = useState<
+    'primaryWeapon' | 'secondaryWeapon' | 'pistol'
+  >('primaryWeapon');
+
   // Get aggregated values for display
   const aggregatedValues = useAggregatedValues(selectedWeaponSlot);
-  
+
   // Sync aggregated values to module-level state for Blockly dropdown callbacks
   useEffect(() => {
-    setBlocklyAggregatedValues(aggregatedValues);
+    setBlocklyAggregatedValues(aggregatedValues.toRecord());
   }, [aggregatedValues]);
-  
+
+  // Compute and sync weapon base values for the base_weapon Blockly dropdown
+  const weaponBaseValues = useMemo(() => {
+    const buildWeapon =
+      selectedWeaponSlot === 'primaryWeapon'
+        ? currentBuild.primaryWeapon
+        : selectedWeaponSlot === 'secondaryWeapon'
+          ? currentBuild.secondaryWeapon
+          : currentBuild.pistol;
+    if (!buildWeapon) return {};
+    const base = buildWeapon.weapon;
+    return {
+      rpm: base.rpm || 0,
+      baseMagSize: base.baseMagSize || 0,
+      moddedMagSize: base.moddedMagSize || 0,
+      reload: base.reload || 0,
+      damage: base.damage || 0,
+      optimalRange: base.optimalRange || 0,
+      hsd: base.hsd || 0,
+    } as Record<string, number>;
+  }, [currentBuild, selectedWeaponSlot]);
+
+  useEffect(() => {
+    setBlocklyWeaponValues(weaponBaseValues);
+  }, [weaponBaseValues]);
+
+  // Compute core values (count of each core type across all gear)
+  const coreValues = useMemo(() => {
+    const calc = aggregatedValues;
+    const cores: Record<string, number> = {};
+    for (const [type, gearTypes] of Object.entries(calc.cores)) {
+      cores[type.toLowerCase()] = gearTypes?.length ?? 0;
+    }
+    return cores;
+  }, [aggregatedValues]);
+
   // Build weapon slot labels
   const getWeaponSlotLabel = (slot: 'primary' | 'secondary' | 'pistol'): string => {
-    const weapon = slot === 'primary' ? currentBuild.primaryWeapon
-      : slot === 'secondary' ? currentBuild.secondaryWeapon
-      : currentBuild.pistol;
+    const weapon =
+      slot === 'primary'
+        ? currentBuild.primaryWeapon
+        : slot === 'secondary'
+          ? currentBuild.secondaryWeapon
+          : currentBuild.pistol;
     const label = slot === 'primary' ? 'Primary' : slot === 'secondary' ? 'Secondary' : 'Pistol';
     return weapon ? `${label}: ${weapon.weapon.name}` : `${label} (Empty)`;
   };
@@ -680,7 +1096,7 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
       setEditingFormula(null);
       setAddingToCategory(null);
     },
-    [updateFormula, addFormula]
+    [updateFormula, addFormula],
   );
 
   const handleCancelEdit = () => {
@@ -691,22 +1107,6 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
   if (!isOpen) return null;
 
   const currentFormulas = selectedCategory ? formulas[selectedCategory] || [] : [];
-  
-  // Helper to find the aggregated value for a formula label
-  const getValueForLabel = (label: string): string | null => {
-    const lowerLabel = label.toLowerCase().trim();
-    // Try exact match first
-    if (aggregatedValues[lowerLabel] !== undefined) {
-      return formatAggValue(aggregatedValues[lowerLabel]);
-    }
-    // Try partial match
-    for (const [key, val] of Object.entries(aggregatedValues)) {
-      if (lowerLabel.includes(key) || key.includes(lowerLabel)) {
-        return formatAggValue(val);
-      }
-    }
-    return null;
-  };
 
   return (
     <div className="formula-overlay-backdrop" onClick={onClose}>
@@ -717,16 +1117,26 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
             <select
               className="formula-weapon-select"
               value={selectedWeaponSlot}
-              onChange={(e) => setSelectedWeaponSlot(e.target.value as 'primary' | 'secondary' | 'pistol')}
+              onChange={(e) =>
+                setSelectedWeaponSlot(
+                  e.target.value as 'primaryWeapon' | 'secondaryWeapon' | 'pistol',
+                )
+              }
             >
-              <option value="primary">{getWeaponSlotLabel('primary')}</option>
-              <option value="secondary">{getWeaponSlotLabel('secondary')}</option>
+              <option value="primaryWeapon">{getWeaponSlotLabel('primary')}</option>
+              <option value="secondaryWeapon">{getWeaponSlotLabel('secondary')}</option>
               <option value="pistol">{getWeaponSlotLabel('pistol')}</option>
             </select>
-            <button className="formula-json-btn" onClick={() => setShowJsonModal(true)} title="View JSON">
+            <button
+              className="formula-json-btn"
+              onClick={() => setShowJsonModal(true)}
+              title="View JSON"
+            >
               <MdCode /> JSON
             </button>
-            <button className="formula-close-btn" onClick={onClose}>✕</button>
+            <button className="formula-close-btn" onClick={onClose}>
+              ✕
+            </button>
           </div>
         </div>
 
@@ -749,7 +1159,10 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
                       value={editCategoryName}
                       onChange={(e) => setEditCategoryName(e.target.value)}
                       onBlur={() => handleRenameCategory(cat)}
-                      onKeyDown={(e) => { if (e.key === 'Enter') handleRenameCategory(cat); if (e.key === 'Escape') setEditingCategory(null); }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleRenameCategory(cat);
+                        if (e.key === 'Escape') setEditingCategory(null);
+                      }}
                       autoFocus
                       onClick={(e) => e.stopPropagation()}
                     />
@@ -757,8 +1170,25 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
                     <>
                       <span className="formula-category-label">{cat}</span>
                       <div className="formula-category-actions">
-                        <button onClick={(e) => { e.stopPropagation(); setEditingCategory(cat); setEditCategoryName(cat); }} title="Rename"><MdEdit /></button>
-                        <button onClick={(e) => { e.stopPropagation(); handleDeleteCategory(cat); }} title="Delete"><MdDelete /></button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditingCategory(cat);
+                            setEditCategoryName(cat);
+                          }}
+                          title="Rename"
+                        >
+                          <MdEdit />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteCategory(cat);
+                          }}
+                          title="Delete"
+                        >
+                          <MdDelete />
+                        </button>
                       </div>
                     </>
                   )}
@@ -770,9 +1200,13 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
                 value={newCategoryName}
                 onChange={(e) => setNewCategoryName(e.target.value)}
                 placeholder="New category..."
-                onKeyDown={(e) => { if (e.key === 'Enter') handleAddCategory(); }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleAddCategory();
+                }}
               />
-              <button onClick={handleAddCategory} title="Add Category"><MdAdd /></button>
+              <button onClick={handleAddCategory} title="Add Category">
+                <MdAdd />
+              </button>
             </div>
           </div>
 
@@ -784,7 +1218,10 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
                   <span>{selectedCategory}</span>
                   <button
                     className="formula-add-btn"
-                    onClick={() => { setAddingToCategory(selectedCategory); setEditingFormula(null); }}
+                    onClick={() => {
+                      setAddingToCategory(selectedCategory);
+                      setEditingFormula(null);
+                    }}
                     title="Add Formula"
                   >
                     <MdAdd /> Add Formula
@@ -795,22 +1232,37 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
                 <div className="formula-list">
                   {currentFormulas.map((f, idx) => (
                     <div key={idx} className="formula-list-item">
-                      {editingFormula?.category === selectedCategory && editingFormula?.index === idx ? (
+                      {editingFormula?.category === selectedCategory &&
+                      editingFormula?.index === idx ? (
                         <BlocklyEditor
                           formula={f}
                           onSave={(updated) => handleSaveFormula(selectedCategory, idx, updated)}
                           onCancel={handleCancelEdit}
+                          aggregatedValues={aggregatedValues.toRecord()}
+                          weaponBaseValues={weaponBaseValues}
+                          coreValues={coreValues}
                         />
                       ) : (
                         <div className="formula-list-item-row">
                           <div className="formula-list-item-info">
-                            <span className="formula-item-label">
-                              {f.label}
-                              {(() => {
-                                const val = getValueForLabel(f.label);
-                                return val !== null ? <span className="formula-item-value"> [{val}]</span> : null;
-                              })()}
-                            </span>
+                            <span className="formula-item-label">{f.label}</span>
+                            {(() => {
+                              const result = evaluateFormula(
+                                f.formula,
+                                aggregatedValues.toRecord(),
+                                weaponBaseValues,
+                                coreValues,
+                              );
+                              return result !== null ? (
+                                <span className="formula-item-result">
+                                  {formatFormulaResult(result, f.type)}
+                                </span>
+                              ) : (
+                                <span className="formula-item-result formula-item-result-invalid">
+                                  N/A
+                                </span>
+                              );
+                            })()}
                             <span className="formula-item-type">{f.type}</span>
                             {f.formula && <code className="formula-item-code">{f.formula}</code>}
                           </div>
@@ -819,20 +1271,30 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
                               disabled={idx === 0}
                               onClick={() => reorderFormula(selectedCategory, idx, idx - 1)}
                               title="Move Up"
-                            ><MdArrowUpward /></button>
+                            >
+                              <MdArrowUpward />
+                            </button>
                             <button
                               disabled={idx === currentFormulas.length - 1}
                               onClick={() => reorderFormula(selectedCategory, idx, idx + 1)}
                               title="Move Down"
-                            ><MdArrowDownward /></button>
+                            >
+                              <MdArrowDownward />
+                            </button>
                             <button
-                              onClick={() => setEditingFormula({ category: selectedCategory, index: idx })}
+                              onClick={() =>
+                                setEditingFormula({ category: selectedCategory, index: idx })
+                              }
                               title="Edit"
-                            ><MdEdit /></button>
+                            >
+                              <MdEdit />
+                            </button>
                             <button
                               onClick={() => removeFormula(selectedCategory, idx)}
                               title="Delete"
-                            ><MdDelete /></button>
+                            >
+                              <MdDelete />
+                            </button>
                           </div>
                         </div>
                       )}
@@ -846,6 +1308,9 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
                     formula={{ label: '', block: null, type: FormulaType.Number, formula: '' }}
                     onSave={(f) => handleSaveFormula(selectedCategory, null, f)}
                     onCancel={handleCancelEdit}
+                    aggregatedValues={aggregatedValues.toRecord()}
+                    weaponBaseValues={weaponBaseValues}
+                    coreValues={coreValues}
                   />
                 )}
               </>
@@ -855,10 +1320,7 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
           </div>
         </div>
 
-        <FormulaJsonModal
-          isOpen={showJsonModal}
-          onClose={() => setShowJsonModal(false)}
-        />
+        <FormulaJsonModal isOpen={showJsonModal} onClose={() => setShowJsonModal(false)} />
       </div>
     </div>
   );

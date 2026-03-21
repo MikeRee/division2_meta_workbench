@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { DataKey } from '../constants/dataKeys';
+import { getBasePath } from '../utils/basePath';
 
 // Define the RuleBinding type
 export interface RuleBinding {
@@ -15,7 +16,7 @@ export type RuleOperation = 'replace' | 'match' | 'mapping' | 'transform' | 'sys
 /**
  * System rules are built-in transformation functions that cannot be edited or deleted.
  * They can be added to any RuleBinding.rules array by their name.
- * 
+ *
  * Available system rules:
  * - "lowercase": Converts the value to lowercase. If value is an object, converts to JSON string, lowercases, then parses back to object.
  * - "trim whitespace": Trims leading and trailing whitespace from the value. If value is an object, converts to JSON string, trims, then parses back to object.
@@ -73,7 +74,12 @@ interface RulesState {
   addBinding: (dataKey: DataKey, binding: RuleBinding) => void;
   updateBinding: (dataKey: DataKey, index: number, binding: RuleBinding) => void;
   removeBinding: (dataKey: DataKey, index: number) => void;
-  reorderBindingRules: (dataKey: DataKey, bindingIndex: number, fromRuleIndex: number, toRuleIndex: number) => void;
+  reorderBindingRules: (
+    dataKey: DataKey,
+    bindingIndex: number,
+    fromRuleIndex: number,
+    toRuleIndex: number,
+  ) => void;
   getBindings: (dataKey: DataKey) => RuleBinding[];
   deleteRule: (label: string) => void;
   setLoading: (loading: boolean) => void;
@@ -118,7 +124,7 @@ const downloadRulesFile = (data: RulesData) => {
  */
 const loadRulesFile = async (): Promise<RulesData | null> => {
   try {
-    const response = await fetch('/clean/rules.json');
+    const response = await fetch(`${getBasePath()}/clean/rules.json`);
     if (!response.ok) {
       console.warn(`Failed to load /clean/rules.json: ${response.status}`);
       return null;
@@ -251,13 +257,14 @@ export const useRulesStore = create<RulesState>()(
 
       loadRulesFromFile: async () => {
         const state = get();
-        
+
         // Only load if cache is empty (no rules and no bindings)
-        const hasRules = Object.keys(state.replaceRules).length > 0 || 
-                        Object.keys(state.matchRules).length > 0 || 
-                        Object.keys(state.mappings).length > 0;
+        const hasRules =
+          Object.keys(state.replaceRules).length > 0 ||
+          Object.keys(state.matchRules).length > 0 ||
+          Object.keys(state.mappings).length > 0;
         const hasBindings = Object.keys(state.bindings).length > 0;
-        
+
         if (hasRules || hasBindings) {
           console.log('Rules already loaded from cache, skipping file load');
           return;
@@ -292,8 +299,8 @@ export const useRulesStore = create<RulesState>()(
         downloadRulesFile(data);
       },
     }),
-    { name: 'rules-cache' }
-  )
+    { name: 'rules-cache' },
+  ),
 );
 
 export default useRulesStore;

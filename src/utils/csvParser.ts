@@ -1,6 +1,7 @@
 import Attribute from '../models/Attribute';
 import StatusImmunity from '../models/StatusImmunity';
 import GearMod from '../models/GearMod';
+import { getBasePath } from './basePath';
 
 /**
  * Parses CSV text into rows
@@ -9,15 +10,15 @@ import GearMod from '../models/GearMod';
  */
 const parseCSV = (csvText: string): string[][] => {
   const lines = csvText.trim().split('\n');
-  return lines.map(line => {
+  return lines.map((line) => {
     // Simple CSV parsing - handles quoted values with commas
     const result: string[] = [];
     let current = '';
     let inQuotes = false;
-    
+
     for (let i = 0; i < line.length; i++) {
       const char = line[i];
-      
+
       if (char === '"') {
         inQuotes = !inQuotes;
       } else if (char === ',' && !inQuotes) {
@@ -28,7 +29,7 @@ const parseCSV = (csvText: string): string[][] => {
       }
     }
     result.push(current.trim());
-    
+
     return result;
   });
 };
@@ -39,7 +40,7 @@ const parseCSV = (csvText: string): string[][] => {
  * @returns {Promise<string>} CSV text content
  */
 export const loadCSVFile = async (filename: string): Promise<string> => {
-  const response = await fetch(`/data/${filename}`);
+  const response = await fetch(`${getBasePath()}/data/${filename}`);
   if (!response.ok) {
     throw new Error(`Failed to load ${filename}`);
   }
@@ -53,9 +54,10 @@ export const loadCSVFile = async (filename: string): Promise<string> => {
  */
 export const parseWeaponAttributes = (csvText: string): Attribute[] => {
   const rows = parseCSV(csvText);
-  return rows.slice(1) // Skip header
-    .filter(row => row[0] && row[0].trim())
-    .map(row => Attribute.fromCSVRow(row, 'weapon'));
+  return rows
+    .slice(1) // Skip header
+    .filter((row) => row[0] && row[0].trim())
+    .map((row) => Attribute.fromCSVRow(row, 'weapon'));
 };
 
 /**
@@ -65,9 +67,10 @@ export const parseWeaponAttributes = (csvText: string): Attribute[] => {
  */
 export const parseWeaponTypeAttributes = (csvText: string): Attribute[] => {
   const rows = parseCSV(csvText);
-  return rows.slice(1) // Skip header
-    .filter(row => row[0] && row[0].trim())
-    .map(row => Attribute.fromCSVRow(row, 'weaponType'));
+  return rows
+    .slice(1) // Skip header
+    .filter((row) => row[0] && row[0].trim())
+    .map((row) => Attribute.fromCSVRow(row, 'weaponType'));
 };
 
 /**
@@ -77,9 +80,10 @@ export const parseWeaponTypeAttributes = (csvText: string): Attribute[] => {
  */
 export const parseGearAttributes = (csvText: string): GearMod[] => {
   const rows = parseCSV(csvText);
-  return rows.slice(1) // Skip header
-    .filter(row => row[0] && row[0].trim())
-    .map(row => GearMod.fromCSVRow(row));
+  return rows
+    .slice(1) // Skip header
+    .filter((row) => row[0] && row[0].trim())
+    .map((row) => GearMod.fromCSVRow(row));
 };
 
 /**
@@ -89,9 +93,10 @@ export const parseGearAttributes = (csvText: string): GearMod[] => {
  */
 export const parseGearMods = (csvText: string): GearMod[] => {
   const rows = parseCSV(csvText);
-  return rows.slice(1) // Skip header
-    .filter(row => row[0] && row[0].trim())
-    .map(row => GearMod.fromCSVRow(row));
+  return rows
+    .slice(1) // Skip header
+    .filter((row) => row[0] && row[0].trim())
+    .map((row) => GearMod.fromCSVRow(row));
 };
 
 /**
@@ -101,9 +106,10 @@ export const parseGearMods = (csvText: string): GearMod[] => {
  */
 export const parseKeenersWatch = (csvText: string): Attribute[] => {
   const rows = parseCSV(csvText);
-  return rows.slice(1) // Skip header
-    .filter(row => row[0] && row[0].trim())
-    .map(row => Attribute.fromCSVRow(row, 'keenersWatch'));
+  return rows
+    .slice(1) // Skip header
+    .filter((row) => row[0] && row[0].trim())
+    .map((row) => Attribute.fromCSVRow(row, 'keenersWatch'));
 };
 
 /**
@@ -113,7 +119,8 @@ export const parseKeenersWatch = (csvText: string): Attribute[] => {
  */
 export const parseStatusImmunities = (csvText: string): StatusImmunity[] => {
   const rows = parseCSV(csvText);
-  return rows.slice(1) // Skip header
-    .filter(row => row[0] && row[0].trim())
-    .map(row => StatusImmunity.fromCSVRow(row));
+  return rows
+    .slice(1) // Skip header
+    .filter((row) => row[0] && row[0].trim())
+    .map((row) => StatusImmunity.fromCSVRow(row));
 };

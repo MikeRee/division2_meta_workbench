@@ -28,7 +28,7 @@ type BuildData = {
 interface BuildState {
   currentBuild: Build;
   savedBuilds: Map<string, Build>;
-  
+
   updateCurrentBuild: (updates: Partial<BuildData>) => void;
   setSpecialization: (specialization: any) => void;
   setPrimaryWeapon: (primaryWeapon: any) => void;
@@ -43,7 +43,7 @@ interface BuildState {
   setSkill1: (skill1: any) => void;
   setSkill2: (skill2: any) => void;
   setWatch: (watch: any) => void;
-  
+
   saveCurrentBuild: (name?: string) => string;
   loadBuild: (buildId: string) => boolean;
   deleteBuild: (buildId: string) => boolean;
@@ -66,7 +66,7 @@ const useBuildStore = create<BuildState>()(
     (set, get) => ({
       // Current build being edited
       currentBuild: new Build(),
-      
+
       // Saved builds map (id -> Build)
       savedBuilds: new Map<string, Build>(),
 
@@ -78,7 +78,7 @@ const useBuildStore = create<BuildState>()(
         const updated = new Build({
           ...currentData,
           ...updates,
-          updatedAt: Date.now()
+          updatedAt: Date.now(),
         });
         set({ currentBuild: updated });
       },
@@ -142,17 +142,17 @@ const useBuildStore = create<BuildState>()(
         const buildToSave = new Build({
           ...currentData,
           name: name || currentData.name || 'Untitled Build',
-          updatedAt: Date.now()
+          updatedAt: Date.now(),
         });
-        
+
         const savedBuilds = new Map(get().savedBuilds);
         savedBuilds.set(buildToSave.id, buildToSave);
-        
-        set({ 
+
+        set({
           savedBuilds,
-          currentBuild: buildToSave
+          currentBuild: buildToSave,
         });
-        
+
         return buildToSave.id;
       },
 
@@ -203,18 +203,18 @@ const useBuildStore = create<BuildState>()(
       updateSavedBuild: (buildId, updates) => {
         const savedBuilds = new Map(get().savedBuilds);
         const build = savedBuilds.get(buildId);
-        
+
         if (build) {
           const buildData = build instanceof Build ? build.toJSON() : (build as any);
           const updated = new Build({
             ...buildData,
             ...updates,
             id: buildId, // Preserve original ID
-            updatedAt: Date.now()
+            updatedAt: Date.now(),
           });
           savedBuilds.set(buildId, updated);
           set({ savedBuilds });
-          
+
           // If updating current build, update it too
           if (get().currentBuild.id === buildId) {
             set({ currentBuild: updated });
@@ -226,9 +226,9 @@ const useBuildStore = create<BuildState>()(
 
       // Clear all saved builds
       clearAllBuilds: () => {
-        set({ 
+        set({
           savedBuilds: new Map(),
-          currentBuild: new Build()
+          currentBuild: new Build(),
         });
       },
 
@@ -257,10 +257,22 @@ const useBuildStore = create<BuildState>()(
       storage: createJSONStorage(() => localStorage, {
         reviver: (key, value: any) => {
           if (key === 'currentBuild' && value) {
-            return Build.fromJSON(value);
+            try {
+              return Build.fromJSON(value);
+            } catch (error) {
+              console.warn('Failed to restore currentBuild from localStorage:', error);
+              return new Build(value);
+            }
           }
           if (key === 'savedBuilds' && Array.isArray(value)) {
-            return new Map(value.map(([id, buildData]: [string, any]) => [id, Build.fromJSON(buildData)]));
+            try {
+              return new Map(
+                value.map(([id, buildData]: [string, any]) => [id, Build.fromJSON(buildData)]),
+              );
+            } catch (error) {
+              console.warn('Failed to restore savedBuilds from localStorage:', error);
+              return new Map();
+            }
           }
           return value;
         },
@@ -272,10 +284,11 @@ const useBuildStore = create<BuildState>()(
             return Array.from(value.entries()).map(([id, build]) => [id, build.toJSON()]);
           }
           return value;
-        }
-      })
-    }
-  )
+        },
+      }),
+      skipHydration: true,
+    },
+  ),
 );
 
 export default useBuildStore;

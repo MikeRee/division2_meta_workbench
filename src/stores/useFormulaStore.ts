@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Formula } from '../models/Formula';
+import { getBasePath } from '../utils/basePath';
 
 interface FormulaStore {
   formulas: Record<string, Formula[]>;
@@ -27,18 +28,17 @@ export const useFormulaStore = create<FormulaStore>()(
 
       setFormulas: (category: string, formulas: Formula[]) =>
         set((state) => ({
-          formulas: { ...state.formulas, [category]: formulas }
+          formulas: { ...state.formulas, [category]: formulas },
         })),
 
-      setAllFormulas: (formulas: Record<string, Formula[]>) =>
-        set({ formulas }),
+      setAllFormulas: (formulas: Record<string, Formula[]>) => set({ formulas }),
 
       addFormula: (category: string, formula: Formula) =>
         set((state) => ({
           formulas: {
             ...state.formulas,
-            [category]: [...(state.formulas[category] || []), formula]
-          }
+            [category]: [...(state.formulas[category] || []), formula],
+          },
         })),
 
       updateFormula: (category: string, index: number, formula: Formula) =>
@@ -92,7 +92,7 @@ export const useFormulaStore = create<FormulaStore>()(
 
       bootstrapFromFile: async () => {
         try {
-          const response = await fetch('/clean/formulas.json');
+          const response = await fetch(`${getBasePath()}/clean/formulas.json`);
           if (!response.ok) return;
           const data = await response.json();
           if (data && typeof data === 'object' && Object.keys(data).length > 0) {
@@ -107,15 +107,7 @@ export const useFormulaStore = create<FormulaStore>()(
     {
       name: 'formula-store',
       partialize: (state) => ({ formulas: state.formulas }),
-      onRehydrateStorage: () => (state) => {
-        if (state) {
-          state._hasHydrated = true;
-          // If formulas are empty after rehydration, bootstrap from file
-          if (Object.keys(state.formulas).length === 0) {
-            state.bootstrapFromFile();
-          }
-        }
-      },
-    }
-  )
+      skipHydration: true,
+    },
+  ),
 );

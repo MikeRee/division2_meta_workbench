@@ -1,7 +1,38 @@
-import BuildGear from './BuildGear';
+import BuildGear, { GearSource, GearType } from './BuildGear';
 import { BuildWeapon } from './BuildWeapon';
+import { CoreType, getDefaultCoreValue, parseCoreType } from './CoreValue';
 import { KeenersWatchStats } from './KeenersWatchStats';
 import LlmBuild from './LlmBuild';
+import NamedGear from './NamedGear';
+import { useLookupStore } from '../stores/useLookupStore';
+import useCleanDataStore from '../stores/useCleanDataStore';
+import { fuzzyFind } from '../utils/fuzzySearch';
+import Gearset from './Gearset';
+import Brandset from './Brandset';
+
+function getDefaultWatchStats(): KeenersWatchStats {
+  const keenersWatchData = useLookupStore.getState().keenersWatch;
+  const defaults: KeenersWatchStats = {
+    Offensive: {},
+    Defensive: {},
+    Utility: {},
+    Handling: {},
+  };
+  if (keenersWatchData instanceof Map && keenersWatchData.size > 0) {
+    keenersWatchData.forEach((attr: any) => {
+      const rawCategory = attr.category;
+      const category = rawCategory
+        ? ((rawCategory.charAt(0).toUpperCase() + rawCategory.slice(1)) as keyof KeenersWatchStats)
+        : null;
+      const statName = attr.attribute;
+      const maxValue = parseFloat(attr.max.toString().replace('%', '')) || 0;
+      if (category && statName && defaults[category]) {
+        defaults[category][statName] = maxValue;
+      }
+    });
+  }
+  return defaults;
+}
 
 class Build {
   id: string;
@@ -39,7 +70,7 @@ class Build {
     skill2 = null,
     watch = null,
     createdAt = null,
-    updatedAt = null
+    updatedAt = null,
   }: {
     id?: string | null;
     name?: string;
@@ -73,7 +104,12 @@ class Build {
     this.kneepads = kneepads;
     this.skill1 = skill1;
     this.skill2 = skill2;
-    this.watch = watch || null;
+    this.watch =
+      watch &&
+      typeof watch === 'object' &&
+      Object.values(watch).some((cat: any) => cat && Object.keys(cat).length > 0)
+        ? watch
+        : getDefaultWatchStats();
     this.createdAt = createdAt || Date.now();
     this.updatedAt = updatedAt || Date.now();
   }
@@ -85,15 +121,15 @@ class Build {
   toLlm(): LlmBuild {
     const convertWeapon = (weapon: BuildWeapon | null) => {
       if (!weapon) return null;
-      
+
       const result: any = {
         name: weapon.weapon.name,
         attrib1: weapon.core1?.key || '',
       };
-      
+
       if (weapon.core2?.key) result.attrib2 = weapon.core2.key;
       if (weapon.attrib?.key) result.mod = weapon.attrib.key;
-      
+
       const attachments: any = {};
       if (weapon.configuredModSlots?.muzzle) {
         const key = Object.keys(weapon.configuredModSlots.muzzle)[0];
@@ -111,26 +147,26 @@ class Build {
         const key = Object.keys(weapon.configuredModSlots.optics)[0];
         if (key) attachments.opticsIfOption = key;
       }
-      
+
       if (Object.keys(attachments).length > 0) {
         result.attachments = attachments;
       }
-      
+
       return result;
     };
 
     const convertGear = (gear: BuildGear | null) => {
       if (!gear) return null;
-      
+
       const result: any = {
         name: gear.name,
-        core: gear.core.map(c => c.type),
+        core: gear.core.map((c) => c.type),
       };
-      
+
       if (gear.minor1?.key) result.gearAttrib1 = gear.minor1.key;
       if (gear.minor2?.key) result.gearAttrib2 = gear.minor2.key;
       if (gear.minor3?.key) result.gearMod = gear.minor3.key;
-      
+
       return result;
     };
 
@@ -147,13 +183,25 @@ class Build {
     });
   }
 
+  toView(): Record<string, any> {
+    const llm = this.toLlm();
+    const result: Record<string, any> = llm.toJSON();
+    const defaults = getDefaultWatchStats();
+    const merged: KeenersWatchStats = { ...defaults };
+    for (const cat of Object.keys(merged) as (keyof KeenersWatchStats)[]) {
+      merged[cat] = { ...defaults[cat], ...(this.watch?.[cat] || {}) };
+    }
+    result.watch = merged;
+    return result;
+  }
+
   static fromLlm(llmBuild: LlmBuild): Partial<Build> {
     // Note: This returns a partial Build since LlmBuild doesn't contain all Build properties
     // The caller should merge this with existing Build data or provide defaults
-    
+
     const convertWeapon = (llmWeapon: any): BuildWeapon | null => {
       if (!llmWeapon) return null;
-      
+
       // This is a simplified conversion - in practice, you'd need to:
       // 1. Look up the actual Weapon object by name
       // 2. Reconstruct the configuredModSlots from attachments
@@ -161,13 +209,68 @@ class Build {
       return null;
     };
 
-    const convertGear = (llmGear: any): BuildGear | null => {
+    const convertGear = (llmGear: any, gearType: GearType): BuildGear | null => {
       if (!llmGear) return null;
-      
-      // This is a simplified conversion - in practice, you'd need to:
-      // 1. Look up the actual gear source (brandset/gearset/named/exotic)
-      // 2. Reconstruct the full GearModValue objects from the keys
-      // For now, returning null as we need more context about available gear
+
+      const name: string = llmGear.name;
+      const llmCores: CoreType[] = llmGear.core || [];
+
+      const storeState = useCleanDataStore.getState();
+
+      // Try named/exotic gear first
+      const namedGear: NamedGear[] = storeState.getCleanData('namedGear') || [];
+      let namedMatch = fuzzyFind(name, namedGear, (ng) => ng.name);
+
+      if (namedMatch) {
+        try {
+          const buildGear = new BuildGear(namedMatch);
+
+          // If the gear has 3 cores (exotic with all 3), keep them as-is from the data
+          // Otherwise (1 core), assign the first LLM-provided core
+          if (buildGear.core.length < 3 && llmCores.length > 0) {
+            const coreType = parseCoreType(llmCores[0]);
+            buildGear.core = [{ type: coreType, value: getDefaultCoreValue(coreType) }];
+          }
+
+          return buildGear;
+        } catch (e) {
+          console.warn(`Build.fromLlm: failed to create BuildGear from named gear "${name}"`, e);
+        }
+      }
+
+      // Try gearsets
+      const gearsets: Gearset[] = storeState.getCleanData('gearsets') || [];
+      const gearsetMatch = fuzzyFind(name, gearsets, (gs) => gs.name);
+      if (gearsetMatch) {
+        try {
+          const buildGear = new BuildGear(gearsetMatch, gearType);
+          if (llmCores.length > 0) {
+            const coreType = parseCoreType(llmCores[0]);
+            buildGear.core = [{ type: coreType, value: getDefaultCoreValue(coreType) }];
+          }
+          return buildGear;
+        } catch (e) {
+          console.warn(`Build.fromLlm: failed to create BuildGear from gearset "${name}"`, e);
+        }
+      }
+
+      // Try brandsets
+      const brandsets: Brandset[] = storeState.getCleanData('brandsets') || [];
+      const brandMatch = fuzzyFind(name, brandsets, (bs) => bs.brand);
+      if (brandMatch) {
+        try {
+          const buildGear = new BuildGear(brandMatch, gearType);
+          if (llmCores.length > 0) {
+            const coreType = parseCoreType(llmCores[0]);
+            buildGear.core = [{ type: coreType, value: getDefaultCoreValue(coreType) }];
+          }
+          return buildGear;
+        } catch (e) {
+          console.warn(`Build.fromLlm: failed to create BuildGear from brandset "${name}"`, e);
+        }
+      }
+
+      console.warn(`Build.fromLlm: no match found for gear "${name}"`);
       return null;
     };
 
@@ -175,12 +278,12 @@ class Build {
       primaryWeapon: convertWeapon(llmBuild.primaryWeapon),
       secondaryWeapon: convertWeapon(llmBuild.secondaryWeapon),
       pistol: convertWeapon(llmBuild.pistol),
-      mask: convertGear(llmBuild.mask),
-      chest: convertGear(llmBuild.chest),
-      holster: convertGear(llmBuild.holster),
-      backpack: convertGear(llmBuild.backpack),
-      gloves: convertGear(llmBuild.gloves),
-      kneepads: convertGear(llmBuild.kneepads),
+      mask: convertGear(llmBuild.mask, GearType.Mask),
+      chest: convertGear(llmBuild.chest, GearType.Chest),
+      holster: convertGear(llmBuild.holster, GearType.Holster),
+      backpack: convertGear(llmBuild.backpack, GearType.Backpack),
+      gloves: convertGear(llmBuild.gloves, GearType.Gloves),
+      kneepads: convertGear(llmBuild.kneepads, GearType.Kneepads),
     };
   }
 
@@ -202,53 +305,40 @@ class Build {
       skill2: this.skill2,
       watch: this.watch,
       createdAt: this.createdAt,
-      updatedAt: this.updatedAt
+      updatedAt: this.updatedAt,
     };
   }
 
   static fromJSON(json: any): Build {
     const buildData = { ...json };
-    
+
     // Convert gear slot data to BuildGear instances if they exist and aren't already instances
-    if (buildData.mask && !(buildData.mask instanceof BuildGear)) {
-      buildData.mask = BuildGear.fromJSON(buildData.mask);
+    const gearSlots = ['mask', 'chest', 'holster', 'backpack', 'gloves', 'kneepads'] as const;
+    for (const slot of gearSlots) {
+      if (buildData[slot] && !(buildData[slot] instanceof BuildGear)) {
+        try {
+          buildData[slot] = BuildGear.fromJSON(buildData[slot]);
+        } catch (error) {
+          console.warn(`Build.fromJSON: failed to restore ${slot}, keeping raw data`, error);
+        }
+      }
     }
-    if (buildData.chest && !(buildData.chest instanceof BuildGear)) {
-      buildData.chest = BuildGear.fromJSON(buildData.chest);
-    }
-    if (buildData.holster && !(buildData.holster instanceof BuildGear)) {
-      buildData.holster = BuildGear.fromJSON(buildData.holster);
-    }
-    if (buildData.backpack && !(buildData.backpack instanceof BuildGear)) {
-      buildData.backpack = BuildGear.fromJSON(buildData.backpack);
-    }
-    if (buildData.gloves && !(buildData.gloves instanceof BuildGear)) {
-      buildData.gloves = BuildGear.fromJSON(buildData.gloves);
-    }
-    if (buildData.kneepads && !(buildData.kneepads instanceof BuildGear)) {
-      buildData.kneepads = BuildGear.fromJSON(buildData.kneepads);
-    }
-    
+
     // Convert weapon slot data to BuildWeapon instances if they exist and aren't already instances
-    if (buildData.primaryWeapon && !(buildData.primaryWeapon instanceof BuildWeapon)) {
-      buildData.primaryWeapon = new BuildWeapon(
-        buildData.primaryWeapon.weapon,
-        buildData.primaryWeapon.configuredModSlots || {}
-      );
+    const weaponSlots = ['primaryWeapon', 'secondaryWeapon', 'pistol'] as const;
+    for (const slot of weaponSlots) {
+      if (buildData[slot] && !(buildData[slot] instanceof BuildWeapon)) {
+        try {
+          buildData[slot] = new BuildWeapon(
+            buildData[slot].weapon,
+            buildData[slot].configuredModSlots || {},
+          );
+        } catch (error) {
+          console.warn(`Build.fromJSON: failed to restore ${slot}, keeping raw data`, error);
+        }
+      }
     }
-    if (buildData.secondaryWeapon && !(buildData.secondaryWeapon instanceof BuildWeapon)) {
-      buildData.secondaryWeapon = new BuildWeapon(
-        buildData.secondaryWeapon.weapon,
-        buildData.secondaryWeapon.configuredModSlots || {}
-      );
-    }
-    if (buildData.pistol && !(buildData.pistol instanceof BuildWeapon)) {
-      buildData.pistol = new BuildWeapon(
-        buildData.pistol.weapon,
-        buildData.pistol.configuredModSlots || {}
-      );
-    }
-    
+
     return new Build(buildData);
   }
 
@@ -257,7 +347,7 @@ class Build {
       ...this.toJSON(),
       id: null, // Generate new ID for clone
       createdAt: null,
-      updatedAt: null
+      updatedAt: null,
     });
   }
 }
