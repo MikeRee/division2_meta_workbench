@@ -250,16 +250,19 @@ class BuildGear {
           ? Object.keys(item.minor2)
           : [];
 
-      const minor1IsCore = minor1Keys.includes('armor') || minor1Keys.includes('skill');
-      const minor2IsCore = minor2Keys.includes('armor') || minor2Keys.includes('skill');
+      const hasArmor = (keys: string[]) => keys.includes('armor');
+      const hasSkill = (keys: string[]) => keys.some((k) => k.startsWith('skill'));
+
+      const minor1IsCore = hasArmor(minor1Keys) || hasSkill(minor1Keys);
+      const minor2IsCore = hasArmor(minor2Keys) || hasSkill(minor2Keys);
 
       // Add armor tier if found in minor1 or minor2
-      if (minor1Keys.includes('armor') || minor2Keys.includes('armor')) {
+      if (hasArmor(minor1Keys) || hasArmor(minor2Keys)) {
         this.core.push({ type: CoreType.Armor, value: getDefaultCoreValue(CoreType.Armor) });
       }
 
       // Add skill tier if found in minor1 or minor2
-      if (minor1Keys.includes('skill') || minor2Keys.includes('skill')) {
+      if (hasSkill(minor1Keys) || hasSkill(minor2Keys)) {
         this.core.push({
           type: CoreType.SkillTier,
           value: getDefaultCoreValue(CoreType.SkillTier),

@@ -1,8 +1,14 @@
-import BuildGear from './BuildGear';
+import BuildGear, { GearSource, GearType } from './BuildGear';
 import { BuildWeapon } from './BuildWeapon';
+import { CoreType, getDefaultCoreValue, parseCoreType } from './CoreValue';
 import { KeenersWatchStats } from './KeenersWatchStats';
 import LlmBuild from './LlmBuild';
+import NamedGear from './NamedGear';
 import { useLookupStore } from '../stores/useLookupStore';
+import useCleanDataStore from '../stores/useCleanDataStore';
+import { fuzzyFind } from '../utils/fuzzySearch';
+import Gearset from './Gearset';
+import Brandset from './Brandset';
 
 function getDefaultWatchStats(): KeenersWatchStats {
   const keenersWatchData = useLookupStore.getState().keenersWatch;
@@ -203,13 +209,68 @@ class Build {
       return null;
     };
 
-    const convertGear = (llmGear: any): BuildGear | null => {
+    const convertGear = (llmGear: any, gearType: GearType): BuildGear | null => {
       if (!llmGear) return null;
 
-      // This is a simplified conversion - in practice, you'd need to:
-      // 1. Look up the actual gear source (brandset/gearset/named/exotic)
-      // 2. Reconstruct the full GearModValue objects from the keys
-      // For now, returning null as we need more context about available gear
+      const name: string = llmGear.name;
+      const llmCores: CoreType[] = llmGear.core || [];
+
+      const storeState = useCleanDataStore.getState();
+
+      // Try named/exotic gear first
+      const namedGear: NamedGear[] = storeState.getCleanData('namedGear') || [];
+      let namedMatch = fuzzyFind(name, namedGear, (ng) => ng.name);
+
+      if (namedMatch) {
+        try {
+          const buildGear = new BuildGear(namedMatch);
+
+          // If the gear has 3 cores (exotic with all 3), keep them as-is from the data
+          // Otherwise (1 core), assign the first LLM-provided core
+          if (buildGear.core.length < 3 && llmCores.length > 0) {
+            const coreType = parseCoreType(llmCores[0]);
+            buildGear.core = [{ type: coreType, value: getDefaultCoreValue(coreType) }];
+          }
+
+          return buildGear;
+        } catch (e) {
+          console.warn(`Build.fromLlm: failed to create BuildGear from named gear "${name}"`, e);
+        }
+      }
+
+      // Try gearsets
+      const gearsets: Gearset[] = storeState.getCleanData('gearsets') || [];
+      const gearsetMatch = fuzzyFind(name, gearsets, (gs) => gs.name);
+      if (gearsetMatch) {
+        try {
+          const buildGear = new BuildGear(gearsetMatch, gearType);
+          if (llmCores.length > 0) {
+            const coreType = parseCoreType(llmCores[0]);
+            buildGear.core = [{ type: coreType, value: getDefaultCoreValue(coreType) }];
+          }
+          return buildGear;
+        } catch (e) {
+          console.warn(`Build.fromLlm: failed to create BuildGear from gearset "${name}"`, e);
+        }
+      }
+
+      // Try brandsets
+      const brandsets: Brandset[] = storeState.getCleanData('brandsets') || [];
+      const brandMatch = fuzzyFind(name, brandsets, (bs) => bs.brand);
+      if (brandMatch) {
+        try {
+          const buildGear = new BuildGear(brandMatch, gearType);
+          if (llmCores.length > 0) {
+            const coreType = parseCoreType(llmCores[0]);
+            buildGear.core = [{ type: coreType, value: getDefaultCoreValue(coreType) }];
+          }
+          return buildGear;
+        } catch (e) {
+          console.warn(`Build.fromLlm: failed to create BuildGear from brandset "${name}"`, e);
+        }
+      }
+
+      console.warn(`Build.fromLlm: no match found for gear "${name}"`);
       return null;
     };
 
@@ -217,12 +278,12 @@ class Build {
       primaryWeapon: convertWeapon(llmBuild.primaryWeapon),
       secondaryWeapon: convertWeapon(llmBuild.secondaryWeapon),
       pistol: convertWeapon(llmBuild.pistol),
-      mask: convertGear(llmBuild.mask),
-      chest: convertGear(llmBuild.chest),
-      holster: convertGear(llmBuild.holster),
-      backpack: convertGear(llmBuild.backpack),
-      gloves: convertGear(llmBuild.gloves),
-      kneepads: convertGear(llmBuild.kneepads),
+      mask: convertGear(llmBuild.mask, GearType.Mask),
+      chest: convertGear(llmBuild.chest, GearType.Chest),
+      holster: convertGear(llmBuild.holster, GearType.Holster),
+      backpack: convertGear(llmBuild.backpack, GearType.Backpack),
+      gloves: convertGear(llmBuild.gloves, GearType.Gloves),
+      kneepads: convertGear(llmBuild.kneepads, GearType.Kneepads),
     };
   }
 

@@ -12,10 +12,11 @@ import { getBasePath } from '../utils/basePath';
 import { fuzzyFind } from '../utils/fuzzySearch';
 import { parseCoreType, getDefaultCoreValue } from '../models/CoreValue';
 
-interface GeminiModel {
+interface OpenRouterModel {
+  id: string;
   name: string;
-  displayName: string;
-  supportedGenerationMethods: string[];
+  promptPrice: string;
+  completionPrice: string;
 }
 
 interface ChatMessage {
@@ -35,10 +36,10 @@ interface Prompts {
 
 function ChatWindow() {
   const [isConfigOpen, setIsConfigOpen] = useState(false);
-  const [geminiApiKey, setGeminiApiKey] = useState('');
-  const [selectedModel, setSelectedModel] = useState('models/gemini-1.5-flash');
+  const [openRouterApiKey, setOpenRouterApiKey] = useState('');
+  const [selectedModel, setSelectedModel] = useState('google/gemini-flash-1.5');
   const [tempApiKey, setTempApiKey] = useState('');
-  const [availableModels, setAvailableModels] = useState<GeminiModel[]>([]);
+  const [availableModels, setAvailableModels] = useState<OpenRouterModel[]>([]);
   const [isLoadingModels, setIsLoadingModels] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
     // Load messages from localStorage on initialization
@@ -65,8 +66,14 @@ function ChatWindow() {
   const jsonViewerRef = useRef<HTMLPreElement>(null);
 
   // Checkbox states
-  const [includeBuild, setIncludeBuild] = useState(true);
-  const [includeSeasonalModifiers, setIncludeSeasonalModifiers] = useState(true);
+  const [includeBuild, setIncludeBuild] = useState(() => {
+    const saved = localStorage.getItem('chatIncludeBuild');
+    return saved !== null ? saved === 'true' : false;
+  });
+  const [includeSeasonalModifiers, setIncludeSeasonalModifiers] = useState(() => {
+    const saved = localStorage.getItem('chatIncludeModifiers');
+    return saved !== null ? saved === 'true' : false;
+  });
   const [seasonalModifierText, setSeasonalModifierText] = useState('');
   const [showSeasonalInput, setShowSeasonalInput] = useState(false);
 
@@ -92,12 +99,12 @@ function ChatWindow() {
   const [jsonEditorValue, setJsonEditorValue] = useState('');
 
   useEffect(() => {
-    const savedKey = localStorage.getItem('geminiApiKey');
+    const savedKey = localStorage.getItem('openRouterApiKey');
     if (savedKey) {
-      setGeminiApiKey(savedKey);
+      setOpenRouterApiKey(savedKey);
       fetchAvailableModels(savedKey);
     }
-    const savedModel = localStorage.getItem('geminiModel');
+    const savedModel = localStorage.getItem('openRouterModel');
     if (savedModel) {
       setSelectedModel(savedModel);
     }
@@ -111,12 +118,12 @@ function ChatWindow() {
 
           // Load saved prompts from localStorage or use defaults
           const savedPrompts: Prompts = {
-            system: localStorage.getItem('geminiPrompt_system') || defaultPrompts.system || '',
-            query: localStorage.getItem('geminiPrompt_query') || defaultPrompts.query || '',
+            system: localStorage.getItem('openRouterPrompt_system') || defaultPrompts.system || '',
+            query: localStorage.getItem('openRouterPrompt_query') || defaultPrompts.query || '',
             seasonal:
-              localStorage.getItem('geminiPrompt_seasonal') || defaultPrompts.seasonal || '',
+              localStorage.getItem('openRouterPrompt_seasonal') || defaultPrompts.seasonal || '',
             existing:
-              localStorage.getItem('geminiPrompt_existing') || defaultPrompts.existing || '',
+              localStorage.getItem('openRouterPrompt_existing') || defaultPrompts.existing || '',
           };
 
           setPrompts(savedPrompts);
@@ -155,25 +162,32 @@ function ChatWindow() {
 
     setIsLoadingModels(true);
     try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`,
-      );
+      const response = await fetch('https://openrouter.ai/api/v1/models', {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+        },
+      });
 
       if (response.ok) {
         const data = await response.json();
-        const models = data.models
-          .filter((model: any) => model.supportedGenerationMethods?.includes('generateContent'))
-          .map((model: any) => ({
-            name: model.name, // Keep full name like "models/gemini-1.5-flash"
-            displayName: model.displayName || model.name.replace('models/', ''),
-            supportedGenerationMethods: model.supportedGenerationMethods,
-          }));
+        const models: OpenRouterModel[] = data.data
+          .map((model: any) => {
+            const promptPrice = parseFloat(model.pricing?.prompt || '0') * 1_000_000;
+            const completionPrice = parseFloat(model.pricing?.completion || '0') * 1_000_000;
+            return {
+              id: model.id,
+              name: model.name || model.id,
+              promptPrice: promptPrice < 0.01 ? 'free' : `$${promptPrice.toFixed(2)}`,
+              completionPrice: completionPrice < 0.01 ? 'free' : `$${completionPrice.toFixed(2)}`,
+            };
+          })
+          .sort((a: OpenRouterModel, b: OpenRouterModel) => a.name.localeCompare(b.name));
         setAvailableModels(models);
 
         // Update selected model if it's not in the list
-        if (models.length > 0 && !models.find((m: any) => m.name === selectedModel)) {
-          setSelectedModel(models[0].name);
-          localStorage.setItem('geminiModel', models[0].name);
+        if (models.length > 0 && !models.find((m) => m.id === selectedModel)) {
+          setSelectedModel(models[0].id);
+          localStorage.setItem('openRouterModel', models[0].id);
         }
       }
     } catch (error) {
@@ -354,7 +368,14 @@ function ChatWindow() {
             : new BuildGear(foundItem);
 
         // Apply core attributes from LlmGear if specified
-        if (llmGear.core && Array.isArray(llmGear.core) && llmGear.core.length > 0) {
+        // If the gear already has 3 cores (exotic with all 3), keep them as-is from the data
+        // Otherwise, use the LLM-provided cores (typically just the first one)
+        if (
+          buildGear.core.length < 3 &&
+          llmGear.core &&
+          Array.isArray(llmGear.core) &&
+          llmGear.core.length > 0
+        ) {
           buildGear.core = llmGear.core.map((coreType: string) => ({
             type: parseCoreType(coreType),
             value: getDefaultCoreValue(parseCoreType(coreType)),
@@ -563,9 +584,9 @@ function ChatWindow() {
   };
 
   const sendMessage = async () => {
-    if (!inputValue.trim() || !geminiApiKey) {
-      if (!geminiApiKey) {
-        setLlmStatus('Please configure your Gemini API key');
+    if (!inputValue.trim() || !openRouterApiKey) {
+      if (!openRouterApiKey) {
+        setLlmStatus('Please configure your OpenRouter API key');
       }
       return;
     }
@@ -585,7 +606,7 @@ function ChatWindow() {
       userPrompt += '\n\n' + prompts.seasonal + seasonalModifierText;
     }
 
-    console.log('=== GEMINI REQUEST ===');
+    console.log('=== OPENROUTER REQUEST ===');
     console.log('User Input:', inputValue);
     console.log('Include Build:', includeBuild);
     console.log('Include Seasonal:', includeSeasonalModifiers);
@@ -604,7 +625,7 @@ function ChatWindow() {
       inputRef.current.style.height = 'auto';
     }
     setIsGenerating(true);
-    setLlmStatus('Connecting to Gemini...');
+    setLlmStatus('Connecting to OpenRouter...');
 
     // Add placeholder for assistant message
     setMessages((prev) => [
@@ -617,81 +638,54 @@ function ChatWindow() {
     ]);
 
     try {
-      // Prepend system prompt to user prompt for models that don't support system_instruction
-      const fullPrompt = prompts.system + '\n\n' + userPrompt;
-
       console.log('System Prompt:', prompts.system);
       console.log('System Prompt Length:', prompts.system.length);
-      console.log('Total Prompt Length:', fullPrompt.length);
 
-      // Build conversation history for Gemini
-      // First message includes system prompt + user prompt
-      // Subsequent messages are user/model pairs
-      const contents = [];
+      // Build conversation history in OpenAI chat format
+      const chatMessages: { role: string; content: string }[] = [
+        { role: 'system', content: prompts.system },
+      ];
 
-      if (messages.length === 0) {
-        // First message - include system prompt with user prompt
-        contents.push({
-          role: 'user',
-          parts: [{ text: fullPrompt }],
-        });
-      } else {
-        // Build history from previous messages
-        // First user message should include system prompt
-        let isFirstUserMessage = true;
-
-        for (const msg of messages) {
-          if (msg.role === 'user') {
-            contents.push({
-              role: 'user',
-              parts: [
-                {
-                  text: isFirstUserMessage
-                    ? prompts.system + '\n\n' + prompts.query + msg.content
-                    : prompts.query + msg.content,
-                },
-              ],
-            });
-            isFirstUserMessage = false;
-          } else if (msg.role === 'assistant' && msg.content) {
-            contents.push({
-              role: 'model',
-              parts: [{ text: msg.content }],
-            });
-          }
+      for (const msg of messages) {
+        if (msg.role === 'user') {
+          chatMessages.push({
+            role: 'user',
+            content: prompts.query + msg.content,
+          });
+        } else if (msg.role === 'assistant' && msg.content) {
+          chatMessages.push({
+            role: 'assistant',
+            content: msg.content,
+          });
         }
-
-        // Add current message
-        contents.push({
-          role: 'user',
-          parts: [{ text: userPrompt }],
-        });
       }
 
-      console.log('Conversation History Length:', contents.length);
-      console.log('Conversation Contents:', contents);
+      // Add current message
+      chatMessages.push({
+        role: 'user',
+        content: userPrompt,
+      });
 
-      // Use non-streaming endpoint
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1/${selectedModel}:generateContent?key=${geminiApiKey}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            contents: contents,
-            generationConfig: {
-              temperature: 0.7,
-              maxOutputTokens: 8192, // Increased from 2048 to allow full responses
-            },
-          }),
+      console.log('Conversation History Length:', chatMessages.length);
+      console.log('Conversation Contents:', chatMessages);
+
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${openRouterApiKey}`,
         },
-      );
+        body: JSON.stringify({
+          model: selectedModel,
+          messages: chatMessages,
+          temperature: 0.7,
+          max_tokens: 8192,
+        }),
+      });
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('=== GEMINI ERROR ===');
+        console.error('=== OPENROUTER ERROR ===');
         console.error('Status:', response.status);
         console.error('Response:', errorText);
         throw new Error(`API error: ${response.status}`);
@@ -701,57 +695,44 @@ function ChatWindow() {
 
       const data = await response.json();
 
-      console.log('=== GEMINI RESPONSE ===');
+      console.log('=== OPENROUTER RESPONSE ===');
       console.log('Full Response:', JSON.stringify(data, null, 2));
 
-      // Extract text from the response
-      const candidates = data.candidates;
-      if (candidates && candidates.length > 0) {
-        const content = candidates[0].content;
-        console.log('Candidate Content:', content);
-        console.log('Finish Reason:', candidates[0].finishReason);
+      const choice = data.choices?.[0];
+      if (choice?.message?.content) {
+        const text = choice.message.content;
+        console.log('Extracted Text Length:', text.length);
+        console.log('Extracted Text:', text);
 
-        if (content && content.parts && content.parts.length > 0) {
-          const text = content.parts[0].text;
-          console.log('Extracted Text Length:', text?.length);
-          console.log('Extracted Text:', text);
+        // Parse the response and apply model if present
+        const { message, modelApplied, modelJson } = parseAndApplyModel(text);
 
-          if (text) {
-            // Parse the response and apply model if present
-            const { message, modelApplied, modelJson } = parseAndApplyModel(text);
+        console.log('=== PARSED RESPONSE ===');
+        console.log('Message:', message);
+        console.log('Model Applied:', modelApplied);
 
-            console.log('=== PARSED RESPONSE ===');
-            console.log('Message:', message);
-            console.log('Model Applied:', modelApplied);
-
-            setMessages((prev) => {
-              const newMessages = [...prev];
-              const lastMessage = newMessages[newMessages.length - 1];
-              if (lastMessage?.role === 'assistant') {
-                lastMessage.content = message;
-                lastMessage.modelApplied = modelApplied;
-                lastMessage.modelJson = modelJson;
-              }
-              return [...newMessages];
-            });
-
-            if (modelApplied) {
-              setLlmStatus('Build updated successfully!');
-              setTimeout(() => setLlmStatus(''), 2000);
-            }
-          } else {
-            throw new Error('No text in response');
+        setMessages((prev) => {
+          const newMessages = [...prev];
+          const lastMessage = newMessages[newMessages.length - 1];
+          if (lastMessage?.role === 'assistant') {
+            lastMessage.content = message;
+            lastMessage.modelApplied = modelApplied;
+            lastMessage.modelJson = modelJson;
           }
-        } else {
-          throw new Error('No content in response');
+          return [...newMessages];
+        });
+
+        if (modelApplied) {
+          setLlmStatus('Build updated successfully!');
+          setTimeout(() => setLlmStatus(''), 2000);
         }
       } else {
-        throw new Error('No candidates in response');
+        throw new Error('No response content from model');
       }
 
       setLlmStatus('');
     } catch (error) {
-      console.error('=== GEMINI ERROR ===');
+      console.error('=== OPENROUTER ERROR ===');
       console.error('Error sending message:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to generate response';
       setLlmStatus(`Error: ${errorMessage}`);
@@ -778,13 +759,13 @@ function ChatWindow() {
   };
 
   const handleSaveConfig = () => {
-    localStorage.setItem('geminiApiKey', tempApiKey);
-    setGeminiApiKey(tempApiKey);
+    localStorage.setItem('openRouterApiKey', tempApiKey);
+    setOpenRouterApiKey(tempApiKey);
     fetchAvailableModels(tempApiKey);
 
     // Save prompts
     Object.entries(tempPrompts).forEach(([key, value]) => {
-      localStorage.setItem(`geminiPrompt_${key}`, value);
+      localStorage.setItem(`openRouterPrompt_${key}`, value);
     });
     setPrompts(tempPrompts);
 
@@ -794,11 +775,11 @@ function ChatWindow() {
   const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const model = e.target.value;
     setSelectedModel(model);
-    localStorage.setItem('geminiModel', model);
+    localStorage.setItem('openRouterModel', model);
   };
 
   const handleOpenConfig = () => {
-    setTempApiKey(geminiApiKey);
+    setTempApiKey(openRouterApiKey);
     setTempPrompts(prompts);
     setIsConfigOpen(true);
   };
@@ -889,7 +870,11 @@ function ChatWindow() {
               🗑️
             </button>
           )}
-          <button className="config-button" onClick={handleOpenConfig} title="Configure Gemini API">
+          <button
+            className="config-button"
+            onClick={handleOpenConfig}
+            title="Configure OpenRouter API"
+          >
             ⚙️
           </button>
         </div>
@@ -897,15 +882,15 @@ function ChatWindow() {
       <div className="chat-messages">
         {messages.length === 0 ? (
           <div className="empty-state">
-            {geminiApiKey
+            {openRouterApiKey
               ? 'Start a conversation...'
-              : 'Configure your Gemini API key to start chatting'}
+              : 'Configure your OpenRouter API key to start chatting'}
           </div>
         ) : (
           messages.map((message, index) => (
             <div key={index} className={`message ${message.role}`}>
               <div className="message-role">
-                {message.role === 'user' ? 'You' : 'Gemini'}
+                {message.role === 'user' ? 'You' : 'Assistant'}
                 {message.modelApplied && message.modelJson && (
                   <span
                     className="model-applied-badge clickable"
@@ -938,15 +923,16 @@ function ChatWindow() {
               <option>Loading models...</option>
             ) : availableModels.length > 0 ? (
               availableModels.map((model) => (
-                <option key={model.name} value={model.name}>
-                  {model.displayName}
+                <option key={model.id} value={model.id}>
+                  {model.name} ({model.promptPrice}/{model.completionPrice} per 1M tokens)
                 </option>
               ))
             ) : (
               <>
-                <option value="models/gemini-1.5-flash">Gemini 1.5 Flash</option>
-                <option value="models/gemini-1.5-pro">Gemini 1.5 Pro</option>
-                <option value="models/gemini-2.0-flash-exp">Gemini 2.0 Flash (Exp)</option>
+                <option value="google/gemini-flash-1.5">Gemini 1.5 Flash</option>
+                <option value="google/gemini-pro-1.5">Gemini 1.5 Pro</option>
+                <option value="openai/gpt-4o">GPT-4o</option>
+                <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
               </>
             )}
           </select>
@@ -954,15 +940,21 @@ function ChatWindow() {
             <input
               type="checkbox"
               checked={includeBuild}
-              onChange={(e) => setIncludeBuild(e.target.checked)}
+              onChange={(e) => {
+                setIncludeBuild(e.target.checked);
+                localStorage.setItem('chatIncludeBuild', String(e.target.checked));
+              }}
             />
-            Include Build
+            Build
           </label>
           <label className="chat-checkbox">
             <input
               type="checkbox"
               checked={includeSeasonalModifiers}
-              onChange={(e) => setIncludeSeasonalModifiers(e.target.checked)}
+              onChange={(e) => {
+                setIncludeSeasonalModifiers(e.target.checked);
+                localStorage.setItem('chatIncludeModifiers', String(e.target.checked));
+              }}
             />
             <span
               className="seasonal-link"
@@ -971,7 +963,7 @@ function ChatWindow() {
                 setShowSeasonalInput(!showSeasonalInput);
               }}
             >
-              Seasonal Modifiers
+              Modifiers
             </span>
           </label>
         </div>
@@ -979,7 +971,7 @@ function ChatWindow() {
           <div className="seasonal-input-container">
             <textarea
               className="seasonal-textarea"
-              placeholder="Explain the seasonal modifier to Gemini..."
+              placeholder="Explain the seasonal modifier..."
               value={seasonalModifierText}
               onChange={(e) => setSeasonalModifierText(e.target.value)}
             />
@@ -1005,15 +997,15 @@ function ChatWindow() {
       {isConfigOpen && (
         <div className="overlay-backdrop" onClick={() => setIsConfigOpen(false)}>
           <div className="overlay-content config-overlay" onClick={(e) => e.stopPropagation()}>
-            <h2>Gemini Configuration</h2>
+            <h2>OpenRouter Configuration</h2>
             <div className="config-field">
-              <label htmlFor="geminiApiKey">Gemini API Key</label>
+              <label htmlFor="openRouterApiKey">OpenRouter API Key</label>
               <input
-                id="geminiApiKey"
+                id="openRouterApiKey"
                 type="password"
                 value={tempApiKey}
                 onChange={(e) => setTempApiKey(e.target.value)}
-                placeholder="Enter your Gemini API Key"
+                placeholder="Enter your OpenRouter API Key"
               />
             </div>
 
