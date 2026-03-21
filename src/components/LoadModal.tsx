@@ -5,6 +5,7 @@ import { useCleanDataStore, getModelFields, CLASS_CONSTRUCTORS } from '../stores
 import { useRulesStore, SYSTEM_RULES } from '../stores/useRulesStore';
 import { MdDownload, MdEditDocument, MdCleaningServices } from 'react-icons/md';
 import { applyBindings } from '../utils/dataNormalizer';
+import { getBasePath } from '../utils/basePath';
 
 /**
  * Format a value for display in the Source column.
@@ -34,7 +35,9 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     setViewerType(type);
   };
   const [viewerUpdateFn, setViewerUpdateFn] = useState<((data: any) => void) | null>(null);
-  const [viewerActions, setViewerActions] = useState<Array<{ label: string; onClick: () => void }>>([]);
+  const [viewerActions, setViewerActions] = useState<Array<{ label: string; onClick: () => void }>>(
+    [],
+  );
   const [editedJson, setEditedJson] = useState('');
   const [dataExists, setDataExists] = useState<Record<string, boolean>>({});
   const [cleanDataExists, setCleanDataExists] = useState<Record<string, boolean>>({});
@@ -71,10 +74,10 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
   const [showTestValidate, setShowTestValidate] = useState(true);
   const [testItemIndex, setTestItemIndex] = useState(0);
   const [testAllPassed, setTestAllPassed] = useState<boolean | null>(null);
-  
+
   // Subscribe to rules store for reactive updates
   const rulesStore = useRulesStore();
-  
+
   const [pages, setPages] = useState<Record<string, string>>({
     weapons: 'Weapons',
     weaponTalents: 'Weapon Talents',
@@ -84,23 +87,27 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     gearTalents: 'Gear Talents',
     namedGear: 'Gear: Named + Exotics',
     skills: 'Skill List',
-    weaponMods: 'Weapon Mods'
+    weaponMods: 'Weapon Mods',
   });
 
   const csvFiles = [
     { key: 'weaponAttributes', label: 'Weapon Attributes', filename: 'weapon_attributes.csv' },
-    { key: 'weaponTypeAttributes', label: 'Weapon Type Attributes', filename: 'weapon_type_attributes.csv' },
+    {
+      key: 'weaponTypeAttributes',
+      label: 'Weapon Type Attributes',
+      filename: 'weapon_type_attributes.csv',
+    },
     { key: 'gearAttributes', label: 'Gear Attributes', filename: 'gear_attributes.csv' },
     { key: 'gearMods', label: 'Gear Mods', filename: 'gear_mods.csv' },
     { key: 'keenersWatch', label: "Keener's Watch Stats", filename: 'keeners_watch_max_stats.csv' },
     { key: 'statusImmunities', label: 'Status Immunities', filename: 'status_immunities.csv' },
-    { key: 'specializations', label: 'Specializations', filename: 'specializations.json' }
+    { key: 'specializations', label: 'Specializations', filename: 'specializations.json' },
   ];
 
   useEffect(() => {
     const savedKey = localStorage.getItem('googleApiKey');
     if (savedKey) setApiKey(savedKey);
-    
+
     const savedSpreadsheet = localStorage.getItem('division2GearSpreadsheet');
     if (savedSpreadsheet) setSpreadsheetUrl(savedSpreadsheet);
 
@@ -110,44 +117,54 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
       const counts: Record<string, number> = {};
       const cleanExists: Record<string, boolean> = {};
       const cleanCounts: Record<string, number> = {};
-      
+
       const rawStore = useRawDataStore.getState();
       const cleanStore = useCleanDataStore.getState();
-      
-      Object.keys(pages).forEach(dataType => {
+
+      Object.keys(pages).forEach((dataType) => {
         const data = rawStore.getRawData(dataType as any);
         exists[dataType] = data && data.length > 0;
         counts[dataType] = data ? data.length : 0;
-        
+
         const cleanData = cleanStore.getCleanData(dataType as any);
-        cleanExists[dataType] = cleanData && (Array.isArray(cleanData) ? cleanData.length > 0 : true);
+        cleanExists[dataType] =
+          cleanData && (Array.isArray(cleanData) ? cleanData.length > 0 : true);
         cleanCounts[dataType] = cleanData && Array.isArray(cleanData) ? cleanData.length : 0;
       });
-      
+
       // Check CSV files and load from lookups.json if needed
-      const lookupTypes = ['weaponAttributes', 'weaponTypeAttributes', 'gearAttributes', 'gearMods', 'keenersWatch', 'statusImmunities', 'specializations'];
+      const lookupTypes = [
+        'weaponAttributes',
+        'weaponTypeAttributes',
+        'gearAttributes',
+        'gearMods',
+        'keenersWatch',
+        'statusImmunities',
+        'specializations',
+      ];
       let lookupsData: any = null;
-      
+
       for (const { key } of csvFiles) {
         const data = rawStore.getRawData(key as any);
         exists[key] = data && data.length > 0;
         counts[key] = data ? data.length : 0;
-        
+
         let cleanData = cleanStore.getCleanData(key as any);
-        
+
         // If clean data is empty and this is a lookup type, load from lookups.json
-        const isEmpty = !cleanData || 
-                       (Array.isArray(cleanData) && cleanData.length === 0) ||
-                       (typeof cleanData === 'object' && Object.keys(cleanData).length === 0);
-        
+        const isEmpty =
+          !cleanData ||
+          (Array.isArray(cleanData) && cleanData.length === 0) ||
+          (typeof cleanData === 'object' && Object.keys(cleanData).length === 0);
+
         if (isEmpty && lookupTypes.includes(key)) {
           try {
             // Load lookups.json only once
             if (!lookupsData) {
-              const response = await fetch('/clean/lookups.json');
+              const response = await fetch(`${getBasePath()}/clean/lookups.json`);
               lookupsData = await response.json();
             }
-            
+
             const lookupData = lookupsData[key];
             if (lookupData) {
               // Save to clean store in original structure (no conversion)
@@ -158,7 +175,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
             console.error(`Failed to load ${key} from lookups.json:`, error);
           }
         }
-        
+
         // Count based on data structure
         let count = 0;
         if (cleanData) {
@@ -168,11 +185,11 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
             count = Object.keys(cleanData).length;
           }
         }
-        
+
         cleanExists[key] = cleanData && count > 0;
         cleanCounts[key] = count;
       }
-      
+
       setDataExists(exists);
       setDataCounts(counts);
       setCleanDataExists(cleanExists);
@@ -197,63 +214,63 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
   };
 
   const handlePageChange = (key: string, value: string) => {
-    setPages(prev => ({ ...prev, [key]: value }));
+    setPages((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleLoad = async (dataType: string) => {
     console.log(`[LoadModal] handleLoad called for: ${dataType}`);
-    setLoadingStates(prev => {
+    setLoadingStates((prev) => {
       console.log(`[LoadModal] Setting loading state for ${dataType} to true`);
       return { ...prev, [dataType]: true };
     });
     try {
-      console.log(`[LoadModal] About to call onLoadData for ${dataType} with page: ${pages[dataType]}`);
+      console.log(
+        `[LoadModal] About to call onLoadData for ${dataType} with page: ${pages[dataType]}`,
+      );
       await onLoadData(dataType, pages[dataType]);
       console.log(`[LoadModal] onLoadData completed for ${dataType}`);
     } catch (error) {
       console.error(`[LoadModal] Error in onLoadData for ${dataType}:`, error);
     } finally {
-      setLoadingStates(prev => {
+      setLoadingStates((prev) => {
         console.log(`[LoadModal] Setting loading state for ${dataType} to false`);
         return { ...prev, [dataType]: false };
       });
       // Refresh data existence check after load
       const rawStore = useRawDataStore.getState();
       const data = rawStore.getRawData(dataType as any);
-      setDataExists(prev => ({ ...prev, [dataType]: data && data.length > 0 }));
-      setDataCounts(prev => ({ ...prev, [dataType]: data ? data.length : 0 }));
+      setDataExists((prev) => ({ ...prev, [dataType]: data && data.length > 0 }));
+      setDataCounts((prev) => ({ ...prev, [dataType]: data ? data.length : 0 }));
     }
   };
 
   const handleLoadCSV = async (csvKey: string, filename: string) => {
     console.log(`[LoadModal] handleLoadCSV called for: ${csvKey}`);
-    setLoadingStates(prev => {
+    setLoadingStates((prev) => {
       console.log(`[LoadModal] Setting loading state for ${csvKey} to true`);
       return { ...prev, [csvKey]: true };
     });
     try {
       await onLoadData(csvKey, filename, true);
     } finally {
-      setLoadingStates(prev => {
+      setLoadingStates((prev) => {
         console.log(`[LoadModal] Setting loading state for ${csvKey} to false`);
         return { ...prev, [csvKey]: false };
       });
       // Refresh data existence check after load
       const rawStore = useRawDataStore.getState();
       const data = rawStore.getRawData(csvKey as any);
-      setDataExists(prev => ({ ...prev, [csvKey]: data && data.length > 0 }));
-      setDataCounts(prev => ({ ...prev, [csvKey]: data ? data.length : 0 }));
+      setDataExists((prev) => ({ ...prev, [csvKey]: data && data.length > 0 }));
+      setDataCounts((prev) => ({ ...prev, [csvKey]: data ? data.length : 0 }));
     }
   };
 
-
-
   const handleView = (dataType: string) => {
     if (loadingStates[dataType]) return;
-    
+
     const rawStore = useRawDataStore.getState();
     const data = rawStore.getRawData(dataType as any);
-    
+
     if (!data || data.length === 0) {
       alert(`No data available for ${dataType}`);
       return;
@@ -270,49 +287,68 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
 
   const handleViewClean = (dataType: string) => {
     if (loadingStates[dataType]) return;
-    
+
     const cleanStore = useCleanDataStore.getState();
     let data = cleanStore.getCleanData(dataType as any);
-    
+
     // Callback that writes to the clean store
     const cleanUpdateFn = (parsed: any) => {
       useCleanDataStore.getState().setCleanData(dataType as any, parsed);
     };
-    
+
     // Extra actions for clean data viewer
     const cleanActions = [
       { label: 'Import', onClick: () => handleImport() },
-      { label: 'Rules', onClick: () => { setRulesDataKey(dataType); setShowRulesOverlay(true); } },
+      {
+        label: 'Rules',
+        onClick: () => {
+          setRulesDataKey(dataType);
+          setShowRulesOverlay(true);
+        },
+      },
     ];
-    
+
     // If clean data is empty and this is a lookup-based type, try to load from lookups.json
-    const lookupTypes = ['weaponAttributes', 'weaponTypeAttributes', 'gearAttributes', 'gearMods', 'keenersWatch', 'statusImmunities', 'specializations'];
+    const lookupTypes = [
+      'weaponAttributes',
+      'weaponTypeAttributes',
+      'gearAttributes',
+      'gearMods',
+      'keenersWatch',
+      'statusImmunities',
+      'specializations',
+    ];
     const isLookupType = lookupTypes.includes(dataType);
-    
+
     // Lookup types don't need Import/Rules
     const actions = isLookupType ? [] : cleanActions;
-    
-    if ((!data || (typeof data === 'object' && Object.keys(data).length === 0) || (Array.isArray(data) && data.length === 0)) && isLookupType) {
+
+    if (
+      (!data ||
+        (typeof data === 'object' && Object.keys(data).length === 0) ||
+        (Array.isArray(data) && data.length === 0)) &&
+      isLookupType
+    ) {
       // Attempt to load from lookups.json
-      fetch('/clean/lookups.json')
-        .then(response => response.json())
-        .then(lookups => {
+      fetch(`${getBasePath()}/clean/lookups.json`)
+        .then((response) => response.json())
+        .then((lookups) => {
           const lookupData = lookups[dataType];
           if (lookupData) {
             cleanStore.setCleanData(dataType as any, lookupData);
-            
+
             setViewerData(lookupData);
             updateViewerType(dataType);
             setViewerUpdateFn(() => cleanUpdateFn);
             setViewerActions(actions);
             setEditedJson(JSON.stringify(lookupData, null, 2));
-            
+
             let count = 0;
             if (typeof lookupData === 'object') {
               count = Object.keys(lookupData).length;
             }
-            setCleanDataExists(prev => ({ ...prev, [dataType]: true }));
-            setCleanDataCounts(prev => ({ ...prev, [dataType]: count }));
+            setCleanDataExists((prev) => ({ ...prev, [dataType]: true }));
+            setCleanDataCounts((prev) => ({ ...prev, [dataType]: count }));
           } else {
             const displayData = data || {};
             setViewerData(displayData);
@@ -322,7 +358,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
             setEditedJson(JSON.stringify(displayData, null, 2));
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('Failed to load lookups.json:', error);
           const displayData = data || {};
           setViewerData(displayData);
@@ -357,12 +393,12 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
   const handleUpdateJson = () => {
     try {
       const parsed = JSON.parse(editedJson);
-      
+
       if (viewerUpdateFn) {
         viewerUpdateFn(parsed);
         alert(`${viewerType} updated successfully!`);
       }
-      
+
       handleCloseViewer();
     } catch (error: any) {
       alert(`Invalid JSON: ${error.message}`);
@@ -376,126 +412,182 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
       alert('No data type selected. Please open a clean data viewer first.');
       return;
     }
-    
+
     try {
       const rawStore = useRawDataStore.getState();
       const cleanStore = useCleanDataStore.getState();
       const rulesStore = useRulesStore.getState();
-      
+
       // Get raw data - force reload from files if store is empty for this type
       let rawData = rawStore.getRawData(currentViewerType as any);
-      console.log('[handleImport] Raw data for', currentViewerType, ':', rawData?.length || 0, 'items');
-      
+      console.log(
+        '[handleImport] Raw data for',
+        currentViewerType,
+        ':',
+        rawData?.length || 0,
+        'items',
+      );
+
       if (!rawData || !Array.isArray(rawData) || rawData.length === 0) {
         console.log('[handleImport] No raw data found, attempting to load from /raw files...');
         await rawStore.loadAllRawFiles();
         rawData = rawStore.getRawData(currentViewerType as any);
-        console.log('[handleImport] After loading, raw data for', currentViewerType, ':', rawData?.length || 0, 'items');
+        console.log(
+          '[handleImport] After loading, raw data for',
+          currentViewerType,
+          ':',
+          rawData?.length || 0,
+          'items',
+        );
       }
-      
+
       if (!rawData || !Array.isArray(rawData) || rawData.length === 0) {
-        alert(`No raw data available to import for "${currentViewerType}". Please load raw data first using the Load button.`);
+        alert(
+          `No raw data available to import for "${currentViewerType}". Please load raw data first using the Load button.`,
+        );
         return;
       }
-      
+
       // Get bindings for this data type
       const bindings = rulesStore.getBindings(currentViewerType as any);
-      console.log('[handleImport] Bindings for', currentViewerType, ':', bindings?.length || 0, 'bindings');
+      console.log(
+        '[handleImport] Bindings for',
+        currentViewerType,
+        ':',
+        bindings?.length || 0,
+        'bindings',
+      );
       console.log('[handleImport] Rules state:', {
         replaceRules: Object.keys(rulesStore.replaceRules),
         matchRules: Object.keys(rulesStore.matchRules),
         mappings: Object.keys(rulesStore.mappings),
       });
       if (bindings.length === 0) {
-        alert(`No bindings configured for "${currentViewerType}". Please configure bindings in the Rules section first.`);
+        alert(
+          `No bindings configured for "${currentViewerType}". Please configure bindings in the Rules section first.`,
+        );
         return;
       }
-    
+
       // Apply bindings to transform raw data using shared function
-      console.log('[handleImport] Bindings detail:', JSON.stringify(bindings.map(b => ({ dest: b.destination, src: b.source, rules: b.rules }))));
+      console.log(
+        '[handleImport] Bindings detail:',
+        JSON.stringify(
+          bindings.map((b) => ({ dest: b.destination, src: b.source, rules: b.rules })),
+        ),
+      );
       console.log('[handleImport] Replace rules:', JSON.stringify(rulesStore.replaceRules));
       console.log('[handleImport] Mappings:', Object.keys(rulesStore.mappings));
-      const processedData = applyBindings(rawData, bindings, {
-        replaceRules: rulesStore.replaceRules,
-        matchRules: rulesStore.matchRules,
-        mappings: rulesStore.mappings
-      }, { trackRules: true });
-      
-      console.log('[handleImport] Processed', processedData?.length || 0, 'items. First item:', processedData?.[0]);
+      const processedData = applyBindings(
+        rawData,
+        bindings,
+        {
+          replaceRules: rulesStore.replaceRules,
+          matchRules: rulesStore.matchRules,
+          mappings: rulesStore.mappings,
+        },
+        { trackRules: true },
+      );
+
+      console.log(
+        '[handleImport] Processed',
+        processedData?.length || 0,
+        'items. First item:',
+        processedData?.[0],
+      );
       console.log('[handleImport] First raw item was:', rawData?.[0]);
       const firstRaw = rawData?.[0];
       const firstProcessed = processedData?.[0];
       if (firstRaw) {
         console.log('[handleImport] Raw minor1:', firstRaw.minor1, '| minor2:', firstRaw.minor2);
-        console.log('[handleImport] Processed minor1:', firstProcessed?.minor1, '| minor2:', firstProcessed?.minor2);
+        console.log(
+          '[handleImport] Processed minor1:',
+          firstProcessed?.minor1,
+          '| minor2:',
+          firstProcessed?.minor2,
+        );
       }
       // Find an item that has "explosive" in minor1 or minor2
-      const explosiveItem = rawData?.find((item: any) => 
-        (item.minor1 && String(item.minor1).toLowerCase().includes('explosive')) ||
-        (item.minor2 && String(item.minor2).toLowerCase().includes('explosive'))
+      const explosiveItem = rawData?.find(
+        (item: any) =>
+          (item.minor1 && String(item.minor1).toLowerCase().includes('explosive')) ||
+          (item.minor2 && String(item.minor2).toLowerCase().includes('explosive')),
       );
       if (explosiveItem) {
         const idx = rawData.indexOf(explosiveItem);
         console.log('[handleImport] Found item with explosive at index', idx);
         console.log('[handleImport] Raw explosive item minor1:', explosiveItem.minor1);
         console.log('[handleImport] Raw explosive item minor2:', explosiveItem.minor2);
-        console.log('[handleImport] Processed explosive item minor1:', processedData?.[idx]?.minor1);
-        console.log('[handleImport] Processed explosive item minor2:', processedData?.[idx]?.minor2);
+        console.log(
+          '[handleImport] Processed explosive item minor1:',
+          processedData?.[idx]?.minor1,
+        );
+        console.log(
+          '[handleImport] Processed explosive item minor2:',
+          processedData?.[idx]?.minor2,
+        );
       } else {
         console.log('[handleImport] No items found with "explosive" in minor1 or minor2');
       }
-      
+
       // Instantiate model classes based on data type using CLASS_CONSTRUCTORS
       let modelInstances: any[];
       const Constructor = CLASS_CONSTRUCTORS[currentViewerType as keyof typeof CLASS_CONSTRUCTORS];
-      
+
       if (Constructor) {
         modelInstances = processedData.map((data: any) => new Constructor(data));
       } else {
         modelInstances = processedData;
       }
-      
+
       // Get existing clean data
       const existingCleanData = cleanStore.getCleanData(currentViewerType as any);
-      
+
       // Compare with existing data - only prompt if different
       if (existingCleanData && Array.isArray(existingCleanData) && existingCleanData.length > 0) {
         const existingJson = JSON.stringify(existingCleanData, null, 2);
         const newJson = JSON.stringify(modelInstances, null, 2);
-        
+
         if (existingJson === newJson) {
-          console.log('[handleImport] Processed data matches existing clean data, refreshing viewer');
+          console.log(
+            '[handleImport] Processed data matches existing clean data, refreshing viewer',
+          );
         } else {
           console.log('[handleImport] Processed data differs from existing clean data');
           const confirmed = confirm(
             `The processed data is different from the existing clean data.\n\n` +
-            `Existing items: ${existingCleanData.length}\n` +
-            `New items: ${modelInstances.length}\n\n` +
-            `Do you want to replace the existing clean data with the newly processed data?`
+              `Existing items: ${existingCleanData.length}\n` +
+              `New items: ${modelInstances.length}\n\n` +
+              `Do you want to replace the existing clean data with the newly processed data?`,
           );
-          
+
           if (!confirmed) {
             return;
           }
         }
       }
-      
+
       // Update clean data store
       cleanStore.setCleanData(currentViewerType as any, modelInstances);
-      
+
       // Always update viewer to show processed data
       setViewerData(modelInstances);
       setEditedJson(JSON.stringify(modelInstances, null, 2));
-      
+
       // Update counts
       const cleanExists: Record<string, boolean> = {};
       const cleanCounts: Record<string, number> = {};
       cleanExists[currentViewerType] = modelInstances && modelInstances.length > 0;
       cleanCounts[currentViewerType] = modelInstances ? modelInstances.length : 0;
-      setCleanDataExists(prev => ({ ...prev, ...cleanExists }));
-      setCleanDataCounts(prev => ({ ...prev, ...cleanCounts }));
-      
-      console.log('[handleImport] Successfully imported', modelInstances.length, 'items for', currentViewerType);
+      setCleanDataExists((prev) => ({ ...prev, ...cleanExists }));
+      setCleanDataCounts((prev) => ({ ...prev, ...cleanCounts }));
+
+      console.log(
+        '[handleImport] Successfully imported',
+        modelInstances.length,
+        'items for',
+        currentViewerType,
+      );
     } catch (error: any) {
       console.error('Import failed:', error);
       alert(`Import failed: ${error.message || error}`);
@@ -510,7 +602,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
   const getAvailableFields = (): string[] => {
     const rawStore = useRawDataStore.getState();
     const data = rawStore.getRawData(rulesDataKey as any);
-    
+
     if (!data || !Array.isArray(data) || data.length === 0) {
       return [];
     }
@@ -518,10 +610,10 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     // Get all unique keys from the first few items
     const fields = new Set<string>();
     const sampleSize = Math.min(5, data.length);
-    
+
     for (let i = 0; i < sampleSize; i++) {
       if (data[i] && typeof data[i] === 'object') {
-        Object.keys(data[i]).forEach(key => fields.add(key));
+        Object.keys(data[i]).forEach((key) => fields.add(key));
       }
     }
 
@@ -533,7 +625,10 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     return getModelFields(rulesDataKey as any);
   };
 
-  const getFieldType = (dataKey: string, fieldName: string): 'string' | 'number' | 'array' | 'object' | 'unknown' => {
+  const getFieldType = (
+    dataKey: string,
+    fieldName: string,
+  ): 'string' | 'number' | 'array' | 'object' | 'unknown' => {
     // Map data types and their fields to TypeScript types
     const typeMap: Record<string, Record<string, 'string' | 'number' | 'array' | 'object'>> = {
       weapons: {
@@ -548,7 +643,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
         damage: 'number',
         optimalRange: 'number',
         modSlots: 'array',
-        hsd: 'number'
+        hsd: 'number',
       },
       exoticWeapons: {
         type: 'string',
@@ -556,15 +651,15 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
         name: 'string',
         talentName: 'string',
         talentDesc: 'string',
-        modSlots: 'object'
+        modSlots: 'object',
       },
       weaponMods: {
         type: 'string',
         slot: 'string',
         name: 'string',
         bonus: 'object',
-        penalty: 'object'
-      }
+        penalty: 'object',
+      },
     };
 
     return typeMap[dataKey]?.[fieldName] || 'unknown';
@@ -592,7 +687,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     }
 
     const rulesStore = useRulesStore.getState();
-    
+
     if (ruleType === 'replace') {
       if (!replaceMatch) {
         alert('Please enter a match pattern');
@@ -633,7 +728,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     const rulesStore = useRulesStore.getState();
     const existingMapping = rulesStore.mappings[ruleLabel] || {};
     rulesStore.setMapping(ruleLabel, { ...existingMapping, [mappingKey]: mappingValue });
-    
+
     setMappingKey('');
     setMappingValue('');
   };
@@ -645,18 +740,18 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     }
 
     const rulesStore = useRulesStore.getState();
-    
+
     if (editingBindingIndex !== null) {
       // Update existing binding
       const currentBindings = rulesStore.getBindings(rulesDataKey as any);
       const existingBinding = currentBindings[editingBindingIndex];
-      
+
       if (!existingBinding) {
         alert('Error: Binding not found');
         setEditingBindingIndex(null);
         return;
       }
-      
+
       rulesStore.updateBinding(rulesDataKey as any, editingBindingIndex, {
         destination: bindingDestination,
         source: bindingSource,
@@ -681,7 +776,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     const rulesStore = useRulesStore.getState();
     const bindings = rulesStore.getBindings(rulesDataKey as any);
     const binding = bindings[index];
-    
+
     setBindingDestination(binding.destination);
     setBindingSource(binding.source);
     setEditingBindingIndex(index);
@@ -703,12 +798,12 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     const rulesStore = useRulesStore.getState();
     const bindings = rulesStore.getBindings(rulesDataKey as any);
     const binding = bindings[bindingIndex];
-    
+
     rulesStore.updateBinding(rulesDataKey as any, bindingIndex, {
       ...binding,
       rules: [...binding.rules, bindingRule],
     });
-    
+
     setBindingRule('');
   };
 
@@ -716,7 +811,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     const rulesStore = useRulesStore.getState();
     const bindings = rulesStore.getBindings(rulesDataKey as any);
     const binding = bindings[bindingIndex];
-    
+
     const newRules = binding.rules.filter((_, i) => i !== ruleIndex);
     rulesStore.updateBinding(rulesDataKey as any, bindingIndex, {
       ...binding,
@@ -724,21 +819,25 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     });
   };
 
-  const handleMoveRuleInBinding = (bindingIndex: number, ruleIndex: number, direction: 'up' | 'down') => {
+  const handleMoveRuleInBinding = (
+    bindingIndex: number,
+    ruleIndex: number,
+    direction: 'up' | 'down',
+  ) => {
     const rulesStore = useRulesStore.getState();
     const bindings = rulesStore.getBindings(rulesDataKey as any);
     const binding = bindings[bindingIndex];
-    
+
     const newIndex = direction === 'up' ? ruleIndex - 1 : ruleIndex + 1;
     if (newIndex < 0 || newIndex >= binding.rules.length) return;
-    
+
     rulesStore.reorderBindingRules(rulesDataKey as any, bindingIndex, ruleIndex, newIndex);
   };
 
   const toggleBindingExpanded = (index: number) => {
-    setExpandedBindings(prev => ({
+    setExpandedBindings((prev) => ({
       ...prev,
-      [index]: !prev[index]
+      [index]: !prev[index],
     }));
   };
 
@@ -775,20 +874,22 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
       setShowBindingsJson(true);
     } catch (error) {
       console.error('Error opening bindings JSON:', error);
-      alert('Error opening bindings JSON: ' + (error instanceof Error ? error.message : String(error)));
+      alert(
+        'Error opening bindings JSON: ' + (error instanceof Error ? error.message : String(error)),
+      );
     }
   };
 
   const handleSaveBindingsJson = () => {
     try {
       const parsedBindings = JSON.parse(bindingsJsonText);
-      
+
       // Validate that it's an array
       if (!Array.isArray(parsedBindings)) {
         alert('Invalid JSON: Must be an array of bindings');
         return;
       }
-      
+
       // Validate each binding has required fields
       for (const binding of parsedBindings) {
         if (!binding.source || !binding.destination || !binding.rules) {
@@ -801,7 +902,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
           return;
         }
       }
-      
+
       // Update the store
       const rulesStore = useRulesStore.getState();
       // Clear existing bindings and add new ones
@@ -809,12 +910,12 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
       for (let i = currentBindings.length - 1; i >= 0; i--) {
         rulesStore.removeBinding(rulesDataKey as any, i);
       }
-      
+
       // Add new bindings
       parsedBindings.forEach((binding: any) => {
         rulesStore.addBinding(rulesDataKey as any, binding);
       });
-      
+
       setShowBindingsJson(false);
     } catch (error) {
       alert('Invalid JSON: ' + (error instanceof Error ? error.message : String(error)));
@@ -829,23 +930,25 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
       setShowMappingJson(true);
     } catch (error) {
       console.error('Error opening mapping JSON:', error);
-      alert('Error opening mapping JSON: ' + (error instanceof Error ? error.message : String(error)));
+      alert(
+        'Error opening mapping JSON: ' + (error instanceof Error ? error.message : String(error)),
+      );
     }
   };
 
   const handleSaveMappingJson = () => {
     try {
       const parsedMapping = JSON.parse(mappingJsonText);
-      
+
       // Validate that it's an object
       if (typeof parsedMapping !== 'object' || Array.isArray(parsedMapping)) {
         alert('Invalid JSON: Must be an object with key-value pairs');
         return;
       }
-      
+
       // Update the store
       rulesStore.setMapping(mappingJsonLabel, parsedMapping);
-      
+
       setShowMappingJson(false);
     } catch (error) {
       alert('Invalid JSON: ' + (error instanceof Error ? error.message : String(error)));
@@ -853,9 +956,9 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
   };
 
   const toggleMappingExpanded = (label: string) => {
-    setExpandedMappings(prev => ({
+    setExpandedMappings((prev) => ({
       ...prev,
-      [label]: !prev[label]
+      [label]: !prev[label],
     }));
   };
 
@@ -864,26 +967,28 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
       const allRules = {
         replaceRules: rulesStore.replaceRules,
         matchRules: rulesStore.matchRules,
-        mappings: rulesStore.mappings
+        mappings: rulesStore.mappings,
       };
       setAllRulesJsonText(JSON.stringify(allRules, null, 2));
       setShowAllRulesJson(true);
     } catch (error) {
       console.error('Error opening all rules JSON:', error);
-      alert('Error opening all rules JSON: ' + (error instanceof Error ? error.message : String(error)));
+      alert(
+        'Error opening all rules JSON: ' + (error instanceof Error ? error.message : String(error)),
+      );
     }
   };
 
   const handleSaveAllRulesJson = () => {
     try {
       const parsed = JSON.parse(allRulesJsonText);
-      
+
       // Validate structure
       if (typeof parsed !== 'object' || Array.isArray(parsed)) {
         alert('Invalid JSON: Must be an object with replaceRules, matchRules, and mappings');
         return;
       }
-      
+
       // Update the store
       if (parsed.replaceRules) {
         Object.entries(parsed.replaceRules).forEach(([label, value]: [string, any]) => {
@@ -892,7 +997,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
           }
         });
       }
-      
+
       if (parsed.matchRules) {
         Object.entries(parsed.matchRules).forEach(([label, regex]: [string, any]) => {
           if (typeof regex === 'string') {
@@ -900,7 +1005,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
           }
         });
       }
-      
+
       if (parsed.mappings) {
         Object.entries(parsed.mappings).forEach(([label, mapping]: [string, any]) => {
           if (typeof mapping === 'object' && !Array.isArray(mapping)) {
@@ -908,7 +1013,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
           }
         });
       }
-      
+
       setShowAllRulesJson(false);
     } catch (error) {
       alert('Invalid JSON: ' + (error instanceof Error ? error.message : String(error)));
@@ -918,16 +1023,18 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
   const handleSaveRulesJson = () => {
     try {
       const parsed = JSON.parse(rulesJsonText);
-      
+
       // Validate structure
       if (typeof parsed !== 'object' || Array.isArray(parsed)) {
-        alert('Invalid JSON: Must be an object with replaceRules, matchRules, mappings, and bindings');
+        alert(
+          'Invalid JSON: Must be an object with replaceRules, matchRules, mappings, and bindings',
+        );
         return;
       }
-      
+
       // Clear existing rules
       rulesStore.clearAll();
-      
+
       // Update replace rules
       if (parsed.replaceRules) {
         Object.entries(parsed.replaceRules).forEach(([label, value]: [string, any]) => {
@@ -936,7 +1043,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
           }
         });
       }
-      
+
       // Update match rules
       if (parsed.matchRules) {
         Object.entries(parsed.matchRules).forEach(([label, regex]: [string, any]) => {
@@ -945,7 +1052,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
           }
         });
       }
-      
+
       // Update mappings
       if (parsed.mappings) {
         Object.entries(parsed.mappings).forEach(([label, mapping]: [string, any]) => {
@@ -954,7 +1061,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
           }
         });
       }
-      
+
       // Update bindings
       if (parsed.bindings) {
         Object.entries(parsed.bindings).forEach(([dataKey, bindings]: [string, any]) => {
@@ -967,7 +1074,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
           }
         });
       }
-      
+
       setShowRulesJsonOverlay(false);
       alert('Rules updated successfully!');
     } catch (error) {
@@ -983,7 +1090,9 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
         <div className="modal-header">
           <h2>Load / Process data</h2>
           <div className="header-controls">
-            <button className="config-icon" onClick={() => setShowConfig(!showConfig)}>⚙️</button>
+            <button className="config-icon" onClick={() => setShowConfig(!showConfig)}>
+              ⚙️
+            </button>
           </div>
         </div>
 
@@ -1007,43 +1116,45 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                 placeholder="Enter your Google API Key"
               />
             </div>
-            <button className="save-config-btn" onClick={handleSaveConfig}>Save Config</button>
+            <button className="save-config-btn" onClick={handleSaveConfig}>
+              Save Config
+            </button>
           </div>
         )}
 
         <h3 className="section-heading">Extract</h3>
-        
+
         <div className="extract-grid">
           <div className="grid-header">Label</div>
           <div className="grid-header">Page</div>
           <div className="grid-header">Actions</div>
 
           <div className="grid-label">{getLabel('Weapons', 'weapons')}</div>
-          <input 
-            className="grid-input" 
-            value={pages.weapons} 
+          <input
+            className="grid-input"
+            value={pages.weapons}
             onChange={(e) => handlePageChange('weapons', e.target.value)}
           />
           <div className="action-buttons">
-            <button 
-              className="icon-button" 
-              onClick={() => handleLoad('weapons')} 
+            <button
+              className="icon-button"
+              onClick={() => handleLoad('weapons')}
               title="Load"
               disabled={loadingStates.weapons}
             >
               {loadingStates.weapons ? '⏳' : <MdDownload />}
             </button>
-            <button 
-              className={`icon-button ${dataExists.weapons ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleView('weapons')} 
+            <button
+              className={`icon-button ${dataExists.weapons ? 'has-data' : 'no-data'}`}
+              onClick={() => handleView('weapons')}
               title="View"
               disabled={!dataExists.weapons || loadingStates.weapons}
             >
               <MdEditDocument />
             </button>
-            <button 
-              className={`icon-button ${cleanDataExists.weapons ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleViewClean('weapons')} 
+            <button
+              className={`icon-button ${cleanDataExists.weapons ? 'has-data' : 'no-data'}`}
+              onClick={() => handleViewClean('weapons')}
               title="View Clean Data"
               disabled={loadingStates.weapons}
             >
@@ -1052,31 +1163,31 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
           </div>
 
           <div className="grid-label">{getLabel('Weapon Talents', 'weaponTalents')}</div>
-          <input 
-            className="grid-input" 
-            value={pages.weaponTalents} 
+          <input
+            className="grid-input"
+            value={pages.weaponTalents}
             onChange={(e) => handlePageChange('weaponTalents', e.target.value)}
           />
           <div className="action-buttons">
-            <button 
-              className="icon-button" 
-              onClick={() => handleLoad('weaponTalents')} 
+            <button
+              className="icon-button"
+              onClick={() => handleLoad('weaponTalents')}
               title="Load"
               disabled={loadingStates.weaponTalents}
             >
               {loadingStates.weaponTalents ? '⏳' : <MdDownload />}
             </button>
-            <button 
-              className={`icon-button ${dataExists.weaponTalents ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleView('weaponTalents')} 
+            <button
+              className={`icon-button ${dataExists.weaponTalents ? 'has-data' : 'no-data'}`}
+              onClick={() => handleView('weaponTalents')}
               title="View"
               disabled={!dataExists.weaponTalents || loadingStates.weaponTalents}
             >
               <MdEditDocument />
             </button>
-            <button 
-              className={`icon-button ${cleanDataExists.weaponTalents ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleViewClean('weaponTalents')} 
+            <button
+              className={`icon-button ${cleanDataExists.weaponTalents ? 'has-data' : 'no-data'}`}
+              onClick={() => handleViewClean('weaponTalents')}
               title="View Clean Data"
               disabled={loadingStates.weaponTalents}
             >
@@ -1085,31 +1196,31 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
           </div>
 
           <div className="grid-label">{getLabel('Exotic Weapons', 'exoticWeapons')}</div>
-          <input 
-            className="grid-input" 
-            value={pages.exoticWeapons} 
+          <input
+            className="grid-input"
+            value={pages.exoticWeapons}
             onChange={(e) => handlePageChange('exoticWeapons', e.target.value)}
           />
           <div className="action-buttons">
-            <button 
-              className="icon-button" 
-              onClick={() => handleLoad('exoticWeapons')} 
+            <button
+              className="icon-button"
+              onClick={() => handleLoad('exoticWeapons')}
               title="Load"
               disabled={loadingStates.exoticWeapons}
             >
               {loadingStates.exoticWeapons ? '⏳' : <MdDownload />}
             </button>
-            <button 
-              className={`icon-button ${dataExists.exoticWeapons ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleView('exoticWeapons')} 
+            <button
+              className={`icon-button ${dataExists.exoticWeapons ? 'has-data' : 'no-data'}`}
+              onClick={() => handleView('exoticWeapons')}
               title="View"
               disabled={!dataExists.exoticWeapons || loadingStates.exoticWeapons}
             >
               <MdEditDocument />
             </button>
-            <button 
-              className={`icon-button ${cleanDataExists.exoticWeapons ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleViewClean('exoticWeapons')} 
+            <button
+              className={`icon-button ${cleanDataExists.exoticWeapons ? 'has-data' : 'no-data'}`}
+              onClick={() => handleViewClean('exoticWeapons')}
               title="View Clean Data"
               disabled={loadingStates.exoticWeapons}
             >
@@ -1118,31 +1229,31 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
           </div>
 
           <div className="grid-label">{getLabel('Gearsets', 'gearsets')}</div>
-          <input 
-            className="grid-input" 
-            value={pages.gearsets} 
+          <input
+            className="grid-input"
+            value={pages.gearsets}
             onChange={(e) => handlePageChange('gearsets', e.target.value)}
           />
           <div className="action-buttons">
-            <button 
-              className="icon-button" 
-              onClick={() => handleLoad('gearsets')} 
+            <button
+              className="icon-button"
+              onClick={() => handleLoad('gearsets')}
               title="Load"
               disabled={loadingStates.gearsets}
             >
               {loadingStates.gearsets ? '⏳' : <MdDownload />}
             </button>
-            <button 
-              className={`icon-button ${dataExists.gearsets ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleView('gearsets')} 
+            <button
+              className={`icon-button ${dataExists.gearsets ? 'has-data' : 'no-data'}`}
+              onClick={() => handleView('gearsets')}
               title="View"
               disabled={!dataExists.gearsets || loadingStates.gearsets}
             >
               <MdEditDocument />
             </button>
-            <button 
-              className={`icon-button ${cleanDataExists.gearsets ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleViewClean('gearsets')} 
+            <button
+              className={`icon-button ${cleanDataExists.gearsets ? 'has-data' : 'no-data'}`}
+              onClick={() => handleViewClean('gearsets')}
               title="View Clean Data"
               disabled={loadingStates.gearsets}
             >
@@ -1151,31 +1262,31 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
           </div>
 
           <div className="grid-label">{getLabel('Brandsets', 'brandsets')}</div>
-          <input 
-            className="grid-input" 
-            value={pages.brandsets} 
+          <input
+            className="grid-input"
+            value={pages.brandsets}
             onChange={(e) => handlePageChange('brandsets', e.target.value)}
           />
           <div className="action-buttons">
-            <button 
-              className="icon-button" 
-              onClick={() => handleLoad('brandsets')} 
+            <button
+              className="icon-button"
+              onClick={() => handleLoad('brandsets')}
               title="Load"
               disabled={loadingStates.brandsets}
             >
               {loadingStates.brandsets ? '⏳' : <MdDownload />}
             </button>
-            <button 
-              className={`icon-button ${dataExists.brandsets ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleView('brandsets')} 
+            <button
+              className={`icon-button ${dataExists.brandsets ? 'has-data' : 'no-data'}`}
+              onClick={() => handleView('brandsets')}
               title="View"
               disabled={!dataExists.brandsets || loadingStates.brandsets}
             >
               <MdEditDocument />
             </button>
-            <button 
-              className={`icon-button ${cleanDataExists.brandsets ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleViewClean('brandsets')} 
+            <button
+              className={`icon-button ${cleanDataExists.brandsets ? 'has-data' : 'no-data'}`}
+              onClick={() => handleViewClean('brandsets')}
               title="View Clean Data"
               disabled={loadingStates.brandsets}
             >
@@ -1184,31 +1295,31 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
           </div>
 
           <div className="grid-label">{getLabel('Gear Talents', 'gearTalents')}</div>
-          <input 
-            className="grid-input" 
-            value={pages.gearTalents} 
+          <input
+            className="grid-input"
+            value={pages.gearTalents}
             onChange={(e) => handlePageChange('gearTalents', e.target.value)}
           />
           <div className="action-buttons">
-            <button 
-              className="icon-button" 
-              onClick={() => handleLoad('gearTalents')} 
+            <button
+              className="icon-button"
+              onClick={() => handleLoad('gearTalents')}
               title="Load"
               disabled={loadingStates.gearTalents}
             >
               {loadingStates.gearTalents ? '⏳' : <MdDownload />}
             </button>
-            <button 
-              className={`icon-button ${dataExists.gearTalents ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleView('gearTalents')} 
+            <button
+              className={`icon-button ${dataExists.gearTalents ? 'has-data' : 'no-data'}`}
+              onClick={() => handleView('gearTalents')}
               title="View"
               disabled={!dataExists.gearTalents || loadingStates.gearTalents}
             >
               <MdEditDocument />
             </button>
-            <button 
-              className={`icon-button ${cleanDataExists.gearTalents ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleViewClean('gearTalents')} 
+            <button
+              className={`icon-button ${cleanDataExists.gearTalents ? 'has-data' : 'no-data'}`}
+              onClick={() => handleViewClean('gearTalents')}
               title="View Clean Data"
               disabled={loadingStates.gearTalents}
             >
@@ -1217,31 +1328,31 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
           </div>
 
           <div className="grid-label">{getLabel('Named/Exotic Gear', 'namedGear')}</div>
-          <input 
-            className="grid-input" 
-            value={pages.namedGear} 
+          <input
+            className="grid-input"
+            value={pages.namedGear}
             onChange={(e) => handlePageChange('namedGear', e.target.value)}
           />
           <div className="action-buttons">
-            <button 
-              className="icon-button" 
-              onClick={() => handleLoad('namedGear')} 
+            <button
+              className="icon-button"
+              onClick={() => handleLoad('namedGear')}
               title="Load"
               disabled={loadingStates.namedGear}
             >
               {loadingStates.namedGear ? '⏳' : <MdDownload />}
             </button>
-            <button 
-              className={`icon-button ${dataExists.namedGear ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleView('namedGear')} 
+            <button
+              className={`icon-button ${dataExists.namedGear ? 'has-data' : 'no-data'}`}
+              onClick={() => handleView('namedGear')}
               title="View"
               disabled={!dataExists.namedGear || loadingStates.namedGear}
             >
               <MdEditDocument />
             </button>
-            <button 
-              className={`icon-button ${cleanDataExists.namedGear ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleViewClean('namedGear')} 
+            <button
+              className={`icon-button ${cleanDataExists.namedGear ? 'has-data' : 'no-data'}`}
+              onClick={() => handleViewClean('namedGear')}
               title="View Clean Data"
               disabled={loadingStates.namedGear}
             >
@@ -1250,31 +1361,31 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
           </div>
 
           <div className="grid-label">{getLabel('Skills', 'skills')}</div>
-          <input 
-            className="grid-input" 
-            value={pages.skills} 
+          <input
+            className="grid-input"
+            value={pages.skills}
             onChange={(e) => handlePageChange('skills', e.target.value)}
           />
           <div className="action-buttons">
-            <button 
-              className="icon-button" 
-              onClick={() => handleLoad('skills')} 
+            <button
+              className="icon-button"
+              onClick={() => handleLoad('skills')}
               title="Load"
               disabled={loadingStates.skills}
             >
               {loadingStates.skills ? '⏳' : <MdDownload />}
             </button>
-            <button 
-              className={`icon-button ${dataExists.skills ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleView('skills')} 
+            <button
+              className={`icon-button ${dataExists.skills ? 'has-data' : 'no-data'}`}
+              onClick={() => handleView('skills')}
               title="View"
               disabled={!dataExists.skills || loadingStates.skills}
             >
               <MdEditDocument />
             </button>
-            <button 
-              className={`icon-button ${cleanDataExists.skills ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleViewClean('skills')} 
+            <button
+              className={`icon-button ${cleanDataExists.skills ? 'has-data' : 'no-data'}`}
+              onClick={() => handleViewClean('skills')}
               title="View Clean Data"
               disabled={loadingStates.skills}
             >
@@ -1283,31 +1394,31 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
           </div>
 
           <div className="grid-label">{getLabel('Weapon Mods', 'weaponMods')}</div>
-          <input 
-            className="grid-input" 
-            value={pages.weaponMods} 
+          <input
+            className="grid-input"
+            value={pages.weaponMods}
             onChange={(e) => handlePageChange('weaponMods', e.target.value)}
           />
           <div className="action-buttons">
-            <button 
-              className="icon-button" 
-              onClick={() => handleLoad('weaponMods')} 
+            <button
+              className="icon-button"
+              onClick={() => handleLoad('weaponMods')}
               title="Load"
               disabled={loadingStates.weaponMods}
             >
               {loadingStates.weaponMods ? '⏳' : <MdDownload />}
             </button>
-            <button 
-              className={`icon-button ${dataExists.weaponMods ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleView('weaponMods')} 
+            <button
+              className={`icon-button ${dataExists.weaponMods ? 'has-data' : 'no-data'}`}
+              onClick={() => handleView('weaponMods')}
               title="View"
               disabled={!dataExists.weaponMods || loadingStates.weaponMods}
             >
               <MdEditDocument />
             </button>
-            <button 
-              className={`icon-button ${cleanDataExists.weaponMods ? 'has-data' : 'no-data'}`} 
-              onClick={() => handleViewClean('weaponMods')} 
+            <button
+              className={`icon-button ${cleanDataExists.weaponMods ? 'has-data' : 'no-data'}`}
+              onClick={() => handleViewClean('weaponMods')}
               title="View Clean Data"
               disabled={loadingStates.weaponMods}
             >
@@ -1320,20 +1431,23 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
           {csvFiles.map(({ key, label, filename }) => {
             // All CSV files should only show one view icon
             const cleanOnly = true;
-            
+
             return (
               <div key={key} className="csv-item">
                 <span className="csv-label">{getLabel(label, key, cleanOnly)}</span>
                 {/* No Load button for CSV files - they don't have a scraping page */}
                 <div style={{ width: '32px' }}></div>
-                <MdEditDocument 
-                  className={`csv-icon ${cleanDataExists[key] ? 'has-data' : 'no-data'}`} 
+                <MdEditDocument
+                  className={`csv-icon ${cleanDataExists[key] ? 'has-data' : 'no-data'}`}
                   onClick={() => {
                     if (loadingStates[key]) return;
                     handleViewClean(key);
-                  }} 
+                  }}
                   title="View Data"
-                  style={{ opacity: cleanDataExists[key] && !loadingStates[key] ? 1 : 0.3, cursor: cleanDataExists[key] && !loadingStates[key] ? 'pointer' : 'not-allowed' }}
+                  style={{
+                    opacity: cleanDataExists[key] && !loadingStates[key] ? 1 : 0.3,
+                    cursor: cleanDataExists[key] && !loadingStates[key] ? 'pointer' : 'not-allowed',
+                  }}
                 />
                 <div style={{ width: '32px' }}></div>
               </div>
@@ -1346,7 +1460,9 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
             <div className="json-viewer-content" onClick={(e) => e.stopPropagation()}>
               <div className="json-viewer-header">
                 <h3>{viewerType} Data</h3>
-                <button className="close-viewer-btn" onClick={handleCloseViewer}>✕</button>
+                <button className="close-viewer-btn" onClick={handleCloseViewer}>
+                  ✕
+                </button>
               </div>
               <textarea
                 className="json-editor"
@@ -1356,10 +1472,16 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
               />
               <div className="json-viewer-actions">
                 {viewerActions.map((action, i) => (
-                  <button key={i} className="import-btn" onClick={action.onClick}>{action.label}</button>
+                  <button key={i} className="import-btn" onClick={action.onClick}>
+                    {action.label}
+                  </button>
                 ))}
-                <button className="update-btn" onClick={handleUpdateJson}>Update</button>
-                <button className="cancel-btn" onClick={handleCloseViewer}>Cancel</button>
+                <button className="update-btn" onClick={handleUpdateJson}>
+                  Update
+                </button>
+                <button className="cancel-btn" onClick={handleCloseViewer}>
+                  Cancel
+                </button>
               </div>
             </div>
           </div>
@@ -1370,24 +1492,48 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
             <div className="rules-content" onClick={(e) => e.stopPropagation()}>
               <div className="rules-header">
                 <h3>Rules Configuration - {rulesDataKey}</h3>
-                <button className="close-viewer-btn" onClick={handleCloseRules}>✕</button>
+                <button className="close-viewer-btn" onClick={handleCloseRules}>
+                  ✕
+                </button>
               </div>
-              
+
               <div className="rules-body">
                 {/* Bindings Section - FIRST */}
                 <div className="rules-section-header">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
                     <h4>Mapping/Bindings for {rulesDataKey}</h4>
-                    <a 
-                      href="#" 
-                      onClick={(e) => { e.preventDefault(); handleOpenBindingsJson(); }}
-                      style={{ fontSize: '0.9rem', color: '#3498db', textDecoration: 'none', cursor: 'pointer' }}
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleOpenBindingsJson();
+                      }}
+                      style={{
+                        fontSize: '0.9rem',
+                        color: '#3498db',
+                        textDecoration: 'none',
+                        cursor: 'pointer',
+                      }}
                     >
                       json
                     </a>
                   </div>
-                  <div style={{ fontSize: '0.85rem', color: '#7f8c8d', fontWeight: 'normal', marginTop: '0.25rem' }}>
-                    Define destination fields and their source mappings. Add rules to transform data in order.
+                  <div
+                    style={{
+                      fontSize: '0.85rem',
+                      color: '#7f8c8d',
+                      fontWeight: 'normal',
+                      marginTop: '0.25rem',
+                    }}
+                  >
+                    Define destination fields and their source mappings. Add rules to transform data
+                    in order.
                   </div>
                 </div>
 
@@ -1395,15 +1541,17 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                   // Check if there are any available destinations
                   const bindings = rulesStore.getBindings(rulesDataKey as any);
                   const usedDestinations = bindings
-                    .map((b, idx) => idx === editingBindingIndex ? null : b.destination)
-                    .filter(d => d !== null);
-                  const availableDestinations = getDestinationFields().filter(field => !usedDestinations.includes(field));
-                  
+                    .map((b, idx) => (idx === editingBindingIndex ? null : b.destination))
+                    .filter((d) => d !== null);
+                  const availableDestinations = getDestinationFields().filter(
+                    (field) => !usedDestinations.includes(field),
+                  );
+
                   // Hide selection fields if all destinations are mapped and not editing
                   if (availableDestinations.length === 0 && editingBindingIndex === null) {
                     return null;
                   }
-                  
+
                   // Show selection fields if there are available destinations OR we're editing
                   return (
                     <div className="rule-row">
@@ -1413,8 +1561,10 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                         onChange={(e) => setBindingSource(e.target.value)}
                       >
                         <option value="">Select source field...</option>
-                        {getAvailableFields().map(field => (
-                          <option key={field} value={field}>{field}</option>
+                        {getAvailableFields().map((field) => (
+                          <option key={field} value={field}>
+                            {field}
+                          </option>
                         ))}
                       </select>
                       <span className="arrow">→</span>
@@ -1424,12 +1574,16 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                         onChange={(e) => setBindingDestination(e.target.value)}
                       >
                         <option value="">Select destination field...</option>
-                        {getDestinationFields().filter(field => {
-                          // Filter out destinations that are already used, except when editing
-                          return !usedDestinations.includes(field);
-                        }).map(field => (
-                          <option key={field} value={field}>{field}</option>
-                        ))}
+                        {getDestinationFields()
+                          .filter((field) => {
+                            // Filter out destinations that are already used, except when editing
+                            return !usedDestinations.includes(field);
+                          })
+                          .map((field) => (
+                            <option key={field} value={field}>
+                              {field}
+                            </option>
+                          ))}
                       </select>
                       {availableDestinations.length > 0 ? (
                         <>
@@ -1437,13 +1591,19 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                             {editingBindingIndex !== null ? 'Update' : 'Add'}
                           </button>
                           {editingBindingIndex !== null && (
-                            <button className="add-link" onClick={handleCancelEditBinding}>Cancel</button>
+                            <button className="add-link" onClick={handleCancelEditBinding}>
+                              Cancel
+                            </button>
                           )}
                         </>
                       ) : editingBindingIndex !== null ? (
                         <>
-                          <button className="add-link" onClick={handleAddBinding}>Update</button>
-                          <button className="add-link" onClick={handleCancelEditBinding}>Cancel</button>
+                          <button className="add-link" onClick={handleAddBinding}>
+                            Update
+                          </button>
+                          <button className="add-link" onClick={handleCancelEditBinding}>
+                            Cancel
+                          </button>
                         </>
                       ) : null}
                     </div>
@@ -1452,44 +1612,63 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
 
                 <div className="bindings-list">
                   {rulesStore.getBindings(rulesDataKey as any).map((binding, index) => (
-                    <div key={index} className="binding-item" style={{ 
-                      border: '1px solid #ddd', 
-                      borderRadius: '4px', 
-                      padding: '0.5rem', 
-                      marginBottom: '0.5rem',
-                      backgroundColor: editingBindingIndex === index ? '#f0f8ff' : 'transparent'
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div 
-                          style={{ display: 'flex', alignItems: 'center', flex: 1, cursor: 'pointer' }}
+                    <div
+                      key={index}
+                      className="binding-item"
+                      style={{
+                        border: '1px solid #ddd',
+                        borderRadius: '4px',
+                        padding: '0.5rem',
+                        marginBottom: '0.5rem',
+                        backgroundColor: editingBindingIndex === index ? '#f0f8ff' : 'transparent',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            flex: 1,
+                            cursor: 'pointer',
+                          }}
                           onClick={() => toggleBindingExpanded(index)}
                         >
                           <span style={{ marginRight: '0.5rem', fontSize: '0.8rem' }}>
                             {expandedBindings[index] ? '▼' : '▶'}
                           </span>
                           <span>{binding.source}</span>
-                          <span className="arrow" style={{ margin: '0 0.5rem' }}>→</span>
+                          <span className="arrow" style={{ margin: '0 0.5rem' }}>
+                            →
+                          </span>
                           <span style={{ fontWeight: 'bold' }}>{binding.destination}</span>
-                          <span style={{ 
-                            marginLeft: '0.5rem', 
-                            fontSize: '0.85rem', 
-                            color: '#7f8c8d',
-                            fontStyle: 'italic'
-                          }}>
+                          <span
+                            style={{
+                              marginLeft: '0.5rem',
+                              fontSize: '0.85rem',
+                              color: '#7f8c8d',
+                              fontStyle: 'italic',
+                            }}
+                          >
                             ({binding.rules.length} rule{binding.rules.length !== 1 ? 's' : ''})
                           </span>
                         </div>
                         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                          <button 
-                            className="icon-btn" 
+                          <button
+                            className="icon-btn"
                             onClick={() => handleEditBinding(index)}
                             title="Edit binding"
                             style={{ fontSize: '0.8rem', padding: '0.2rem 0.4rem' }}
                           >
                             ✎
                           </button>
-                          <span 
-                            className="remove-link" 
+                          <span
+                            className="remove-link"
                             onClick={() => handleRemoveBinding(index)}
                             title="Delete binding"
                           >
@@ -1497,38 +1676,57 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                           </span>
                         </div>
                       </div>
-                      
+
                       {expandedBindings[index] && (
                         <div style={{ marginTop: '0.5rem', paddingLeft: '1.5rem' }}>
-                          <div style={{ fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              fontWeight: 'bold',
+                              marginBottom: '0.25rem',
+                            }}
+                          >
                             Rules (applied in order):
                           </div>
-                          
+
                           {binding.rules.length === 0 ? (
-                            <div style={{ fontSize: '0.85rem', color: '#7f8c8d', fontStyle: 'italic', marginBottom: '0.5rem' }}>
+                            <div
+                              style={{
+                                fontSize: '0.85rem',
+                                color: '#7f8c8d',
+                                fontStyle: 'italic',
+                                marginBottom: '0.5rem',
+                              }}
+                            >
                               No rules applied - direct mapping
                             </div>
                           ) : (
                             <div style={{ marginBottom: '0.5rem' }}>
                               {binding.rules.map((rule, ruleIndex) => (
-                                <div 
-                                  key={ruleIndex} 
-                                  style={{ 
-                                    display: 'flex', 
-                                    alignItems: 'center', 
+                                <div
+                                  key={ruleIndex}
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
                                     gap: '0.5rem',
                                     padding: '0.25rem',
                                     backgroundColor: '#f9f9f9',
                                     borderRadius: '3px',
-                                    marginBottom: '0.25rem'
+                                    marginBottom: '0.25rem',
                                   }}
                                 >
-                                  <span style={{ fontSize: '0.85rem', color: '#7f8c8d', minWidth: '1.5rem' }}>
+                                  <span
+                                    style={{
+                                      fontSize: '0.85rem',
+                                      color: '#7f8c8d',
+                                      minWidth: '1.5rem',
+                                    }}
+                                  >
                                     {ruleIndex + 1}.
                                   </span>
                                   <span style={{ flex: 1, fontSize: '0.9rem' }}>{rule}</span>
-                                  <button 
-                                    className="icon-btn" 
+                                  <button
+                                    className="icon-btn"
                                     onClick={() => handleMoveRuleInBinding(index, ruleIndex, 'up')}
                                     disabled={ruleIndex === 0}
                                     title="Move rule up"
@@ -1536,17 +1734,19 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                                   >
                                     ↑
                                   </button>
-                                  <button 
-                                    className="icon-btn" 
-                                    onClick={() => handleMoveRuleInBinding(index, ruleIndex, 'down')}
+                                  <button
+                                    className="icon-btn"
+                                    onClick={() =>
+                                      handleMoveRuleInBinding(index, ruleIndex, 'down')
+                                    }
                                     disabled={ruleIndex === binding.rules.length - 1}
                                     title="Move rule down"
                                     style={{ fontSize: '0.7rem', padding: '0.1rem 0.3rem' }}
                                   >
                                     ↓
                                   </button>
-                                  <span 
-                                    className="remove-link" 
+                                  <span
+                                    className="remove-link"
                                     onClick={() => handleRemoveRuleFromBinding(index, ruleIndex)}
                                     title="Remove rule"
                                     style={{ fontSize: '0.8rem' }}
@@ -1557,7 +1757,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                               ))}
                             </div>
                           )}
-                          
+
                           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                             <select
                               className="rule-input"
@@ -1566,21 +1766,29 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                               style={{ flex: 1, fontSize: '0.85rem' }}
                             >
                               <option value="">Add a rule...</option>
-                              {Object.keys(SYSTEM_RULES).map(label => (
-                                <option key={label} value={label}>{label} (system)</option>
+                              {Object.keys(SYSTEM_RULES).map((label) => (
+                                <option key={label} value={label}>
+                                  {label} (system)
+                                </option>
                               ))}
-                              {Object.keys(rulesStore.replaceRules).map(label => (
-                                <option key={label} value={label}>{label} (replace)</option>
+                              {Object.keys(rulesStore.replaceRules).map((label) => (
+                                <option key={label} value={label}>
+                                  {label} (replace)
+                                </option>
                               ))}
-                              {Object.keys(rulesStore.matchRules).map(label => (
-                                <option key={label} value={label}>{label} (match)</option>
+                              {Object.keys(rulesStore.matchRules).map((label) => (
+                                <option key={label} value={label}>
+                                  {label} (match)
+                                </option>
                               ))}
-                              {Object.keys(rulesStore.mappings).map(label => (
-                                <option key={label} value={label}>{label} (mapping)</option>
+                              {Object.keys(rulesStore.mappings).map((label) => (
+                                <option key={label} value={label}>
+                                  {label} (mapping)
+                                </option>
                               ))}
                             </select>
-                            <button 
-                              className="add-link" 
+                            <button
+                              className="add-link"
                               onClick={() => handleAddRuleToBinding(index)}
                               style={{ fontSize: '0.85rem' }}
                             >
@@ -1594,8 +1802,8 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                 </div>
 
                 {/* Test/Validate Section */}
-                <div 
-                  className="rules-section-header" 
+                <div
+                  className="rules-section-header"
                   style={{ marginTop: '1.5rem', cursor: 'pointer', userSelect: 'none' }}
                   onClick={() => setShowTestValidate(!showTestValidate)}
                 >
@@ -1603,485 +1811,603 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                     <span style={{ marginRight: '0.5rem' }}>{showTestValidate ? '▼' : '▶'}</span>
                     <h4>Test/Validate</h4>
                   </div>
-                  <div style={{ fontSize: '0.85rem', color: '#7f8c8d', fontWeight: 'normal', marginTop: '0.25rem', marginLeft: '1.5rem' }}>
+                  <div
+                    style={{
+                      fontSize: '0.85rem',
+                      color: '#7f8c8d',
+                      fontWeight: 'normal',
+                      marginTop: '0.25rem',
+                      marginLeft: '1.5rem',
+                    }}
+                  >
                     Test your mappings with sample data from the source
                   </div>
                 </div>
 
-                {showTestValidate && (() => {
-                  const rawStore = useRawDataStore.getState();
-                  const rawData = rawStore.getRawData(rulesDataKey as any);
-                  const bindings = rulesStore.getBindings(rulesDataKey as any);
-                  
-                  if (!rawData || !Array.isArray(rawData) || rawData.length === 0) {
-                    return (
-                      <div style={{ fontSize: '0.85rem', color: '#7f8c8d', fontStyle: 'italic', padding: '0.5rem' }}>
-                        No source data available. Load data first to test mappings.
-                      </div>
-                    );
-                  }
+                {showTestValidate &&
+                  (() => {
+                    const rawStore = useRawDataStore.getState();
+                    const rawData = rawStore.getRawData(rulesDataKey as any);
+                    const bindings = rulesStore.getBindings(rulesDataKey as any);
 
-                  if (bindings.length === 0) {
-                    return (
-                      <div style={{ fontSize: '0.85rem', color: '#7f8c8d', fontStyle: 'italic', padding: '0.5rem' }}>
-                        No bindings configured. Add bindings above to test.
-                      </div>
-                    );
-                  }
+                    if (!rawData || !Array.isArray(rawData) || rawData.length === 0) {
+                      return (
+                        <div
+                          style={{
+                            fontSize: '0.85rem',
+                            color: '#7f8c8d',
+                            fontStyle: 'italic',
+                            padding: '0.5rem',
+                          }}
+                        >
+                          No source data available. Load data first to test mappings.
+                        </div>
+                      );
+                    }
 
-                  // Ensure testItemIndex is within bounds
-                  const currentIndex = Math.min(testItemIndex, rawData.length - 1);
-                  const sampleItem = rawData[currentIndex];
-                  
-                  // Function to construct model instance from mapped data
-                  const constructModelInstance = (dataKey: string, mappedData: any) => {
-                    try {
-                      const Constructor = CLASS_CONSTRUCTORS[dataKey as keyof typeof CLASS_CONSTRUCTORS];
-                      if (!Constructor) {
-                        return mappedData;
-                      }
-                      
-                      // Construct the model instance first (this may clean/transform the data)
-                      const instance = new Constructor(mappedData);
-                      
-                      // Now validate enum fields on the constructed instance
-                      const enumErrors = validateEnumFields(dataKey, instance);
-                      if (enumErrors.length > 0) {
-                        throw new Error(`Enum validation failed: ${enumErrors.join(', ')}`);
-                      }
-                      
-                      return instance;
-                    } catch (error) {
-                      throw new Error(`Model construction failed: ${error instanceof Error ? error.message : String(error)}`);
+                    if (bindings.length === 0) {
+                      return (
+                        <div
+                          style={{
+                            fontSize: '0.85rem',
+                            color: '#7f8c8d',
+                            fontStyle: 'italic',
+                            padding: '0.5rem',
+                          }}
+                        >
+                          No bindings configured. Add bindings above to test.
+                        </div>
+                      );
                     }
-                  };
-                  
-                  // Function to get expected type from model metadata
-                  const getExpectedType = (dataKey: string, fieldName: string): string | null => {
-                    const Constructor = CLASS_CONSTRUCTORS[dataKey as keyof typeof CLASS_CONSTRUCTORS];
-                    if (!Constructor) {
-                      return null;
-                    }
-                    
-                    // Check if the constructor has FIELD_TYPES metadata
-                    const fieldTypes = (Constructor as any).FIELD_TYPES;
-                    if (fieldTypes && fieldTypes[fieldName]) {
-                      return fieldTypes[fieldName];
-                    }
-                    
-                    return null;
-                  };
-                  
-                  // Function to check if value matches expected type
-                  const checkTypeMatch = (value: any, expectedType: string): { matches: boolean; actualType: string } => {
-                    const actualType = typeof value === 'object' && value !== null 
-                      ? (Array.isArray(value) ? 'array' : 'object') 
-                      : typeof value;
-                    
-                    // Simple type matching
-                    if (expectedType === 'string' && typeof value === 'string') {
-                      return { matches: true, actualType };
-                    }
-                    if (expectedType === 'number' && typeof value === 'number') {
-                      return { matches: true, actualType };
-                    }
-                    if (expectedType === 'boolean' && typeof value === 'boolean') {
-                      return { matches: true, actualType };
-                    }
-                    if (expectedType.includes('Record<') && typeof value === 'object' && value !== null && !Array.isArray(value)) {
-                      return { matches: true, actualType: expectedType };
-                    }
-                    if (expectedType.endsWith('[]') && Array.isArray(value)) {
-                      return { matches: true, actualType: expectedType };
-                    }
-                    
-                    // Enum types - enums are strings at runtime
-                    // Check for common enum type names or union types with quotes
-                    if (typeof value === 'string' && (
-                      expectedType.endsWith('Type') || 
-                      expectedType.endsWith('Source') || 
-                      expectedType.endsWith('Classification') ||
-                      expectedType.includes('"') || 
-                      expectedType.includes('|')
-                    )) {
-                      return { matches: true, actualType: expectedType };
-                    }
-                    
-                    return { matches: false, actualType };
-                  };
-                  
-                  
-                  // Function to validate enum fields
-                  const validateEnumFields = (dataKey: string, data: any): string[] => {
-                    const errors: string[] = [];
-                    
-                    // Define enum metadata: field name -> valid values
-                    const enumMetadata: Record<string, Record<string, string[]>> = {
-                      // Models with CoreType enum
-                      gearsets: {
-                        core: ['weapon damage', 'armor', 'skill tier']
-                      },
-                      brandsets: {
-                        core: ['weapon damage', 'armor', 'skill tier']
-                      },
-                      namedGear: {
-                        core: ['weapon damage', 'armor', 'skill tier']
-                      },
-                      // Models with GearModClassification enum
-                      gearMods: {
-                        classification: ['offensive', 'defensive', 'skill']
-                      },
-                      // Models with GearSource enum
-                      buildGear: {
-                        source: ['brandset', 'gearset', 'named', 'exotic']
-                      },
-                      // Models with GearType enum
-                      buildGear_type: {
-                        type: ['mask', 'chest', 'holster', 'gloves', 'backpack', 'kneepads']
+
+                    // Ensure testItemIndex is within bounds
+                    const currentIndex = Math.min(testItemIndex, rawData.length - 1);
+                    const sampleItem = rawData[currentIndex];
+
+                    // Function to construct model instance from mapped data
+                    const constructModelInstance = (dataKey: string, mappedData: any) => {
+                      try {
+                        const Constructor =
+                          CLASS_CONSTRUCTORS[dataKey as keyof typeof CLASS_CONSTRUCTORS];
+                        if (!Constructor) {
+                          return mappedData;
+                        }
+
+                        // Construct the model instance first (this may clean/transform the data)
+                        const instance = new Constructor(mappedData);
+
+                        // Now validate enum fields on the constructed instance
+                        const enumErrors = validateEnumFields(dataKey, instance);
+                        if (enumErrors.length > 0) {
+                          throw new Error(`Enum validation failed: ${enumErrors.join(', ')}`);
+                        }
+
+                        return instance;
+                      } catch (error) {
+                        throw new Error(
+                          `Model construction failed: ${error instanceof Error ? error.message : String(error)}`,
+                        );
                       }
                     };
-                    
-                    // Get enum fields for this data type
-                    const enumFields = enumMetadata[dataKey];
-                    if (!enumFields) {
-                      return errors; // No enum validation needed for this type
-                    }
-                    
-                    // Validate each enum field
-                    for (const [fieldName, validValues] of Object.entries(enumFields)) {
-                      const fieldValue = data[fieldName];
-                      
-                      // Skip if field is not present or is null/undefined
-                      if (fieldValue === null || fieldValue === undefined) {
-                        continue;
+
+                    // Function to get expected type from model metadata
+                    const getExpectedType = (dataKey: string, fieldName: string): string | null => {
+                      const Constructor =
+                        CLASS_CONSTRUCTORS[dataKey as keyof typeof CLASS_CONSTRUCTORS];
+                      if (!Constructor) {
+                        return null;
                       }
-                      
-                      // Check if it's a string value (enums are strings at runtime)
-                      if (typeof fieldValue === 'string') {
-                        if (!validValues.includes(fieldValue)) {
-                          errors.push(`${fieldName}="${fieldValue}" is not a valid enum value (expected: ${validValues.join(', ')})`);
+
+                      // Check if the constructor has FIELD_TYPES metadata
+                      const fieldTypes = (Constructor as any).FIELD_TYPES;
+                      if (fieldTypes && fieldTypes[fieldName]) {
+                        return fieldTypes[fieldName];
+                      }
+
+                      return null;
+                    };
+
+                    // Function to check if value matches expected type
+                    const checkTypeMatch = (
+                      value: any,
+                      expectedType: string,
+                    ): { matches: boolean; actualType: string } => {
+                      const actualType =
+                        typeof value === 'object' && value !== null
+                          ? Array.isArray(value)
+                            ? 'array'
+                            : 'object'
+                          : typeof value;
+
+                      // Simple type matching
+                      if (expectedType === 'string' && typeof value === 'string') {
+                        return { matches: true, actualType };
+                      }
+                      if (expectedType === 'number' && typeof value === 'number') {
+                        return { matches: true, actualType };
+                      }
+                      if (expectedType === 'boolean' && typeof value === 'boolean') {
+                        return { matches: true, actualType };
+                      }
+                      if (
+                        expectedType.includes('Record<') &&
+                        typeof value === 'object' &&
+                        value !== null &&
+                        !Array.isArray(value)
+                      ) {
+                        return { matches: true, actualType: expectedType };
+                      }
+                      if (expectedType.endsWith('[]') && Array.isArray(value)) {
+                        return { matches: true, actualType: expectedType };
+                      }
+
+                      // Enum types - enums are strings at runtime
+                      // Check for common enum type names or union types with quotes
+                      if (
+                        typeof value === 'string' &&
+                        (expectedType.endsWith('Type') ||
+                          expectedType.endsWith('Source') ||
+                          expectedType.endsWith('Classification') ||
+                          expectedType.includes('"') ||
+                          expectedType.includes('|'))
+                      ) {
+                        return { matches: true, actualType: expectedType };
+                      }
+
+                      return { matches: false, actualType };
+                    };
+
+                    // Function to validate enum fields
+                    const validateEnumFields = (dataKey: string, data: any): string[] => {
+                      const errors: string[] = [];
+
+                      // Define enum metadata: field name -> valid values
+                      const enumMetadata: Record<string, Record<string, string[]>> = {
+                        // Models with CoreType enum
+                        gearsets: {
+                          core: ['weapon damage', 'armor', 'skill tier'],
+                        },
+                        brandsets: {
+                          core: ['weapon damage', 'armor', 'skill tier'],
+                        },
+                        namedGear: {
+                          core: ['weapon damage', 'armor', 'skill tier'],
+                        },
+                        // Models with GearModClassification enum
+                        gearMods: {
+                          classification: ['offensive', 'defensive', 'skill'],
+                        },
+                        // Models with GearSource enum
+                        buildGear: {
+                          source: ['brandset', 'gearset', 'named', 'exotic'],
+                        },
+                        // Models with GearType enum
+                        buildGear_type: {
+                          type: ['mask', 'chest', 'holster', 'gloves', 'backpack', 'kneepads'],
+                        },
+                      };
+
+                      // Get enum fields for this data type
+                      const enumFields = enumMetadata[dataKey];
+                      if (!enumFields) {
+                        return errors; // No enum validation needed for this type
+                      }
+
+                      // Validate each enum field
+                      for (const [fieldName, validValues] of Object.entries(enumFields)) {
+                        const fieldValue = data[fieldName];
+
+                        // Skip if field is not present or is null/undefined
+                        if (fieldValue === null || fieldValue === undefined) {
+                          continue;
                         }
-                      } else if (typeof fieldValue === 'object' && !Array.isArray(fieldValue)) {
-                        // Handle complex core types like Record<CoreType, string[]> in Gearset
-                        // This is valid, so skip validation
-                        continue;
-                      } else {
-                        // Field exists but is not a string - type mismatch
-                        errors.push(`${fieldName} has type "${typeof fieldValue}" but expected enum string (one of: ${validValues.join(', ')})`);
-                      }
-                    }
-                    
-                    return errors;
-                  };
-                  
-                  return (
-                    <div style={{ marginTop: '0.5rem' }}>
-                      {/* Pagination Controls */}
-                      <div style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        gap: '0.5rem', 
-                        marginBottom: '0.75rem',
-                        padding: '0.5rem',
-                        backgroundColor: '#f9f9f9',
-                        borderRadius: '4px',
-                        justifyContent: 'space-between'
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <button
-                            onClick={() => {
-                              setTestItemIndex(Math.max(0, currentIndex - 1));
-                              setTestAllPassed(null); // Reset test status when manually navigating
-                            }}
-                            disabled={currentIndex === 0}
-                            style={{
-                              padding: '0.25rem 0.5rem',
-                              background: currentIndex === 0 ? '#bdc3c7' : '#3498db',
-                              color: '#fff',
-                              border: 'none',
-                              borderRadius: '3px',
-                              cursor: currentIndex === 0 ? 'not-allowed' : 'pointer',
-                              fontSize: '0.85rem'
-                            }}
-                          >
-                            ◀
-                          </button>
-                          
-                          <select
-                            value={currentIndex}
-                            onChange={(e) => {
-                              setTestItemIndex(parseInt(e.target.value));
-                              setTestAllPassed(null); // Reset test status when manually navigating
-                            }}
-                            style={{
-                              padding: '0.25rem 0.5rem',
-                              background: '#fff',
-                              border: '1px solid #ddd',
-                              borderRadius: '3px',
-                              fontSize: '0.85rem',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            {rawData.map((_: any, idx: number) => (
-                              <option key={idx} value={idx}>
-                                Item {idx + 1} of {rawData.length}
-                              </option>
-                            ))}
-                          </select>
-                          
-                          <button
-                            onClick={() => {
-                              setTestItemIndex(Math.min(rawData.length - 1, currentIndex + 1));
-                              setTestAllPassed(null); // Reset test status when manually navigating
-                            }}
-                            disabled={currentIndex === rawData.length - 1}
-                            style={{
-                              padding: '0.25rem 0.5rem',
-                              background: currentIndex === rawData.length - 1 ? '#bdc3c7' : '#3498db',
-                              color: '#fff',
-                              border: 'none',
-                              borderRadius: '3px',
-                              cursor: currentIndex === rawData.length - 1 ? 'not-allowed' : 'pointer',
-                              fontSize: '0.85rem'
-                            }}
-                          >
-                            ▶
-                          </button>
-                        </div>
 
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <a
-                            href="#"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              
-                              // Test all items using the same applyBindings function as Import
-                              for (let i = 0; i < rawData.length; i++) {
-                                const item = rawData[i];
-                                let hasError = false;
-                                
-                                // Apply bindings using shared function
-                                const processedArray = applyBindings([item], bindings, {
-                                  replaceRules: rulesStore.replaceRules,
-                                  matchRules: rulesStore.matchRules,
-                                  mappings: rulesStore.mappings
-                                }, { trackRules: true });
-                                const mappedData = processedArray[0] || {};
-                                
-                                // Try to construct model instance
-                                try {
-                                  constructModelInstance(rulesDataKey, mappedData);
-                                } catch (error) {
-                                  hasError = true;
-                                }
-                                
-                                // If error found, navigate to that item and stop
-                                if (hasError) {
-                                  setTestItemIndex(i);
-                                  setTestAllPassed(false);
-                                  return;
-                                }
-                              }
-                              
-                              // All tests passed
-                              setTestAllPassed(true);
-                            }}
-                            style={{
-                              color: '#3498db',
-                              fontSize: '0.85rem',
-                              textDecoration: 'none',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            Test All
-                          </a>
-                          
-                          {testAllPassed === true && (
-                            <span style={{ 
-                              color: '#27ae60', 
-                              fontSize: '0.85rem',
-                              fontWeight: 'bold'
-                            }}>
-                              ✓ All Tests Passed
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Data Grid */}
-                      <div style={{ 
-                        display: 'grid', 
-                        gridTemplateColumns: '1fr auto 1fr auto', 
-                        gap: '0.5rem',
-                        padding: '0.5rem',
-                        backgroundColor: '#f9f9f9',
-                        borderRadius: '4px',
-                        fontSize: '0.85rem'
-                      }}>
-                        <div style={{ fontWeight: 'bold', color: '#2c3e50' }}>Source</div>
-                        <div></div>
-                        <div style={{ fontWeight: 'bold', color: '#2c3e50' }}>Mapped (Model Instance)</div>
-                        <div></div>
-                        
-                          {(() => {
-                          // Use the same applyBindings function as Import
-                          const processedArray = applyBindings([sampleItem], bindings, {
-                            replaceRules: rulesStore.replaceRules,
-                            matchRules: rulesStore.matchRules,
-                            mappings: rulesStore.mappings
-                          }, { trackRules: true });
-                          const mappedData = processedArray[0] || {};
-                          
-                          // Try to construct model instance
-                          let modelInstance: any = null;
-                          let modelError: string | null = null;
-                          
-                          try {
-                            modelInstance = constructModelInstance(rulesDataKey, mappedData);
-                          } catch (error) {
-                            modelError = error instanceof Error ? error.message : String(error);
+                        // Check if it's a string value (enums are strings at runtime)
+                        if (typeof fieldValue === 'string') {
+                          if (!validValues.includes(fieldValue)) {
+                            errors.push(
+                              `${fieldName}="${fieldValue}" is not a valid enum value (expected: ${validValues.join(', ')})`,
+                            );
                           }
-                          
-                          // Now render each binding with the model instance value
-                          return bindings.map((binding, idx) => {
-                            const sourceValue = sampleItem[binding.source];
-                            
-                            // Get the value from the constructed model instance
-                            let displayValue: any;
-                            let hasError = false;
-                            let errorMessage = '';
-                            let isEnumError = false;
-                            
-                            if (modelError) {
-                              hasError = true;
-                              errorMessage = modelError;
-                              displayValue = '(model construction failed)';
-                              // Check if this specific field has an enum error
-                              if (modelError.includes(`${binding.destination}=`)) {
-                                isEnumError = true;
-                              }
-                            } else if (modelInstance) {
-                              displayValue = modelInstance[binding.destination];
-                              
-                              // Check if value matches expected type
-                              const expectedType = getExpectedType(rulesDataKey, binding.destination);
-                              if (expectedType) {
-                                const typeCheck = checkTypeMatch(displayValue, expectedType);
-                                if (!typeCheck.matches) {
-                                  hasError = true;
-                                  errorMessage = `Type mismatch: expected ${expectedType}, got ${typeCheck.actualType}`;
+                        } else if (typeof fieldValue === 'object' && !Array.isArray(fieldValue)) {
+                          // Handle complex core types like Record<CoreType, string[]> in Gearset
+                          // This is valid, so skip validation
+                          continue;
+                        } else {
+                          // Field exists but is not a string - type mismatch
+                          errors.push(
+                            `${fieldName} has type "${typeof fieldValue}" but expected enum string (one of: ${validValues.join(', ')})`,
+                          );
+                        }
+                      }
+
+                      return errors;
+                    };
+
+                    return (
+                      <div style={{ marginTop: '0.5rem' }}>
+                        {/* Pagination Controls */}
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            marginBottom: '0.75rem',
+                            padding: '0.5rem',
+                            backgroundColor: '#f9f9f9',
+                            borderRadius: '4px',
+                            justifyContent: 'space-between',
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <button
+                              onClick={() => {
+                                setTestItemIndex(Math.max(0, currentIndex - 1));
+                                setTestAllPassed(null); // Reset test status when manually navigating
+                              }}
+                              disabled={currentIndex === 0}
+                              style={{
+                                padding: '0.25rem 0.5rem',
+                                background: currentIndex === 0 ? '#bdc3c7' : '#3498db',
+                                color: '#fff',
+                                border: 'none',
+                                borderRadius: '3px',
+                                cursor: currentIndex === 0 ? 'not-allowed' : 'pointer',
+                                fontSize: '0.85rem',
+                              }}
+                            >
+                              ◀
+                            </button>
+
+                            <select
+                              value={currentIndex}
+                              onChange={(e) => {
+                                setTestItemIndex(parseInt(e.target.value));
+                                setTestAllPassed(null); // Reset test status when manually navigating
+                              }}
+                              style={{
+                                padding: '0.25rem 0.5rem',
+                                background: '#fff',
+                                border: '1px solid #ddd',
+                                borderRadius: '3px',
+                                fontSize: '0.85rem',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              {rawData.map((_: any, idx: number) => (
+                                <option key={idx} value={idx}>
+                                  Item {idx + 1} of {rawData.length}
+                                </option>
+                              ))}
+                            </select>
+
+                            <button
+                              onClick={() => {
+                                setTestItemIndex(Math.min(rawData.length - 1, currentIndex + 1));
+                                setTestAllPassed(null); // Reset test status when manually navigating
+                              }}
+                              disabled={currentIndex === rawData.length - 1}
+                              style={{
+                                padding: '0.25rem 0.5rem',
+                                background:
+                                  currentIndex === rawData.length - 1 ? '#bdc3c7' : '#3498db',
+                                color: '#fff',
+                                border: 'none',
+                                borderRadius: '3px',
+                                cursor:
+                                  currentIndex === rawData.length - 1 ? 'not-allowed' : 'pointer',
+                                fontSize: '0.85rem',
+                              }}
+                            >
+                              ▶
+                            </button>
+                          </div>
+
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <a
+                              href="#"
+                              onClick={(e) => {
+                                e.preventDefault();
+
+                                // Test all items using the same applyBindings function as Import
+                                for (let i = 0; i < rawData.length; i++) {
+                                  const item = rawData[i];
+                                  let hasError = false;
+
+                                  // Apply bindings using shared function
+                                  const processedArray = applyBindings(
+                                    [item],
+                                    bindings,
+                                    {
+                                      replaceRules: rulesStore.replaceRules,
+                                      matchRules: rulesStore.matchRules,
+                                      mappings: rulesStore.mappings,
+                                    },
+                                    { trackRules: true },
+                                  );
+                                  const mappedData = processedArray[0] || {};
+
+                                  // Try to construct model instance
+                                  try {
+                                    constructModelInstance(rulesDataKey, mappedData);
+                                  } catch (error) {
+                                    hasError = true;
+                                  }
+
+                                  // If error found, navigate to that item and stop
+                                  if (hasError) {
+                                    setTestItemIndex(i);
+                                    setTestAllPassed(false);
+                                    return;
+                                  }
                                 }
-                              }
-                              
-                              // Additional per-field enum validation
-                              const fieldEnumErrors = validateEnumFields(rulesDataKey, { [binding.destination]: displayValue });
-                              if (fieldEnumErrors.length > 0) {
-                                hasError = true;
-                                isEnumError = true;
-                                errorMessage = fieldEnumErrors[0];
-                              }
-                            } else {
-                              displayValue = '(no model)';
+
+                                // All tests passed
+                                setTestAllPassed(true);
+                              }}
+                              style={{
+                                color: '#3498db',
+                                fontSize: '0.85rem',
+                                textDecoration: 'none',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              Test All
+                            </a>
+
+                            {testAllPassed === true && (
+                              <span
+                                style={{
+                                  color: '#27ae60',
+                                  fontSize: '0.85rem',
+                                  fontWeight: 'bold',
+                                }}
+                              >
+                                ✓ All Tests Passed
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Data Grid */}
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr auto 1fr auto',
+                            gap: '0.5rem',
+                            padding: '0.5rem',
+                            backgroundColor: '#f9f9f9',
+                            borderRadius: '4px',
+                            fontSize: '0.85rem',
+                          }}
+                        >
+                          <div style={{ fontWeight: 'bold', color: '#2c3e50' }}>Source</div>
+                          <div></div>
+                          <div style={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                            Mapped (Model Instance)
+                          </div>
+                          <div></div>
+
+                          {(() => {
+                            // Use the same applyBindings function as Import
+                            const processedArray = applyBindings(
+                              [sampleItem],
+                              bindings,
+                              {
+                                replaceRules: rulesStore.replaceRules,
+                                matchRules: rulesStore.matchRules,
+                                mappings: rulesStore.mappings,
+                              },
+                              { trackRules: true },
+                            );
+                            const mappedData = processedArray[0] || {};
+
+                            // Try to construct model instance
+                            let modelInstance: any = null;
+                            let modelError: string | null = null;
+
+                            try {
+                              modelInstance = constructModelInstance(rulesDataKey, mappedData);
+                            } catch (error) {
+                              modelError = error instanceof Error ? error.message : String(error);
                             }
-                            
-                            return (
-                              <React.Fragment key={`binding-${idx}`}>
-                                <div style={{ 
-                                  padding: '0.25rem', 
-                                  backgroundColor: '#fff',
-                                  borderRadius: '3px',
-                                  border: '1px solid #ddd'
-                                }}>
-                                  <div style={{ fontSize: '0.75rem', color: '#7f8c8d', marginBottom: '0.15rem' }}>
-                                    {binding.source}
+
+                            // Now render each binding with the model instance value
+                            return bindings.map((binding, idx) => {
+                              const sourceValue = sampleItem[binding.source];
+
+                              // Get the value from the constructed model instance
+                              let displayValue: any;
+                              let hasError = false;
+                              let errorMessage = '';
+                              let isEnumError = false;
+
+                              if (modelError) {
+                                hasError = true;
+                                errorMessage = modelError;
+                                displayValue = '(model construction failed)';
+                                // Check if this specific field has an enum error
+                                if (modelError.includes(`${binding.destination}=`)) {
+                                  isEnumError = true;
+                                }
+                              } else if (modelInstance) {
+                                displayValue = modelInstance[binding.destination];
+
+                                // Check if value matches expected type
+                                const expectedType = getExpectedType(
+                                  rulesDataKey,
+                                  binding.destination,
+                                );
+                                if (expectedType) {
+                                  const typeCheck = checkTypeMatch(displayValue, expectedType);
+                                  if (!typeCheck.matches) {
+                                    hasError = true;
+                                    errorMessage = `Type mismatch: expected ${expectedType}, got ${typeCheck.actualType}`;
+                                  }
+                                }
+
+                                // Additional per-field enum validation
+                                const fieldEnumErrors = validateEnumFields(rulesDataKey, {
+                                  [binding.destination]: displayValue,
+                                });
+                                if (fieldEnumErrors.length > 0) {
+                                  hasError = true;
+                                  isEnumError = true;
+                                  errorMessage = fieldEnumErrors[0];
+                                }
+                              } else {
+                                displayValue = '(no model)';
+                              }
+
+                              return (
+                                <React.Fragment key={`binding-${idx}`}>
+                                  <div
+                                    style={{
+                                      padding: '0.25rem',
+                                      backgroundColor: '#fff',
+                                      borderRadius: '3px',
+                                      border: '1px solid #ddd',
+                                    }}
+                                  >
+                                    <div
+                                      style={{
+                                        fontSize: '0.75rem',
+                                        color: '#7f8c8d',
+                                        marginBottom: '0.15rem',
+                                      }}
+                                    >
+                                      {binding.source}
+                                    </div>
+                                    <div style={{ wordBreak: 'break-word' }}>
+                                      {formatSourceValue(sourceValue)}
+                                    </div>
                                   </div>
-                                  <div style={{ wordBreak: 'break-word' }}>
-                                    {formatSourceValue(sourceValue)}
+
+                                  <div
+                                    style={{
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      color: '#3498db',
+                                    }}
+                                  >
+                                    →
                                   </div>
-                                </div>
-                                
-                                <div style={{ 
-                                  display: 'flex', 
-                                  alignItems: 'center',
-                                  color: '#3498db'
-                                }}>
-                                  →
-                                </div>
-                                
-                                <div style={{ 
-                                  padding: '0.25rem', 
-                                  backgroundColor: hasError ? (isEnumError ? '#fff3e0' : '#ffe6e6') : '#fff',
-                                  borderRadius: '3px',
-                                  border: hasError ? (isEnumError ? '2px solid #e67e22' : '1px solid #e74c3c') : '1px solid #ddd',
-                                  position: 'relative'
-                                }}>
-                                  <div style={{ fontSize: '0.75rem', color: '#7f8c8d', marginBottom: '0.15rem' }}>
-                                    {binding.destination}
-                                    {hasError && (
-                                      <span 
-                                        title={errorMessage}
-                                        style={{ 
-                                          marginLeft: '0.5rem',
-                                          color: isEnumError ? '#e67e22' : '#e74c3c',
-                                          cursor: 'help',
-                                          fontSize: '1rem'
+
+                                  <div
+                                    style={{
+                                      padding: '0.25rem',
+                                      backgroundColor: hasError
+                                        ? isEnumError
+                                          ? '#fff3e0'
+                                          : '#ffe6e6'
+                                        : '#fff',
+                                      borderRadius: '3px',
+                                      border: hasError
+                                        ? isEnumError
+                                          ? '2px solid #e67e22'
+                                          : '1px solid #e74c3c'
+                                        : '1px solid #ddd',
+                                      position: 'relative',
+                                    }}
+                                  >
+                                    <div
+                                      style={{
+                                        fontSize: '0.75rem',
+                                        color: '#7f8c8d',
+                                        marginBottom: '0.15rem',
+                                      }}
+                                    >
+                                      {binding.destination}
+                                      {hasError && (
+                                        <span
+                                          title={errorMessage}
+                                          style={{
+                                            marginLeft: '0.5rem',
+                                            color: isEnumError ? '#e67e22' : '#e74c3c',
+                                            cursor: 'help',
+                                            fontSize: '1rem',
+                                          }}
+                                        >
+                                          {isEnumError ? '🔴' : '⚠️'}
+                                        </span>
+                                      )}
+                                      {hasError && isEnumError && (
+                                        <span
+                                          style={{
+                                            marginLeft: '0.25rem',
+                                            color: '#e67e22',
+                                            fontSize: '0.65rem',
+                                            fontWeight: 'bold',
+                                            textTransform: 'uppercase',
+                                          }}
+                                        >
+                                          ENUM
+                                        </span>
+                                      )}
+                                      <span
+                                        style={{
+                                          marginLeft: '0.25rem',
+                                          color: '#95a5a6',
+                                          fontSize: '0.7rem',
                                         }}
                                       >
-                                        {isEnumError ? '🔴' : '⚠️'}
+                                        (
+                                        {(() => {
+                                          const expectedType = getExpectedType(
+                                            rulesDataKey,
+                                            binding.destination,
+                                          );
+                                          return (
+                                            expectedType ||
+                                            (typeof displayValue === 'object' &&
+                                            displayValue !== null
+                                              ? Array.isArray(displayValue)
+                                                ? 'array'
+                                                : 'object'
+                                              : typeof displayValue)
+                                          );
+                                        })()}
+                                        )
                                       </span>
-                                    )}
-                                    {hasError && isEnumError && (
-                                      <span style={{ 
-                                        marginLeft: '0.25rem', 
-                                        color: '#e67e22', 
-                                        fontSize: '0.65rem',
-                                        fontWeight: 'bold',
-                                        textTransform: 'uppercase'
-                                      }}>
-                                        ENUM
-                                      </span>
-                                    )}
-                                    <span style={{ marginLeft: '0.25rem', color: '#95a5a6', fontSize: '0.7rem' }}>
-                                      ({(() => {
-                                        const expectedType = getExpectedType(rulesDataKey, binding.destination);
-                                        return expectedType || (typeof displayValue === 'object' && displayValue !== null ? (Array.isArray(displayValue) ? 'array' : 'object') : typeof displayValue);
-                                      })()})
-                                    </span>
-                                  </div>
-                                  <div style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
-                                    {hasError 
-                                      ? String(displayValue)
-                                      : (typeof displayValue === 'object' && displayValue !== null)
-                                      ? JSON.stringify(displayValue, null, 2)
-                                      : (displayValue === 0 ? '0' : String(displayValue ?? ''))}
-                                  </div>
-                                  {hasError && (
-                                    <div style={{ 
-                                      fontSize: '0.7rem', 
-                                      color: isEnumError ? '#e67e22' : '#e74c3c', 
-                                      marginTop: '0.25rem',
-                                      fontStyle: 'italic',
-                                      fontWeight: isEnumError ? 'bold' : 'normal'
-                                    }}>
-                                      {errorMessage}
                                     </div>
-                                  )}
-                                </div>
-                                
-                                <div>
-                                  {/* Empty cell for alignment */}
-                                </div>
-                              </React.Fragment>
-                            );
-                          });
-                        })()}
+                                    <div
+                                      style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}
+                                    >
+                                      {hasError
+                                        ? String(displayValue)
+                                        : typeof displayValue === 'object' && displayValue !== null
+                                          ? JSON.stringify(displayValue, null, 2)
+                                          : displayValue === 0
+                                            ? '0'
+                                            : String(displayValue ?? '')}
+                                    </div>
+                                    {hasError && (
+                                      <div
+                                        style={{
+                                          fontSize: '0.7rem',
+                                          color: isEnumError ? '#e67e22' : '#e74c3c',
+                                          marginTop: '0.25rem',
+                                          fontStyle: 'italic',
+                                          fontWeight: isEnumError ? 'bold' : 'normal',
+                                        }}
+                                      >
+                                        {errorMessage}
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  <div>{/* Empty cell for alignment */}</div>
+                                </React.Fragment>
+                              );
+                            });
+                          })()}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })()}
+                    );
+                  })()}
 
                 {/* Create New Rule Section - SECOND */}
-                <div 
+                <div
                   className="rules-section-header"
                   style={{ cursor: 'pointer', userSelect: 'none', marginTop: '1.5rem' }}
                   onClick={() => setShowCreateRule(!showCreateRule)}
@@ -2102,7 +2428,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                         value={newRuleLabel}
                         onChange={(e) => setNewRuleLabel(e.target.value)}
                       />
-                      <select 
+                      <select
                         className="rule-input"
                         value={ruleType}
                         onChange={(e) => setRuleType(e.target.value as any)}
@@ -2145,7 +2471,9 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                     )}
 
                     {ruleType === 'mapping' && (
-                      <div style={{ fontSize: '0.85rem', color: '#7f8c8d', marginBottom: '0.5rem' }}>
+                      <div
+                        style={{ fontSize: '0.85rem', color: '#7f8c8d', marginBottom: '0.5rem' }}
+                      >
                         Create a mapping rule first, then add key-value pairs to it below.
                       </div>
                     )}
@@ -2157,20 +2485,35 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                 )}
 
                 {/* Existing Rules Section - THIRD */}
-                <div 
+                <div
                   className="rules-section-header"
                   style={{ cursor: 'pointer', userSelect: 'none' }}
                   onClick={() => setShowExistingRules(!showExistingRules)}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                       <span style={{ marginRight: '0.5rem' }}>{showExistingRules ? '▼' : '▶'}</span>
                       <h4>Existing Rules</h4>
                     </div>
-                    <a 
-                      href="#" 
-                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleOpenAllRulesJson(); }}
-                      style={{ fontSize: '0.9rem', color: '#3498db', textDecoration: 'none', cursor: 'pointer' }}
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleOpenAllRulesJson();
+                      }}
+                      style={{
+                        fontSize: '0.9rem',
+                        color: '#3498db',
+                        textDecoration: 'none',
+                        cursor: 'pointer',
+                      }}
                     >
                       json
                     </a>
@@ -2182,157 +2525,232 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                     <div className="rules-group-header">
                       <span>Replace Rules</span>
                     </div>
-                    {Object.entries(useRulesStore.getState().replaceRules).map(([label, [match, replace]]) => (
+                    {Object.entries(useRulesStore.getState().replaceRules).map(
+                      ([label, [match, replace]]) => (
+                        <div key={label} className="rule-row">
+                          <strong>{label}:</strong>
+                          <span>{match}</span>
+                          <span className="arrow">→</span>
+                          <span>{replace}</span>
+                          <span className="remove-link" onClick={() => handleDeleteRule(label)}>
+                            ✕
+                          </span>
+                        </div>
+                      ),
+                    )}
+                    {Object.keys(useRulesStore.getState().replaceRules).length === 0 && (
+                      <div
+                        style={{
+                          fontSize: '0.85rem',
+                          color: '#7f8c8d',
+                          fontStyle: 'italic',
+                          marginBottom: '0.5rem',
+                        }}
+                      >
+                        No replace rules yet
+                      </div>
+                    )}
+
+                    <div className="rules-group-header">
+                      <span>Match Rules</span>
+                    </div>
+                    {Object.entries(useRulesStore.getState().matchRules).map(([label, regex]) => (
                       <div key={label} className="rule-row">
                         <strong>{label}:</strong>
-                        <span>{match}</span>
-                        <span className="arrow">→</span>
-                        <span>{replace}</span>
-                        <span className="remove-link" onClick={() => handleDeleteRule(label)}>✕</span>
-                      </div>
-                    ))}
-                {Object.keys(useRulesStore.getState().replaceRules).length === 0 && (
-                  <div style={{ fontSize: '0.85rem', color: '#7f8c8d', fontStyle: 'italic', marginBottom: '0.5rem' }}>
-                    No replace rules yet
-                  </div>
-                )}
-
-                <div className="rules-group-header">
-                  <span>Match Rules</span>
-                </div>
-                {Object.entries(useRulesStore.getState().matchRules).map(([label, regex]) => (
-                  <div key={label} className="rule-row">
-                    <strong>{label}:</strong>
-                    <span>{regex}</span>
-                    <span className="remove-link" onClick={() => handleDeleteRule(label)}>✕</span>
-                  </div>
-                ))}
-                {Object.keys(useRulesStore.getState().matchRules).length === 0 && (
-                  <div style={{ fontSize: '0.85rem', color: '#7f8c8d', fontStyle: 'italic', marginBottom: '0.5rem' }}>
-                    No match rules yet
-                  </div>
-                )}
-
-                <div className="rules-group-header">
-                  <span>Mappings (Lookup Tables)</span>
-                </div>
-                {Object.entries(useRulesStore.getState().mappings).map(([label, mapping]) => {
-                  const isExpanded = expandedMappings[label] || false;
-                  const itemCount = Object.keys(mapping).length;
-                  
-                  return (
-                    <div key={label} className="mapping-group">
-                      <div 
-                        className="mapping-label" 
-                        style={{ 
-                          display: 'flex', 
-                          justifyContent: 'space-between', 
-                          alignItems: 'center',
-                          cursor: 'pointer',
-                          userSelect: 'none'
-                        }}
-                        onClick={() => toggleMappingExpanded(label)}
-                      >
-                        <div>
-                          <span style={{ marginRight: '0.5rem' }}>{isExpanded ? '▼' : '▶'}</span>
-                          <strong>{label}:</strong>
-                          {!isExpanded && (
-                            <span style={{ fontSize: '0.85rem', color: '#7f8c8d', marginLeft: '0.5rem' }}>
-                              [{itemCount} {itemCount === 1 ? 'item' : 'items'}]
-                            </span>
-                          )}
-                          <a 
-                            href="#" 
-                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleOpenMappingJson(label); }}
-                            style={{ fontSize: '0.85rem', color: '#3498db', textDecoration: 'none', cursor: 'pointer', marginLeft: '0.5rem' }}
-                          >
-                            json
-                          </a>
-                        </div>
-                        <span 
-                          className="remove-link" 
-                          onClick={(e) => { e.stopPropagation(); handleDeleteRule(label); }}
-                        >
+                        <span>{regex}</span>
+                        <span className="remove-link" onClick={() => handleDeleteRule(label)}>
                           ✕
                         </span>
                       </div>
-                      
-                      {isExpanded && (
-                        <>
-                          {Object.entries(mapping).map(([key, value]) => (
-                            <div key={key} className="rule-row mapping-entry">
-                              <span>{key}</span>
-                              <span className="arrow">→</span>
-                              <span>{value}</span>
-                              <span className="remove-link" onClick={() => handleDeleteMappingEntry(label, key)}>✕</span>
-                            </div>
-                          ))}
-                          {Object.keys(mapping).length === 0 && (
-                            <div style={{ fontSize: '0.8rem', color: '#7f8c8d', fontStyle: 'italic', paddingLeft: '1rem' }}>
-                              No entries yet. Add key-value pairs below.
-                            </div>
-                          )}
-                          <div className="rule-row mapping-entry" style={{ marginTop: '0.5rem' }}>
-                            <input
-                              type="text"
-                              className="rule-input"
-                              placeholder="Key"
-                              value={selectedRuleLabel === label ? mappingKey : ''}
-                              onFocus={() => setSelectedRuleLabel(label)}
-                              onChange={(e) => {
-                                setSelectedRuleLabel(label);
-                                setMappingKey(e.target.value);
-                              }}
-                            />
-                            <span className="arrow">→</span>
-                            <input
-                              type="text"
-                              className="rule-input"
-                              placeholder="Value"
-                              value={selectedRuleLabel === label ? mappingValue : ''}
-                              onFocus={() => setSelectedRuleLabel(label)}
-                              onChange={(e) => {
-                                setSelectedRuleLabel(label);
-                                setMappingValue(e.target.value);
-                              }}
-                            />
-                            <button 
-                              className="add-link" 
-                              onClick={() => handleAddMappingEntry(label)}
-                              style={{ padding: '0.25rem 0.75rem', background: '#3498db', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-                            >
-                              Add
-                            </button>
-                          </div>
-                        </>
-                      )}
+                    ))}
+                    {Object.keys(useRulesStore.getState().matchRules).length === 0 && (
+                      <div
+                        style={{
+                          fontSize: '0.85rem',
+                          color: '#7f8c8d',
+                          fontStyle: 'italic',
+                          marginBottom: '0.5rem',
+                        }}
+                      >
+                        No match rules yet
+                      </div>
+                    )}
+
+                    <div className="rules-group-header">
+                      <span>Mappings (Lookup Tables)</span>
                     </div>
-                  );
-                })}
-                {Object.keys(useRulesStore.getState().mappings).length === 0 && (
-                  <div style={{ fontSize: '0.85rem', color: '#7f8c8d', fontStyle: 'italic', marginBottom: '0.5rem' }}>
-                    No mapping rules yet. Create one above to start adding key-value pairs.
-                  </div>
-                )}
+                    {Object.entries(useRulesStore.getState().mappings).map(([label, mapping]) => {
+                      const isExpanded = expandedMappings[label] || false;
+                      const itemCount = Object.keys(mapping).length;
+
+                      return (
+                        <div key={label} className="mapping-group">
+                          <div
+                            className="mapping-label"
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              cursor: 'pointer',
+                              userSelect: 'none',
+                            }}
+                            onClick={() => toggleMappingExpanded(label)}
+                          >
+                            <div>
+                              <span style={{ marginRight: '0.5rem' }}>
+                                {isExpanded ? '▼' : '▶'}
+                              </span>
+                              <strong>{label}:</strong>
+                              {!isExpanded && (
+                                <span
+                                  style={{
+                                    fontSize: '0.85rem',
+                                    color: '#7f8c8d',
+                                    marginLeft: '0.5rem',
+                                  }}
+                                >
+                                  [{itemCount} {itemCount === 1 ? 'item' : 'items'}]
+                                </span>
+                              )}
+                              <a
+                                href="#"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleOpenMappingJson(label);
+                                }}
+                                style={{
+                                  fontSize: '0.85rem',
+                                  color: '#3498db',
+                                  textDecoration: 'none',
+                                  cursor: 'pointer',
+                                  marginLeft: '0.5rem',
+                                }}
+                              >
+                                json
+                              </a>
+                            </div>
+                            <span
+                              className="remove-link"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteRule(label);
+                              }}
+                            >
+                              ✕
+                            </span>
+                          </div>
+
+                          {isExpanded && (
+                            <>
+                              {Object.entries(mapping).map(([key, value]) => (
+                                <div key={key} className="rule-row mapping-entry">
+                                  <span>{key}</span>
+                                  <span className="arrow">→</span>
+                                  <span>{value}</span>
+                                  <span
+                                    className="remove-link"
+                                    onClick={() => handleDeleteMappingEntry(label, key)}
+                                  >
+                                    ✕
+                                  </span>
+                                </div>
+                              ))}
+                              {Object.keys(mapping).length === 0 && (
+                                <div
+                                  style={{
+                                    fontSize: '0.8rem',
+                                    color: '#7f8c8d',
+                                    fontStyle: 'italic',
+                                    paddingLeft: '1rem',
+                                  }}
+                                >
+                                  No entries yet. Add key-value pairs below.
+                                </div>
+                              )}
+                              <div
+                                className="rule-row mapping-entry"
+                                style={{ marginTop: '0.5rem' }}
+                              >
+                                <input
+                                  type="text"
+                                  className="rule-input"
+                                  placeholder="Key"
+                                  value={selectedRuleLabel === label ? mappingKey : ''}
+                                  onFocus={() => setSelectedRuleLabel(label)}
+                                  onChange={(e) => {
+                                    setSelectedRuleLabel(label);
+                                    setMappingKey(e.target.value);
+                                  }}
+                                />
+                                <span className="arrow">→</span>
+                                <input
+                                  type="text"
+                                  className="rule-input"
+                                  placeholder="Value"
+                                  value={selectedRuleLabel === label ? mappingValue : ''}
+                                  onFocus={() => setSelectedRuleLabel(label)}
+                                  onChange={(e) => {
+                                    setSelectedRuleLabel(label);
+                                    setMappingValue(e.target.value);
+                                  }}
+                                />
+                                <button
+                                  className="add-link"
+                                  onClick={() => handleAddMappingEntry(label)}
+                                  style={{
+                                    padding: '0.25rem 0.75rem',
+                                    background: '#3498db',
+                                    color: '#fff',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer',
+                                  }}
+                                >
+                                  Add
+                                </button>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      );
+                    })}
+                    {Object.keys(useRulesStore.getState().mappings).length === 0 && (
+                      <div
+                        style={{
+                          fontSize: '0.85rem',
+                          color: '#7f8c8d',
+                          fontStyle: 'italic',
+                          marginBottom: '0.5rem',
+                        }}
+                      >
+                        No mapping rules yet. Create one above to start adding key-value pairs.
+                      </div>
+                    )}
                   </>
                 )}
               </div>
 
               <div className="rules-actions">
-                <button className="save-rules-btn" onClick={() => {
-                  const rulesState = useRulesStore.getState();
-                  const rulesData = {
-                    replaceRules: rulesState.replaceRules,
-                    matchRules: rulesState.matchRules,
-                    mappings: rulesState.mappings,
-                    bindings: rulesState.bindings
-                  };
-                  setRulesJsonText(JSON.stringify(rulesData, null, 2));
-                  setShowRulesJsonOverlay(true);
-                }}>
+                <button
+                  className="save-rules-btn"
+                  onClick={() => {
+                    const rulesState = useRulesStore.getState();
+                    const rulesData = {
+                      replaceRules: rulesState.replaceRules,
+                      matchRules: rulesState.matchRules,
+                      mappings: rulesState.mappings,
+                      bindings: rulesState.bindings,
+                    };
+                    setRulesJsonText(JSON.stringify(rulesData, null, 2));
+                    setShowRulesJsonOverlay(true);
+                  }}
+                >
                   Show Rules
                 </button>
-                <button className="cancel-btn" onClick={handleCloseRules}>Close</button>
+                <button className="cancel-btn" onClick={handleCloseRules}>
+                  Close
+                </button>
               </div>
             </div>
           </div>
@@ -2340,8 +2758,16 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
 
         {/* Bindings JSON Editor Modal */}
         {showBindingsJson && (
-          <div className="overlay-backdrop" onClick={() => setShowBindingsJson(false)} style={{ zIndex: 10001 }}>
-            <div className="overlay-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px', width: '90%' }}>
+          <div
+            className="overlay-backdrop"
+            onClick={() => setShowBindingsJson(false)}
+            style={{ zIndex: 10001 }}
+          >
+            <div
+              className="overlay-content"
+              onClick={(e) => e.stopPropagation()}
+              style={{ maxWidth: '800px', width: '90%' }}
+            >
               <h2>Edit Bindings JSON - {rulesDataKey}</h2>
               <textarea
                 value={bindingsJsonText}
@@ -2354,7 +2780,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                   padding: '10px',
                   border: '1px solid #ddd',
                   borderRadius: '4px',
-                  resize: 'vertical'
+                  resize: 'vertical',
                 }}
               />
               <div className="overlay-actions" style={{ marginTop: '1rem' }}>
@@ -2367,8 +2793,16 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
 
         {/* Mapping JSON Editor Modal */}
         {showMappingJson && (
-          <div className="overlay-backdrop" onClick={() => setShowMappingJson(false)} style={{ zIndex: 10001 }}>
-            <div className="overlay-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px', width: '90%' }}>
+          <div
+            className="overlay-backdrop"
+            onClick={() => setShowMappingJson(false)}
+            style={{ zIndex: 10001 }}
+          >
+            <div
+              className="overlay-content"
+              onClick={(e) => e.stopPropagation()}
+              style={{ maxWidth: '800px', width: '90%' }}
+            >
               <h2>Edit Mapping JSON - {mappingJsonLabel}</h2>
               <textarea
                 value={mappingJsonText}
@@ -2381,7 +2815,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                   padding: '10px',
                   border: '1px solid #ddd',
                   borderRadius: '4px',
-                  resize: 'vertical'
+                  resize: 'vertical',
                 }}
               />
               <div className="overlay-actions" style={{ marginTop: '1rem' }}>
@@ -2394,8 +2828,16 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
 
         {/* All Rules JSON Editor Modal */}
         {showAllRulesJson && (
-          <div className="overlay-backdrop" onClick={() => setShowAllRulesJson(false)} style={{ zIndex: 10001 }}>
-            <div className="overlay-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px', width: '90%' }}>
+          <div
+            className="overlay-backdrop"
+            onClick={() => setShowAllRulesJson(false)}
+            style={{ zIndex: 10001 }}
+          >
+            <div
+              className="overlay-content"
+              onClick={(e) => e.stopPropagation()}
+              style={{ maxWidth: '800px', width: '90%' }}
+            >
               <h2>Edit All Rules JSON</h2>
               <textarea
                 value={allRulesJsonText}
@@ -2408,7 +2850,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                   padding: '10px',
                   border: '1px solid #ddd',
                   borderRadius: '4px',
-                  resize: 'vertical'
+                  resize: 'vertical',
                 }}
               />
               <div className="overlay-actions" style={{ marginTop: '1rem' }}>
@@ -2421,11 +2863,20 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
 
         {/* Complete Rules JSON Editor Modal */}
         {showRulesJsonOverlay && (
-          <div className="overlay-backdrop" onClick={() => setShowRulesJsonOverlay(false)} style={{ zIndex: 10001 }}>
-            <div className="overlay-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px', width: '90%' }}>
+          <div
+            className="overlay-backdrop"
+            onClick={() => setShowRulesJsonOverlay(false)}
+            style={{ zIndex: 10001 }}
+          >
+            <div
+              className="overlay-content"
+              onClick={(e) => e.stopPropagation()}
+              style={{ maxWidth: '800px', width: '90%' }}
+            >
               <h2>Edit Rules JSON</h2>
               <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '1rem' }}>
-                Edit the complete rules configuration including replaceRules, matchRules, mappings, and bindings.
+                Edit the complete rules configuration including replaceRules, matchRules, mappings,
+                and bindings.
               </p>
               <textarea
                 value={rulesJsonText}
@@ -2438,7 +2889,7 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
                   padding: '10px',
                   border: '1px solid #ddd',
                   borderRadius: '4px',
-                  resize: 'vertical'
+                  resize: 'vertical',
                 }}
               />
               <div className="overlay-actions" style={{ marginTop: '1rem' }}>

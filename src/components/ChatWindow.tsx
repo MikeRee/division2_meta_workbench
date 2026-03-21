@@ -8,6 +8,7 @@ import BuildGear, { GearType } from '../models/BuildGear';
 import { GearModValue } from '../models/GearMod';
 import Weapon from '../models/Weapon';
 import NamedGear from '../models/NamedGear';
+import { getBasePath } from '../utils/basePath';
 import { fuzzyFind } from '../utils/fuzzySearch';
 import { parseCoreType, getDefaultCoreValue } from '../models/CoreValue';
 
@@ -104,7 +105,7 @@ function ChatWindow() {
     // Load prompts from file and localStorage
     const loadPrompts = async () => {
       try {
-        const response = await fetch('/clean/prompts.json');
+        const response = await fetch(`${getBasePath()}/clean/prompts.json`);
         if (response.ok) {
           const defaultPrompts = await response.json();
 

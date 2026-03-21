@@ -18,6 +18,7 @@ import WeaponMod from './models/WeaponMod';
 import Attribute from './models/Attribute';
 import GearMod from './models/GearMod';
 import StatusImmunity from './models/StatusImmunity';
+import { getBasePath } from './utils/basePath';
 import {
   parseWeapons,
   parseWeaponTalents,
@@ -76,31 +77,56 @@ function App() {
       // Phase 2: Load fresh data into lookup and clean stores (in parallel)
       await Promise.all([loadJsonData(), loadCleanData(useCleanDataStore), loadLookupData()]);
 
-      // Phase 3: Rehydrate build store now that its dependencies are ready
+      // Phase 3: Bootstrap formula store if empty
+      const { useFormulaStore } = await import('./stores/useFormulaStore');
+      await useFormulaStore.persist.rehydrate();
+      const formulaState = useFormulaStore.getState();
+      if (Object.keys(formulaState.formulas).length === 0) {
+        await formulaState.bootstrapFromFile();
+      }
+
+      // Phase 4: Rehydrate build store now that its dependencies are ready
       const { useBuildStore } = await import('./stores/useBuildStore');
       useBuildStore.persist.rehydrate();
       console.log('Build store rehydrated after dependencies loaded');
     };
 
     const loadJsonData = async () => {
+      const base = getBasePath();
       const dataFiles: Record<string, string> = {
-        weapons: '/clean/weapons.json',
-        weaponTalents: '/clean/weaponTalents.json',
-        exoticWeapons: '/clean/exoticWeapons.json',
-        gearsets: '/clean/gearsets.json',
-        brandsets: '/clean/brandsets.json',
-        gearTalents: '/clean/gearTalents.json',
-        namedGear: '/clean/namedGear.json',
-        skills: '/data/skills.json',
-        weaponMods: '/clean/weaponMods.json',
-        specializations: '/data/specialties.json',
-        missingMappings: '/data/missingMappings.json',
-        prompts: '/clean/prompts.json',
+        weapons: `${base}/clean/weapons.json`,
+        weaponTalents: `${base}/clean/weaponTalents.json`,
+        exoticWeapons: `${base}/clean/exoticWeapons.json`,
+        gearsets: `${base}/clean/gearsets.json`,
+        brandsets: `${base}/clean/brandsets.json`,
+        gearTalents: `${base}/clean/gearTalents.json`,
+        namedGear: `${base}/clean/namedGear.json`,
+        skills: `${base}/data/skills.json`,
+        weaponMods: `${base}/clean/weaponMods.json`,
+        specializations: `${base}/data/specialties.json`,
+        missingMappings: `${base}/data/missingMappings.json`,
+        prompts: `${base}/clean/prompts.json`,
       };
 
       const store = useLookupStore.getState() as any;
 
       for (const [dataType, filePath] of Object.entries(dataFiles)) {
+        // Skip if lookup store already has data for this type
+        const getterName = `getAll${dataType.charAt(0).toUpperCase() + dataType.slice(1)}`;
+        const existing = store[getterName]?.();
+        if (
+          existing &&
+          ((Array.isArray(existing) && existing.length > 0) ||
+            (existing instanceof Map && existing.size > 0))
+        ) {
+          continue;
+        }
+        // Special check for non-array types
+        if (dataType === 'missingMappings' && Object.keys(store.missingMappings || {}).length > 0)
+          continue;
+        if (dataType === 'prompts' && store.prompts instanceof Map && store.prompts.size > 0)
+          continue;
+
         try {
           const response = await fetch(filePath);
           if (response.ok) {
@@ -142,20 +168,26 @@ function App() {
     };
 
     const loadCleanData = async (useCleanDataStore: any) => {
+      const base = getBasePath();
       const cleanDataFiles: Record<string, string> = {
-        weapons: '/clean/weapons.json',
-        weaponTalents: '/clean/weaponTalents.json',
-        exoticWeapons: '/clean/exoticWeapons.json',
-        gearsets: '/clean/gearsets.json',
-        brandsets: '/clean/brandsets.json',
-        gearTalents: '/clean/gearTalents.json',
-        namedGear: '/clean/namedGear.json',
-        weaponMods: '/clean/weaponMods.json',
+        weapons: `${base}/clean/weapons.json`,
+        weaponTalents: `${base}/clean/weaponTalents.json`,
+        exoticWeapons: `${base}/clean/exoticWeapons.json`,
+        gearsets: `${base}/clean/gearsets.json`,
+        brandsets: `${base}/clean/brandsets.json`,
+        gearTalents: `${base}/clean/gearTalents.json`,
+        namedGear: `${base}/clean/namedGear.json`,
+        weaponMods: `${base}/clean/weaponMods.json`,
       };
 
       const cleanStore = useCleanDataStore.getState();
 
       for (const [dataType, filePath] of Object.entries(cleanDataFiles)) {
+        // Skip if clean store already has data for this type
+        if (cleanStore.hasCleanData(dataType as any)) {
+          continue;
+        }
+
         try {
           const response = await fetch(filePath);
           if (response.ok) {
@@ -171,8 +203,14 @@ function App() {
 
     // Load lookup data from lookups.json
     const loadLookupData = async () => {
+      // Skip if lookup store already has lookup data (e.g. from localStorage)
+      const store = useLookupStore.getState();
+      if (store.weaponAttributes.size > 0 && store.keenersWatch.size > 0) {
+        return;
+      }
+
       try {
-        const response = await fetch('/clean/lookups.json');
+        const response = await fetch(`${getBasePath()}/clean/lookups.json`);
         if (!response.ok) {
           console.log('No lookups.json file found, falling back to CSV files');
           // Fallback to CSV loading
@@ -547,7 +585,7 @@ function App() {
       const rawExoticData = parseExoticWeapons(data.sheets[0].data[0]);
 
       // Load regex patterns for normalization
-      const patternsResponse = await fetch('/data/regexPatterns.json');
+      const patternsResponse = await fetch(`${getBasePath()}/data/regexPatterns.json`);
       const patterns = await patternsResponse.json();
 
       // Normalize the data
@@ -619,7 +657,7 @@ function App() {
       const gearsetList = parseGearsets(gridData);
 
       // Load patterns and gear attributes for normalization
-      const patternsResponse = await fetch('/data/regexPatterns.json');
+      const patternsResponse = await fetch(`${getBasePath()}/data/regexPatterns.json`);
       const patterns = await patternsResponse.json();
 
       const gearAttributes = useLookupStore.getState().getAllGearAttributes();
@@ -688,7 +726,7 @@ function App() {
       const brandsetList = parseBrandsets(data);
 
       // Load regex patterns and gear attributes for normalization
-      const patternsResponse = await fetch('/data/regexPatterns.json');
+      const patternsResponse = await fetch(`${getBasePath()}/data/regexPatterns.json`);
       const patterns = await patternsResponse.json();
 
       const gearAttributes = useLookupStore.getState().getAllGearAttributes();
@@ -848,7 +886,7 @@ function App() {
       const rawNamedGearData = parseNamedGear(data.sheets[0].data[0]);
 
       // Load regex patterns and gear attributes
-      const patternsResponse = await fetch('/data/regexPatterns.json');
+      const patternsResponse = await fetch(`${getBasePath()}/data/regexPatterns.json`);
       const patterns = await patternsResponse.json();
 
       const gearAttributes = useLookupStore.getState().getAllGearAttributes();
@@ -982,7 +1020,7 @@ function App() {
       }
 
       // Load regex patterns for normalization
-      const patternsResponse = await fetch('/data/regexPatterns.json');
+      const patternsResponse = await fetch(`${getBasePath()}/data/regexPatterns.json`);
       const patterns = await patternsResponse.json();
 
       // Parse and normalize weapon mods
