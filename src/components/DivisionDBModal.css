@@ -1,0 +1,199 @@
+.divisiondb-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.divisiondb-content {
+  background: #0a0a0a;
+  padding: 2rem;
+  border-radius: 2px;
+  width: 90%;
+  max-width: 900px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid #3a3a3a;
+}
+
+.divisiondb-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.divisiondb-header h2 {
+  color: #d4af37;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.divisiondb-close {
+  background: transparent;
+  border: none;
+  color: #999;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.divisiondb-close:hover {
+  color: #ff6b6b;
+}
+
+.divisiondb-body {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.divisiondb-diagram {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #3a3a3a;
+  border-radius: 2px;
+  padding: 1rem;
+  min-height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.divisiondb-diagram svg {
+  max-width: 100%;
+  cursor: default;
+}
+
+.divisiondb-diagram .er.entityBox {
+  cursor: pointer;
+}
+
+.divisiondb-diagram [id*="entity-"] {
+  cursor: pointer;
+}
+
+/* Edit popup overlay */
+.divisiondb-edit-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.divisiondb-edit-content {
+  background: #0a0a0a;
+  padding: 1.5rem;
+  border-radius: 2px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid #3a3a3a;
+}
+
+.divisiondb-edit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.divisiondb-edit-header h3 {
+  color: #d4af37;
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.divisiondb-edit-body {
+  flex: 1;
+  overflow: auto;
+}
+
+.divisiondb-edit-json {
+  width: 100%;
+  min-height: 400px;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  color: #a0d8b0;
+  border: 1px solid #3a3a3a;
+  border-radius: 2px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  resize: none;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+.divisiondb-edit-json:focus {
+  outline: none;
+  border-color: #d4af37;
+}
+
+.divisiondb-edit-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.divisiondb-save-btn {
+  padding: 0.6rem 1.5rem;
+  background: rgba(47, 179, 102, 0.1);
+  color: #2fb85d;
+  border: 1px solid #2fb85d;
+  border-radius: 2px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.divisiondb-save-btn:hover {
+  background: rgba(47, 179, 102, 0.2);
+}
+
+.divisiondb-cancel-btn {
+  padding: 0.6rem 1.5rem;
+  background: transparent;
+  color: #999;
+  border: 1px solid #3a3a3a;
+  border-radius: 2px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.divisiondb-cancel-btn:hover {
+  border-color: #d4af37;
+  color: #d4af37;
+}
+
+.divisiondb-hint {
+  color: #7f8c8d;
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 0.5rem;
+  font-style: italic;
+}

@@ -1,32 +1,33 @@
-import React, { useEffect } from "react";
-import styles from "./TacticalCard.module.css";
-import { BuildWeapon } from "../models/BuildWeapon";
-import { getDefaultCoreImage } from "../models/CoreValue";
-import { getDefaultAttrImage, GearModClassification } from "../models/GearMod";
+import React, { useEffect } from 'react';
+import styles from './TacticalCard.module.css';
+import { BuildWeapon } from '../models/BuildWeapon';
+import { getDefaultCoreImage } from '../models/CoreValue';
+import { getDefaultAttrImage, GearModClassification } from '../models/GearMod';
+import { Rarety } from '../constants/dataKeys';
 
-// Color mapping based on weapon flag
-const getWeaponColors = (flag: string | null) => {
-  switch (flag) {
-    case 'E': // Exotic - reddish
+// Color mapping based on weapon rarety
+const getWeaponColors = (rarety: Rarety) => {
+  switch (rarety) {
+    case Rarety.EXOTIC:
       return {
         accentBar: '#DC2626',
         gradientStart: '#4d0505',
         gradientEnd: 'black',
-        nameColor: '#EF4444'
+        nameColor: '#EF4444',
       };
-    case 'N': // Named - yellow
+    case Rarety.NAMED:
       return {
         accentBar: '#FFD700',
         gradientStart: '#4d4105',
         gradientEnd: 'black',
-        nameColor: '#FFD700'
+        nameColor: '#FFD700',
       };
-    default: // Standard - yellow with white text
+    default:
       return {
         accentBar: '#FFD700',
         gradientStart: '#4d4105',
         gradientEnd: 'black',
-        nameColor: '#e5e7eb'
+        nameColor: '#e5e7eb',
       };
   }
 };
@@ -34,32 +35,38 @@ const getWeaponColors = (flag: string | null) => {
 // Helper function to determine classification from weapon attribute key
 const getAttributeClassification = (key: string | undefined): GearModClassification => {
   if (!key) return GearModClassification.Offensive;
-  
+
   const lowerKey = key.toLowerCase();
-  
+
   // Check for offensive attributes
-  if (lowerKey.includes('damage') || 
-      lowerKey.includes('critical') || 
-      lowerKey.includes('headshot') ||
-      lowerKey.includes('health damage')) {
+  if (
+    lowerKey.includes('damage') ||
+    lowerKey.includes('critical') ||
+    lowerKey.includes('headshot') ||
+    lowerKey.includes('health damage')
+  ) {
     return GearModClassification.Offensive;
   }
-  
+
   // Check for defensive attributes
-  if (lowerKey.includes('armor') || 
-      lowerKey.includes('health') ||
-      lowerKey.includes('hazard protection')) {
+  if (
+    lowerKey.includes('armor') ||
+    lowerKey.includes('health') ||
+    lowerKey.includes('hazard protection')
+  ) {
     return GearModClassification.Defensive;
   }
-  
+
   // Check for utility/skill attributes
-  if (lowerKey.includes('skill') || 
-      lowerKey.includes('status effects') ||
-      lowerKey.includes('repair') ||
-      lowerKey.includes('duration')) {
+  if (
+    lowerKey.includes('skill') ||
+    lowerKey.includes('status effects') ||
+    lowerKey.includes('repair') ||
+    lowerKey.includes('duration')
+  ) {
     return GearModClassification.Skill;
   }
-  
+
   // Default to offensive for weapon attributes
   return GearModClassification.Offensive;
 };
@@ -71,10 +78,7 @@ interface WeaponTacticalCardProps {
   onClick?: () => void;
 }
 
-const WeaponTacticalCard: React.FC<WeaponTacticalCardProps> = ({
-  buildWeapon,
-  onClick,
-}) => {
+const WeaponTacticalCard: React.FC<WeaponTacticalCardProps> = ({ buildWeapon, onClick }) => {
   // // Debug logger for buildWeapon prop
   // useEffect(() => {
   //   console.log('WeaponTacticalCard - buildWeapon:', buildWeapon);
@@ -85,9 +89,9 @@ const WeaponTacticalCard: React.FC<WeaponTacticalCardProps> = ({
     console.error('WeaponTacticalCard: Invalid buildWeapon prop', buildWeapon);
     return null;
   }
-  
+
   const weapon = buildWeapon.weapon;
-  const colors = getWeaponColors(weapon.flag);
+  const colors = getWeaponColors(weapon.rarety);
 
   return (
     <div className={styles.tacticalCard} onClick={onClick}>
@@ -102,10 +106,7 @@ const WeaponTacticalCard: React.FC<WeaponTacticalCardProps> = ({
       <div className={styles.cardScanlines} />
 
       {/* Left side accent bar */}
-      <div
-        className={styles.accentBar}
-        style={{ backgroundColor: colors.accentBar }}
-      />
+      <div className={styles.accentBar} style={{ backgroundColor: colors.accentBar }} />
 
       <div className={styles.cardContent}>
         <div className={styles.gearInfo}>
@@ -115,21 +116,9 @@ const WeaponTacticalCard: React.FC<WeaponTacticalCardProps> = ({
         </div>
 
         <div className={styles.gearAttributes}>
-          {weapon.damage && (
-            <div className={styles.attribute}>
-              {weapon.damage} Damage
-            </div>
-          )}
-          {weapon.rpm && (
-            <div className={styles.attribute}>
-              {weapon.rpm} RPM
-            </div>
-          )}
-          {weapon.baseMagSize && (
-            <div className={styles.attribute}>
-              {weapon.baseMagSize} Mag
-            </div>
-          )}
+          {weapon.damage && <div className={styles.attribute}>{weapon.damage} Damage</div>}
+          {weapon.rpm && <div className={styles.attribute}>{weapon.rpm} RPM</div>}
+          {weapon.baseMagSize && <div className={styles.attribute}>{weapon.baseMagSize} Mag</div>}
         </div>
 
         <div className={styles.pipContainer}>
@@ -164,13 +153,10 @@ const WeaponTacticalCard: React.FC<WeaponTacticalCardProps> = ({
           )}
 
           {/* Display mod slots as pips */}
-          {weapon.modSlots && weapon.modSlots.map((slot, index) => (
-            <div
-              key={index}
-              className={styles.pip}
-              title={slot}
-            />
-          ))}
+          {weapon.modSlots &&
+            weapon.modSlots.map((slot, index) => (
+              <div key={index} className={styles.pip} title={slot} />
+            ))}
         </div>
       </div>
 

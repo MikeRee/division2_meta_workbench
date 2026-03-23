@@ -1,0 +1,1762 @@
+[
+  {
+    "name": "Breadbasket",
+    "type": "weapon",
+    "perfectName": "Perfect Breadbasket",
+    "icon": "",
+    "description": "Landing body shots adds a stack of bonus +55% headshot damage to the next headshot for 10s. Max stack is 3.",
+    "perfectDescription": "Landing body shots adds a stack of bonus +70% headshot damage to the next headshot for 10s. Max stack is 2.",
+    "exclusiveTo": [],
+    "stacks": [
+      {
+        "size": 3,
+        "duration": 10,
+        "cooldown": 0,
+        "bonus": {
+          "headshot damage": 55
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Killer",
+    "type": "weapon",
+    "perfectName": "Perfect Killer",
+    "icon": "",
+    "description": "Killing an enemy with a critical hit grants +70% critical hit damage for 10s.",
+    "perfectDescription": "Killing an enemy with a critical hit grants +90% critical hit damage for 10s.",
+    "exclusiveTo": [],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 10,
+        "cooldown": 0,
+        "bonus": {
+          "critical hit damage": 70
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Preservation",
+    "type": "weapon",
+    "perfectName": "Perfect Preservation",
+    "icon": "",
+    "description": "Killing an enemy repairs 10% armor over 5s. Headshot kills improve the repair by an additional 10%.",
+    "perfectDescription": "Killing an enemy repairs 15% armor over 5s. Headshot kills improve the repair by an additional 15%.",
+    "exclusiveTo": [],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 5,
+        "cooldown": 0,
+        "bonus": {
+          "armor repair": 10
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Optimist",
+    "type": "weapon",
+    "perfectName": "Perfect Optimist",
+    "icon": "",
+    "description": "Weapon damage is increased by +3.5% for every 10% ammo missing from the magazine.",
+    "perfectDescription": "Weapon damage is increased by +4.5% for every 10% ammo missing from the magazine.",
+    "exclusiveTo": [],
+    "stacks": [
+      {
+        "size": 10,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "weapon damage": 3.5
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Strained",
+    "type": "weapon",
+    "perfectName": "Perfect Strained",
+    "icon": "",
+    "description": "Gain 10% critical hit damage for every 0.5s you are firing. Stacks up to 5 times.",
+    "perfectDescription": "Gain 10% critical hit damage for every 0.5s you are firing. Stacks up to 8 times.",
+    "exclusiveTo": [],
+    "stacks": [
+      {
+        "size": 5,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "critical hit damage": 10
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Close & Personal",
+    "type": "weapon",
+    "perfectName": "Perfectly Close & Personal",
+    "icon": "",
+    "description": "Killing a target within 7m grants +30% weapon damage for 10s.",
+    "perfectDescription": "Killing a target within 7m grants +38% weapon damage for 10s.",
+    "exclusiveTo": [],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 10,
+        "cooldown": 0,
+        "bonus": {
+          "weapon damage": 30
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Fast Hands",
+    "type": "weapon",
+    "perfectName": "Perfect Fast Hands",
+    "icon": "",
+    "description": "Critical hits add a stack of 3% reload speed bonus. Max stack is 40.",
+    "perfectDescription": "Critical hits add a stack of 5% reload speed bonus. Max stack is 40.",
+    "exclusiveTo": [],
+    "stacks": [
+      {
+        "size": 40,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "reload speed": 3
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Sadist",
+    "type": "weapon",
+    "perfectName": "Perfect Sadist",
+    "icon": "",
+    "description": "Amplifies +30% weapon damage to bleeding enemies. After 4 kills, applies bleed to the next enemy you hit.",
+    "perfectDescription": "Amplifies +35% weapon damage to bleeding enemies. After 3 kills, applies bleed to the next enemy you hit.",
+    "exclusiveTo": [],
+    "stacks": [],
+    "perfectStacks": [],
+    "bonus": {
+      "amplified weapon damage": 30
+    },
+    "perfectBonus": {
+      "amplified weapon damage": 35
+    }
+  },
+  {
+    "name": "Ranger",
+    "type": "weapon",
+    "perfectName": "Perfect Ranger",
+    "icon": "",
+    "description": "Amplifies weapon damage by 2% for every 4m you are away from your target.",
+    "perfectDescription": "Amplifies weapon damage by 2% for every 3m you are away from your target.",
+    "exclusiveTo": [],
+    "stacks": [
+      {
+        "size": 25,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "amplified weapon damage": 2
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Steady Handed",
+    "type": "weapon",
+    "perfectName": "Perfect Steady Handed",
+    "icon": "",
+    "description": "Hits grant a stack of +1% Accuracy and Stability. At 100 stacks, consumes stacks to refill the magazine.",
+    "perfectDescription": "Hits grant a stack of +1% Accuracy and Stability. At 75 stacks, consumes stacks to refill the magazine.",
+    "exclusiveTo": [],
+    "stacks": [
+      {
+        "size": 100,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "accuracy": 1,
+          "stability": 1
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Spike",
+    "type": "weapon",
+    "perfectName": "Perfect Spike",
+    "icon": "",
+    "description": "Headshots grant +20% skill damage for 15s.",
+    "perfectDescription": "Headshots grant +25% skill damage for 15s.",
+    "exclusiveTo": [],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 15,
+        "cooldown": 0,
+        "bonus": {
+          "skill damage": 20
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Perpetuation",
+    "type": "weapon",
+    "perfectName": "Perfect Perpetuation",
+    "icon": "",
+    "description": "Headshots grant +75% status effect damage and duration to the next status effect you apply. Cooldown: 20s.",
+    "perfectDescription": "Headshots grant +75% status effect damage and duration to the next status effect you apply. Cooldown: 16s.",
+    "exclusiveTo": [],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 0,
+        "cooldown": 20,
+        "bonus": {
+          "status effect damage": 75,
+          "status effect duration": 75
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Future Perfect",
+    "type": "weapon",
+    "perfectName": "Future Perfection",
+    "icon": "",
+    "description": "Weapon kills grant +1 skill tier for 15s. Stacks up to 3 times. Weapon kills at skill tier 6 grant overcharge for 15s. Overcharge Cooldown: 90s.",
+    "perfectDescription": "Weapon kills grant +1 skill tier for 19s. Stacks up to 4 times. Weapon kills at skill tier 6 grant overcharge for 15s. Overcharge Cooldown: 90s.",
+    "exclusiveTo": [],
+    "stacks": [
+      {
+        "size": 3,
+        "duration": 15,
+        "cooldown": 0,
+        "bonus": {
+          "skill tier": 1
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Flatline",
+    "type": "weapon",
+    "perfectName": "Perfect Flatline",
+    "icon": "",
+    "description": "Amplifies weapon damage by 15% to pulsed enemies. After 4 kills, applies pulse to the next enemy you hit.",
+    "perfectDescription": "Amplifies weapon damage by 20% to pulsed enemies. After 3 kills, applies pulse to the next enemy you hit.",
+    "exclusiveTo": [],
+    "stacks": [],
+    "perfectStacks": [],
+    "bonus": {
+      "amplified weapon damage": 15
+    },
+    "perfectBonus": {
+      "amplified weapon damage": 20
+    }
+  },
+  {
+    "name": "In Sync",
+    "type": "weapon",
+    "perfectName": "Perfectly In Sync",
+    "icon": "",
+    "description": "Hitting an enemy grants +15% skill damage for 5s. Using a skill or damaging an enemy with a skill grants +15% weapon damage for 5s. Damage increases are doubled while both buffs are active at the same time.",
+    "perfectDescription": "Hitting an enemy grants +20% skill damage for 5s. Using a skill or damaging an enemy with a skill grants +20% weapon damage for 5s. Damage increases are doubled while both buffs are active at the same time.",
+    "exclusiveTo": [],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 5,
+        "cooldown": 0,
+        "bonus": {
+          "skill damage": 15
+        }
+      },
+      {
+        "size": 1,
+        "duration": 5,
+        "cooldown": 0,
+        "bonus": {
+          "weapon damage": 15
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Soft Spot",
+    "type": "weapon",
+    "perfectName": "Perfect Soft Spot",
+    "icon": "",
+    "description": "Destroying a Weakpoint grants 19% Weapon Damage for 15s.",
+    "perfectDescription": "Destroying a Weakpoint grants 24% Weapon Damage for 15s.",
+    "exclusiveTo": [],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 15,
+        "cooldown": 0,
+        "bonus": {
+          "weapon damage": 19
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Rifleman",
+    "type": "weapon",
+    "perfectName": "Perfect Rifleman",
+    "icon": "",
+    "description": "Landing headshots adds a stack of bonus +10% weapon damage for 5s. Max stack is 5. Additional headshots refresh the duration.",
+    "perfectDescription": "Landing headshots adds a stack of bonus +11% weapon damage for 5s. Max stack is 6. Additional headshots refresh the duration.",
+    "exclusiveTo": ["rifle"],
+    "stacks": [
+      {
+        "size": 5,
+        "duration": 5,
+        "cooldown": 0,
+        "bonus": {
+          "weapon damage": 10
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Boomerang",
+    "type": "weapon",
+    "perfectName": "Perfect Boomerang",
+    "icon": "",
+    "description": "Critical hits have a 50% chance to return the bullet to the magazine. If a bullet is returned the next shot gains 40% increased damage.",
+    "perfectDescription": "Critical hits have a 75% chance to return the bullet to the magazine. If a bullet is returned the next shot gains 50% increased damage.",
+    "exclusiveTo": ["rifle"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "weapon damage": 40
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {
+      "return chance": 50
+    },
+    "perfectBonus": {
+      "return chance": 75
+    }
+  },
+  {
+    "name": "Lucky Shot",
+    "type": "weapon",
+    "perfectName": "Perfect Lucky Shot",
+    "icon": "",
+    "description": "Magazine capacity is increased by 20%. Missed shots from cover have a 100% chance to return to the magazine.",
+    "perfectDescription": "Magazine capacity is increased by 30%. Missed shots from cover have a 100% chance to return to the magazine.",
+    "exclusiveTo": ["rifle"],
+    "stacks": [],
+    "perfectStacks": [],
+    "bonus": {
+      "magazine capacity": 20,
+      "miss return chance": 100
+    },
+    "perfectBonus": {
+      "magazine capacity": 30,
+      "miss return chance": 100
+    }
+  },
+  {
+    "name": "Determined",
+    "type": "weapon",
+    "perfectName": "Perfectly Determined",
+    "icon": "",
+    "description": "After killing an enemy with a headshot the next shot landed on any enemy will be a guaranteed headshot.",
+    "perfectDescription": "After killing an enemy with a headshot the next shot landed on any enemy will be a guaranteed critical headshot.",
+    "exclusiveTo": ["rifle"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "guaranteed headshot": 1
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Behind You",
+    "type": "weapon",
+    "perfectName": "Perfectly Behind You",
+    "icon": "",
+    "description": "Amplifies weapon damage by +20% to enemies that are not targeting you.",
+    "perfectDescription": "Amplifies weapon damage by +25% to enemies that are not targeting you.",
+    "exclusiveTo": ["rifle"],
+    "stacks": [],
+    "perfectStacks": [],
+    "bonus": {
+      "amplified weapon damage": 20
+    },
+    "perfectBonus": {
+      "amplified weapon damage": 25
+    }
+  },
+  {
+    "name": "Precision Strike",
+    "type": "weapon",
+    "perfectName": "Perfect Precision Strike",
+    "icon": "",
+    "description": "Killing enemies farther than 20m builds up stacks. Max stack is 3. Hitting an enemy within 20m will use all stacks to provide 20% amplified damage to enemies within 20m for 5s.",
+    "perfectDescription": "Killing enemies farther than 20m builds up stacks. Max stack is 3. Hitting an enemy within 20m will use all stacks to provide 20% amplified damage to enemies within 20m for 5s.",
+    "exclusiveTo": ["rifle"],
+    "stacks": [
+      {
+        "size": 3,
+        "duration": 5,
+        "cooldown": 0,
+        "bonus": {
+          "amplified weapon damage": 20
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Near Sighted",
+    "type": "weapon",
+    "perfectName": "Perfect Near Sighted",
+    "icon": "",
+    "description": "Receive +80% stability at the cost of -35% optimal range.",
+    "perfectDescription": "Receive +100% stability at the cost of -35% optimal range.",
+    "exclusiveTo": ["assault rifle"],
+    "stacks": [],
+    "perfectStacks": [],
+    "bonus": {
+      "stability": 80,
+      "optimal range": -35
+    },
+    "perfectBonus": {
+      "stability": 100,
+      "optimal range": -35
+    }
+  },
+  {
+    "name": "On Empty",
+    "type": "weapon",
+    "perfectName": "Perfect On Empty",
+    "icon": "",
+    "description": "Reloading from empty grants +60% weapon handling for 10s.",
+    "perfectDescription": "Reloading from empty grants +80% weapon handling for 10s.",
+    "exclusiveTo": ["assault rifle"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 10,
+        "cooldown": 0,
+        "bonus": {
+          "weapon handling": 60
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Measured",
+    "type": "weapon",
+    "perfectName": "Perfectly Measured",
+    "icon": "",
+    "description": "The top half of the magazine has 25% rate of fire and -25% weapon damage. The bottom half of the magazine has -18% rate of fire and +30% total weapon damage.",
+    "perfectDescription": "The top half of the magazine has 25% rate of fire and -30% weapon damage. The bottom half of the magazine has -18% rate of fire and +38% total weapon damage.",
+    "exclusiveTo": ["assault rifle"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "rate of fire": 25,
+          "weapon damage": -25
+        }
+      },
+      {
+        "size": 1,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "rate of fire": -18,
+          "total weapon damage": 30
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Overflowing",
+    "type": "weapon",
+    "perfectName": "Perfect Overflowing",
+    "icon": "",
+    "description": "Every 3 reloads from empty increases your base magazine capacity by 100%.",
+    "perfectDescription": "Every 2 reloads from empty increases your base magazine capacity by 100%.",
+    "exclusiveTo": ["assault rifle"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "magazine capacity": 100
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Stabilize",
+    "type": "weapon",
+    "perfectName": "Perfect Stabilize",
+    "icon": "",
+    "description": "Firing your weapon increases Weapon Accuracy by 1% and Weapon Stability by 1% per shot up to 60%. If you stop firing, the bonuses reset after 4 seconds.",
+    "perfectDescription": "Firing your weapon increases Weapon Accuracy by 1% and Weapon Stability by 1% per shot up to 60%. If you stop firing, the bonuses reset after 4 seconds.",
+    "exclusiveTo": ["assault rifle"],
+    "stacks": [
+      {
+        "size": 60,
+        "duration": 4,
+        "cooldown": 0,
+        "bonus": {
+          "accuracy": 1,
+          "stability": 1
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Precision Strike",
+    "type": "weapon",
+    "perfectName": "Perfect Precision Strike",
+    "icon": "",
+    "description": "Killing enemies farther than 20m builds up stacks. Max stack is 3. Hitting an enemy within 20m will use all stacks to provide 20% amplified damage to enemies within 20m for 5s.",
+    "perfectDescription": "Killing enemies farther than 20m builds up stacks. Max stack is 3. Hitting an enemy within 20m will use all stacks to provide 20% amplified damage to enemies within 20m for 5s.",
+    "exclusiveTo": ["assault rifle"],
+    "stacks": [
+      {
+        "size": 3,
+        "duration": 5,
+        "cooldown": 0,
+        "bonus": {
+          "amplified damage": 20
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Naked",
+    "type": "weapon",
+    "perfectName": "Perfectly Naked",
+    "icon": "",
+    "description": "Hitting an enemy with no armor grants +50% headshot damage for 5s.",
+    "perfectDescription": "Hitting an enemy with no armor grants +50% headshot damage for 8s.",
+    "exclusiveTo": ["mr"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 5,
+        "cooldown": 0,
+        "bonus": {
+          "headshot damage": 50
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "First Blood",
+    "type": "weapon",
+    "perfectName": "Perfect First Blood",
+    "icon": "",
+    "description": "If scoped, your first shot fired from out of combat or after fully reloading from empty deals headshot damage to any part of the body hit. Requires a Scope with 8x magnification or higher.",
+    "perfectDescription": "If scoped, your first 2 shots fired from out of combat or after fully reloading from empty deals headshot damage to any part of the body hit. Requires a Scope with 8x magnification or higher.",
+    "exclusiveTo": ["mr"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "guaranteed headshot damage": 1
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Lucky Shot",
+    "type": "weapon",
+    "perfectName": "Perfect Lucky Shot",
+    "icon": "",
+    "description": "Magazine capacity is increased by 20%. Missed shots from cover have a 100% chance to return to the magazine.",
+    "perfectDescription": "Magazine capacity is increased by 30%. Missed shots from cover have a 100% chance to return to the magazine.",
+    "exclusiveTo": ["mr"],
+    "stacks": [],
+    "perfectStacks": [],
+    "bonus": {
+      "magazine capacity": 20,
+      "missed shot return chance": 100
+    },
+    "perfectBonus": {
+      "magazine capacity": 30,
+      "missed shot return chance": 100
+    }
+  },
+  {
+    "name": "Determined",
+    "type": "weapon",
+    "perfectName": "Perfectly Determined",
+    "icon": "",
+    "description": "After killing an enemy with a headshot the next shot landed on any enemy will be a guaranteed headshot.",
+    "perfectDescription": "After killing an enemy with a headshot the next shot landed on any enemy will be a guaranteed critical headshot.",
+    "exclusiveTo": ["mr"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "guaranteed headshot": 1
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Behind You",
+    "type": "weapon",
+    "perfectName": "Perfectly Behind You",
+    "icon": "",
+    "description": "Amplifies weapon damage by +20% to enemies that are not targeting you.",
+    "perfectDescription": "Amplifies weapon damage by +25% to enemies that are not targeting you.",
+    "exclusiveTo": ["mr"],
+    "stacks": [],
+    "perfectStacks": [],
+    "bonus": {
+      "amplified weapon damage": 20
+    },
+    "perfectBonus": {
+      "amplified weapon damage": 25
+    }
+  },
+  {
+    "name": "Precision Strike",
+    "type": "weapon",
+    "perfectName": "Perfect Precision Strike",
+    "icon": "",
+    "description": "Killing enemies farther than 20m builds up stacks. Max stack is 3. Hitting an enemy within 20m will use all stacks to provide 20% amplified damage to enemies within 20m for 5s.",
+    "perfectDescription": "Killing enemies farther than 20m builds up stacks. Max stack is 3. Hitting an enemy within 20m will use all stacks to provide 20% amplified damage to enemies within 20m for 5s.",
+    "exclusiveTo": ["mr"],
+    "stacks": [
+      {
+        "size": 3,
+        "duration": 5,
+        "cooldown": 0,
+        "bonus": {
+          "amplified damage": 20
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Outsider",
+    "type": "weapon",
+    "perfectName": "Perfect Outsider",
+    "icon": "",
+    "description": "After killing an enemy, gain 100% optimal range and +100% accuracy for 10s.",
+    "perfectDescription": "After killing an enemy, gain 150% optimal range and +125% accuracy for 10s.",
+    "exclusiveTo": ["smg"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 10,
+        "cooldown": 0,
+        "bonus": {
+          "optimal range": 100,
+          "accuracy": 100
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Unwavering",
+    "type": "weapon",
+    "perfectName": "Perfect Unwavering",
+    "icon": "",
+    "description": "Swapping to this weapon grants +300% weapon handling for 5s. Kills refresh the buff. Swapping away disables this from all weapons for 5s.",
+    "perfectDescription": "Swapping to this weapon grants +400% weapon handling for 5s. Kills refresh the buff. Swapping away disables this from all weapons for 5s.",
+    "exclusiveTo": ["smg"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 5,
+        "cooldown": 5,
+        "bonus": {
+          "weapon handling": 300
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Measured",
+    "type": "weapon",
+    "perfectName": "Perfectly Measured",
+    "icon": "",
+    "description": "The top half of the magazine has 25% rate of fire and -25% weapon damage. The bottom half of the magazine has -18% rate of fire and +30% total weapon damage.",
+    "perfectDescription": "The top half of the magazine has 25% rate of fire and -30% weapon damage. The bottom half of the magazine has -18% rate of fire and +38% total weapon damage.",
+    "exclusiveTo": ["smg"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "rate of fire": 25,
+          "weapon damage": -25
+        }
+      },
+      {
+        "size": 1,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "rate of fire": -18,
+          "total weapon damage": 30
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Stabilize",
+    "type": "weapon",
+    "perfectName": "Perfect Stabilize",
+    "icon": "",
+    "description": "Firing your weapon increases Weapon Accuracy by 1% and Weapon Stability by 1% per shot up to 60%. If you stop firing, the bonuses reset after 4 seconds.",
+    "perfectDescription": "Firing your weapon increases Weapon Accuracy by 1% and Weapon Stability by 1% per shot up to 60%. If you stop firing, the bonuses reset after 4 seconds.",
+    "exclusiveTo": ["smg"],
+    "stacks": [
+      {
+        "size": 60,
+        "duration": 4,
+        "cooldown": 0,
+        "bonus": {
+          "accuracy": 1,
+          "stability": 1
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Unhinged",
+    "type": "weapon",
+    "perfectName": "Perfect Unhinged",
+    "icon": "",
+    "description": "Grants +18% weapon damage at the cost of -25% Stability and -25% Accuracy.",
+    "perfectDescription": "Grants +22% weapon damage at the cost of -25% Stability and -25% Accuracy.",
+    "exclusiveTo": ["lmg"],
+    "stacks": [],
+    "perfectStacks": [],
+    "bonus": {
+      "weapon damage": 18,
+      "stability": -25,
+      "accuracy": -25
+    },
+    "perfectBonus": {
+      "weapon damage": 22,
+      "stability": -25,
+      "accuracy": -25
+    }
+  },
+  {
+    "name": "Frenzy",
+    "type": "weapon",
+    "perfectName": "Perfect Frenzy",
+    "icon": "",
+    "description": "For every 10 bullets in the magazine capacity, gain +3% rate of fire and +3% weapon damage for 9s when reloading from empty.",
+    "perfectDescription": "For every 8 bullets in the magazine capacity, gain +3% rate of fire and +3% weapon damage for 9s when reloading from empty.",
+    "exclusiveTo": ["lmg"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 9,
+        "cooldown": 0,
+        "bonus": {
+          "rate of fire per 10 rounds": 3,
+          "weapon damage per 10 rounds": 3
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Measured",
+    "type": "weapon",
+    "perfectName": "Perfectly Measured",
+    "icon": "",
+    "description": "The top half of the magazine has 25% rate of fire and -25% weapon damage. The bottom half of the magazine has -18% rate of fire and +30% total weapon damage.",
+    "perfectDescription": "The top half of the magazine has 25% rate of fire and -30% weapon damage. The bottom half of the magazine has -18% rate of fire and +38% total weapon damage.",
+    "exclusiveTo": ["lmg"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "rate of fire": 25,
+          "weapon damage": -25
+        }
+      },
+      {
+        "size": 1,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "rate of fire": -18,
+          "total weapon damage": 30
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Overwhelm",
+    "type": "weapon",
+    "perfectName": "Perfect Overwhelm",
+    "icon": "",
+    "description": "Suppressing an enemy, that is not currently suppressed, grants +10% weapon damage for 12 seconds. Max stack is 4.",
+    "perfectDescription": "Suppressing an enemy, that is not currently suppressed, grants +12% weapon damage for 12 seconds. Max stack is 4.",
+    "exclusiveTo": ["lmg"],
+    "stacks": [
+      {
+        "size": 4,
+        "duration": 12,
+        "cooldown": 0,
+        "bonus": {
+          "weapon damage": 10
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Precision Strike",
+    "type": "weapon",
+    "perfectName": "Perfect Precision Strike",
+    "icon": "",
+    "description": "Killing enemies farther than 20m builds up stacks. Max stack is 3. Hitting an enemy within 20m will use all stacks to provide 20% amplified damage to enemies within 20m for 5s.",
+    "perfectDescription": "Killing enemies farther than 20m builds up stacks. Max stack is 3. Hitting an enemy within 20m will use all stacks to provide 20% amplified damage to enemies within 20m for 5s.",
+    "exclusiveTo": ["lmg"],
+    "stacks": [
+      {
+        "size": 3,
+        "duration": 5,
+        "cooldown": 0,
+        "bonus": {
+          "amplified damage": 20
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Stabilize",
+    "type": "weapon",
+    "perfectName": "Perfect Stabilize",
+    "icon": "",
+    "description": "Firing your weapon increases Weapon Accuracy by 1% and Weapon Stability by 1% per shot up to 60%. If you stop firing, the bonuses reset after 4 seconds.",
+    "perfectDescription": "Firing your weapon increases Weapon Accuracy by 1% and Weapon Stability by 1% per shot up to 60%. If you stop firing, the bonuses reset after 4 seconds.",
+    "exclusiveTo": ["lmg"],
+    "stacks": [
+      {
+        "size": 60,
+        "duration": 4,
+        "cooldown": 0,
+        "bonus": {
+          "accuracy": 1,
+          "stability": 1
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Pummel",
+    "type": "weapon",
+    "perfectName": "Perfect Pummel",
+    "icon": "",
+    "description": "3 consecutive kills refills the magazine and grants +40% weapon damage for 10s.",
+    "perfectDescription": "2 consecutive kills refills the magazine and grants +40% weapon damage for 10s.",
+    "exclusiveTo": ["shotgun"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 10,
+        "cooldown": 0,
+        "bonus": {
+          "weapon damage": 40
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Pumped Up",
+    "type": "weapon",
+    "perfectName": "Perfect Pumped Up",
+    "icon": "",
+    "description": "Reloading grants +1.2% weapon damage for 10s. Stacks up to 25 times.",
+    "perfectDescription": "Reloading grants +6% weapon damage for 10s. Stacks up to 5 times.",
+    "exclusiveTo": ["shotgun"],
+    "stacks": [
+      {
+        "size": 25,
+        "duration": 10,
+        "cooldown": 0,
+        "bonus": {
+          "weapon damage": 1.2
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Brazen",
+    "type": "weapon",
+    "perfectName": "Perfect Brazen",
+    "icon": "",
+    "description": "Receive +3.5% Amplified Damage on the next shot with the weapon for each pellet that hits the target, if at least 6 pellets hit.",
+    "perfectDescription": "Receive +2%/3% Amplified Damage on the next shot with the weapon for each pellet that hits the target, if at least 4 pellets hit.",
+    "exclusiveTo": ["shotgun"],
+    "stacks": [
+      {
+        "size": 8,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "amplified damage": 3.5
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Salvage",
+    "type": "weapon",
+    "perfectName": "Perfect Salvage",
+    "icon": "",
+    "description": "Killing a target has a +70% chance to refill the magazine.",
+    "perfectDescription": "Killing a target has a +85% chance to refill the magazine.",
+    "exclusiveTo": ["pistol"],
+    "stacks": [],
+    "perfectStacks": [],
+    "bonus": {
+      "refill chance": 70
+    },
+    "perfectBonus": {
+      "refill chance": 85
+    }
+  },
+  {
+    "name": "Finisher",
+    "type": "weapon",
+    "perfectName": "Perfect Finisher",
+    "icon": "",
+    "description": "Swapping from this weapon within 10s of killing an enemy grants 30% critical hit chance and 30% critical hit damage for 15s.",
+    "perfectDescription": "Swapping from this weapon within 10s of killing an enemy grants 35% critical hit chance and 40% critical hit damage for 15s.",
+    "exclusiveTo": ["pistol"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 15,
+        "cooldown": 0,
+        "bonus": {
+          "critical hit chance": 30,
+          "critical hit damage": 30
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Lucky Shot",
+    "type": "weapon",
+    "perfectName": "Perfect Lucky Shot",
+    "icon": "",
+    "description": "Magazine capacity is increased by 20%. Missed shots from cover have a 100% chance to return to the magazine.",
+    "perfectDescription": "Magazine capacity is increased by 30%. Missed shots from cover have a 100% chance to return to the magazine.",
+    "exclusiveTo": ["pistol"],
+    "stacks": [],
+    "perfectStacks": [],
+    "bonus": {
+      "magazine capacity": 20,
+      "miss return chance": 100
+    },
+    "perfectBonus": {
+      "magazine capacity": 30,
+      "miss return chance": 100
+    }
+  },
+  {
+    "name": "Determined",
+    "type": "weapon",
+    "perfectName": "Perfectly Determined",
+    "icon": "",
+    "description": "After killing an enemy with a headshot the next shot landed on any enemy will be a guaranteed headshot.",
+    "perfectDescription": "After killing an enemy with a headshot the next shot landed on any enemy will be a guaranteed critical headshot.",
+    "exclusiveTo": ["pistol"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "guaranteed headshot": 1
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Adaptive Instincts",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "Hitting 30 headshots grants 20% critical hit chance and 50% critical hit damage for 45s. Hitting 65 body shots grants 90% weapon damage for 45s. Hitting 20 leg shots grants 150% reload speed for 45s. Buffs refresh when out of combat.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Chameleon"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 45,
+        "cooldown": 0,
+        "bonus": {
+          "critical hit chance": 20,
+          "critical hit damage": 50
+        }
+      },
+      {
+        "size": 1,
+        "duration": 45,
+        "cooldown": 0,
+        "bonus": {
+          "weapon damage": 90
+        }
+      },
+      {
+        "size": 1,
+        "duration": 45,
+        "cooldown": 0,
+        "bonus": {
+          "reload speed": 150
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Eagle Strike",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "Accuracy increases as you continuously fire, up to 30%. Headshot kills grant the Tenacity buff for 15s. The strength of Tenacity is increased by 1% for body shots and 5% for headshots.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Eagle Bearer"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 15,
+        "cooldown": 0,
+        "bonus": {
+          "activate tenacity": 1
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {
+      "max accuracy": 30
+    },
+    "perfectBonus": {}
+  },
+  {
+    "name": "Tenacity",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "40-80% of damage taken is delayed until the buff expires. All of the total delayed damage is reduced for each enemy killed while the buff is active, up to 100% with 3 kills.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Eagle Bearer"],
+    "stacks": [
+      {
+        "size": 3,
+        "duration": 15,
+        "cooldown": 0,
+        "bonus": {
+          "delayed damage reduction": 33.3
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {
+      "damage delay minimum": 40,
+      "damage delay maximum": 80
+    },
+    "perfectBonus": {}
+  },
+  {
+    "name": "Actum Est",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "Shooting an enemy with this weapon will give 1 stack. At 100 stacks the next magazine will be 100% filled with shock ammo.",
+    "perfectDescription": "",
+    "exclusiveTo": ["St. Elmo's Engine"],
+    "stacks": [
+      {
+        "size": 100,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "shock ammo": 100
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Big Game Hunter",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "When scoped, switches to semi-automatic fire mode, dealing 450% weapon damage. Headshots grant +6% headshot damage. Stacks up to 25 times. Once at full stacks, 10 stacks decay every 4s.",
+    "perfectDescription": "",
+    "exclusiveTo": ["The Bighorn"],
+    "stacks": [
+      {
+        "size": 25,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "headshot damage": 6
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {
+      "scoped weapon damage": 450
+    },
+    "perfectBonus": {}
+  },
+  {
+    "name": "Talent Unnerve",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "Killing an enemy will apply a mark on every enemy within 20m. Max marks per enemy is 5. Marks disappear 10s after the last one. Deal +15% Amplified Damage per mark.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Strega"],
+    "stacks": [
+      {
+        "size": 5,
+        "duration": 10,
+        "cooldown": 0,
+        "bonus": {
+          "amplified damage": 15
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Capacitance",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "Shooting enemies builds stacks to a cap of 40. Each stack grants 1.5% Skill Damage. For each skill tier gain 7.5% Weapon Damage.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Capacitor"],
+    "stacks": [
+      {
+        "size": 40,
+        "duration": 5,
+        "cooldown": 0,
+        "bonus": {
+          "skill damage": 1.5
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {
+      "weapon damage per skill tier": 7.5
+    },
+    "perfectBonus": {}
+  },
+  {
+    "name": "Perturb",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "While holstered for 10s, weapon becomes Primed. Swapping to Primed weapon grants +25% Rate of Fire, +30% Weapon Damage and 100% more Threat for 20s.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Whiplash"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 20,
+        "cooldown": 10,
+        "bonus": {
+          "rate of fire": 25,
+          "weapon damage": 30,
+          "threat": 100
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {
+      "holstered threat": -50
+    },
+    "perfectBonus": {}
+  },
+  {
+    "name": "Bullet Hell",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "This weapon never needs to be reloaded. For every 100 bullets that hit an enemy, replenish ammo to you and all allies' reserves.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Bullet King"],
+    "stacks": [],
+    "perfectStacks": [],
+    "bonus": {
+      "infinite magazine": 1
+    },
+    "perfectBonus": {}
+  },
+  {
+    "name": "Disruptor Rounds",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "Shooting marks enemies and adds stacks up to 50. Deploying a non-shield skill triggers effects based on stacks: 1-10 Pulse, 11-25 Disrupt, 26-49 Disorient, 50 all effects within 10m.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Bluescreen"],
+    "stacks": [
+      {
+        "size": 50,
+        "duration": 5,
+        "cooldown": 0,
+        "bonus": {
+          "status effect": 1
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Ardent",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "Shooting heats up weapon. When the meter is full (50% mag size), rounds ignite enemies.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Iron Lung"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "ignite rounds": 1
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Pakhan",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "Each kill gains a stack of 75% Base Magazine Size increase to the next magazine, up to 4 stacks.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Pakhan"],
+    "stacks": [
+      {
+        "size": 4,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "magazine size": 75
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Plague of the Outcasts",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "Hits apply a debuff dealing 100% weapon damage over 10s. Stacks up to 50 times.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Pestilence"],
+    "stacks": [
+      {
+        "size": 50,
+        "duration": 10,
+        "cooldown": 0,
+        "bonus": {
+          "damage over time": 100
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Payment in kind",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "Dealing damage adds a stack of 2% Critical Hit Damage, up to 100 stacks, lasting 10s. On reload apply a 10s bleed to yourself.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Backfire"],
+    "stacks": [
+      {
+        "size": 100,
+        "duration": 10,
+        "cooldown": 0,
+        "bonus": {
+          "critical hit damage": 2
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Incessant Chatter",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "When you reload, rate of fire is increased by 25% for each enemy within 15m. Max stacks: 5. Kills refill 50% magazine.",
+    "perfectDescription": "",
+    "exclusiveTo": ["The Chatterbox"],
+    "stacks": [
+      {
+        "size": 5,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "rate of fire": 25
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {
+      "refill on kill": 50
+    },
+    "perfectBonus": {}
+  },
+  {
+    "name": "Breathe Free",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "When moving, gain 4-8 stacks per second. Each round fired consumes a stack, amplifying damage by 75%. Kills grant +20% movement speed for 10s.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Lady Death"],
+    "stacks": [
+      {
+        "size": 32,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "amplified damage": 75
+        }
+      },
+      {
+        "size": 1,
+        "duration": 10,
+        "cooldown": 0,
+        "bonus": {
+          "movement speed": 20
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Rule them all",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "When the agent has a Status Effect, 50% of the next magazine applies the same Status Effect.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Ouroboros"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "status effect ammo": 50
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Sandman",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "Melee attacks instantly kill non-elite enemies. Cooldown: 15s.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Sweet Dreams"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 0,
+        "cooldown": 15,
+        "bonus": {
+          "instant kill melee": 1
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Septic Shock",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "Shooting applies venom stacks (10s). 2-Poison, 4-Disorient, 6-Shock, 9-Target takes 20% additional damage.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Scorpio"],
+    "stacks": [
+      {
+        "size": 9,
+        "duration": 10,
+        "cooldown": 0,
+        "bonus": {
+          "damage taken": 20
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Binary Trigger",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "Fires on trigger pull and release. If both hit, gain a stack. At 7 stacks, next shot deals 500% amplified damage and 500% explosion damage.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Merciless"],
+    "stacks": [
+      {
+        "size": 7,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "amplified damage": 500,
+          "explosion damage": 500
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Agonizing Bite",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "Marks a random enemy. Hitting consumes mark for guaranteed crit with 20% amplified damage. Afterwards, all shots are guaranteed crits for 5s.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Diamondback"],
+    "stacks": [
+      {
+        "size": 1,
+        "duration": 5,
+        "cooldown": 0,
+        "bonus": {
+          "guaranteed critical hit": 1,
+          "amplified damage": 20
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Transfusion",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "Headshots build stacks (max 8). Healing allies repairs 50% damage per stack. Healed allies receive bonus armor. At max stacks, shots are guaranteed headshots for 8s.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Geri and Freki"],
+    "stacks": [
+      {
+        "size": 8,
+        "duration": 8,
+        "cooldown": 0,
+        "bonus": {
+          "repair": 50,
+          "guaranteed headshots": 1
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Full Stop",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "Shooting builds stacks (cap 20). Headshots grant 2. Each stack grants 2% Weapon Damage and 5% Headshot Damage. Reload grants temp armor based on stacks.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Dread Edict"],
+    "stacks": [
+      {
+        "size": 20,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "weapon damage": 2,
+          "headshot damage": 5
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "High Priority Target",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "Amplifies Weapon Damage by 125% to the highest ranking enemies in combat.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Shroud"],
+    "stacks": [],
+    "perfectStacks": [],
+    "bonus": {
+      "amplified weapon damage": 125
+    },
+    "perfectBonus": {}
+  },
+  {
+    "name": "Liberty or Death",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "Hits grant +2% weapon damage. Stacks up to 30. Headshots consume all stacks, repairing shield for 3% per stack.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Liberty"],
+    "stacks": [
+      {
+        "size": 30,
+        "duration": 0,
+        "cooldown": 0,
+        "bonus": {
+          "weapon damage": 2
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {
+      "shield repair per stack": 3
+    },
+    "perfectBonus": {}
+  },
+  {
+    "name": "Busy Little Bee",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "Each shot to a different target gives 1 stack (max 10). Each stack gives 20% weapon damage on weapon swap for 10s.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Busy Little Bee"],
+    "stacks": [
+      {
+        "size": 10,
+        "duration": 10,
+        "cooldown": 0,
+        "bonus": {
+          "amplified damage": 20
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
+    "name": "Mosquito Song",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "Hitting an enemy applies a stack. At 5 stacks, enemy targets you for 5s and takes 25% more damage to armor.",
+    "perfectDescription": "",
+    "exclusiveTo": ["Mosquito"],
+    "stacks": [
+      {
+        "size": 5,
+        "duration": 5,
+        "cooldown": 0,
+        "bonus": {
+          "damage to armor": 25
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  }
+]

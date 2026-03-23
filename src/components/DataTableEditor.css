@@ -1,0 +1,336 @@
+.dt-editor-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.dt-editor-content {
+  background: #0a0a0a;
+  padding: 1.5rem;
+  border-radius: 2px;
+  width: 95%;
+  max-width: 1200px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid #3a3a3a;
+}
+
+.dt-editor-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.dt-editor-header h3 {
+  color: #d4af37;
+  margin: 0;
+  font-size: 1.3rem;
+  white-space: nowrap;
+}
+
+.dt-editor-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.dt-editor-search {
+  padding: 0.4rem 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  color: #ccc;
+  border: 1px solid #3a3a3a;
+  border-radius: 2px;
+  font-size: 0.85rem;
+  width: 200px;
+}
+
+.dt-editor-search:focus {
+  outline: none;
+  border-color: #d4af37;
+}
+
+.dt-editor-add-btn {
+  padding: 0.4rem 0.75rem;
+  background: rgba(212, 175, 55, 0.1);
+  color: #d4af37;
+  border: 1px solid #d4af37;
+  border-radius: 2px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dt-editor-add-btn:hover {
+  background: rgba(212, 175, 55, 0.2);
+}
+
+.dt-editor-body {
+  flex: 1;
+  overflow: auto;
+  border: 1px solid #2a2a2a;
+  border-radius: 2px;
+}
+
+.dt-editor-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.dt-editor-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.dt-editor-table th {
+  background: #1a1a1a;
+  color: #d4af37;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 2px solid #3a3a3a;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.dt-editor-table th:hover {
+  background: #222;
+}
+
+.dt-editor-table th.dt-sorted {
+  color: #fff;
+}
+
+.dt-editor-table td {
+  padding: 0.4rem 0.75rem;
+  border-bottom: 1px solid #1a1a1a;
+  color: #ccc;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.dt-editor-table tr:hover td {
+  background: rgba(212, 175, 55, 0.04);
+}
+
+.dt-cell-input {
+  width: 100%;
+  padding: 0.25rem 0.4rem;
+  background: #111;
+  color: #a0d8b0;
+  border: 1px solid #d4af37;
+  border-radius: 2px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  box-sizing: border-box;
+}
+
+.dt-cell-input:focus {
+  outline: none;
+}
+
+.dt-actions-col {
+  width: 60px;
+  text-align: center;
+}
+
+.dt-delete-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #666;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.8rem;
+  border-radius: 2px;
+}
+
+.dt-delete-btn:hover {
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+}
+
+.dt-empty {
+  text-align: center;
+  color: #666;
+  padding: 2rem;
+  font-style: italic;
+}
+
+.dt-editor-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.dt-row-count {
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.dt-editor-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Record cell styles */
+.dt-record-td {
+  cursor: pointer !important;
+}
+
+.dt-record-td:hover {
+  background: rgba(212, 175, 55, 0.08) !important;
+}
+
+.dt-record-cell {
+  font-size: 0.83rem;
+}
+
+.dt-record-cell b {
+  color: #d4af37;
+  font-weight: 600;
+}
+
+.dt-record-empty {
+  color: #444;
+}
+
+/* JSON viewer button */
+.dt-editor-json-btn {
+  padding: 0.4rem 0.6rem;
+  background: rgba(160, 216, 176, 0.1);
+  color: #a0d8b0;
+  border: 1px solid #a0d8b0;
+  border-radius: 2px;
+  font-size: 0.85rem;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dt-editor-json-btn:hover {
+  background: rgba(160, 216, 176, 0.2);
+}
+
+/* JSON viewer modal */
+.dt-json-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+}
+
+.dt-json-content {
+  background: #0a0a0a;
+  padding: 1.5rem;
+  border-radius: 2px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid #3a3a3a;
+}
+
+.dt-json-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.dt-json-header h3 {
+  color: #d4af37;
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.dt-json-body {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dt-json-textarea {
+  width: 100%;
+  min-height: 400px;
+  flex: 1;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  color: #a0d8b0;
+  border: 1px solid #3a3a3a;
+  border-radius: 2px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  resize: none;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+.dt-json-textarea:focus {
+  outline: none;
+  border-color: #d4af37;
+}
+
+.dt-json-error {
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  padding: 0.4rem 0;
+}
+
+.dt-json-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+/* String array (modSlots) cell styles */
+.dt-string-array-td {
+  cursor: pointer !important;
+}
+
+.dt-string-array-td:hover {
+  background: rgba(212, 175, 55, 0.08) !important;
+}
+
+.dt-string-array-cell b {
+  color: #d4af37;
+  font-weight: 600;
+}
+
+.dt-string-array-cell {
+  font-size: 0.83rem;
+}

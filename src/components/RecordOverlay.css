@@ -1,0 +1,195 @@
+.record-overlay-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+}
+
+.record-overlay-content {
+  background: #111;
+  border: 1px solid #3a3a3a;
+  border-radius: 2px;
+  width: 400px;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+.record-overlay-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.record-overlay-header h4 {
+  color: #d4af37;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.record-overlay-close {
+  background: transparent;
+  border: none;
+  color: #999;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 0 0.25rem;
+}
+
+.record-overlay-close:hover {
+  color: #ff6b6b;
+}
+
+.record-overlay-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.record-overlay-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.record-overlay-key {
+  flex: 2;
+  padding: 0.35rem 0.5rem;
+  background: #0a0a0a;
+  color: #ccc;
+  border: 1px solid #2a2a2a;
+  border-radius: 2px;
+  font-size: 0.85rem;
+}
+
+.record-overlay-key:focus {
+  outline: none;
+  border-color: #d4af37;
+}
+
+.record-overlay-sep {
+  color: #666;
+  font-weight: bold;
+}
+
+.record-overlay-value {
+  flex: 1;
+  padding: 0.35rem 0.5rem;
+  background: #0a0a0a;
+  color: #a0d8b0;
+  border: 1px solid #2a2a2a;
+  border-radius: 2px;
+  font-size: 0.85rem;
+  font-family: 'Courier New', monospace;
+}
+
+.record-overlay-value:focus {
+  outline: none;
+  border-color: #d4af37;
+}
+
+/* Hide number input spinners */
+.record-overlay-value::-webkit-inner-spin-button,
+.record-overlay-value::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.record-overlay-value {
+  -moz-appearance: textfield;
+}
+
+.record-overlay-remove {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #555;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.75rem;
+  border-radius: 2px;
+}
+
+.record-overlay-remove:hover {
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+}
+
+.record-overlay-empty {
+  color: #555;
+  font-style: italic;
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.85rem;
+}
+
+.record-overlay-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #2a2a2a;
+}
+
+.record-overlay-add {
+  padding: 0.35rem 0.75rem;
+  background: rgba(212, 175, 55, 0.1);
+  color: #d4af37;
+  border: 1px solid #d4af37;
+  border-radius: 2px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.record-overlay-add:hover {
+  background: rgba(212, 175, 55, 0.2);
+}
+
+.record-overlay-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* ModSlots overlay additions */
+.modslots-label {
+  flex: 1;
+  color: #ccc;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.modslots-add-row {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.modslots-select {
+  padding: 0.35rem 0.5rem;
+  background: #0a0a0a;
+  color: #ccc;
+  border: 1px solid #2a2a2a;
+  border-radius: 2px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.modslots-select:focus {
+  outline: none;
+  border-color: #d4af37;
+}
+
+.modslots-select:disabled {
+  opacity: 0.4;
+  cursor: default;
+}

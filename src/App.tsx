@@ -178,6 +178,7 @@ function App() {
         gearTalents: `${base}/clean/gearTalents.json`,
         namedGear: `${base}/clean/namedGear.json`,
         weaponMods: `${base}/clean/weaponMods.json`,
+        talents: `${base}/clean/talents.json`,
       };
 
       const cleanStore = useCleanDataStore.getState();

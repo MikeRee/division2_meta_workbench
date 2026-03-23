@@ -106,43 +106,41 @@ export const parseWeapons = (gridData: GridData): Weapon[] => {
 
   // Extract headers from first row
   const headerRow = rowData[0];
-  const headers = headerRow.values ? headerRow.values.map(cell => 
-    cell.formattedValue || ''
-  ) : [];
+  const headers = headerRow.values ? headerRow.values.map((cell) => cell.formattedValue || '') : [];
 
   let currentType = '';
   let currentVariant = '';
-  
+
   const weaponList: Weapon[] = rowData
     .slice(1) // Skip header row
-    .filter(rowObj => rowObj.values && rowObj.values.length > 0)
-    .map(rowObj => {
+    .filter((rowObj) => rowObj.values && rowObj.values.length > 0)
+    .map((rowObj) => {
       const cells = rowObj.values || [];
-      
+
       // Extract values and detect flag from name cell (column C, index 2)
-      const row = cells.map(cell => cell.formattedValue || '');
+      const row = cells.map((cell) => cell.formattedValue || '');
       let flag: string | null = null;
-      
+
       // Check text color of name cell (column C, index 2)
       if (cells[2] && cells[2].effectiveFormat && cells[2].effectiveFormat.textFormat) {
         flag = getFlagFromColor(cells[2].effectiveFormat.textFormat, row[2]);
       }
-      
+
       // Skip completely empty rows
       if (!row[0] && !row[1] && !row[2]) {
         return null;
       }
-      
+
       // If column A (type) is not empty, update the current type
       if (row[0] && row[0].trim()) {
         currentType = row[0].trim();
       }
-      
+
       // If column B (variant) is not empty, update the current variant
       if (row[1] && row[1].trim()) {
         currentVariant = row[1].trim();
       }
-      
+
       // Create a new row with the current type and variant filled in
       const rowWithDefaults = [...row];
       if (!rowWithDefaults[0] || !rowWithDefaults[0].trim()) {
@@ -151,21 +149,24 @@ export const parseWeapons = (gridData: GridData): Weapon[] => {
       if (!rowWithDefaults[1] || !rowWithDefaults[1].trim()) {
         rowWithDefaults[1] = currentVariant;
       }
-      
+
       const weapon = Weapon.fromSheetRow(headers, rowWithDefaults);
-      
-      // Override flag with color-detected value
+
+      // Override rarety with color-detected value
       if (flag) {
-        weapon.flag = flag;
+        weapon.rarety = Weapon.parseRarety(flag);
       }
-      
+
       return weapon;
     })
-    .filter((weapon): weapon is Weapon => weapon !== null && weapon.name !== undefined && weapon.name.trim() !== ''); // Only keep weapons with a name
-  
+    .filter(
+      (weapon): weapon is Weapon =>
+        weapon !== null && weapon.name !== undefined && weapon.name.trim() !== '',
+    ); // Only keep weapons with a name
+
   console.log('Weapons parsed:', weaponList.length);
   console.log('First 3 weapons:', weaponList.slice(0, 3));
-  
+
   return weaponList;
 };
 
@@ -223,7 +224,9 @@ export const parseWeaponTalents = (data: SheetData): WeaponTalent[] => {
     // (Category headers only have text in column B)
     if (colC.trim() || colD.trim() || colE.trim()) {
       if (currentWeaponCategory) {
-        console.log(`Found talent at row ${index}: name="${colB}" icon="${colA}" category="${currentWeaponCategory}"`);
+        console.log(
+          `Found talent at row ${index}: name="${colB}" icon="${colA}" category="${currentWeaponCategory}"`,
+        );
         // Create modified row with extracted icon URL
         const modifiedRow = [colA, colB, colC, colD, colE];
         talentList.push(WeaponTalent.fromSheetRow(modifiedRow, currentWeaponCategory));
@@ -257,19 +260,19 @@ export const parseExoticWeapons = (gridData: GridData): Record<string, any> => {
 
   const exoticData: Record<string, any> = {};
   let currentType = '';
-  
+
   for (let i = 1; i < rowData.length; i++) {
     const rowObj = rowData[i];
     if (!rowObj.values || rowObj.values.length === 0) continue;
-    
+
     const cells = rowObj.values || [];
-    const row = cells.map(cell => cell.formattedValue || '');
-    
+    const row = cells.map((cell) => cell.formattedValue || '');
+
     // Update category from column A
     if (row[0] && row[0].trim()) {
       currentType = row[0].trim();
     }
-    
+
     // Separately check for exotic weapons - if column C has a weapon name
     if (row[2] && row[2].trim()) {
       // Check if column C (weapon name) has exotic color
@@ -280,16 +283,16 @@ export const parseExoticWeapons = (gridData: GridData): Record<string, any> => {
         const red = color.red || 0;
         const green = color.green || 0;
         const blue = color.blue || 0;
-        
+
         if (red > 0.9 && green > 0.35 && green < 0.55 && blue > 0.15 && blue < 0.35) {
           hasExoticColor = true;
         }
       }
-      
+
       // If exotic color, process this weapon
       if (hasExoticColor) {
         const name = row[2].trim();
-        
+
         // Extract icon from column D (index 3)
         let icon = '';
         if (cells[3]) {
@@ -313,7 +316,7 @@ export const parseExoticWeapons = (gridData: GridData): Record<string, any> => {
             icon = iconCell.formattedValue || '';
           }
         }
-        
+
         // Look at the PREVIOUS row for variant, talent, and mods (exotic weapons span 2 rows)
         // Row 1: variant in col B, talent in col E, mods in col F
         // Row 2: weapon name in col C, icon in col D
@@ -321,16 +324,16 @@ export const parseExoticWeapons = (gridData: GridData): Record<string, any> => {
         let talentName: string | null = null;
         let talentDesc: string | null = null;
         let modsInfo = '';
-        
+
         if (i - 1 >= 0) {
           const prevRowObj = rowData[i - 1];
           if (prevRowObj.values && prevRowObj.values.length > 0) {
             const prevCells = prevRowObj.values || [];
-            const prevRow = prevCells.map(cell => cell.formattedValue || '');
-            
+            const prevRow = prevCells.map((cell) => cell.formattedValue || '');
+
             // Column B: variant
             variant = prevRow[1] || '';
-            
+
             // Column E (index 4): talent info
             const talentInfo = prevRow[4] || '';
             if (talentInfo) {
@@ -342,12 +345,12 @@ export const parseExoticWeapons = (gridData: GridData): Record<string, any> => {
                 }
               }
             }
-            
+
             // Column F (index 5): mod slots - keep as raw multiline string
             modsInfo = prevRow[5] || '';
           }
         }
-        
+
         // Create raw data object (not ExoticWeapon yet)
         exoticData[name] = {
           type: currentType,
@@ -356,15 +359,15 @@ export const parseExoticWeapons = (gridData: GridData): Record<string, any> => {
           icons: [],
           talentName: talentName,
           talentDesc: talentDesc,
-          modsInfo: modsInfo
+          modsInfo: modsInfo,
         };
-        
+
         // Skip the next row ONLY if it's not a category row
         // Check if next row has text in column A (category) - if so, don't skip
         if (i + 1 < rowData.length) {
           const nextRowObj = rowData[i + 1];
           if (nextRowObj.values && nextRowObj.values.length > 0) {
-            const nextRow = nextRowObj.values.map(cell => cell.formattedValue || '');
+            const nextRow = nextRowObj.values.map((cell) => cell.formattedValue || '');
             // Only skip if column A is empty (not a category row)
             if (!nextRow[0] || !nextRow[0].trim()) {
               i++;
@@ -374,9 +377,9 @@ export const parseExoticWeapons = (gridData: GridData): Record<string, any> => {
       }
     }
   }
-  
+
   console.log('Exotic weapons parsed:', Object.keys(exoticData).length);
-  
+
   return exoticData;
 };
 
@@ -385,8 +388,10 @@ export const parseExoticWeapons = (gridData: GridData): Record<string, any> => {
  * @param {Record<string, any>} exoticWeaponData - Normalized exotic weapon data
  * @returns {ExoticWeapon[]} Array of ExoticWeapon objects
  */
-export const convertToExoticWeaponObjects = (exoticWeaponData: Record<string, any>): ExoticWeapon[] => {
-  return Object.values(exoticWeaponData).map(data => new ExoticWeapon(data));
+export const convertToExoticWeaponObjects = (
+  exoticWeaponData: Record<string, any>,
+): ExoticWeapon[] => {
+  return Object.values(exoticWeaponData).map((data) => new ExoticWeapon(data));
 };
 
 /**
@@ -424,31 +429,31 @@ export const parseGearsets = (gridData: GridData): any[] => {
     return {
       red: color.red || 0,
       green: color.green || 0,
-      blue: color.blue || 0
+      blue: color.blue || 0,
     };
   };
 
   // Helper function to determine CoreType from color
   const getCoreTypeFromColor = (color: any) => {
     if (!color) return null;
-    
+
     const { red, green, blue } = color;
-    
+
     // Red color for Weapon Damage (~0.64, ~0.23, ~0.23)
     if (red > 0.55 && red < 0.75 && green > 0.15 && green < 0.35 && blue > 0.15 && blue < 0.35) {
       return CoreType.WeaponDamage;
     }
-    
+
     // Blue color for Armor (~0.27, ~0.38, ~0.56)
-    if (red > 0.20 && red < 0.35 && green > 0.30 && green < 0.45 && blue > 0.50 && blue < 0.65) {
+    if (red > 0.2 && red < 0.35 && green > 0.3 && green < 0.45 && blue > 0.5 && blue < 0.65) {
       return CoreType.Armor;
     }
-    
+
     // Yellow/Orange color for Skill Tier (~1.0, ~0.84, ~0.4)
-    if (red > 0.95 && green > 0.75 && green < 0.90 && blue > 0.3 && blue < 0.5) {
+    if (red > 0.95 && green > 0.75 && green < 0.9 && blue > 0.3 && blue < 0.5) {
       return CoreType.SkillTier;
     }
-    
+
     return null;
   };
 
@@ -456,14 +461,14 @@ export const parseGearsets = (gridData: GridData): any[] => {
   for (let i = 1; i < rowData.length; i += 2) {
     const rowObj1 = rowData[i];
     const rowObj2 = rowData[i + 1];
-    
+
     if (!rowObj1 || !rowObj1.values) continue;
-    
+
     const cells1 = rowObj1.values || [];
     const cells2 = rowObj2 && rowObj2.values ? rowObj2.values : [];
-    
-    const row1 = cells1.map(cell => cell.formattedValue || '');
-    const row2 = cells2.map(cell => cell.formattedValue || '');
+
+    const row1 = cells1.map((cell) => cell.formattedValue || '');
+    const row2 = cells2.map((cell) => cell.formattedValue || '');
 
     // Skip if both rows are empty
     if (row1.length === 0 && row2.length === 0) continue;
@@ -478,7 +483,7 @@ export const parseGearsets = (gridData: GridData): any[] => {
     }
 
     const name = (row2[0] || '').trim();
-    
+
     // Only add if it has a name
     if (name) {
       const coreValue1 = row1[2] || '';
@@ -486,15 +491,15 @@ export const parseGearsets = (gridData: GridData): any[] => {
       const coreValue2 = row2[2] || '';
       const coreCell2 = cells2[2];
       let core: any;
-      
+
       // Check cell color for row 1
       const coreColor1 = getCellColor(coreCell1);
       const coreType1 = getCoreTypeFromColor(coreColor1);
-      
+
       // Check cell color for row 2
       const coreColor2 = getCellColor(coreCell2);
       const coreType2 = getCoreTypeFromColor(coreColor2);
-      
+
       // Debug logging for Refactor
       if (name === 'Refactor') {
         console.log('Refactor row1 core value:', coreValue1);
@@ -504,7 +509,7 @@ export const parseGearsets = (gridData: GridData): any[] => {
         console.log('Refactor row2 core color:', coreColor2);
         console.log('Refactor row2 core type:', coreType2);
       }
-      
+
       // Debug logging for System Corruption
       if (name.includes('System Corruption')) {
         console.log('System Corruption row1 core value:', coreValue1);
@@ -514,25 +519,31 @@ export const parseGearsets = (gridData: GridData): any[] => {
         console.log('System Corruption row2 core color:', coreColor2);
         console.log('System Corruption row2 core type:', coreType2);
       }
-      
+
       if (coreType1 || coreType2) {
         // At least one color detected - this gearset has multiple core types
         core = {};
-        
+
         if (coreType1 && coreValue1) {
-          const pieces1 = coreValue1.split('\n').map(p => p.trim()).filter(p => p);
+          const pieces1 = coreValue1
+            .split('\n')
+            .map((p) => p.trim())
+            .filter((p) => p);
           core[coreType1] = pieces1;
         }
-        
+
         if (coreType2 && coreValue2) {
-          const pieces2 = coreValue2.split('\n').map(p => p.trim()).filter(p => p);
+          const pieces2 = coreValue2
+            .split('\n')
+            .map((p) => p.trim())
+            .filter((p) => p);
           core[coreType2] = pieces2;
         }
       } else {
         // No color detected - treat as standard core type string (spanned cell)
         core = coreValue1;
       }
-      
+
       // Create plain object (not Gearset instance)
       gearsetList.push({
         logo: logo,
@@ -545,16 +556,18 @@ export const parseGearsets = (gridData: GridData): any[] => {
         chestDesc: row1[7] || '',
         backpack: row1[8] || '',
         backpackDesc: row1[9] || '',
-        hint: row1[10] || ''
+        hint: row1[10] || '',
       });
     }
   }
 
   console.log('Gearsets parsed:', gearsetList.length);
   console.log('First 3 gearsets:', gearsetList.slice(0, 3));
-  
+
   // Debug: Check if any gearset has "mask" as core
-  const maskCore = gearsetList.find(g => g.core && g.core.toLowerCase && g.core.toLowerCase().includes('mask'));
+  const maskCore = gearsetList.find(
+    (g) => g.core && g.core.toLowerCase && g.core.toLowerCase().includes('mask'),
+  );
   if (maskCore) {
     console.log('Found gearset with "mask" in core:', maskCore);
   }
@@ -596,7 +609,7 @@ export const parseBrandsets = (data: SheetData): Brandset[] => {
     const modifiedRow = [row[0], icon, row[2], row[3], row[4], row[5], row[6], row[7]];
 
     const brandset = Brandset.fromSheetRow(modifiedRow);
-    
+
     // Only add if it has a brand name
     if (brandset.brand && brandset.brand.trim()) {
       brandsetList.push(brandset);
@@ -704,11 +717,11 @@ export const parseNamedGear = (gridData: GridData): Record<string, any> => {
   const namedGearData: Record<string, any> = {};
   let currentType = '';
   let isExoticSection = false;
-  
+
   // Helper function to extract icon URL from cell
   const extractIcon = (cell?: CellData) => {
     if (!cell) return '';
-    
+
     // First check if there's a userEnteredValue with a formula
     if (cell.userEnteredValue && cell.userEnteredValue.formulaValue) {
       const formula = cell.userEnteredValue.formulaValue;
@@ -719,49 +732,49 @@ export const parseNamedGear = (gridData: GridData): Record<string, any> => {
         }
       }
     }
-    
+
     // Otherwise return formatted value
     return cell.formattedValue || '';
   };
-  
+
   for (let i = 1; i < rowData.length; i++) {
     const rowObj = rowData[i];
     if (!rowObj.values || rowObj.values.length === 0) continue;
-    
+
     const cells = rowObj.values || [];
-    const row = cells.map(cell => cell.formattedValue || '');
-    
+    const row = cells.map((cell) => cell.formattedValue || '');
+
     // Check if we've hit the EXOTICS section marker
     if (row[1] && row[1].trim().toUpperCase() === 'EXOTICS') {
       isExoticSection = true;
       continue;
     }
-    
+
     // Update type from column A (multirow cell)
     if (row[0] && row[0].trim()) {
       currentType = row[0].trim();
     }
-    
+
     if (isExoticSection) {
       // Exotic items: 2 rows each
       // Row 1: col f=icon, col g=talent, col h=desc, col i=core, col j-l=minor1-3, col n=notes
       // Row 2: col e=name, col f=icon2 (optional)
-      
+
       // Check if next row exists and has a name in col E
       if (i + 1 < rowData.length) {
         const nextRowObj = rowData[i + 1];
         if (nextRowObj.values && nextRowObj.values.length > 0) {
           const nextCells = nextRowObj.values || [];
-          const nextRow = nextCells.map(cell => cell.formattedValue || '');
-          
+          const nextRow = nextCells.map((cell) => cell.formattedValue || '');
+
           // If next row has a name in col E, this is an exotic item
           if (nextRow[4] && nextRow[4].trim()) {
             const name = nextRow[4].trim();
-            
+
             // Extract icons from formulas
-            const icon = extractIcon(cells[5]);  // Col F row 1
-            const icon2 = extractIcon(nextCells[5]);  // Col F row 2
-            
+            const icon = extractIcon(cells[5]); // Col F row 1
+            const icon2 = extractIcon(nextCells[5]); // Col F row 2
+
             // Create raw data object (not NamedGear yet)
             namedGearData[name] = {
               type: currentType,
@@ -776,9 +789,9 @@ export const parseNamedGear = (gridData: GridData): Record<string, any> => {
               minor2: row[10] || '',
               minor3: row[11] || '',
               notes: row[13] || '',
-              isExotic: true
+              isExotic: true,
             };
-            
+
             i++; // Skip the next row since we processed it
             continue;
           }
@@ -787,14 +800,14 @@ export const parseNamedGear = (gridData: GridData): Record<string, any> => {
     } else {
       // Named items: 1 row each
       // col c=brand, col e=name, col f=icon, col g=talent, col h=desc, col i=core, col j-l=minor1-3, col n=notes
-      
+
       // Check if this row has a name in col E
       if (row[4] && row[4].trim()) {
         const name = row[4].trim();
-        
+
         // Extract icon from formula
-        const icon = extractIcon(cells[5]);  // Col F
-        
+        const icon = extractIcon(cells[5]); // Col F
+
         // Create raw data object (not NamedGear yet)
         namedGearData[name] = {
           type: currentType,
@@ -809,12 +822,12 @@ export const parseNamedGear = (gridData: GridData): Record<string, any> => {
           minor2: row[10] || '',
           minor3: row[11] || '',
           notes: row[13] || '',
-          isExotic: false
+          isExotic: false,
         };
       }
     }
   }
-  
+
   return namedGearData;
 };
 
@@ -824,7 +837,7 @@ export const parseNamedGear = (gridData: GridData): Record<string, any> => {
  * @returns {NamedGear[]} Array of NamedGear objects
  */
 export const convertToNamedGearObjects = (namedGearData: Record<string, any>): NamedGear[] => {
-  return Object.values(namedGearData).map(data => new NamedGear(data));
+  return Object.values(namedGearData).map((data) => new NamedGear(data));
 };
 
 /**
@@ -846,10 +859,11 @@ export const parseSkills = (data: SheetData): Skill[] => {
   // Extract headers from row 1 (columns C onwards)
   const headers = rows[0] || [];
   const headerMap: Record<number, string> = {};
-  for (let i = 2; i < headers.length; i++) { // Start from column C (index 2)
+  for (let i = 2; i < headers.length; i++) {
+    // Start from column C (index 2)
     if (headers[i] && headers[i].trim()) {
       let headerName = headers[i].trim();
-      
+
       // Clean up tier names
       if (headerName.includes('Base Stats') || headerName.includes('Skill Tier 0')) {
         headerName = '0';
@@ -868,34 +882,42 @@ export const parseSkills = (data: SheetData): Skill[] => {
       } else if (headerName.includes('Overcharge')) {
         headerName = '7';
       }
-      
+
       headerMap[i] = headerName;
     }
   }
 
   let currentType = '';
   let i = 1; // Start from row 2 (skip header row)
-  
+
   while (i < rows.length) {
     const row = rows[i] || [];
-    
+
     // Update type from column A if present
     if (row[0] && row[0].trim()) {
       currentType = row[0].trim();
     }
-    
+
     // Check if column B has a skill name (not an icon URL or formula)
     const colB = row[1] || '';
     const colA = row[0] || '';
-    
-    if (colB && colB.trim() && !colB.startsWith('http') && !colB.startsWith('=IMAGE') && !colB.startsWith('=image')) {
+
+    if (
+      colB &&
+      colB.trim() &&
+      !colB.startsWith('http') &&
+      !colB.startsWith('=IMAGE') &&
+      !colB.startsWith('=image')
+    ) {
       const skillName = colB.trim();
-      
+
       // Check if column A in the SAME row has an icon formula
       let icon = '';
-      
-      console.log(`[parseSkills] Found skill "${skillName}" at row ${i}, colA="${colA.substring(0, 80)}"`);
-      
+
+      console.log(
+        `[parseSkills] Found skill "${skillName}" at row ${i}, colA="${colA.substring(0, 80)}"`,
+      );
+
       // Extract icon URL from =IMAGE() formula in column A
       if (colA && (colA.startsWith('=IMAGE(') || colA.startsWith('=image('))) {
         const match = colA.match(/=IMAGE\("([^"]+)"/i);
@@ -911,73 +933,79 @@ export const parseSkills = (data: SheetData): Skill[] => {
       } else {
         console.log(`[parseSkills] ✗ No icon formula found in colA for "${skillName}"`);
       }
-      
+
       if (!icon) {
         console.log(`[parseSkills] ⚠ No icon found for "${skillName}"`);
       }
-      
+
       // Now collect data rows - they span from current row until we hit another skill name
       // Data is in columns C onwards, with keys in column C
       const skillData: Record<string, Record<string, string>> = {};
-      
+
       // Start collecting data from the row AFTER the skill name row
       // because the skill name row doesn't have data keys in column C
       let dataRowIndex = i + 1;
-      
+
       // Determine the end of this skill's data block
       let endRowIndex = dataRowIndex;
       while (endRowIndex < rows.length) {
         const checkRow = rows[endRowIndex] || [];
         // Stop if we hit a new skill name in column B or new type in column A
-        if ((checkRow[0] && checkRow[0].trim()) || 
-            (checkRow[1] && checkRow[1].trim() && !checkRow[1].startsWith('http') && !checkRow[1].startsWith('=IMAGE') && !checkRow[1].startsWith('=image'))) {
+        if (
+          (checkRow[0] && checkRow[0].trim()) ||
+          (checkRow[1] &&
+            checkRow[1].trim() &&
+            !checkRow[1].startsWith('http') &&
+            !checkRow[1].startsWith('=IMAGE') &&
+            !checkRow[1].startsWith('=image'))
+        ) {
           break;
         }
         endRowIndex++;
       }
-      
+
       // Collect data from all rows in this skill's block
       // Structure: { header1: { key1: value1, key2: value2 }, header2: { key1: value1 } }
       for (let dataRow = dataRowIndex; dataRow < endRowIndex; dataRow++) {
         const dataRowData = rows[dataRow] || [];
         const key = dataRowData[2] || ''; // Column C - should contain labels like "Radius", "Cooldown"
-        
+
         if (key && key.trim() && key.trim() !== '') {
           const keyName = key.trim();
-          
+
           // Collect values from columns D onwards based on headers
           for (let col = 3; col < dataRowData.length; col++) {
             const headerName = headerMap[col];
             if (headerName) {
               const value = dataRowData[col] || '';
-              
+
               // Initialize header map if it doesn't exist
               if (!skillData[headerName]) {
                 skillData[headerName] = {};
               }
-              
+
               // Store value under header -> key
               skillData[headerName][keyName] = value;
             }
           }
         }
       }
-      
+
       // Create skill object
       const skill = new Skill({
         type: currentType,
         name: skillName,
         icon: icon,
-        data: skillData
+        data: skillData,
       });
-      
+
       skillList.push(skill);
-      
+
       // Move to the end of this skill's block
       i = endRowIndex;
       continue;
     }
-    
+
     i++;
   }
 

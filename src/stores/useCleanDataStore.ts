@@ -10,6 +10,7 @@ import GearTalent from '../models/GearTalent';
 import NamedGear from '../models/NamedGear';
 import Skill from '../models/Skill';
 import WeaponMod from '../models/WeaponMod';
+import Talent from '../models/Talent';
 
 // Type mapping for each clean data key
 export interface CleanDataTypeMap {
@@ -22,6 +23,7 @@ export interface CleanDataTypeMap {
   namedGear: NamedGear[];
   skills: Skill[];
   weaponMods: WeaponMod[];
+  talents: Talent[];
   specializations: any[]; // No specific model yet
 }
 
@@ -54,6 +56,7 @@ export const CLASS_CONSTRUCTORS: Partial<Record<MainDataKey, new (data: any) => 
   namedGear: NamedGear,
   skills: Skill,
   weaponMods: WeaponMod,
+  talents: Talent,
   // specializations has no class constructor
 };
 

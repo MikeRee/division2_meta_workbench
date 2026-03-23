@@ -11,6 +11,7 @@ export const MAIN_DATA_KEYS = [
   'namedGear',
   'skills',
   'weaponMods',
+  'talents',
   'specializations',
 ] as const;
 
@@ -26,11 +27,17 @@ export const LOOKUP_DATA_KEYS = [
   'statusImmunities',
 ] as const;
 
+export enum Rarety {
+  NONE = 'NONE',
+  NAMED = 'NAMED',
+  EXOTIC = 'EXOTIC',
+}
+
 /**
  * All data keys combined (for backwards compatibility)
  */
 export const DATA_KEYS = [...MAIN_DATA_KEYS, ...LOOKUP_DATA_KEYS] as const;
 
-export type MainDataKey = typeof MAIN_DATA_KEYS[number];
-export type LookupDataKey = typeof LOOKUP_DATA_KEYS[number];
-export type DataKey = typeof DATA_KEYS[number];
+export type MainDataKey = (typeof MAIN_DATA_KEYS)[number];
+export type LookupDataKey = (typeof LOOKUP_DATA_KEYS)[number];
+export type DataKey = (typeof DATA_KEYS)[number];

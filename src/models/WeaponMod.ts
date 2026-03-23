@@ -5,16 +5,15 @@ class WeaponMod {
   slot: string;
   name: string;
   bonus: Record<string, number>;
-  penalty: Record<string, number>;
-  source: string;
+  filters: string[];
+  source?: string;
 
   static readonly FIELD_TYPES = {
     type: 'string',
     slot: 'string',
     name: 'string',
     bonus: 'Record<string, number>',
-    penalty: 'Record<string, number>',
-    source: 'string'
+    source: 'string',
   } as const;
 
   constructor({
@@ -22,15 +21,15 @@ class WeaponMod {
     slot = '',
     name = '',
     bonus = '',
-    penalty = '',
+    filters = [],
     source = '',
-    __appliedRules = {}
+    __appliedRules = {},
   }: {
     type?: string;
     slot?: string;
     name?: string;
     bonus?: string | Record<string, number>;
-    penalty?: string | Record<string, number>;
+    filters?: string[];
     source?: string;
     __appliedRules?: Record<string, string[]>;
   } = {}) {
@@ -38,7 +37,7 @@ class WeaponMod {
     this.slot = slot;
     this.name = name;
     this.bonus = parseRecordField(bonus, __appliedRules?.bonus);
-    this.penalty = parseRecordField(penalty, __appliedRules?.penalty);
+    this.filters = filters;
     this.source = source;
   }
 
@@ -48,11 +47,13 @@ class WeaponMod {
       slot: currentSlot,
       name: row[2] || '',
       bonus: row[3] || '',
-      penalty: row[4] || '',
-      source: row[5] || ''
+      source: row[5] || '',
     });
   }
 
+  static distinctTypes(mods: WeaponMod[]): string[] {
+    return [...new Set(mods.map((m) => m.type).filter(Boolean))];
+  }
 }
 
 export default WeaponMod;
