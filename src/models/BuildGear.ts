@@ -50,9 +50,10 @@ interface BuildGearData {
 }
 
 class BuildGear {
-  // Static property to hold gear attributes loaded from lookups
+  // Static properties populated by initialize*() during the App boot sequence (Phase 3)
+  // before any BuildGear instances are created.
   private static gearAttributeOptions: Record<string, number> = {};
-  private static isInitialized = false;
+  private static gearModAttributeOptions: Record<string, number> = {};
 
   name: string;
   source: GearSource;
@@ -64,18 +65,11 @@ class BuildGear {
   minor3: GearModValue | null;
   data: Gearset | Brandset | NamedGear | null;
 
-  // Static method to initialize gear attributes from lookups
+  // Called during App bootstrap Phase 3, after lookup attributes are loaded.
   static initializeGearAttributes(gearAttributes: Record<string, number>) {
-    console.log(
-      'BuildGear.initializeGearAttributes called with',
-      Object.keys(gearAttributes).length,
-      'attributes',
-    );
-    // Only initialize if we have valid attributes (not just empty string)
     const validAttrs = Object.keys(gearAttributes).filter((key) => key !== '');
     if (validAttrs.length > 0) {
       BuildGear.gearAttributeOptions = gearAttributes;
-      BuildGear.isInitialized = true;
     } else {
       console.warn(
         'BuildGear.initializeGearAttributes - received invalid attributes, skipping initialization',
@@ -83,82 +77,17 @@ class BuildGear {
     }
   }
 
-  // Static method to get gear attributes, loading from localStorage if needed
+  // Called during App bootstrap Phase 3, after lookup attributes are loaded.
+  static initializeGearModAttributes(gearModAttributes: Record<string, number>) {
+    BuildGear.gearModAttributeOptions = gearModAttributes;
+  }
+
   private static getGearAttributes(): Record<string, number> {
-    if (!BuildGear.isInitialized) {
-      console.log('BuildGear.getGearAttributes - not initialized, trying localStorage');
-      // Try to load from localStorage (lookup-store)
-      try {
-        const lookupStore = localStorage.getItem('lookup-store');
-        if (lookupStore) {
-          const parsed = JSON.parse(lookupStore);
-          console.log(
-            'BuildGear.getGearAttributes - parsed localStorage:',
-            parsed.state?.gearAttributes ? 'has gearAttributes' : 'no gearAttributes',
-          );
-          if (parsed.state?.gearAttributes) {
-            const attrs: Record<string, number> = {};
-
-            // gearAttributes is stored as a GearModCollection serialized as array
-            if (Array.isArray(parsed.state.gearAttributes)) {
-              console.log(
-                'BuildGear.getGearAttributes - gearAttributes is array with',
-                parsed.state.gearAttributes.length,
-                'items',
-              );
-              // It's an array of [key, GearMod] pairs from the Map
-              parsed.state.gearAttributes.forEach((item: any, index: number) => {
-                // Handle both array format [key, mod] and direct mod format
-                const mod = Array.isArray(item) ? item[1] : item;
-                if (mod && mod.attribute && mod.max !== undefined) {
-                  attrs[mod.attribute] =
-                    typeof mod.max === 'number' ? mod.max : parseFloat(mod.max) || 0;
-                } else {
-                  console.log('BuildGear.getGearAttributes - item', index, 'invalid:', item);
-                }
-              });
-            }
-
-            console.log(
-              'BuildGear.getGearAttributes - loaded',
-              Object.keys(attrs).length,
-              'attributes from localStorage',
-            );
-            BuildGear.gearAttributeOptions = attrs;
-            BuildGear.isInitialized = true;
-          }
-        } else {
-          console.log('BuildGear.getGearAttributes - no localStorage found');
-        }
-      } catch (error) {
-        console.error('Error loading gear attributes from localStorage:', error);
-      }
-    }
     return BuildGear.gearAttributeOptions;
   }
 
-  // Static method to get gear mod attributes (for mod slot), loading from localStorage if needed
   private static getGearModAttributes(): Record<string, number> {
-    const attrs: Record<string, number> = {};
-    try {
-      const lookupStore = localStorage.getItem('lookup-store');
-      if (lookupStore) {
-        const parsed = JSON.parse(lookupStore);
-        if (parsed.state?.gearModAttributes && Array.isArray(parsed.state.gearModAttributes)) {
-          // gearModAttributes is stored as Map entries [[key, GearMod], ...]
-          parsed.state.gearModAttributes.forEach((item: any) => {
-            const mod = Array.isArray(item) ? item[1] : item;
-            if (mod && mod.attribute && mod.max !== undefined) {
-              attrs[mod.attribute] =
-                typeof mod.max === 'number' ? mod.max : parseFloat(mod.max) || 0;
-            }
-          });
-        }
-      }
-    } catch (error) {
-      console.error('Error loading gear mod attributes from localStorage:', error);
-    }
-    return attrs;
+    return BuildGear.gearModAttributeOptions;
   }
 
   constructor(item: Gearset | Brandset | NamedGear, gearType?: GearType) {

@@ -1088,7 +1088,11 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Load / Process data</h2>
+          <h2>
+            Load / Process data
+            <br />
+            NOT WORKING - PENDING UPDATE - DO NOT USE
+          </h2>
           <div className="header-controls">
             <button className="config-icon" onClick={() => setShowConfig(!showConfig)}>
               ⚙️

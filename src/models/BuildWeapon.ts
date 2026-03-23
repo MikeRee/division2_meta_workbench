@@ -1,87 +1,86 @@
-import { CoreType } from './CoreValue';
 import Weapon from './Weapon';
 import WeaponMod from './WeaponMod';
 
 export class BuildWeapon {
-  // Static property to hold weapon attributes loaded from lookups
+  // Static property to hold weapon attributes loaded from lookups.
+  // Populated by initializeWeaponAttributes() during the App boot sequence (Phase 3)
+  // before any BuildWeapon instances are created.
   private static weaponAttributeOptions: Record<string, number> = {};
-  private static isInitialized = false;
 
   weapon: Weapon;
-  core1: WeaponModValue;
-  core2?: WeaponModValue;
-  attrib?: WeaponModValue;
-  configuredModSlots: Record<string, Record<string, number>>;
+  get primaryAttribute1(): Record<string, number> {
+    if (this.weapon.fixedPrimary1 && Object.keys(this.weapon.fixedPrimary1).length > 0)
+      return this.weapon.fixedPrimary1;
 
-  // Static method to initialize weapon attributes from lookups
-  static initializeWeaponAttributes(weaponAttributes: Record<string, number>) {
-    BuildWeapon.weaponAttributeOptions = weaponAttributes;
-    BuildWeapon.isInitialized = true;
+    const core1Key = this.weapon.type.toLowerCase() + ' damage';
+    return { [core1Key]: 15 };
   }
 
-  // Static method to get weapon attributes, loading from localStorage if needed
-  private static getWeaponAttributes(): Record<string, number> {
-    if (!BuildWeapon.isInitialized) {
-      // Try to load from localStorage (lookup-store)
-      try {
-        const lookupStore = localStorage.getItem('lookup-store');
-        if (lookupStore) {
-          const parsed = JSON.parse(lookupStore);
-          if (parsed.state?.weaponAttributes) {
-            // weaponAttributes is stored as an array of [key, value] pairs
-            const attrs: Record<string, number> = {};
-            parsed.state.weaponAttributes.forEach(([key, attr]: [string, any]) => {
-              if (attr && attr.attribute) {
-                const maxValue = parseFloat(attr.max) || 0;
-                attrs[attr.attribute] = maxValue;
-              }
-            });
-            BuildWeapon.weaponAttributeOptions = attrs;
-            BuildWeapon.isInitialized = true;
-          }
-        }
-      } catch (error) {
-        console.error('Error loading weapon attributes from localStorage:', error);
+  private _primaryAttribute2: Record<string, number>;
+  get primaryAttribute2(): Record<string, number> | null {
+    if (this.weapon.fixedPrimary2 && Object.keys(this.weapon.fixedPrimary2).length > 0)
+      return this.weapon.fixedPrimary2;
+    if (this.weapon.type == 'pistol') return null;
+    return this._primaryAttribute2;
+  }
+  setPrimaryAttribute2(key: string, value: number) {
+    this._primaryAttribute2 = { [key]: value };
+  }
+
+  private _secondaryAttribute: Record<string, number>;
+  get secondaryAttribute(): Record<string, number> {
+    if (this.weapon.fixedSecondary && Object.keys(this.weapon.fixedSecondary).length > 0)
+      return this.weapon.fixedSecondary;
+    return this._secondaryAttribute;
+  }
+
+  private _modSlots: Record<string, Record<string, number>>;
+  get modSlots(): Record<string, Record<string, number>> {
+    if (this.weapon.fixedSlots && Object.keys(this.weapon.fixedSlots).length > 0)
+      return this.weapon.fixedSlots;
+    return this._modSlots;
+  }
+  setModSlots(slots: Record<string, Record<string, number>>): string[] {
+    if (this.weapon.fixedSlots && Object.keys(this.weapon.fixedSlots).length > 0)
+      return [`Slots are fixed for ${this.weapon.name}, unable to set mod slots.`];
+
+    const errors: string[] = [];
+    const updatedSlots: Record<string, Record<string, number>> = {};
+    for (const key of Object.keys(slots)) {
+      if (key in this.weapon.modSlots) {
+        updatedSlots[key] = slots[key];
+      } else {
+        errors.push(`Mod slot "${key}" does not exist on ${this.weapon.name}.`);
       }
     }
+    this._modSlots = updatedSlots;
+    return errors;
+  }
+
+  // Called during App bootstrap Phase 3, after lookup attributes are loaded.
+  static initializeWeaponAttributes(weaponAttributes: Record<string, number>) {
+    BuildWeapon.weaponAttributeOptions = weaponAttributes;
+  }
+
+  private static getWeaponAttributes(): Record<string, number> {
     return BuildWeapon.weaponAttributeOptions;
   }
 
-  constructor(
-    weapon: Weapon,
-    configuredModSlots: Record<string, Record<string, number>> = {},
-    allWeaponMods?: WeaponMod[],
-  ) {
+  constructor(weapon: Weapon) {
     this.weapon = weapon;
+    this._modSlots = {};
 
-    // Get weapon attributes (will load from localStorage if not initialized)
+    // Initialize primaryAttribute2 from weapon attributes if not a pistol
     const weaponAttrs = BuildWeapon.getWeaponAttributes();
-
-    // Set core1 with weapon type damage
-    const core1Key = weapon.type.toLowerCase() + ' damage';
-    this.core1 = new WeaponModValue({ [core1Key]: 15 }, core1Key, 15);
-
-    // If core2 is undefined and weapon type is not pistol, create with all weapon attributes as options
     if (weapon.type.toLowerCase() !== 'pistol') {
       const firstKey = Object.keys(weaponAttrs)[0];
-      this.core2 = new WeaponModValue(weaponAttrs, firstKey);
+      this._primaryAttribute2 = firstKey ? { [firstKey]: weaponAttrs[firstKey] } : {};
+    } else {
+      this._primaryAttribute2 = {};
     }
 
+    // Initialize secondaryAttribute from weapon attributes
     const secondKey = Object.keys(weaponAttrs)[1];
-    this.attrib = new WeaponModValue(weaponAttrs, secondKey);
-    this.configuredModSlots = configuredModSlots;
-  }
-}
-
-class WeaponModValue {
-  options: Record<string, number>;
-  key?: string;
-  value?: number;
-
-  constructor(options: Record<string, number> = {}, key?: string, value?: number) {
-    this.options = options;
-    this.key = key;
-    // Default to the max value from options when a key is provided but no value
-    this.value = value ?? (key != null ? options[key] : undefined);
+    this._secondaryAttribute = secondKey ? { [secondKey]: weaponAttrs[secondKey] } : {};
   }
 }

@@ -12,6 +12,9 @@ class Weapon {
   damage: number;
   optimalRange: number;
   modSlots: string[];
+  fixedPrimary1: Record<string, number>;
+  fixedPrimary2: Record<string, number>;
+  fixedSecondary: Record<string, number>;
   fixedSlots: Record<string, Record<string, number>>;
   fixedTalent: string[];
   hsd: number;
@@ -56,6 +59,11 @@ class Weapon {
     } else {
       this.fixedSlots = {};
     }
+
+    // Ensure fixedPrimary1 is a Record<string, number>
+    this.fixedPrimary1 = this.parseRecordField(data.fixedPrimary1);
+    this.fixedPrimary2 = this.parseRecordField(data.fixedPrimary2);
+    this.fixedSecondary = this.parseRecordField(data.fixedSecondary);
 
     this.fixedTalent = Array.isArray(data.fixedTalent) ? data.fixedTalent : [];
   }
@@ -110,6 +118,13 @@ class Weapon {
       if (upper === 'N' || upper === 'NAMED') return Rarety.NAMED;
     }
     return Rarety.NONE;
+  }
+
+  private parseRecordField(value: any): Record<string, number> {
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      return value;
+    }
+    return {};
   }
 
   static normalizeHeaderKey(header: string, columnIndex: number): string {

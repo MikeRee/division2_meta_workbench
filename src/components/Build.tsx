@@ -213,22 +213,7 @@ function Build() {
           return null;
         }
 
-        // Reconstruct mod slots
-        const configuredModSlots: Record<string, Record<string, number>> = {};
-        if (llmWeapon.muzzleIfOption) {
-          configuredModSlots.muzzle = { [llmWeapon.muzzleIfOption]: 0 };
-        }
-        if (llmWeapon.underbarrelIfOption) {
-          configuredModSlots.underbarrel = { [llmWeapon.underbarrelIfOption]: 0 };
-        }
-        if (llmWeapon.magazineIfOption) {
-          configuredModSlots.magazine = { [llmWeapon.magazineIfOption]: 0 };
-        }
-        if (llmWeapon.opticsIfOption) {
-          configuredModSlots.optics = { [llmWeapon.opticsIfOption]: 0 };
-        }
-
-        return new BuildWeapon(weapon, configuredModSlots, weaponMods);
+        return new BuildWeapon(weapon);
       };
 
       // Reconstruct BuildGear instances by looking up gear by name
@@ -337,13 +322,13 @@ function Build() {
         // Filter out pistols for primary and secondary weapons, wrap in BuildWeapon
         items = (weapons as Weapon[])
           .filter((weapon) => weapon.type?.toLowerCase() !== 'pistol')
-          .map((weapon) => new BuildWeapon(weapon, {}, weaponMods));
+          .map((weapon) => new BuildWeapon(weapon));
         break;
       case 'pistol':
         // Only show pistols, wrap in BuildWeapon
         items = (weapons as Weapon[])
           .filter((weapon) => weapon.type?.toLowerCase() === 'pistol')
-          .map((weapon) => new BuildWeapon(weapon, {}, weaponMods));
+          .map((weapon) => new BuildWeapon(weapon));
         break;
       case 'mask':
         items = createBuildGearList(GearType.Mask);

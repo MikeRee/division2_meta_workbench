@@ -20,7 +20,7 @@ class Talent {
 
   constructor(data: any = {}) {
     this.name = data.name || '';
-    this.type = data.type || TalentType.WEAPON;
+    this.type = data.type || '';
     this.perfectName = data.perfectName || '';
     this.icon = data.icon || '';
     this.description = data.description || '';

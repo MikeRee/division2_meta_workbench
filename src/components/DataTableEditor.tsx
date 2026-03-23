@@ -180,6 +180,9 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
   // Columns that are always treated as nested records (Record<string, Record<string, number>>)
   const KNOWN_NESTED_RECORD_COLUMNS = new Set(['fixedSlots']);
 
+  // Columns that are always treated as Record<string, number>
+  const KNOWN_RECORD_COLUMNS = new Set(['fixedPrimary1', 'fixedPrimary2', 'fixedSecondary']);
+
   // Detect which columns are Record<string, number> from the first row
   const recordColumns = useMemo(() => {
     if (!tableData.length) return new Set<string>();
@@ -188,7 +191,10 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
       if (key === '__rowId') continue;
       if (KNOWN_NESTED_RECORD_COLUMNS.has(key)) continue;
       // Check first few rows to confirm it's a record field
-      if (tableData.slice(0, 5).every((row) => isRecordField(row[key]))) {
+      if (
+        KNOWN_RECORD_COLUMNS.has(key) ||
+        tableData.slice(0, 5).every((row) => isRecordField(row[key]))
+      ) {
         cols.add(key);
       }
     }

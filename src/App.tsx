@@ -72,23 +72,74 @@ function App() {
 
       const { useCleanDataStore } = await import('./stores/useCleanDataStore');
       useCleanDataStore.persist.rehydrate();
-      console.log('Lookup and clean data stores rehydrated');
+      console.log('Phase 1 complete: Lookup and clean data stores rehydrated');
 
-      // Phase 2: Load fresh data into lookup and clean stores (in parallel)
-      await Promise.all([loadJsonData(), loadCleanData(useCleanDataStore), loadLookupData()]);
+      // Phase 2: Load lookup attributes first (weaponAttributes, gearAttributes, etc.)
+      // These are needed by BuildWeapon/BuildGear static initializers
+      await loadLookupData();
+      console.log('Phase 2 complete: Lookup attributes loaded');
 
-      // Phase 3: Bootstrap formula store if empty
+      // Phase 3: Initialize static model attributes from loaded lookups
+      const { BuildWeapon } = await import('./models/BuildWeapon');
+      const lookupState = useLookupStore.getState();
+
+      // Initialize BuildWeapon with weapon attributes
+      const weaponAttrs: Record<string, number> = {};
+      if (lookupState.weaponAttributes instanceof Map) {
+        lookupState.weaponAttributes.forEach((attr: any) => {
+          if (attr.attribute) {
+            weaponAttrs[attr.attribute] = parseFloat(attr.max?.toString().replace('%', '')) || 0;
+          }
+        });
+      }
+      BuildWeapon.initializeWeaponAttributes(weaponAttrs);
+
+      // Initialize BuildGear with gear attributes
+      const { default: BuildGear } = await import('./models/BuildGear');
+      const gearAttrs: Record<string, number> = {};
+      const gearAttrCollection = lookupState.gearAttributes;
+      if (gearAttrCollection) {
+        const allMods = gearAttrCollection.toArray?.() || [];
+        allMods.forEach((mod: any) => {
+          if (mod.attribute) {
+            gearAttrs[mod.attribute] =
+              typeof mod.max === 'number' ? mod.max : parseFloat(mod.max) || 0;
+          }
+        });
+      }
+      BuildGear.initializeGearAttributes(gearAttrs);
+
+      // Initialize BuildGear with gear mod attributes (for mod slots on mask/backpack/chest)
+      const gearModAttrs: Record<string, number> = {};
+      if (lookupState.gearModAttributes instanceof Map) {
+        lookupState.gearModAttributes.forEach((mod: any) => {
+          if (mod.attribute) {
+            gearModAttrs[mod.attribute] =
+              typeof mod.max === 'number' ? mod.max : parseFloat(mod.max) || 0;
+          }
+        });
+      }
+      BuildGear.initializeGearModAttributes(gearModAttrs);
+      console.log('Phase 3 complete: BuildWeapon and BuildGear static attributes initialized');
+
+      // Phase 4: Load game data into lookup and clean stores (can run in parallel now)
+      await Promise.all([loadJsonData(), loadCleanData(useCleanDataStore)]);
+      console.log('Phase 4 complete: Game data loaded into lookup and clean stores');
+
+      // Phase 5: Bootstrap formula store if empty
       const { useFormulaStore } = await import('./stores/useFormulaStore');
       await useFormulaStore.persist.rehydrate();
       const formulaState = useFormulaStore.getState();
       if (Object.keys(formulaState.formulas).length === 0) {
         await formulaState.bootstrapFromFile();
       }
+      console.log('Phase 5 complete: Formula store ready');
 
-      // Phase 4: Rehydrate build store now that its dependencies are ready
+      // Phase 6: Rehydrate build store now that ALL dependencies are ready
+      // (lookup attrs → static initializers → clean data → build store)
       const { useBuildStore } = await import('./stores/useBuildStore');
       useBuildStore.persist.rehydrate();
-      console.log('Build store rehydrated after dependencies loaded');
+      console.log('Phase 6 complete: Build store rehydrated');
     };
 
     const loadJsonData = async () => {
@@ -221,12 +272,6 @@ function App() {
 
         const lookups = await response.json();
         const store = useLookupStore.getState() as any;
-
-        // Initialize BuildWeapon with weapon attributes
-        if (lookups.weaponAttributes) {
-          const { BuildWeapon } = await import('./models/BuildWeapon');
-          BuildWeapon.initializeWeaponAttributes(lookups.weaponAttributes);
-        }
 
         // Load weapon attributes
         if (lookups.weaponAttributes) {

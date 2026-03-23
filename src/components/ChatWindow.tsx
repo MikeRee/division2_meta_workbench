@@ -297,39 +297,39 @@ function ChatWindow() {
           return null;
         }
 
-        const configuredModSlots: Record<string, Record<string, number>> = {};
+        const modSlots: Record<string, Record<string, number>> = {};
 
         // Handle both old format and new attachments format
         if (llmWeapon.attachments) {
           if (llmWeapon.attachments.muzzleIfOption) {
-            configuredModSlots.muzzle = { [llmWeapon.attachments.muzzleIfOption]: 0 };
+            modSlots.muzzle = { [llmWeapon.attachments.muzzleIfOption]: 0 };
           }
           if (llmWeapon.attachments.underbarrelIfOption) {
-            configuredModSlots.underbarrel = { [llmWeapon.attachments.underbarrelIfOption]: 0 };
+            modSlots.underbarrel = { [llmWeapon.attachments.underbarrelIfOption]: 0 };
           }
           if (llmWeapon.attachments.magazineIfOption) {
-            configuredModSlots.magazine = { [llmWeapon.attachments.magazineIfOption]: 0 };
+            modSlots.magazine = { [llmWeapon.attachments.magazineIfOption]: 0 };
           }
           if (llmWeapon.attachments.opticsIfOption) {
-            configuredModSlots.optics = { [llmWeapon.attachments.opticsIfOption]: 0 };
+            modSlots.optics = { [llmWeapon.attachments.opticsIfOption]: 0 };
           }
         } else {
           // Old format compatibility
           if (llmWeapon.muzzleIfOption) {
-            configuredModSlots.muzzle = { [llmWeapon.muzzleIfOption]: 0 };
+            modSlots.muzzle = { [llmWeapon.muzzleIfOption]: 0 };
           }
           if (llmWeapon.underbarrelIfOption) {
-            configuredModSlots.underbarrel = { [llmWeapon.underbarrelIfOption]: 0 };
+            modSlots.underbarrel = { [llmWeapon.underbarrelIfOption]: 0 };
           }
           if (llmWeapon.magazineIfOption) {
-            configuredModSlots.magazine = { [llmWeapon.magazineIfOption]: 0 };
+            modSlots.magazine = { [llmWeapon.magazineIfOption]: 0 };
           }
           if (llmWeapon.opticsIfOption) {
-            configuredModSlots.optics = { [llmWeapon.opticsIfOption]: 0 };
+            modSlots.optics = { [llmWeapon.opticsIfOption]: 0 };
           }
         }
 
-        return new BuildWeapon(weapon, configuredModSlots, weaponMods);
+        return new BuildWeapon(weapon, modSlots, weaponMods);
       };
 
       // Reconstruct BuildGear instances

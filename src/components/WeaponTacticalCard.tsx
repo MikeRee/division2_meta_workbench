@@ -122,8 +122,8 @@ const WeaponTacticalCard: React.FC<WeaponTacticalCardProps> = ({ buildWeapon, on
         </div>
 
         <div className={styles.pipContainer}>
-          {/* Core1 attribute image - weapon type damage */}
-          {buildWeapon.core1 && buildWeapon.core1.key && (
+          {/* Primary attribute 1 - weapon type damage */}
+          {Object.keys(buildWeapon.primaryAttribute1).length > 0 && (
             <div
               className={styles.attributeIcon}
               dangerouslySetInnerHTML={{
@@ -132,22 +132,27 @@ const WeaponTacticalCard: React.FC<WeaponTacticalCardProps> = ({ buildWeapon, on
             />
           )}
 
-          {/* Core2 attribute image - secondary weapon attribute */}
-          {buildWeapon.core2 && buildWeapon.core2.key && (
-            <div
-              className={styles.attributeIcon}
-              dangerouslySetInnerHTML={{
-                __html: getDefaultAttrImage(getAttributeClassification(buildWeapon.core2.key)),
-              }}
-            />
-          )}
+          {/* Primary attribute 2 - secondary weapon attribute */}
+          {buildWeapon.primaryAttribute2 &&
+            Object.keys(buildWeapon.primaryAttribute2).length > 0 && (
+              <div
+                className={styles.attributeIcon}
+                dangerouslySetInnerHTML={{
+                  __html: getDefaultAttrImage(
+                    getAttributeClassification(Object.keys(buildWeapon.primaryAttribute2)[0]),
+                  ),
+                }}
+              />
+            )}
 
-          {/* Attrib attribute image - tertiary weapon attribute */}
-          {buildWeapon.attrib && buildWeapon.attrib.key && (
+          {/* Secondary attribute - tertiary weapon attribute */}
+          {Object.keys(buildWeapon.secondaryAttribute).length > 0 && (
             <div
               className={styles.attributeIcon}
               dangerouslySetInnerHTML={{
-                __html: getDefaultAttrImage(getAttributeClassification(buildWeapon.attrib.key)),
+                __html: getDefaultAttrImage(
+                  getAttributeClassification(Object.keys(buildWeapon.secondaryAttribute)[0]),
+                ),
               }}
             />
           )}

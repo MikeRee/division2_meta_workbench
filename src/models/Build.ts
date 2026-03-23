@@ -124,27 +124,35 @@ class Build {
 
       const result: any = {
         name: weapon.weapon.name,
-        attrib1: weapon.core1?.key || '',
+        attrib1: Object.keys(weapon.primaryAttribute1)[0] || '',
       };
 
-      if (weapon.core2?.key) result.attrib2 = weapon.core2.key;
-      if (weapon.attrib?.key) result.mod = weapon.attrib.key;
+      const pa2 = weapon.primaryAttribute2;
+      if (pa2) {
+        const pa2Key = Object.keys(pa2)[0];
+        if (pa2Key) result.attrib2 = pa2Key;
+      }
+      const sa = weapon.secondaryAttribute;
+      if (sa) {
+        const saKey = Object.keys(sa)[0];
+        if (saKey) result.mod = saKey;
+      }
 
       const attachments: any = {};
-      if (weapon.configuredModSlots?.muzzle) {
-        const key = Object.keys(weapon.configuredModSlots.muzzle)[0];
+      if (weapon.modSlots?.muzzle) {
+        const key = Object.keys(weapon.modSlots.muzzle)[0];
         if (key) attachments.muzzleIfOption = key;
       }
-      if (weapon.configuredModSlots?.underbarrel) {
-        const key = Object.keys(weapon.configuredModSlots.underbarrel)[0];
+      if (weapon.modSlots?.underbarrel) {
+        const key = Object.keys(weapon.modSlots.underbarrel)[0];
         if (key) attachments.underbarrelIfOption = key;
       }
-      if (weapon.configuredModSlots?.magazine) {
-        const key = Object.keys(weapon.configuredModSlots.magazine)[0];
+      if (weapon.modSlots?.magazine) {
+        const key = Object.keys(weapon.modSlots.magazine)[0];
         if (key) attachments.magazineIfOption = key;
       }
-      if (weapon.configuredModSlots?.optics) {
-        const key = Object.keys(weapon.configuredModSlots.optics)[0];
+      if (weapon.modSlots?.optics) {
+        const key = Object.keys(weapon.modSlots.optics)[0];
         if (key) attachments.opticsIfOption = key;
       }
 
@@ -204,7 +212,7 @@ class Build {
 
       // This is a simplified conversion - in practice, you'd need to:
       // 1. Look up the actual Weapon object by name
-      // 2. Reconstruct the configuredModSlots from attachments
+      // 2. Reconstruct the modSlots from attachments
       // For now, returning null as we need more context about available weapons
       return null;
     };
@@ -331,7 +339,7 @@ class Build {
         try {
           buildData[slot] = new BuildWeapon(
             buildData[slot].weapon,
-            buildData[slot].configuredModSlots || {},
+            buildData[slot]._modSlots || buildData[slot].configuredModSlots || {},
           );
         } catch (error) {
           console.warn(`Build.fromJSON: failed to restore ${slot}, keeping raw data`, error);

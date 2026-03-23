@@ -181,16 +181,22 @@ export class StatCalculator {
     const weapon = build[weaponSlot] as BuildWeapon | null;
     if (weapon) {
       const wName = weapon.weapon?.name ?? 'Unknown Weapon';
-      if (weapon.core1?.key && weapon.core1.value != null) {
-        calc.add(weapon.core1.key, wName, 'Core', weapon.core1.value);
+      const pa1 = weapon.primaryAttribute1;
+      if (pa1) {
+        const [key, value] = Object.entries(pa1)[0] ?? [];
+        if (key && value != null) calc.add(key, wName, 'Core', value);
       }
-      if (weapon.core2?.key && weapon.core2.value != null) {
-        calc.add(weapon.core2.key, wName, 'Core', weapon.core2.value);
+      const pa2 = weapon.primaryAttribute2;
+      if (pa2) {
+        const [key, value] = Object.entries(pa2)[0] ?? [];
+        if (key && value != null) calc.add(key, wName, 'Core', value);
       }
-      if (weapon.attrib?.key && weapon.attrib.value != null) {
-        calc.add(weapon.attrib.key, wName, 'Attribute', weapon.attrib.value);
+      const sa = weapon.secondaryAttribute;
+      if (sa) {
+        const [key, value] = Object.entries(sa)[0] ?? [];
+        if (key && value != null) calc.add(key, wName, 'Attribute', value);
       }
-      Object.entries(weapon.configuredModSlots ?? {}).forEach(([slotName, modStats]) => {
+      Object.entries(weapon.modSlots ?? {}).forEach(([slotName, modStats]) => {
         Object.entries(modStats ?? {}).forEach(([key, value]) => {
           calc.add(key, wName, slotName, value);
         });
