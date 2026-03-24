@@ -39,7 +39,13 @@ function RecordOverlay({ title, record, onSave, onClose }: RecordOverlayProps) {
   }, [entries, onSave]);
 
   return (
-    <div className="record-overlay-backdrop" onClick={onClose}>
+    <div
+      className="record-overlay-backdrop"
+      onClick={(e) => {
+        e.stopPropagation();
+        onClose();
+      }}
+    >
       <div className="record-overlay-content" onClick={(e) => e.stopPropagation()}>
         <div className="record-overlay-header">
           <h4>{title}</h4>

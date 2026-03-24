@@ -19,6 +19,26 @@ class Weapon {
   fixedTalent: string[];
   hsd: number;
 
+  static readonly FIELD_TYPES = {
+    type: 'string',
+    variant: 'string',
+    name: 'string',
+    rarety: 'string',
+    rpm: 'number',
+    baseMagSize: 'number',
+    moddedMagSize: 'number',
+    reload: 'number',
+    damage: 'number',
+    optimalRange: 'number',
+    modSlots: 'string[]',
+    fixedPrimary1: 'Record<string, number>',
+    fixedPrimary2: 'Record<string, number>',
+    fixedSecondary: 'Record<string, number>',
+    fixedSlots: 'Record<string, Record<string, number>>',
+    fixedTalent: 'string[]',
+    hsd: 'number',
+  } as const;
+
   constructor(data: any = {}) {
     this.type = data.type || '';
     this.variant = data.variant || '';

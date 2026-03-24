@@ -155,7 +155,13 @@ function StacksOverlay({ title, stacks, onSave, onClose }: StacksOverlayProps) {
   }, [entries, onSave]);
 
   return (
-    <div className="record-overlay-backdrop" onClick={onClose}>
+    <div
+      className="record-overlay-backdrop"
+      onClick={(e) => {
+        e.stopPropagation();
+        onClose();
+      }}
+    >
       <div
         className="record-overlay-content"
         style={{ width: 480 }}

@@ -1,11 +1,11 @@
 import Brandset from '../models/Brandset';
 import Gearset from '../models/Gearset';
-import NamedGear from './NamedGear';
 import Build from './Build';
 import BuildGear, { GearSource, GearType } from './BuildGear';
 import { BuildWeapon } from './BuildWeapon';
 import useCleanDataStore from '../stores/useCleanDataStore';
 import { CoreType } from './CoreValue';
+import NamedExoticGear from './NamedExoticGear';
 
 export enum FormulaType {
   Percent = 'percent',
@@ -81,8 +81,8 @@ export class StatCalculator {
         let setItem: Gearset | Brandset | null = null;
 
         gear.core.forEach((c) => {
-          if (!calc.cores[c.type]) calc.cores[c.type] = [];
-          if (gear.type != null) calc.cores[c.type]!.push(gear.type);
+          if (!calc.cores[c]) calc.cores[c] = [];
+          if (gear.type != null) calc.cores[c]!.push(gear.type);
         });
 
         switch (gear.source) {
@@ -95,7 +95,7 @@ export class StatCalculator {
             setItem = gear.data as Gearset;
             break;
           case GearSource.Named: {
-            const namedData = gear.data as NamedGear | undefined;
+            const namedData = gear.data as NamedExoticGear | undefined;
             if (namedData?.brand) {
               key = `brandset_${namedData.brand}`;
               const brandsets: Brandset[] =

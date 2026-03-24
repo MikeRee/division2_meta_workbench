@@ -5,12 +5,12 @@ import WeaponTalent from '../models/WeaponTalent';
 import ExoticWeapon from '../models/ExoticWeapon';
 import Gearset from '../models/Gearset';
 import Brandset from '../models/Brandset';
-import NamedGear from '../models/NamedGear';
 import Skill from '../models/Skill';
 import WeaponMod from '../models/WeaponMod';
 import Attribute from '../models/Attribute';
 import StatusImmunity from '../models/StatusImmunity';
 import GearMod, { GearModCollection, GearModClassification } from '../models/GearMod';
+import NamedExoticGear from '../models/NamedExoticGear';
 
 interface LookupState {
   weapons: Map<string, Weapon>;
@@ -19,7 +19,7 @@ interface LookupState {
   gearsets: Map<string, Gearset>;
   brandsets: Map<string, Brandset>;
   gearTalents: Map<string, any>;
-  namedGear: Map<string, NamedGear>;
+  namedGear: Map<string, NamedExoticGear>;
   skills: Map<string, Skill>;
   weaponMods: Map<string, WeaponMod>;
   specializations: Map<string, any>;
@@ -42,7 +42,7 @@ interface LookupState {
   setGearsets: (gearsetList: Gearset[]) => void;
   setBrandsets: (brandsetList: Brandset[]) => void;
   setGearTalents: (talentList: any[]) => void;
-  setNamedGear: (namedGearList: NamedGear[]) => void;
+  setNamedGear: (namedGearList: NamedExoticGear[]) => void;
   setSkills: (skillList: Skill[]) => void;
   setWeaponMods: (weaponModList: WeaponMod[]) => void;
   setSpecializations: (specializationList: any[]) => void;
@@ -64,7 +64,7 @@ interface LookupState {
   getGearset: (name: string) => Gearset | undefined;
   getBrandset: (brand: string) => Brandset | undefined;
   getGearTalent: (name: string) => any | undefined;
-  getNamedGear: (name: string) => NamedGear | undefined;
+  getNamedGear: (name: string) => NamedExoticGear | undefined;
   getSkill: (name: string) => Skill | undefined;
   getWeaponMod: (name: string) => WeaponMod | undefined;
   getSpecialization: (name: string) => any | undefined;
@@ -84,7 +84,7 @@ interface LookupState {
   getAllGearsets: () => Gearset[];
   getAllBrandsets: () => Brandset[];
   getAllGearTalents: () => any[];
-  getAllNamedGear: () => NamedGear[];
+  getAllNamedGear: () => NamedExoticGear[];
   getAllSkills: () => Skill[];
   getAllWeaponMods: () => WeaponMod[];
   getAllSpecializations: () => any[];
@@ -120,7 +120,7 @@ const useLookupStore = create<LookupState>()(
       gearsets: new Map<string, Gearset>(),
       brandsets: new Map<string, Brandset>(),
       gearTalents: new Map<string, any>(),
-      namedGear: new Map<string, NamedGear>(),
+      namedGear: new Map<string, NamedExoticGear>(),
       skills: new Map<string, Skill>(),
       weaponMods: new Map<string, WeaponMod>(),
       specializations: new Map<string, any>(),
@@ -202,7 +202,7 @@ const useLookupStore = create<LookupState>()(
       },
 
       setNamedGear: (namedGearList) => {
-        const namedGearMap = new Map<string, NamedGear>();
+        const namedGearMap = new Map<string, NamedExoticGear>();
         namedGearList.forEach((gear) => {
           if (gear.name) {
             namedGearMap.set(gear.name, gear);
@@ -510,7 +510,7 @@ const useLookupStore = create<LookupState>()(
                 case 'brandsets':
                   return new Brandset(item);
                 case 'namedGear':
-                  return new NamedGear(item);
+                  return new NamedExoticGear(item);
                 case 'skills':
                   return new Skill(item);
                 case 'weaponMods':

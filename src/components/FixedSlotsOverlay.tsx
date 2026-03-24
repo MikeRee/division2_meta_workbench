@@ -122,7 +122,13 @@ function FixedSlotsOverlay({ title, slots, onSave, onClose }: FixedSlotsOverlayP
   }, [entries, onSave]);
 
   return (
-    <div className="record-overlay-backdrop" onClick={onClose}>
+    <div
+      className="record-overlay-backdrop"
+      onClick={(e) => {
+        e.stopPropagation();
+        onClose();
+      }}
+    >
       <div
         className="record-overlay-content"
         style={{ width: 560 }}

@@ -57,6 +57,15 @@ export class BuildWeapon {
     return errors;
   }
 
+  private _talents?: string;
+  get talents(): string[] {
+    if (this._talents) return [this._talents];
+    return this.weapon.fixedTalent;
+  }
+  setTalent(talent: string | undefined) {
+    this._talents = talent;
+  }
+
   // Called during App bootstrap Phase 3, after lookup attributes are loaded.
   static initializeWeaponAttributes(weaponAttributes: Record<string, number>) {
     BuildWeapon.weaponAttributeOptions = weaponAttributes;

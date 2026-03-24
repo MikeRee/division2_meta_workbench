@@ -12,7 +12,6 @@ import ExoticWeapon from './models/ExoticWeapon';
 import Gearset from './models/Gearset';
 import Brandset from './models/Brandset';
 import GearTalent from './models/GearTalent';
-import NamedGear from './models/NamedGear';
 import Skill from './models/Skill';
 import WeaponMod from './models/WeaponMod';
 import Attribute from './models/Attribute';
@@ -28,7 +27,6 @@ import {
   parseBrandsets,
   parseGearTalents,
   parseNamedGear,
-  convertToNamedGearObjects,
   parseSkills,
   parseWeaponMods,
   extractSpreadsheetId,
@@ -51,6 +49,7 @@ import {
   processExoticWeaponData,
 } from './utils/dataNormalizer';
 import './App.css';
+import NamedExoticGear from './models/NamedExoticGear';
 
 function App() {
   const [, setDisplayContent] = useState<string>('');
@@ -60,7 +59,7 @@ function App() {
   const [, setGearsets] = useState<Gearset[]>([]);
   const [, setBrandsets] = useState<Brandset[]>([]);
   const [, setGearTalents] = useState<GearTalent[]>([]);
-  const [, setNamedGear] = useState<NamedGear[]>([]);
+  const [, setNamedGear] = useState<NamedExoticGear[]>([]);
   const [, setSkills] = useState<Skill[]>([]);
   const [, setWeaponMods] = useState<WeaponMod[]>([]);
 
@@ -937,19 +936,19 @@ function App() {
 
       const gearAttributes = useLookupStore.getState().getAllGearAttributes();
 
-      // Normalize the data
-      const normalizedData = processNamedGearData(rawNamedGearData, patterns, gearAttributes);
+      // // Normalize the data
+      // const normalizedData = processNamedGearData(rawNamedGearData, patterns, gearAttributes);
 
-      // Convert to NamedGear objects
-      const namedGearList = convertToNamedGearObjects(normalizedData);
+      // // Convert to NamedExoticGear objects
+      // const namedGearList = convertToNamedGearObjects(normalizedData);
 
-      setNamedGear(namedGearList);
+      // setNamedGear(namedGearList);
 
       // Store in lookup store
-      useLookupStore.getState().setNamedGear(namedGearList);
+      // useLookupStore.getState().setNamedGear(namedGearList);
 
-      // Display the normalized JSON data
-      setDisplayContent(JSON.stringify(normalizedData, null, 2));
+      // // Display the normalized JSON data
+      // setDisplayContent(JSON.stringify(normalizedData, null, 2));
     } catch (error) {
       console.error('Full error:', error);
       const errorMessageText = error instanceof Error ? error.message : String(error);

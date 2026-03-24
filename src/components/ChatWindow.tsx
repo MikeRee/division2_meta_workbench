@@ -7,10 +7,10 @@ import { BuildWeapon } from '../models/BuildWeapon';
 import BuildGear, { GearType } from '../models/BuildGear';
 import { GearModValue } from '../models/GearMod';
 import Weapon from '../models/Weapon';
-import NamedGear from '../models/NamedGear';
 import { getBasePath } from '../utils/basePath';
 import { fuzzyFind } from '../utils/fuzzySearch';
-import { parseCoreType, getDefaultCoreValue } from '../models/CoreValue';
+import { parseCoreType } from '../models/CoreValue';
+import NamedExoticGear from '../models/NamedExoticGear';
 
 interface OpenRouterModel {
   id: string;
@@ -329,7 +329,7 @@ function ChatWindow() {
           }
         }
 
-        return new BuildWeapon(weapon, modSlots, weaponMods);
+        return new BuildWeapon(weapon);
       };
 
       // Reconstruct BuildGear instances
@@ -337,14 +337,15 @@ function ChatWindow() {
         if (!llmGear || !llmGear.name) return null;
 
         // Try exact match first
-        let namedGearItem = (namedGear as NamedGear[]).find((g) => g.name === llmGear.name);
+        let namedGearItem = (namedGear as NamedExoticGear[]).find((g) => g.name === llmGear.name);
         let gearsetItem = gearsets.find((g) => g.name === llmGear.name);
         let brandsetItem = brandsets.find((b) => b.brand === llmGear.name);
 
         // If no exact match, try fuzzy search
         if (!namedGearItem && !gearsetItem && !brandsetItem) {
           namedGearItem =
-            fuzzyFind(llmGear.name, namedGear as NamedGear[], (g) => g.name, 0.75) ?? undefined;
+            fuzzyFind(llmGear.name, namedGear as NamedExoticGear[], (g) => g.name, 0.75) ??
+            undefined;
           gearsetItem = fuzzyFind(llmGear.name, gearsets, (g) => g.name, 0.75) ?? undefined;
           brandsetItem = fuzzyFind(llmGear.name, brandsets, (b) => b.brand, 0.75) ?? undefined;
 
@@ -376,10 +377,7 @@ function ChatWindow() {
           Array.isArray(llmGear.core) &&
           llmGear.core.length > 0
         ) {
-          buildGear.core = llmGear.core.map((coreType: string) => ({
-            type: parseCoreType(coreType),
-            value: getDefaultCoreValue(parseCoreType(coreType)),
-          }));
+          buildGear.core = llmGear.core.map((coreType: string) => parseCoreType(coreType));
         }
 
         // Apply gear attributes from LlmGear if they exist

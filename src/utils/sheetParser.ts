@@ -2,9 +2,7 @@ import Weapon from '../models/Weapon';
 import WeaponTalent from '../models/WeaponTalent';
 import ExoticWeapon from '../models/ExoticWeapon';
 import Gearset from '../models/Gearset';
-import Brandset from '../models/Brandset';
 import GearTalent from '../models/GearTalent';
-import NamedGear from '../models/NamedGear';
 import Skill from '../models/Skill';
 import WeaponMod from '../models/WeaponMod';
 import { CoreType } from '../models/CoreValue';
@@ -578,15 +576,15 @@ export const parseGearsets = (gridData: GridData): any[] => {
 /**
  * Parses brandset data from Google Sheets API response
  * @param {SheetData} data - The API response data containing values
- * @returns {Brandset[]} Array of Brandset objects
+ * @returns {any[]} Array of brandset objects
  */
-export const parseBrandsets = (data: SheetData): Brandset[] => {
+export const parseBrandsets = (data: SheetData): any[] => {
   if (!data.values || data.values.length === 0) {
     return [];
   }
 
   const rows = data.values;
-  const brandsetList: Brandset[] = [];
+  const brandsetList: any[] = [];
 
   // Skip header row
   for (let i = 1; i < rows.length; i++) {
@@ -604,11 +602,14 @@ export const parseBrandsets = (data: SheetData): Brandset[] => {
       }
     }
 
-    // Create modified row with extracted icon URL
-    // Row structure: [col A, col B (icon), col C (brand), col D, col E (core), col F (1pc), col G (2pc), col H (3pc)]
-    const modifiedRow = [row[0], icon, row[2], row[3], row[4], row[5], row[6], row[7]];
-
-    const brandset = Brandset.fromSheetRow(modifiedRow);
+    const brandset = {
+      icon,
+      brand: (row[2] || '').trim(),
+      core: row[4] || '',
+      onePc: row[5] || '',
+      twoPc: row[6] || '',
+      threePc: row[7] || '',
+    };
 
     // Only add if it has a brand name
     if (brandset.brand && brandset.brand.trim()) {
@@ -787,7 +788,7 @@ export const parseNamedGear = (gridData: GridData): Record<string, any> => {
               core: row[8] || '',
               minor1: row[9] || '',
               minor2: row[10] || '',
-              minor3: row[11] || '',
+              modSlots: parseInt(row[11]) || 0,
               notes: row[13] || '',
               isExotic: true,
             };
@@ -820,7 +821,7 @@ export const parseNamedGear = (gridData: GridData): Record<string, any> => {
           core: row[8] || '',
           minor1: row[9] || '',
           minor2: row[10] || '',
-          minor3: row[11] || '',
+          modSlots: parseInt(row[11]) || 0,
           notes: row[13] || '',
           isExotic: false,
         };
@@ -829,15 +830,6 @@ export const parseNamedGear = (gridData: GridData): Record<string, any> => {
   }
 
   return namedGearData;
-};
-
-/**
- * Converts named gear data to NamedGear objects after normalization
- * @param {Record<string, any>} namedGearData - Normalized named gear data
- * @returns {NamedGear[]} Array of NamedGear objects
- */
-export const convertToNamedGearObjects = (namedGearData: Record<string, any>): NamedGear[] => {
-  return Object.values(namedGearData).map((data) => new NamedGear(data));
 };
 
 /**

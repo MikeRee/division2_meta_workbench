@@ -211,6 +211,11 @@
   font-weight: 600;
 }
 
+.dt-talent-ref {
+  color: #d4af37;
+  font-weight: 600;
+}
+
 .dt-record-empty {
   color: #444;
 }
@@ -333,4 +338,23 @@
 
 .dt-string-array-cell {
   font-size: 0.83rem;
+}
+
+/* Boolean checkbox cells */
+.dt-bool-td {
+  text-align: center;
+  cursor: pointer !important;
+}
+
+.dt-bool-checkbox {
+  pointer-events: none;
+  accent-color: #d4af37;
+  width: 16px;
+  height: 16px;
+}
+
+/* Talent highlight for namedGear */
+.dt-talent-highlight {
+  color: #d4af37;
+  font-weight: 700;
 }

@@ -18,6 +18,20 @@ class Talent {
   bonus: Record<string, number>;
   perfectBonus?: Record<string, number>;
 
+  static readonly FIELD_TYPES = {
+    name: 'string',
+    type: 'string',
+    perfectName: 'string',
+    icon: 'string',
+    description: 'string',
+    perfectDescription: 'string',
+    exclusiveTo: 'string[]',
+    stacks: 'Stack[]',
+    perfectStacks: 'Stack[]',
+    bonus: 'Record<string, number>',
+    perfectBonus: 'Record<string, number>',
+  } as const;
+
   constructor(data: any = {}) {
     this.name = data.name || '';
     this.type = data.type || '';

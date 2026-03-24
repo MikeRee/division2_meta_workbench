@@ -5,11 +5,9 @@ import { useBuildStore } from '../stores/useBuildStore';
 import { useLookupStore } from '../stores/useLookupStore';
 import Weapon from '../models/Weapon';
 import Skill from '../models/Skill';
-import NamedGear from '../models/NamedGear';
-import { MinorAttribute } from '../models/NamedGear';
 import BuildGear, { GearSource } from '../models/BuildGear';
 import { GearType } from '../models/BuildGear';
-import { CoreType, getDefaultCoreValue, getDefaultMinorAttributes } from '../models/CoreValue';
+import { CoreType, getDefaultMinorAttributes } from '../models/CoreValue';
 import { GearModValue } from '../models/GearMod';
 import TacticalCard from './TacticalCard';
 import WeaponTacticalCard from './WeaponTacticalCard';
@@ -17,6 +15,7 @@ import { BuildWeapon } from '../models/BuildWeapon';
 import BuildJsonModal from './BuildJsonModal';
 import KeenersWatch from './KeenersWatch';
 import { KeenersWatchStats } from '../models/KeenersWatchStats';
+import NamedExoticGear, { MinorAttribute } from '../models/NamedExoticGear';
 
 function Build() {
   const [showOverlay, setShowOverlay] = useState(false);
@@ -116,7 +115,7 @@ function Build() {
     console.log('Brandsets count:', brandsets.length);
 
     // 1. Add NamedGear items of this type
-    const namedGearItems = (namedGear as NamedGear[]).filter(
+    const namedGearItems = (namedGear as NamedExoticGear[]).filter(
       (gear) =>
         gear.type === gearType ||
         (gearType === GearType.Kneepads && gear.type === GearType.Kneepads),
@@ -130,18 +129,7 @@ function Build() {
         return;
       }
 
-      // Validate core type matches enum
-      const validCoreTypes = Object.values(CoreType);
-      if (!validCoreTypes.includes(gear.core)) {
-        console.error(
-          `NamedGear item "${gear.name}" has invalid core type: "${gear.core}". ` +
-            `Expected one of: ${validCoreTypes.join(', ')}. ` +
-            `Fix the data in namedGear.json`,
-        );
-        return;
-      }
-
-      const defaultMinors = getDefaultMinorAttributes(gear.core);
+      const defaultMinors = getDefaultMinorAttributes(gear.core[0]);
 
       // Get all possible gear mods as a Record<string, number>
       const allGearMods: Record<string, number> = {};
@@ -221,7 +209,7 @@ function Build() {
         if (!llmGear || !llmGear.name) return null;
 
         // Find the gear in namedGear, gearsets, or brandsets
-        const namedGearItem = (namedGear as NamedGear[]).find((g) => g.name === llmGear.name);
+        const namedGearItem = (namedGear as NamedExoticGear[]).find((g) => g.name === llmGear.name);
         const gearsetItem = gearsets.find((g) => g.name === llmGear.name);
         const brandsetItem = brandsets.find((b) => b.brand === llmGear.name);
 

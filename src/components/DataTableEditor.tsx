@@ -15,7 +15,12 @@ import ModSlotsOverlay from './ModSlotsOverlay';
 import StacksOverlay from './StacksOverlay';
 import FixedTalentOverlay from './FixedTalentOverlay';
 import WeaponMod from '../models/WeaponMod';
-import { useCleanDataStore, getModelFields, CLASS_CONSTRUCTORS } from '../stores/useCleanDataStore';
+import {
+  useCleanDataStore,
+  getModelFields,
+  getModelFieldTypes,
+  CLASS_CONSTRUCTORS,
+} from '../stores/useCleanDataStore';
 import type { MainDataKey } from '../constants/dataKeys';
 import './DataTableEditor.css';
 
@@ -174,101 +179,164 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
     return [...new Set(talents.map((t: any) => t.name).filter(Boolean))].sort() as string[];
   }, [tableName]);
 
+  // Columns that should use a talent-name dropdown (gearsets: fourPc, chest, backpack)
+  const TALENT_REF_COLUMNS = new Set(
+    tableName === 'gearsets' ? ['fourPc', 'chest', 'backpack'] : [],
+  );
+
+  // All available talent names for gearset talent-ref dropdowns (from talents + gearTalents)
+  const allTalentOptions = useMemo(() => {
+    if (tableName !== 'gearsets') return [] as string[];
+    const names = new Set<string>();
+    const talents = useCleanDataStore.getState().getCleanData('talents');
+    if (talents)
+      talents.forEach((t: any) => {
+        if (t.name) names.add(t.name);
+      });
+    const gearTalents = useCleanDataStore.getState().getCleanData('gearTalents');
+    if (gearTalents)
+      gearTalents.forEach((t: any) => {
+        if (t.talent) names.add(t.talent);
+      });
+    // Also include any existing values from the data itself (gearset-specific talent names)
+    for (const row of tableData) {
+      for (const col of ['fourPc', 'chest', 'backpack']) {
+        if (row[col] && typeof row[col] === 'string') names.add(row[col]);
+      }
+    }
+    return [...names].sort();
+  }, [tableName, tableData]);
+
   // Columns that are always treated as object arrays even when all rows are empty
   const KNOWN_OBJECT_ARRAY_COLUMNS = new Set(['stacks', 'perfectStacks']);
 
   // Columns that are always treated as nested records (Record<string, Record<string, number>>)
   const KNOWN_NESTED_RECORD_COLUMNS = new Set(['fixedSlots']);
 
+  // Model field types — the source of truth for column type detection
+  const modelFieldTypes = useMemo(() => getModelFieldTypes(tableName as MainDataKey), [tableName]);
+
   // Columns that are always treated as Record<string, number>
   const KNOWN_RECORD_COLUMNS = new Set(['fixedPrimary1', 'fixedPrimary2', 'fixedSecondary']);
 
-  // Detect which columns are Record<string, number> from the first row
+  // Detect which columns are Record<string, number>
   const recordColumns = useMemo(() => {
-    if (!tableData.length) return new Set<string>();
     const cols = new Set<string>();
-    for (const key of Object.keys(tableData[0])) {
-      if (key === '__rowId') continue;
-      if (KNOWN_NESTED_RECORD_COLUMNS.has(key)) continue;
-      // Check first few rows to confirm it's a record field
-      if (
-        KNOWN_RECORD_COLUMNS.has(key) ||
-        tableData.slice(0, 5).every((row) => isRecordField(row[key]))
-      ) {
-        cols.add(key);
+    for (const [key, type] of Object.entries(modelFieldTypes)) {
+      if (type === 'Record<string, number>') cols.add(key);
+    }
+    // Fallback for models without FIELD_TYPES
+    if (!Object.keys(modelFieldTypes).length && tableData.length) {
+      for (const key of Object.keys(tableData[0])) {
+        if (key === '__rowId') continue;
+        if (
+          KNOWN_RECORD_COLUMNS.has(key) ||
+          tableData.slice(0, 5).every((row) => isRecordField(row[key]))
+        ) {
+          cols.add(key);
+        }
       }
     }
     return cols;
-  }, [tableData]);
+  }, [modelFieldTypes, tableData]);
 
   // Columns that should use the stacks overlay
   const KNOWN_STACKS_COLUMNS = new Set(['stacks', 'perfectStacks']);
 
   // Detect which columns are arrays of objects (e.g. stacks)
   const objectArrayColumns = useMemo(() => {
-    if (!tableData.length) return new Set<string>();
     const cols = new Set<string>();
-    for (const key of Object.keys(tableData[0])) {
-      if (key === '__rowId') continue;
-      const sample = tableData.slice(0, 20);
-      const allArrays = sample.every((row) => Array.isArray(row[key]));
-      if (!allArrays) continue;
-      const hasObjectRow = sample.some(
-        (row) =>
-          Array.isArray(row[key]) &&
-          row[key].length > 0 &&
-          row[key].every((v: any) => v && typeof v === 'object' && !Array.isArray(v)),
-      );
-      if (hasObjectRow || KNOWN_OBJECT_ARRAY_COLUMNS.has(key)) {
-        cols.add(key);
+    for (const [key, type] of Object.entries(modelFieldTypes)) {
+      if (type === 'Stack[]' || type === 'object[]') cols.add(key);
+    }
+    // Fallback for models without FIELD_TYPES
+    if (!Object.keys(modelFieldTypes).length && tableData.length) {
+      for (const key of Object.keys(tableData[0])) {
+        if (key === '__rowId') continue;
+        const sample = tableData.slice(0, 20);
+        const allArrays = sample.every((row) => Array.isArray(row[key]));
+        if (!allArrays) continue;
+        const hasObjectRow = sample.some(
+          (row) =>
+            Array.isArray(row[key]) &&
+            row[key].length > 0 &&
+            row[key].every((v: any) => v && typeof v === 'object' && !Array.isArray(v)),
+        );
+        if (hasObjectRow || KNOWN_OBJECT_ARRAY_COLUMNS.has(key)) {
+          cols.add(key);
+        }
+      }
+    }
+    return cols;
+  }, [modelFieldTypes, tableData]);
+
+  // Detect which columns are nested records: Record<string, Record<string, number>>
+  const nestedRecordColumns = useMemo(() => {
+    const cols = new Set<string>();
+    for (const [key, type] of Object.entries(modelFieldTypes)) {
+      if (type.includes('Record<string, Record<string, number>>')) cols.add(key);
+    }
+    // Fallback for models without FIELD_TYPES
+    if (!Object.keys(modelFieldTypes).length && tableData.length) {
+      for (const key of Object.keys(tableData[0])) {
+        if (key === '__rowId') continue;
+        if (objectArrayColumns.has(key)) continue;
+        const sample = tableData.slice(0, 20);
+        const hasNestedRecord = sample.some(
+          (row) => isNestedRecordField(row[key]) && Object.keys(row[key]).length > 0,
+        );
+        if (hasNestedRecord || KNOWN_NESTED_RECORD_COLUMNS.has(key)) {
+          cols.add(key);
+        }
+      }
+    }
+    return cols;
+  }, [modelFieldTypes, tableData, objectArrayColumns]);
+
+  // Detect which columns are string arrays
+  const stringArrayColumns = useMemo(() => {
+    const cols = new Set<string>();
+    for (const [key, type] of Object.entries(modelFieldTypes)) {
+      if (type === 'string[]' || type === 'CoreType[]') cols.add(key);
+    }
+    // Fallback for models without FIELD_TYPES
+    if (!Object.keys(modelFieldTypes).length && tableData.length) {
+      for (const key of Object.keys(tableData[0])) {
+        if (key === '__rowId') continue;
+        if (objectArrayColumns.has(key)) continue;
+        const sample = tableData.slice(0, 20);
+        const allArrays = sample.every((row) => Array.isArray(row[key]));
+        const hasStringRow = sample.some(
+          (row) =>
+            Array.isArray(row[key]) &&
+            row[key].length > 0 &&
+            row[key].every((v: any) => typeof v === 'string'),
+        );
+        if (allArrays && hasStringRow) {
+          cols.add(key);
+        }
+      }
+    }
+    return cols;
+  }, [modelFieldTypes, tableData, objectArrayColumns]);
+
+  // Detect boolean columns
+  const booleanColumns = useMemo(() => {
+    const cols = new Set<string>();
+    for (const [key, type] of Object.entries(modelFieldTypes)) {
+      if (type === 'boolean') cols.add(key);
+    }
+    // Fallback for models without FIELD_TYPES
+    if (!Object.keys(modelFieldTypes).length && tableData.length) {
+      for (const key of Object.keys(tableData[0])) {
+        if (key === '__rowId') continue;
+        if (tableData.slice(0, 20).every((row) => typeof row[key] === 'boolean')) {
+          cols.add(key);
+        }
       }
     }
     return cols;
   }, [tableData]);
-
-  // Detect which columns are nested records: Record<string, Record<string, number>>
-  const nestedRecordColumns = useMemo(() => {
-    if (!tableData.length) return new Set<string>();
-    const cols = new Set<string>();
-    for (const key of Object.keys(tableData[0])) {
-      if (key === '__rowId') continue;
-      if (objectArrayColumns.has(key)) continue;
-      const sample = tableData.slice(0, 20);
-      const hasNestedRecord = sample.some(
-        (row) => isNestedRecordField(row[key]) && Object.keys(row[key]).length > 0,
-      );
-      if (hasNestedRecord || KNOWN_NESTED_RECORD_COLUMNS.has(key)) {
-        cols.add(key);
-      }
-    }
-    return cols;
-  }, [tableData, objectArrayColumns]);
-
-  // Columns that are always treated as string arrays even when all rows are empty
-  const KNOWN_STRING_ARRAY_COLUMNS = new Set(['fixedTalent']);
-
-  // Detect which columns are string arrays (e.g. modSlots: string[])
-  const stringArrayColumns = useMemo(() => {
-    if (!tableData.length) return new Set<string>();
-    const cols = new Set<string>();
-    for (const key of Object.keys(tableData[0])) {
-      if (key === '__rowId') continue;
-      if (objectArrayColumns.has(key)) continue;
-      // Must be an array in all sampled rows, and at least one non-empty row must contain strings
-      const sample = tableData.slice(0, 20);
-      const allArrays = sample.every((row) => Array.isArray(row[key]));
-      const hasStringRow = sample.some(
-        (row) =>
-          Array.isArray(row[key]) &&
-          row[key].length > 0 &&
-          row[key].every((v: any) => typeof v === 'string'),
-      );
-      if ((allArrays && hasStringRow) || KNOWN_STRING_ARRAY_COLUMNS.has(key)) {
-        cols.add(key);
-      }
-    }
-    return cols;
-  }, [tableData, objectArrayColumns]);
 
   // Detect enum-like columns: string columns with a small set of distinct values
   const enumColumns = useMemo<Map<string, string[]>>(() => {
@@ -309,17 +377,14 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
   // Derive columns from data keys
   const columns = useMemo<ColumnDef<any, any>[]>(() => {
     let keys: string[];
-    if (data.length) {
+    const modelFields = getModelFields(tableName as MainDataKey);
+    if (modelFields.length) {
+      // Use model-defined fields as the source of truth so stray JSON properties don't leak through
+      keys = modelFields;
+    } else if (data.length) {
       keys = Object.keys(data[0]).filter((k) => k !== '__rowId');
-      // Merge in any model-defined fields not present in the data (e.g. fixedTalent)
-      const modelFields = getModelFields(tableName as MainDataKey);
-      if (modelFields.length) {
-        for (const f of modelFields) {
-          if (!keys.includes(f)) keys.push(f);
-        }
-      }
     } else {
-      keys = getModelFields(tableName as MainDataKey);
+      keys = [];
     }
     if (!keys.length) return [];
     const helper = createColumnHelper<any>();
@@ -342,8 +407,22 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
           if (stringArrayColumns.has(key) && isStringArrayField(val)) {
             return <StringArrayCell items={val} />;
           }
+          if (TALENT_REF_COLUMNS.has(key)) {
+            return <b className="dt-talent-ref">{String(val ?? '')}</b>;
+          }
           if (enumColumns.has(key)) {
             return <b>{String(val ?? '')}</b>;
+          }
+          if (booleanColumns.has(key)) {
+            return (
+              <input
+                type="checkbox"
+                checked={!!val}
+                readOnly
+                className="dt-bool-checkbox"
+                aria-label={key}
+              />
+            );
           }
           if (val && typeof val === 'object') return JSON.stringify(val);
           return String(val ?? '');
@@ -431,11 +510,12 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
           colId,
           slots,
         });
-      } else if (KNOWN_STRING_ARRAY_COLUMNS.has(colId) && stringArrayColumns.has(colId)) {
+      } else if (colId === 'fixedTalent' && stringArrayColumns.has(colId)) {
         const arr = Array.isArray(value) ? [...value] : [];
         setFixedTalentOverlay({ rowId, colId, talents: arr });
-      } else if (stringArrayColumns.has(colId) && isStringArrayField(value)) {
-        setModSlotsOverlay({ rowId, colId, slots: [...value] });
+      } else if (stringArrayColumns.has(colId)) {
+        const arr = Array.isArray(value) ? [...value] : [];
+        setModSlotsOverlay({ rowId, colId, slots: arr });
       }
     },
     [recordColumns, objectArrayColumns, nestedRecordColumns, stringArrayColumns],
@@ -644,6 +724,8 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
                     const isNestedRecord = nestedRecordColumns.has(colId);
                     const isStrArray = stringArrayColumns.has(colId) && isStringArrayField(value);
                     const isEnum = enumColumns.has(colId);
+                    const isTalentRef = TALENT_REF_COLUMNS.has(colId);
+                    const isBool = booleanColumns.has(colId);
                     const isClickable = isRecord || isObjArray || isNestedRecord || isStrArray;
                     const isEditing = editingCell?.rowId === rowId && editingCell?.colId === colId;
 
@@ -655,16 +737,55 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
                             ? 'dt-record-td'
                             : isStrArray
                               ? 'dt-string-array-td'
-                              : ''
+                              : isBool
+                                ? 'dt-bool-td'
+                                : ''
                         }
                         onClick={
-                          isClickable ? () => handleCellClick(rowId, colId, value) : undefined
+                          isClickable
+                            ? () => handleCellClick(rowId, colId, value)
+                            : isBool
+                              ? () =>
+                                  setTableData((prev) =>
+                                    prev.map((row) =>
+                                      row.__rowId === rowId ? { ...row, [colId]: !value } : row,
+                                    ),
+                                  )
+                              : undefined
                         }
                         onDoubleClick={
-                          !isClickable ? () => startEditing(rowId, colId, value) : undefined
+                          !isClickable && !isBool
+                            ? () => startEditing(rowId, colId, value)
+                            : undefined
                         }
                       >
-                        {isEditing && isEnum ? (
+                        {isEditing && isTalentRef ? (
+                          <select
+                            className="dt-cell-input"
+                            value={editValue}
+                            onChange={(e) => {
+                              setEditValue(e.target.value);
+                              setTableData((prev) =>
+                                prev.map((row) =>
+                                  row.__rowId === rowId ? { ...row, [colId]: e.target.value } : row,
+                                ),
+                              );
+                              setEditingCell(null);
+                              setEditValue('');
+                            }}
+                            onBlur={cancelEdit}
+                            onKeyDown={handleKeyDown}
+                            autoFocus
+                            aria-label={`Edit ${colId}`}
+                          >
+                            <option value="">— select talent —</option>
+                            {allTalentOptions.map((opt) => (
+                              <option key={opt} value={opt}>
+                                {opt}
+                              </option>
+                            ))}
+                          </select>
+                        ) : isEditing && isEnum ? (
                           <select
                             className="dt-cell-input"
                             value={editValue}

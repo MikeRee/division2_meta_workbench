@@ -1,10 +1,10 @@
-import { CoreType, CoreValue, getDefaultCoreValue, parseCoreType } from './CoreValue';
-import { GearModValue } from './GearMod';
+import { CoreType, parseCoreType } from './CoreValue';
+import { GearModValue, GearModClassification } from './GearMod';
 import { parseEnum } from '../utils/enumParser';
 import Gearset from './Gearset';
 import Brandset from './Brandset';
-import NamedGear from './NamedGear';
 import useCleanDataStore from '../stores/useCleanDataStore';
+import NamedExoticGear from './NamedExoticGear';
 
 export enum GearSource {
   Brandset = 'brandset',
@@ -38,17 +38,6 @@ export function parseGearType(value: string | GearType): GearType {
   return parseEnum(value, GearType, 'GearType');
 }
 
-interface BuildGearData {
-  name?: string;
-  source: GearSource | string;
-  type?: GearType | string | null;
-  icon?: string;
-  core?: CoreValue[];
-  minor1?: GearModValue | null;
-  minor2?: GearModValue | null;
-  minor3?: GearModValue | null;
-}
-
 class BuildGear {
   // Static properties populated by initialize*() during the App boot sequence (Phase 3)
   // before any BuildGear instances are created.
@@ -57,13 +46,167 @@ class BuildGear {
 
   name: string;
   source: GearSource;
-  type: GearType | null;
+  type: GearType;
   icon: string;
-  core: CoreValue[];
-  minor1: GearModValue | null;
-  minor2: GearModValue | null;
-  minor3: GearModValue | null;
-  data: Gearset | Brandset | NamedGear | null;
+  private _core?: CoreType;
+  get core(): CoreType[] {
+    if (this.source == GearSource.Exotic) {
+      return (this.data as NamedExoticGear)?.core;
+    }
+    if (this._core) return [this._core];
+    if (this.data && 'core' in this.data) {
+      if (Array.isArray(this.data.core)) {
+        return this.data.core;
+      }
+      if (typeof this.data.core === 'object' && this.type) {
+        const coreRecord = this.data.core as Record<CoreType, string[]>;
+        return (Object.entries(coreRecord) as [CoreType, string[]][])
+          .filter(([, gearTypes]) => gearTypes.includes(this.type!))
+          .map(([coreType]) => coreType);
+      }
+      return [this.data.core as CoreType];
+    }
+    return [];
+  }
+  set core(values: CoreType[]) {
+    if (values.length > 0) {
+      this._core = values[0];
+    } else {
+      this._core = undefined;
+    }
+  }
+  private _attribute1?: Record<string, number>;
+  get attribute1(): Record<string, number> {
+    if (this._attribute1) return this._attribute1;
+    if (this.data instanceof NamedExoticGear) {
+      return this.data.attribute1;
+    }
+    return {};
+  }
+  setAttribute1(key: string, value: number): string[] {
+    if (this.data instanceof NamedExoticGear) {
+      if (this.data.isExotic || Object.keys(this.data.attribute1).length > 0)
+        return [`Unable to set attribute1 on ${this.data.name}`];
+    }
+    this._attribute1 = { [key]: value };
+    return [];
+  }
+  private _attribute2?: Record<string, number>;
+  get attribute2(): Record<string, number> {
+    if (this._attribute2) return this._attribute2;
+    if (this.data instanceof NamedExoticGear) {
+      return this.data.attribute2;
+    }
+    return {};
+  }
+  setAttribute2(key: string, value: number): string[] {
+    if (this.data instanceof NamedExoticGear) {
+      if (this.data.isExotic || Object.keys(this.data.attribute2).length > 0)
+        return [`Unable to set attribute2 on ${this.data.name}`];
+    }
+    this._attribute2 = { [key]: value };
+    return [];
+  }
+  private _modSlots: Record<number, Record<string, number>>;
+  get maxModSlots(): number {
+    if (this.source == GearSource.Brandset || this.source == GearSource.Gearset) {
+      switch (this.type) {
+        case GearType.Backpack:
+        case GearType.Mask:
+        case GearType.Chest:
+          return 1;
+      }
+      return 0;
+    }
+    return (this.data as NamedExoticGear).modSlots;
+  }
+  setModSlot(index: number, key: string, value: number): string[] {
+    if (index > this.maxModSlots)
+      return [
+        `Failed to set mod slot on ${this.type}: Attempted to assign slot ${index} of ${this.maxModSlots}`,
+      ];
+    this._modSlots[index] = { [key]: value };
+    return [];
+  }
+  data: Gearset | Brandset | NamedExoticGear;
+
+  /**
+   * Compatibility getter: converts attribute1 (Record<string, number>) to GearModValue.
+   * Consumers that used the old minor1 property get a GearModValue back.
+   */
+  get minor1(): GearModValue | null {
+    const attrs = this.attribute1;
+    const entries = Object.entries(attrs);
+    if (entries.length === 0) return null;
+    const [key, value] = entries[0];
+    const classification = BuildGear.lookupClassification(key);
+    return new GearModValue({ [key]: value }, classification, key, value);
+  }
+
+  set minor1(val: GearModValue | null) {
+    if (!val || !val.key) {
+      this._attribute1 = undefined;
+      return;
+    }
+    this._attribute1 = { [val.key]: val.value ?? 0 };
+  }
+
+  /**
+   * Compatibility getter: converts attribute2 (Record<string, number>) to GearModValue.
+   */
+  get minor2(): GearModValue | null {
+    const attrs = this.attribute2;
+    const entries = Object.entries(attrs);
+    if (entries.length === 0) return null;
+    const [key, value] = entries[0];
+    const classification = BuildGear.lookupClassification(key);
+    return new GearModValue({ [key]: value }, classification, key, value);
+  }
+
+  set minor2(val: GearModValue | null) {
+    if (!val || !val.key) {
+      this._attribute2 = undefined;
+      return;
+    }
+    this._attribute2 = { [val.key]: val.value ?? 0 };
+  }
+
+  /**
+   * Compatibility getter: converts mod slot 0 to GearModValue.
+   */
+  get minor3(): GearModValue | null {
+    const slot = this._modSlots[0];
+    if (!slot) return null;
+    const entries = Object.entries(slot);
+    if (entries.length === 0) return null;
+    const [key, value] = entries[0];
+    const classification = BuildGear.lookupModClassification(key);
+    return new GearModValue({ [key]: value }, classification, key, value);
+  }
+
+  set minor3(val: GearModValue | null) {
+    if (!val || !val.key) {
+      delete this._modSlots[0];
+      return;
+    }
+    this._modSlots[0] = { [val.key]: val.value ?? 0 };
+  }
+
+  /**
+   * Look up the GearModClassification for a gear attribute key from the static attribute options.
+   */
+  private static lookupClassification(key: string): GearModClassification | undefined {
+    // Classification isn't stored in the simple Record<string, number> options.
+    // Return undefined; consumers already handle missing classification gracefully.
+    return undefined;
+  }
+
+  /**
+   * Look up the GearModClassification for a gear mod key from the static mod attribute options.
+   */
+  private static lookupModClassification(key: string): GearModClassification | undefined {
+    return undefined;
+  }
 
   // Called during App bootstrap Phase 3, after lookup attributes are loaded.
   static initializeGearAttributes(gearAttributes: Record<string, number>) {
@@ -90,8 +233,9 @@ class BuildGear {
     return BuildGear.gearModAttributeOptions;
   }
 
-  constructor(item: Gearset | Brandset | NamedGear, gearType?: GearType) {
-    // Check if it's a GearItem (Gearset, Brandset, or NamedGear)
+  constructor(item: Gearset | Brandset | NamedExoticGear, gearType?: GearType) {
+    this._modSlots = {};
+    // Check if it's a GearItem (Gearset, Brandset, or NamedExoticGear)
     if (this.isGearset(item)) {
       if (!gearType) {
         throw new Error(
@@ -102,30 +246,8 @@ class BuildGear {
       this.source = GearSource.Gearset;
       this.type = gearType;
       this.icon = item.logo;
-      this.core = [this.mapCore(item.core)];
+      this._core = this.mapCore(item.core);
       this.data = item;
-
-      // Get gear attributes (will load from localStorage if not initialized)
-      const gearAttrs = BuildGear.getGearAttributes();
-      const firstKey = Object.keys(gearAttrs)[0];
-      const firstValue = gearAttrs[firstKey] || 0;
-
-      this.minor1 = new GearModValue(gearAttrs, undefined, firstKey, firstValue);
-      this.minor2 = null;
-
-      // For mask, backpack, or chest, load gear mods and assign the first one to minor3
-      if (
-        this.type === GearType.Mask ||
-        this.type === GearType.Backpack ||
-        this.type === GearType.Chest
-      ) {
-        const gearMods = BuildGear.getGearModAttributes();
-        const modFirstKey = Object.keys(gearMods)[0];
-        const modFirstValue = gearMods[modFirstKey] || 0;
-        this.minor3 = new GearModValue(gearMods, undefined, modFirstKey, modFirstValue);
-      } else {
-        this.minor3 = null;
-      }
     } else if (this.isBrandset(item)) {
       if (!gearType) {
         throw new Error(
@@ -136,87 +258,18 @@ class BuildGear {
       this.source = GearSource.Brandset;
       this.type = gearType;
       this.icon = item.icon;
-      this.core = [this.mapCore(item.core)];
+      this._core = this.mapCore(item.core);
       this.data = item;
-
-      // Get gear attributes (will load from localStorage if not initialized)
-      const gearAttrs = BuildGear.getGearAttributes();
-      const firstKey = Object.keys(gearAttrs)[0];
-      const firstValue = gearAttrs[firstKey] || 0;
-      const secondKey = Object.keys(gearAttrs)[1];
-      const secondValue = gearAttrs[secondKey] || 0;
-      this.minor1 = new GearModValue(gearAttrs, undefined, firstKey, firstValue);
-      this.minor2 = new GearModValue(gearAttrs, undefined, secondKey, secondValue);
-
-      // For mask, backpack, or chest, load gear mods and assign the first one to minor3
-      if (
-        this.type === GearType.Mask ||
-        this.type === GearType.Backpack ||
-        this.type === GearType.Chest
-      ) {
-        const gearMods = BuildGear.getGearModAttributes();
-        const modFirstKey = Object.keys(gearMods)[0];
-        const modFirstValue = gearMods[modFirstKey] || 0;
-        this.minor3 = new GearModValue(gearMods, undefined, modFirstKey, modFirstValue);
-      } else {
-        this.minor3 = null;
-      }
     } else if (this.isNamedGear(item)) {
       this.name = item.name;
       this.source = item.isExotic ? GearSource.Exotic : GearSource.Named;
       this.type = item.type;
       this.icon = item.icon;
-      this.core = [this.mapCore(item.core)];
       this.data = item;
-
-      // Check if minor1 or minor2 contain armor or skill tiers
-      const minor1Keys =
-        typeof item.minor1 === 'object' && item.minor1 !== null && !Array.isArray(item.minor1)
-          ? Object.keys(item.minor1)
-          : [];
-      const minor2Keys =
-        typeof item.minor2 === 'object' && item.minor2 !== null && !Array.isArray(item.minor2)
-          ? Object.keys(item.minor2)
-          : [];
-
-      const hasArmor = (keys: string[]) => keys.includes('armor');
-      const hasSkill = (keys: string[]) => keys.some((k) => k.startsWith('skill'));
-
-      const minor1IsCore = hasArmor(minor1Keys) || hasSkill(minor1Keys);
-      const minor2IsCore = hasArmor(minor2Keys) || hasSkill(minor2Keys);
-
-      // Add armor tier if found in minor1 or minor2
-      if (hasArmor(minor1Keys) || hasArmor(minor2Keys)) {
-        this.core.push({ type: CoreType.Armor, value: getDefaultCoreValue(CoreType.Armor) });
-      }
-
-      // Add skill tier if found in minor1 or minor2
-      if (hasSkill(minor1Keys) || hasSkill(minor2Keys)) {
-        this.core.push({
-          type: CoreType.SkillTier,
-          value: getDefaultCoreValue(CoreType.SkillTier),
-        });
-      }
-
-      // Set minor attributes to null if they were core attributes, otherwise map them
-      this.minor1 = minor1IsCore ? null : this.mapMinorAttribute(item.minor1, 0);
-      this.minor2 = minor2IsCore ? null : this.mapMinorAttribute(item.minor2, 1);
-
-      // For mask, backpack, or chest, load gear mods and assign the first one to minor3
-      if (
-        this.type === GearType.Mask ||
-        this.type === GearType.Backpack ||
-        this.type === GearType.Chest
-      ) {
-        const gearMods = BuildGear.getGearModAttributes();
-        const firstKey = Object.keys(gearMods)[0];
-        const firstValue = gearMods[firstKey] || 0;
-        this.minor3 = new GearModValue(gearMods, undefined, firstKey, firstValue);
-      } else {
-        this.minor3 = this.mapMinorAttribute(item.minor3, 0);
-      }
     } else {
-      throw new Error('BuildGear constructor requires a Gearset, Brandset, or NamedGear item');
+      throw new Error(
+        'BuildGear constructor requires a Gearset, Brandset, or NamedExoticGear item',
+      );
     }
   }
 
@@ -228,22 +281,22 @@ class BuildGear {
     return item instanceof Brandset || ('brand' in item && 'onePc' in item && !('type' in item));
   }
 
-  private isNamedGear(item: any): item is NamedGear {
-    return item instanceof NamedGear || ('talent' in item && 'desc' in item && 'type' in item);
+  private isNamedGear(item: any): item is NamedExoticGear {
+    return (
+      item instanceof NamedExoticGear || ('talent' in item && 'desc' in item && 'type' in item)
+    );
   }
 
-  private mapCore(core: CoreType | Record<CoreType, string[]>): CoreValue {
+  private mapCore(core: CoreType | Record<CoreType, string[]>): CoreType {
     if (
       typeof core === 'object' &&
       !Array.isArray(core) &&
       !(core instanceof Object && 'type' in core)
     ) {
       // It's a Record<CoreType, string[]> from Gearset - use the first key
-      const coreType = Object.keys(core)[0] as CoreType;
-      return { type: coreType, value: getDefaultCoreValue(coreType) };
+      return Object.keys(core)[0] as CoreType;
     }
-    const coreType = core as CoreType;
-    return { type: coreType, value: getDefaultCoreValue(coreType) };
+    return core as CoreType;
   }
 
   private mapMinorAttribute(minor: any, offset: number): GearModValue | null {
@@ -270,20 +323,7 @@ class BuildGear {
     ];
   }
 
-  toJSON(): BuildGearData {
-    return {
-      name: this.name,
-      source: this.source,
-      type: this.type,
-      icon: this.icon,
-      core: this.core,
-      minor1: this.minor1,
-      minor2: this.minor2,
-      minor3: this.minor3,
-    };
-  }
-
-  static fromJSON(json: BuildGearData): BuildGear {
+  static fromJSON(json: Record<string, any>): BuildGear {
     // Create a BuildGear instance by directly setting properties
     // This bypasses the constructor since we're deserializing saved data
     const gear = Object.create(BuildGear.prototype);
@@ -293,36 +333,39 @@ class BuildGear {
 
     gear.type = json.type ? parseGearType(json.type) : null;
     gear.icon = json.icon || '';
+    gear._modSlots = {};
 
-    // Handle core as array of CoreValue objects
-    if (json.core && Array.isArray(json.core)) {
-      gear.core = json.core.map((coreValue: CoreValue) => ({
-        type: parseCoreType(coreValue.type),
-        value: coreValue.value,
-      }));
-    } else if (
-      json.core &&
-      typeof json.core === 'object' &&
-      'type' in json.core &&
-      'value' in json.core
-    ) {
-      // Handle legacy single core value (convert to array)
-      gear.core = [
-        {
-          type: parseCoreType((json.core as CoreValue).type),
-          value: (json.core as CoreValue).value,
-        },
-      ];
+    // Handle core - supports CoreType string or legacy {type, value} object
+    if (json.core && Array.isArray(json.core) && json.core.length > 0) {
+      const first = json.core[0];
+      gear._core = typeof first === 'string' ? parseCoreType(first) : parseCoreType(first.type);
+    } else if (json.core && typeof json.core === 'string') {
+      gear._core = parseCoreType(json.core);
+    } else if (json.core && typeof json.core === 'object' && 'type' in json.core) {
+      gear._core = parseCoreType(json.core.type);
     } else {
-      // Default to Weapon Damage if core is missing or invalid
-      gear.core = [
-        { type: CoreType.WeaponDamage, value: getDefaultCoreValue(CoreType.WeaponDamage) },
-      ];
+      gear._core = CoreType.WeaponDamage;
     }
 
-    gear.minor1 = json.minor1 || null;
-    gear.minor2 = json.minor2 || null;
-    gear.minor3 = json.minor3 || null;
+    // Restore attribute1/attribute2 from minor1/minor2 if present (legacy format)
+    if (json.minor1 && typeof json.minor1 === 'object' && json.minor1.key) {
+      gear._attribute1 = { [json.minor1.key]: json.minor1.value ?? 0 };
+    } else if (json._attribute1) {
+      gear._attribute1 = json._attribute1;
+    }
+
+    if (json.minor2 && typeof json.minor2 === 'object' && json.minor2.key) {
+      gear._attribute2 = { [json.minor2.key]: json.minor2.value ?? 0 };
+    } else if (json._attribute2) {
+      gear._attribute2 = json._attribute2;
+    }
+
+    // Restore mod slots from minor3 if present (legacy format)
+    if (json.minor3 && typeof json.minor3 === 'object' && json.minor3.key) {
+      gear._modSlots[0] = { [json.minor3.key]: json.minor3.value ?? 0 };
+    } else if (json._modSlots) {
+      gear._modSlots = json._modSlots;
+    }
 
     // Look up the source model from the clean data store
     gear.data = BuildGear.lookupData(gear.source, gear.name);
@@ -331,9 +374,9 @@ class BuildGear {
   }
 
   /**
-   * Look up the source model (Gearset, Brandset, or NamedGear) from the clean data store.
+   * Look up the source model (Gearset, Brandset, or NamedExoticGear) from the clean data store.
    */
-  static lookupData(source: GearSource, name: string): Gearset | Brandset | NamedGear | null {
+  static lookupData(source: GearSource, name: string): Gearset | Brandset | NamedExoticGear | null {
     const storeState = useCleanDataStore.getState();
 
     switch (source) {
@@ -349,8 +392,8 @@ class BuildGear {
       }
       case GearSource.Named:
       case GearSource.Exotic: {
-        const namedGear: NamedGear[] = storeState.getCleanData('namedGear') || [];
-        const match = namedGear.find((ng: NamedGear) => ng.name === name);
+        const namedGear: NamedExoticGear[] = storeState.getCleanData('namedGear') || [];
+        const match = namedGear.find((ng: NamedExoticGear) => ng.name === name);
         return match || null;
       }
       default:

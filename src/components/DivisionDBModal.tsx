@@ -9,8 +9,13 @@ const CHART = `graph LR
   weapons["Weapons"]
   weaponMods["WeaponMods"]
   talents["Talents"]
+  gearsets["Gearsets"]
+  brandsets["Brandsets"]
+  namedGear["NamedExoticGear"]
   weapons --- weaponMods
   weapons --- talents
+  gearsets --- talents
+  namedGear --- talents
 `;
 
 const MERMAID_CONFIG = {
@@ -20,7 +25,7 @@ const MERMAID_CONFIG = {
   flowchart: { htmlLabels: true, curve: 'basis' as const },
 };
 
-const TABLE_NAMES = ['weapons', 'weaponMods', 'talents'];
+const TABLE_NAMES = ['weapons', 'weaponMods', 'talents', 'gearsets', 'brandsets', 'namedGear'];
 
 interface DivisionDBModalProps {
   isOpen: boolean;
@@ -35,7 +40,14 @@ function DivisionDBModal({ isOpen, onClose }: DivisionDBModalProps) {
   const [tableEditorData, setTableEditorData] = useState<any[]>([]);
 
   // Tables that support the TanStack Table editor
-  const TABLE_EDITOR_SUPPORTED = ['weapons', 'weaponMods', 'talents'];
+  const TABLE_EDITOR_SUPPORTED = [
+    'weapons',
+    'weaponMods',
+    'talents',
+    'gearsets',
+    'brandsets',
+    'namedGear',
+  ];
 
   useEffect(() => {
     if (!isOpen || !diagramRef.current) return;
@@ -63,7 +75,7 @@ function DivisionDBModal({ isOpen, onClose }: DivisionDBModalProps) {
 
     if (TABLE_EDITOR_SUPPORTED.includes(tableName)) {
       setEditMode('table');
-      setTableEditorData(data ? JSON.parse(JSON.stringify(data)) : []);
+      setTableEditorData(data ? data.map((item: any) => ({ ...item })) : []);
     } else {
       setEditMode('json');
       setEditedJson(JSON.stringify(data || [], null, 2));

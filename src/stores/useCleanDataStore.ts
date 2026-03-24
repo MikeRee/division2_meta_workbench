@@ -7,10 +7,10 @@ import ExoticWeapon from '../models/ExoticWeapon';
 import Gearset from '../models/Gearset';
 import Brandset from '../models/Brandset';
 import GearTalent from '../models/GearTalent';
-import NamedGear from '../models/NamedGear';
 import Skill from '../models/Skill';
 import WeaponMod from '../models/WeaponMod';
 import Talent from '../models/Talent';
+import NamedExoticGear from '../models/NamedExoticGear';
 
 // Type mapping for each clean data key
 export interface CleanDataTypeMap {
@@ -20,7 +20,7 @@ export interface CleanDataTypeMap {
   gearsets: Gearset[];
   brandsets: Brandset[];
   gearTalents: GearTalent[];
-  namedGear: NamedGear[];
+  namedGear: NamedExoticGear[];
   skills: Skill[];
   weaponMods: WeaponMod[];
   talents: Talent[];
@@ -53,7 +53,7 @@ export const CLASS_CONSTRUCTORS: Partial<Record<MainDataKey, new (data: any) => 
   gearsets: Gearset,
   brandsets: Brandset,
   gearTalents: GearTalent,
-  namedGear: NamedGear,
+  namedGear: NamedExoticGear,
   skills: Skill,
   weaponMods: WeaponMod,
   talents: Talent,
@@ -76,6 +76,17 @@ export const getModelFields = (dataKey: MainDataKey): string[] => {
     console.error(`Failed to get fields for ${dataKey}:`, error);
     return [];
   }
+};
+
+/**
+ * Get model field types from the FIELD_TYPES static property
+ */
+export const getModelFieldTypes = (dataKey: MainDataKey): Record<string, string> => {
+  const Constructor = CLASS_CONSTRUCTORS[dataKey] as any;
+  if (!Constructor || !Constructor.FIELD_TYPES) {
+    return {};
+  }
+  return { ...Constructor.FIELD_TYPES };
 };
 
 /**
@@ -186,12 +197,12 @@ const useCleanDataStore = create<CleanDataState>()(
           }
         }
 
-        // NamedGear: minor1, minor2, minor3 (Record<string, number> | 'mod')
+        // NamedExoticGear: attribute1, attribute2 (Record<string, number>)
         const namedGear = data.namedGear;
         if (namedGear) {
           for (const ng of namedGear) {
-            for (const minor of [ng.minor1, ng.minor2, ng.minor3]) {
-              if (minor && minor !== 'mod' && typeof minor === 'object') {
+            for (const minor of [ng.attribute1, ng.attribute2]) {
+              if (minor && typeof minor === 'object') {
                 for (const key of Object.keys(minor)) {
                   if (key && key !== 'armor' && key !== 'skill tier') {
                     names.add(key);
