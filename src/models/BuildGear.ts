@@ -53,8 +53,6 @@ class BuildGear {
   }
   private _core?: CoreType;
   get core(): CoreType[] {
-    console.log('_core:', this._core, 'data:', this.data);
-
     if (this._core) return [this._core];
     if (this.data && 'core' in this.data) {
       if (Array.isArray(this.data.core)) {

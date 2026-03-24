@@ -115,23 +115,50 @@
 }
 
 /* --- Weapon card styles (used by WeaponTacticalCard) --- */
-.gearAttributes {
-    position: absolute;
-    bottom: 7%;
-    right: 3%;
+.weaponBody {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex: 1;
+    min-height: 0;
+}
+
+.weaponModSlots {
     display: flex;
     flex-direction: column;
-    gap: 0.3cqi;
+    align-items: flex-end;
+    gap: 0.6cqi;
+}
+
+.weaponModSlot {
+    display: flex;
+    align-items: center;
+    gap: 1cqi;
+}
+
+.weaponModLabel {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 2.4cqi;
+    color: #d1d5db;
+    line-height: 1.2;
+    white-space: nowrap;
     text-align: right;
 }
 
-.attribute {
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 2cqi;
-    color: #d1d5db;
-    line-height: 1.3;
-    text-align: right;
+.weaponModIcon {
+    width: 4cqi;
+    height: 4cqi;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
+.weaponModIcon svg {
+    width: 100%;
+    height: 100%;
+}
+
+
 
 .pipContainer {
     display: flex;

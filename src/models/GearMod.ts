@@ -1,4 +1,4 @@
-import { CoreType } from "./CoreValue";
+import { CoreType } from './CoreValue';
 import { parseEnum } from '../utils/enumParser';
 
 /**
@@ -7,14 +7,16 @@ import { parseEnum } from '../utils/enumParser';
 export enum GearModClassification {
   Offensive = 'offensive',
   Defensive = 'defensive',
-  Skill = 'skill'
+  Skill = 'skill',
 }
 
 /**
  * Parse a string into GearModClassification enum
  * @throws Error if value is not a valid GearModClassification
  */
-export function parseGearModClassification(value: string | GearModClassification): GearModClassification {
+export function parseGearModClassification(
+  value: string | GearModClassification,
+): GearModClassification {
   return parseEnum(value, GearModClassification, 'GearModClassification');
 }
 
@@ -29,10 +31,18 @@ class GearMod {
   static readonly FIELD_TYPES = {
     classification: 'GearModClassification',
     attribute: 'string',
-    max: 'number'
+    max: 'number',
   } as const;
 
-  constructor({ classification, attribute, max }: { classification?: string; attribute?: string; max?: string | number }) {
+  constructor({
+    classification,
+    attribute,
+    max,
+  }: {
+    classification?: string;
+    attribute?: string;
+    max?: string | number;
+  }) {
     // Parse classification - will throw error if invalid
     this.classification = parseGearModClassification(classification || 'offensive');
     this.attribute = (attribute || '').toLowerCase();
@@ -48,11 +58,11 @@ class GearMod {
     // Parse max value by removing all non-numeric characters except decimal point
     const maxValue = row[2] || '0';
     const numericValue = maxValue.replace(/[^0-9.]/g, '');
-    
+
     return new GearMod({
       classification: (row[0] || '').toLowerCase(),
       attribute: (row[1] || '').toLowerCase(),
-      max: parseFloat(numericValue) || 0
+      max: parseFloat(numericValue) || 0,
     });
   }
 
@@ -75,16 +85,21 @@ class GearModValue {
   key?: string;
   value?: number;
 
-  constructor(options: Record<string, number>, type?: GearModClassification | CoreType, key?: string, value?: number) {
+  constructor(
+    options: Record<string, number>,
+    type?: GearModClassification | CoreType,
+    key?: string,
+    value?: number,
+  ) {
     this.options = options;
-    
+
     // Check if type is CoreType, assign to core, otherwise classification
     if (type && Object.values(CoreType).includes(type as CoreType)) {
       this.core = type as CoreType;
     } else {
       this.classification = type as GearModClassification;
     }
-    
+
     this.isAttribute = true;
     this.key = key;
     this.value = value;
@@ -192,7 +207,7 @@ export function getDefaultAttrImage(type: GearModClassification): string {
   
 <path d="M10 10 H90 V70 L50 110 L10 70 Z" fill="${color2}" stroke="${color1}" stroke-width="8" stroke-linejoin="round" transform="scale(.9) translate(60, 55)"/>
           
-</svg>`
+</svg>`;
     case GearModClassification.Skill:
       return `<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
   <circle cx="100" cy="100" r="75" 
@@ -209,7 +224,7 @@ export function getDefaultAttrImage(type: GearModClassification): string {
                 <path d="M40 20 V10 H60 V20" fill="#FCE9B6" stroke="#D4A017" stroke-width="6" stroke-linejoin="round"/>
                 <rect x="28" y="85" width="44" height="18" fill="#F4C542"/>
     </g>
-</svg>`
+</svg>`;
   }
 
   return '';
@@ -218,7 +233,7 @@ export function getDefaultAttrImage(type: GearModClassification): string {
 export function getDefaultModImage(type: GearModClassification): string {
   const [color1, color2] = getGearColors(type);
 
-return `<svg width="200" height="200" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+  return `<svg width="200" height="200" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
   <g transform="translate(10, 10)">
     <circle r="7.2" fill="${color1}" />
     
@@ -250,7 +265,7 @@ class GearModCollection {
 
   constructor(mods: GearMod[]) {
     this.modsByAttribute = new Map();
-    mods.forEach(mod => {
+    mods.forEach((mod) => {
       this.modsByAttribute.set(mod.attribute, mod);
     });
   }
@@ -259,19 +274,16 @@ class GearModCollection {
    * Gets the classification for a given attribute
    */
   getClassification(attr: string): GearModClassification | undefined {
-    const mod = this.modsByAttribute.get(attr.toLowerCase());
-    if (!mod) {
-      console.warn(`GearModCollection: Could not find classification for attribute "${attr}"`);
-    }
-    return mod?.classification;
+    return this.modsByAttribute.get(attr.toLowerCase())?.classification;
   }
 
   /**
    * Gets all gear mods with the specified classification
    */
   getAttributes(classification: GearModClassification): GearMod[] {
-    return Array.from(this.modsByAttribute.values())
-      .filter(mod => mod.classification === classification);
+    return Array.from(this.modsByAttribute.values()).filter(
+      (mod) => mod.classification === classification,
+    );
   }
 
   /**
@@ -290,7 +302,6 @@ class GearModCollection {
     });
     return result;
   }
-
 }
 
 export default GearMod;

@@ -53,11 +53,28 @@ function WeaponEditOverlay({ buildWeapon, onSave, onRemove, onClose }: WeaponEdi
   // Mod slots — keyed by slot name (e.g. "muzzle", "optics")
   const availableSlots = buildWeapon.weapon.modSlots; // string[]
   const currentMods = buildWeapon.modSlots; // Record<string, Record<string, number>>
+  // Reverse-lookup: find the mod name whose bonus matches the equipped stats for a slot
+  const findModNameForSlot = useCallback(
+    (slotName: string, bonus: Record<string, number>): string => {
+      const bonusKey = Object.keys(bonus)[0];
+      if (!bonusKey) return '';
+      const match = weaponMods.find(
+        (m) =>
+          (m.slot.toLowerCase() === slotName.toLowerCase() ||
+            m.type.toLowerCase() === slotName.toLowerCase()) &&
+          Object.keys(m.bonus)[0] === bonusKey,
+      );
+      return match?.name ?? '';
+    },
+    [weaponMods],
+  );
+
   const [modSelections, setModSelections] = useState<Record<string, string>>(() => {
     const init: Record<string, string> = {};
     for (const slot of availableSlots) {
       const equipped = currentMods[slot];
-      init[slot] = equipped ? (Object.keys(equipped)[0] ?? '') : '';
+      init[slot] =
+        equipped && Object.keys(equipped).length > 0 ? findModNameForSlot(slot, equipped) : '';
     }
     return init;
   });
@@ -217,8 +234,8 @@ function WeaponEditOverlay({ buildWeapon, onSave, onRemove, onClose }: WeaponEdi
                 aria-label="Weapon talent"
               >
                 <option value="">Select...</option>
-                {weaponTalents.map((t) => (
-                  <option key={t.name} value={t.name}>
+                {weaponTalents.map((t, idx) => (
+                  <option key={`${t.name}-${idx}`} value={t.name}>
                     {t.name}
                   </option>
                 ))}

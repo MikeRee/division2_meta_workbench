@@ -50,7 +50,7 @@ export class BuildWeapon {
     const errors: string[] = [];
     const updatedSlots: Record<string, Record<string, number>> = {};
     for (const key of Object.keys(slots)) {
-      if (key in this.weapon.modSlots) {
+      if (this.weapon.modSlots.includes(key)) {
         updatedSlots[key] = slots[key];
       } else {
         errors.push(`Mod slot "${key}" does not exist on ${this.weapon.name}.`);
