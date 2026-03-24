@@ -3,6 +3,7 @@ import './Build.css';
 import { MdWatch, MdFolderOpen, MdRefresh } from 'react-icons/md';
 import { useBuildStore } from '../stores/useBuildStore';
 import { useLookupStore } from '../stores/useLookupStore';
+import { useCleanDataStore } from '../stores/useCleanDataStore';
 import Weapon from '../models/Weapon';
 import Skill from '../models/Skill';
 import BuildGear, { GearSource } from '../models/BuildGear';
@@ -16,6 +17,11 @@ import BuildJsonModal from './BuildJsonModal';
 import KeenersWatch from './KeenersWatch';
 import { KeenersWatchStats } from '../models/KeenersWatchStats';
 import NamedExoticGear, { MinorAttribute } from '../models/NamedExoticGear';
+import GearEditOverlay from './GearEditOverlay';
+import WeaponEditOverlay from './WeaponEditOverlay';
+
+const GEAR_SLOTS = ['mask', 'chest', 'holster', 'backpack', 'gloves', 'kneepads'] as const;
+const WEAPON_SLOTS = ['primaryWeapon', 'secondaryWeapon', 'pistol'] as const;
 
 function Build() {
   const [showOverlay, setShowOverlay] = useState(false);
@@ -23,28 +29,24 @@ function Build() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showJsonModal, setShowJsonModal] = useState(false);
   const [showWatchOverlay, setShowWatchOverlay] = useState(false);
+  const [editGearSlot, setEditGearSlot] = useState<string | null>(null);
+  const [editWeaponSlot, setEditWeaponSlot] = useState<string | null>(null);
 
   const currentBuild = useBuildStore((state) => state.currentBuild);
   const updateCurrentBuild = useBuildStore((state) => state.updateCurrentBuild);
   const newBuild = useBuildStore((state) => state.newBuild);
 
-  const specializationsMap = useLookupStore((state) => state.specializations);
-  const weaponsMap = useLookupStore((state) => state.weapons);
-  const skillsMap = useLookupStore((state) => state.skills);
-  const namedGearMap = useLookupStore((state) => state.namedGear);
-  const brandsetsMap = useLookupStore((state) => state.brandsets);
-  const gearsetsMap = useLookupStore((state) => state.gearsets);
-  const gearAttributesMap = useLookupStore((state) => state.gearAttributes);
-  const weaponModsMap = useLookupStore((state) => state.weaponMods);
+  // Clean data store — primary source of truth
+  const specializations = useCleanDataStore((s) => s.data.specializations) ?? [];
+  const weapons = (useCleanDataStore((s) => s.data.weapons) ?? []) as Weapon[];
+  const skills = (useCleanDataStore((s) => s.data.skills) ?? []) as Skill[];
+  const namedGear = (useCleanDataStore((s) => s.data.namedGear) ?? []) as NamedExoticGear[];
+  const brandsets = useCleanDataStore((s) => s.data.brandsets) ?? [];
+  const gearsets = useCleanDataStore((s) => s.data.gearsets) ?? [];
+  const weaponMods = useCleanDataStore((s) => s.data.weaponMods) ?? [];
 
-  const specializations =
-    specializationsMap instanceof Map ? Array.from(specializationsMap.values()) : [];
-  const weapons = weaponsMap instanceof Map ? Array.from(weaponsMap.values()) : [];
-  const skills = skillsMap instanceof Map ? Array.from(skillsMap.values()) : [];
-  const namedGear = namedGearMap instanceof Map ? Array.from(namedGearMap.values()) : [];
-  const brandsets = brandsetsMap instanceof Map ? Array.from(brandsetsMap.values()) : [];
-  const gearsets = gearsetsMap instanceof Map ? Array.from(gearsetsMap.values()) : [];
-  const weaponMods = weaponModsMap instanceof Map ? Array.from(weaponModsMap.values()) : [];
+  // Still from lookup store — CSV-derived data not yet in clean store
+  const gearAttributesMap = useLookupStore((state) => state.gearAttributes);
 
   // Initialize BuildGear with gear attributes when they're loaded
   useEffect(() => {
@@ -55,9 +57,34 @@ function Build() {
   }, [gearAttributesMap]);
 
   const handleCellClick = (type: string) => {
+    // If item is already set, open edit overlay instead of selection
+    if (GEAR_SLOTS.includes(type as any) && currentBuild[type as keyof typeof currentBuild]) {
+      setEditGearSlot(type);
+      return;
+    }
+    if (WEAPON_SLOTS.includes(type as any) && currentBuild[type as keyof typeof currentBuild]) {
+      setEditWeaponSlot(type);
+      return;
+    }
     setOverlayType(type);
     setShowOverlay(true);
     setSearchTerm('');
+  };
+
+  const handleGearEditSave = (slot: string, updated: BuildGear) => {
+    updateCurrentBuild({ [slot]: updated } as any);
+    setEditGearSlot(null);
+  };
+
+  const handleWeaponEditSave = (slot: string, updated: BuildWeapon) => {
+    updateCurrentBuild({ [slot]: updated } as any);
+    setEditWeaponSlot(null);
+  };
+
+  const handleEditRemove = (slot: string) => {
+    updateCurrentBuild({ [slot]: null } as any);
+    setEditGearSlot(null);
+    setEditWeaponSlot(null);
   };
 
   // Helper function to process minor attributes
@@ -613,6 +640,24 @@ function Build() {
         currentBuild={currentBuild}
         onSave={handleJsonSave}
       />
+
+      {editGearSlot && currentBuild[editGearSlot as keyof typeof currentBuild] && (
+        <GearEditOverlay
+          buildGear={currentBuild[editGearSlot as keyof typeof currentBuild] as BuildGear}
+          onSave={(updated) => handleGearEditSave(editGearSlot, updated)}
+          onRemove={() => handleEditRemove(editGearSlot)}
+          onClose={() => setEditGearSlot(null)}
+        />
+      )}
+
+      {editWeaponSlot && currentBuild[editWeaponSlot as keyof typeof currentBuild] && (
+        <WeaponEditOverlay
+          buildWeapon={currentBuild[editWeaponSlot as keyof typeof currentBuild] as BuildWeapon}
+          onSave={(updated) => handleWeaponEditSave(editWeaponSlot, updated)}
+          onRemove={() => handleEditRemove(editWeaponSlot)}
+          onClose={() => setEditWeaponSlot(null)}
+        />
+      )}
     </div>
   );
 }

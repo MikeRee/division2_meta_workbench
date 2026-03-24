@@ -33,6 +33,9 @@ export class BuildWeapon {
       return this.weapon.fixedSecondary;
     return this._secondaryAttribute;
   }
+  setSecondaryAttribute(key: string, value: number) {
+    this._secondaryAttribute = { [key]: value };
+  }
 
   private _modSlots: Record<string, Record<string, number>>;
   get modSlots(): Record<string, Record<string, number>> {

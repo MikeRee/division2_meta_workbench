@@ -38,8 +38,8 @@ class NamedExoticGear {
     icon = '',
     talent = [],
     core = [],
-    minor1 = {},
-    minor2 = {},
+    attribute1,
+    attribute2,
     modSlots = 0,
     notes = '',
     isExotic = false,
@@ -50,8 +50,8 @@ class NamedExoticGear {
     icon?: string;
     talent?: string[] | string;
     core?: (CoreType | string)[] | string;
-    minor1?: Record<string, number> | null;
-    minor2?: Record<string, number> | null;
+    attribute1?: Record<string, number> | null;
+    attribute2?: Record<string, number> | null;
     modSlots?: number;
     notes?: string;
     isExotic?: boolean;
@@ -62,8 +62,10 @@ class NamedExoticGear {
     this.icon = icon;
     this.talent = Array.isArray(talent) ? talent : talent ? [talent] : [];
     this.core = (Array.isArray(core) ? core : core ? [core] : []).map(parseCoreType);
-    this.attribute1 = minor1 === null ? null : parseRecordField(minor1);
-    this.attribute2 = minor2 === null ? null : parseRecordField(minor2);
+    const raw1 = attribute1 !== undefined ? attribute1 : {};
+    const raw2 = attribute2 !== undefined ? attribute2 : {};
+    this.attribute1 = raw1 === null ? null : parseRecordField(raw1);
+    this.attribute2 = raw2 === null ? null : parseRecordField(raw2);
     this.modSlots = typeof modSlots === 'number' ? modSlots : parseInt(String(modSlots)) || 0;
     this.notes = notes;
     this.isExotic = isExotic;

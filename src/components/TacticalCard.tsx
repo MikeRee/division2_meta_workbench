@@ -147,7 +147,7 @@ const TacticalCard: React.FC<TacticalCardProps> = ({ buildGear, onClick }) => {
                       __html: getDefaultAttrImage(GearModClassification.Offensive),
                     }}
                   />
-                  <span className={styles.badgeLabel}>Not Set</span>
+                  <span className={styles.badgeLabel}>No Attribute Set</span>
                 </div>
               );
             }
@@ -185,7 +185,7 @@ const TacticalCard: React.FC<TacticalCardProps> = ({ buildGear, onClick }) => {
                       __html: getDefaultAttrImage(GearModClassification.Offensive),
                     }}
                   />
-                  <span className={styles.badgeLabel}>Not Set</span>
+                  <span className={styles.badgeLabel}>No Attribute Set</span>
                 </div>
               );
             }
@@ -213,26 +213,41 @@ const TacticalCard: React.FC<TacticalCardProps> = ({ buildGear, onClick }) => {
           {/* Mod slot — icon + label + value */}
           {(() => {
             const mod = getModSlotDisplay(buildGear.modSlots);
-            if (!mod) return null;
-            return (
-              <div className={styles.badgeRow}>
-                <div
-                  className={styles.attributeIcon}
-                  dangerouslySetInnerHTML={{
-                    __html: getDefaultModImage(mod.classification),
-                  }}
-                />
-                <span className={styles.badgeLabel}>
-                  {mod.key}{' '}
-                  {mod.value != null && (
-                    <span className={styles.badgeValue}>
-                      {mod.value}
-                      {mod.value < 1000 ? '%' : mod.value >= 1000 ? '/s' : ''}
-                    </span>
-                  )}
-                </span>
-              </div>
-            );
+            if (mod) {
+              return (
+                <div className={styles.badgeRow}>
+                  <div
+                    className={styles.attributeIcon}
+                    dangerouslySetInnerHTML={{
+                      __html: getDefaultModImage(mod.classification),
+                    }}
+                  />
+                  <span className={styles.badgeLabel}>
+                    {mod.key}{' '}
+                    {mod.value != null && (
+                      <span className={styles.badgeValue}>
+                        {mod.value}
+                        {mod.value < 1000 ? '%' : mod.value >= 1000 ? '/s' : ''}
+                      </span>
+                    )}
+                  </span>
+                </div>
+              );
+            }
+            if (buildGear.maxModSlots > 0) {
+              return (
+                <div className={`${styles.badgeRow} ${styles.badgeRowNotSet}`}>
+                  <div
+                    className={styles.attributeIcon}
+                    dangerouslySetInnerHTML={{
+                      __html: getDefaultModImage(GearModClassification.Offensive),
+                    }}
+                  />
+                  <span className={styles.badgeLabel}>No Mod Set</span>
+                </div>
+              );
+            }
+            return null;
           })()}
         </div>
       </div>

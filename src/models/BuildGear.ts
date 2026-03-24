@@ -53,6 +53,8 @@ class BuildGear {
   }
   private _core?: CoreType;
   get core(): CoreType[] {
+    console.log('_core:', this._core, 'data:', this.data);
+
     if (this._core) return [this._core];
     if (this.data && 'core' in this.data) {
       if (Array.isArray(this.data.core)) {
@@ -75,9 +77,9 @@ class BuildGear {
     this._core = core;
     return [];
   }
-  private _attribute1?: Record<string, number>;
+  private _attribute1?: Record<string, number> | null;
   get attribute1(): Record<string, number> | null {
-    if (this._attribute1) return this._attribute1;
+    if (this._attribute1 !== undefined) return this._attribute1;
     if (this.data instanceof NamedExoticGear) {
       return this.data.attribute1;
     }
@@ -93,9 +95,12 @@ class BuildGear {
     this._attribute1 = { [key]: value };
     return [];
   }
-  private _attribute2?: Record<string, number>;
+  clearAttribute1(): void {
+    this._attribute1 = null;
+  }
+  private _attribute2?: Record<string, number> | null;
   get attribute2(): Record<string, number> | null {
-    if (this._attribute2) return this._attribute2;
+    if (this._attribute2 !== undefined) return this._attribute2;
     if (this.data instanceof NamedExoticGear) {
       return this.data.attribute2;
     }
@@ -110,6 +115,9 @@ class BuildGear {
     }
     this._attribute2 = { [key]: value };
     return [];
+  }
+  clearAttribute2(): void {
+    this._attribute2 = null;
   }
   private _modSlots: Record<number, Record<string, number>>;
   get maxModSlots(): number {
@@ -194,18 +202,6 @@ class BuildGear {
     }
   }
 
-  private mapCore(core: CoreType | Record<CoreType, string[]>): CoreType {
-    if (
-      typeof core === 'object' &&
-      !Array.isArray(core) &&
-      !(core instanceof Object && 'type' in core)
-    ) {
-      // It's a Record<CoreType, string[]> from Gearset - use the first key
-      return Object.keys(core)[0] as CoreType;
-    }
-    return core as CoreType;
-  }
-
   /** Returns the list of property names available for Blockly dropdowns */
   static blocklyProperties(): [string, string][] {
     return [
@@ -234,16 +230,12 @@ class BuildGear {
       gear._core = parseCoreType(json.core.type);
     }
 
-    // Restore attribute1/attribute2 from minor1/minor2 if present (legacy format)
-    if (json.minor1 && typeof json.minor1 === 'object' && json.minor1.key) {
-      gear._attribute1 = { [json.minor1.key]: json.minor1.value ?? 0 };
-    } else if (json._attribute1) {
+    // Restore attribute1/attribute2
+    if ('_attribute1' in json) {
       gear._attribute1 = json._attribute1;
     }
 
-    if (json.minor2 && typeof json.minor2 === 'object' && json.minor2.key) {
-      gear._attribute2 = { [json.minor2.key]: json.minor2.value ?? 0 };
-    } else if (json._attribute2) {
+    if ('_attribute2' in json) {
       gear._attribute2 = json._attribute2;
     }
 
