@@ -115,30 +115,22 @@ export class StatCalculator {
           }
         }
 
-        // Add gear mod values
-        if (gear.minor1?.key && gear.minor1.value != null) {
-          calc.add(
-            gear.minor1.key,
-            gear.type ?? 'Unknown',
-            gear.minor1.isAttribute ? 'Attribute' : 'GearMod',
-            gear.minor1.value,
-          );
+        // Add gear attribute values
+        if (gear.attribute1) {
+          for (const [key, value] of Object.entries(gear.attribute1)) {
+            calc.add(key, gear.type ?? 'Unknown', 'Attribute', value);
+          }
         }
-        if (gear.minor2?.key && gear.minor2.value != null) {
-          calc.add(
-            gear.minor2.key,
-            gear.type ?? 'Unknown',
-            gear.minor2.isAttribute ? 'Attribute' : 'GearMod',
-            gear.minor2.value,
-          );
+        if (gear.attribute2) {
+          for (const [key, value] of Object.entries(gear.attribute2)) {
+            calc.add(key, gear.type ?? 'Unknown', 'Attribute', value);
+          }
         }
-        if (gear.minor3?.key && gear.minor3.value != null) {
-          calc.add(
-            gear.minor3.key,
-            gear.type ?? 'Unknown',
-            gear.minor3.isAttribute ? 'Attribute' : 'GearMod',
-            gear.minor3.value,
-          );
+        // Add gear mod slot values
+        for (const slot of Object.values(gear.modSlots)) {
+          for (const [key, value] of Object.entries(slot)) {
+            calc.add(key, gear.type ?? 'Unknown', 'GearMod', value);
+          }
         }
       }
     });

@@ -499,35 +499,40 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
       const firstRaw = rawData?.[0];
       const firstProcessed = processedData?.[0];
       if (firstRaw) {
-        console.log('[handleImport] Raw minor1:', firstRaw.minor1, '| minor2:', firstRaw.minor2);
         console.log(
-          '[handleImport] Processed minor1:',
-          firstProcessed?.minor1,
-          '| minor2:',
-          firstProcessed?.minor2,
+          '[handleImport] Raw attribute1:',
+          firstRaw.attribute1,
+          '| attribute2:',
+          firstRaw.attribute2,
+        );
+        console.log(
+          '[handleImport] Processed attribute1:',
+          firstProcessed?.attribute1,
+          '| attribute2:',
+          firstProcessed?.attribute2,
         );
       }
-      // Find an item that has "explosive" in minor1 or minor2
+      // Find an item that has "explosive" in attribute1 or attribute2
       const explosiveItem = rawData?.find(
         (item: any) =>
-          (item.minor1 && String(item.minor1).toLowerCase().includes('explosive')) ||
-          (item.minor2 && String(item.minor2).toLowerCase().includes('explosive')),
+          (item.attribute1 && String(item.attribute1).toLowerCase().includes('explosive')) ||
+          (item.attribute2 && String(item.attribute2).toLowerCase().includes('explosive')),
       );
       if (explosiveItem) {
         const idx = rawData.indexOf(explosiveItem);
         console.log('[handleImport] Found item with explosive at index', idx);
-        console.log('[handleImport] Raw explosive item minor1:', explosiveItem.minor1);
-        console.log('[handleImport] Raw explosive item minor2:', explosiveItem.minor2);
+        console.log('[handleImport] Raw explosive item attribute1:', explosiveItem.attribute1);
+        console.log('[handleImport] Raw explosive item attribute2:', explosiveItem.attribute2);
         console.log(
-          '[handleImport] Processed explosive item minor1:',
-          processedData?.[idx]?.minor1,
+          '[handleImport] Processed explosive item attribute1:',
+          processedData?.[idx]?.attribute1,
         );
         console.log(
-          '[handleImport] Processed explosive item minor2:',
-          processedData?.[idx]?.minor2,
+          '[handleImport] Processed explosive item attribute2:',
+          processedData?.[idx]?.attribute2,
         );
       } else {
-        console.log('[handleImport] No items found with "explosive" in minor1 or minor2');
+        console.log('[handleImport] No items found with "explosive" in attribute1 or attribute2');
       }
 
       // Instantiate model classes based on data type using CLASS_CONSTRUCTORS

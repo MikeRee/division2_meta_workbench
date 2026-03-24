@@ -227,45 +227,37 @@ function Build() {
             : new BuildGear(foundItem);
 
         // Apply attributes from LlmGear if they exist
-        if (llmGear.gearAttrib1 && buildGear.minor1 && gearAttributesMap) {
-          // Find the attribute in gearAttributesMap and update minor1
+        if (
+          llmGear.gearAttrib1 &&
+          buildGear.attribute1 !== null &&
+          Object.keys(buildGear.attribute1).length === 0 &&
+          gearAttributesMap
+        ) {
           const allGearAttrs = gearAttributesMap.toArray();
           const mod = allGearAttrs.find((m) => m.attribute === llmGear.gearAttrib1);
           if (mod) {
-            buildGear.minor1 = new GearModValue(
-              { [mod.attribute]: mod.max },
-              mod.classification,
-              mod.attribute,
-              mod.max,
-            );
+            buildGear.setAttribute1(mod.attribute, mod.max);
           }
         }
 
-        if (llmGear.gearAttrib2 && buildGear.minor2 && gearAttributesMap) {
-          // Find the attribute in gearAttributesMap and update minor2
+        if (
+          llmGear.gearAttrib2 &&
+          buildGear.attribute2 !== null &&
+          Object.keys(buildGear.attribute2).length === 0 &&
+          gearAttributesMap
+        ) {
           const allGearAttrs = gearAttributesMap.toArray();
           const mod = allGearAttrs.find((m) => m.attribute === llmGear.gearAttrib2);
           if (mod) {
-            buildGear.minor2 = new GearModValue(
-              { [mod.attribute]: mod.max },
-              mod.classification,
-              mod.attribute,
-              mod.max,
-            );
+            buildGear.setAttribute2(mod.attribute, mod.max);
           }
         }
 
-        if (llmGear.gearMod && buildGear.minor3 && gearAttributesMap) {
-          // Find the mod in gearAttributesMap and update minor3
+        if (llmGear.gearMod && buildGear.maxModSlots > 0 && gearAttributesMap) {
           const allGearAttrs = gearAttributesMap.toArray();
           const mod = allGearAttrs.find((m) => m.attribute === llmGear.gearMod);
           if (mod) {
-            buildGear.minor3 = new GearModValue(
-              { [mod.attribute]: mod.max },
-              mod.classification,
-              mod.attribute,
-              mod.max,
-            );
+            buildGear.setModSlot(0, mod.attribute, mod.max);
           }
         }
 

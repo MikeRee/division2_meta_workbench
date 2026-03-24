@@ -3,6 +3,7 @@ import styles from './TacticalCard.module.css';
 import BuildGear, { GearSource } from '../models/BuildGear';
 import { getDefaultCoreImage } from '../models/CoreValue';
 import { getDefaultAttrImage, getDefaultModImage, GearModClassification } from '../models/GearMod';
+import useLookupStore from '../stores/useLookupStore';
 
 // Color mapping based on GearSource
 const getGearColors = (source: GearSource | null) => {
@@ -50,6 +51,38 @@ interface TacticalCardProps {
   buildGear: BuildGear;
   /** Optional click handler */
   onClick?: () => void;
+}
+
+/** Extract key/value from a Record<string, number> and look up classification.
+ *  Returns 'not-settable' for null, 'not-set' for empty record, or the display data. */
+function getAttrDisplay(
+  attrs: Record<string, number> | null,
+):
+  | { key: string; value: number; classification: GearModClassification }
+  | 'not-settable'
+  | 'not-set' {
+  if (attrs === null) return 'not-settable';
+  const entries = Object.entries(attrs);
+  if (entries.length === 0) return 'not-set';
+  const [key, value] = entries[0];
+  const classification =
+    useLookupStore.getState().gearAttributes?.getClassification(key) ??
+    GearModClassification.Offensive;
+  return { key, value, classification };
+}
+
+function getModSlotDisplay(
+  modSlots: Record<number, Record<string, number>>,
+): { key: string; value: number; classification: GearModClassification } | null {
+  const slot = modSlots[0];
+  if (!slot) return null;
+  const entries = Object.entries(slot);
+  if (entries.length === 0) return null;
+  const [key, value] = entries[0];
+  const classification =
+    useLookupStore.getState().gearAttributes?.getClassification(key) ??
+    GearModClassification.Offensive;
+  return { key, value, classification };
 }
 
 const TacticalCard: React.FC<TacticalCardProps> = ({ buildGear, onClick }) => {
@@ -101,88 +134,106 @@ const TacticalCard: React.FC<TacticalCardProps> = ({ buildGear, onClick }) => {
             </div>
           )}
 
-          {/* Minor 1 — icon + label + value */}
-          {buildGear.minor1 && buildGear.minor1.key && (
-            <div className={styles.badgeRow}>
-              <div
-                className={styles.attributeIcon}
-                dangerouslySetInnerHTML={{
-                  __html: buildGear.minor1.core
-                    ? getDefaultCoreImage(buildGear.minor1.core)
-                    : getDefaultAttrImage(
-                        buildGear.minor1.classification ?? GearModClassification.Offensive,
-                      ),
-                }}
-              />
-              <span className={styles.badgeLabel}>
-                {buildGear.minor1.key}{' '}
-                {buildGear.minor1.value != null && (
-                  <span className={styles.badgeValue}>
-                    {buildGear.minor1.value}
-                    {buildGear.minor1.value < 1000
-                      ? '%'
-                      : buildGear.minor1.value >= 1000
-                        ? '/s'
-                        : ''}
-                  </span>
-                )}
-              </span>
-            </div>
-          )}
+          {/* Attribute 1 — icon + label + value */}
+          {(() => {
+            const attr1 = getAttrDisplay(buildGear.attribute1);
+            if (attr1 === 'not-settable') return null;
+            if (attr1 === 'not-set') {
+              return (
+                <div className={`${styles.badgeRow} ${styles.badgeRowNotSet}`}>
+                  <div
+                    className={styles.attributeIcon}
+                    dangerouslySetInnerHTML={{
+                      __html: getDefaultAttrImage(GearModClassification.Offensive),
+                    }}
+                  />
+                  <span className={styles.badgeLabel}>Not Set</span>
+                </div>
+              );
+            }
+            return (
+              <div className={styles.badgeRow}>
+                <div
+                  className={styles.attributeIcon}
+                  dangerouslySetInnerHTML={{
+                    __html: getDefaultAttrImage(attr1.classification),
+                  }}
+                />
+                <span className={styles.badgeLabel}>
+                  {attr1.key}{' '}
+                  {attr1.value != null && (
+                    <span className={styles.badgeValue}>
+                      {attr1.value}
+                      {attr1.value < 1000 ? '%' : attr1.value >= 1000 ? '/s' : ''}
+                    </span>
+                  )}
+                </span>
+              </div>
+            );
+          })()}
 
-          {/* Minor 2 — icon + label + value */}
-          {buildGear.minor2 && buildGear.minor2.key && (
-            <div className={styles.badgeRow}>
-              <div
-                className={styles.attributeIcon}
-                dangerouslySetInnerHTML={{
-                  __html: buildGear.minor2.core
-                    ? getDefaultCoreImage(buildGear.minor2.core)
-                    : getDefaultAttrImage(
-                        buildGear.minor2.classification ?? GearModClassification.Offensive,
-                      ),
-                }}
-              />
-              <span className={styles.badgeLabel}>
-                {buildGear.minor2.key}{' '}
-                {buildGear.minor2.value != null && (
-                  <span className={styles.badgeValue}>
-                    {buildGear.minor2.value}
-                    {buildGear.minor2.value < 1000
-                      ? '%'
-                      : buildGear.minor2.value >= 1000
-                        ? '/s'
-                        : ''}
-                  </span>
-                )}
-              </span>
-            </div>
-          )}
+          {/* Attribute 2 — icon + label + value */}
+          {(() => {
+            const attr2 = getAttrDisplay(buildGear.attribute2);
+            if (attr2 === 'not-settable') return null;
+            if (attr2 === 'not-set') {
+              return (
+                <div className={`${styles.badgeRow} ${styles.badgeRowNotSet}`}>
+                  <div
+                    className={styles.attributeIcon}
+                    dangerouslySetInnerHTML={{
+                      __html: getDefaultAttrImage(GearModClassification.Offensive),
+                    }}
+                  />
+                  <span className={styles.badgeLabel}>Not Set</span>
+                </div>
+              );
+            }
+            return (
+              <div className={styles.badgeRow}>
+                <div
+                  className={styles.attributeIcon}
+                  dangerouslySetInnerHTML={{
+                    __html: getDefaultAttrImage(attr2.classification),
+                  }}
+                />
+                <span className={styles.badgeLabel}>
+                  {attr2.key}{' '}
+                  {attr2.value != null && (
+                    <span className={styles.badgeValue}>
+                      {attr2.value}
+                      {attr2.value < 1000 ? '%' : attr2.value >= 1000 ? '/s' : ''}
+                    </span>
+                  )}
+                </span>
+              </div>
+            );
+          })()}
 
           {/* Mod slot — icon + label + value */}
-          {buildGear.minor3 && buildGear.minor3.classification && (
-            <div className={styles.badgeRow}>
-              <div
-                className={styles.attributeIcon}
-                dangerouslySetInnerHTML={{
-                  __html: getDefaultModImage(buildGear.minor3.classification),
-                }}
-              />
-              <span className={styles.badgeLabel}>
-                {buildGear.minor3.key}{' '}
-                {buildGear.minor3.value != null && (
-                  <span className={styles.badgeValue}>
-                    {buildGear.minor3.value}
-                    {buildGear.minor3.value < 1000
-                      ? '%'
-                      : buildGear.minor3.value >= 1000
-                        ? '/s'
-                        : ''}
-                  </span>
-                )}
-              </span>
-            </div>
-          )}
+          {(() => {
+            const mod = getModSlotDisplay(buildGear.modSlots);
+            if (!mod) return null;
+            return (
+              <div className={styles.badgeRow}>
+                <div
+                  className={styles.attributeIcon}
+                  dangerouslySetInnerHTML={{
+                    __html: getDefaultModImage(mod.classification),
+                  }}
+                />
+                <span className={styles.badgeLabel}>
+                  {mod.key}{' '}
+                  {mod.value != null && (
+                    <span className={styles.badgeValue}>
+                      {mod.value}
+                      {mod.value < 1000 ? '%' : mod.value >= 1000 ? '/s' : ''}
+                    </span>
+                  )}
+                </span>
+              </div>
+            );
+          })()}
         </div>
       </div>
 
@@ -197,9 +248,9 @@ const TacticalCard: React.FC<TacticalCardProps> = ({ buildGear, onClick }) => {
 function getAttributeCount(buildGear: BuildGear): number {
   let count = 0;
   if (buildGear.core) count++;
-  if (buildGear.minor1) count++;
-  if (buildGear.minor2) count++;
-  if (buildGear.minor3) count++;
+  if (buildGear.attribute1 !== null) count++;
+  if (buildGear.attribute2 !== null) count++;
+  if (Object.keys(buildGear.modSlots).length > 0) count++;
   return count || 1; // At least 1 pip
 }
 

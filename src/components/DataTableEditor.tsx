@@ -231,11 +231,12 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
   // Columns that are always treated as Record<string, number>
   const KNOWN_RECORD_COLUMNS = new Set(['fixedPrimary1', 'fixedPrimary2', 'fixedSecondary']);
 
-  // Detect which columns are Record<string, number>
+  // Detect which columns are Record<string, number> (including nullable)
   const recordColumns = useMemo(() => {
     const cols = new Set<string>();
     for (const [key, type] of Object.entries(modelFieldTypes)) {
-      if (type === 'Record<string, number>') cols.add(key);
+      if (type === 'Record<string, number>' || type === 'Record<string, number> | null')
+        cols.add(key);
     }
     // Fallback for models without FIELD_TYPES
     if (!Object.keys(modelFieldTypes).length && tableData.length) {
@@ -251,6 +252,15 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
     }
     return cols;
   }, [modelFieldTypes, tableData]);
+
+  // Detect which record columns are nullable (Record<string, number> | null)
+  const nullableRecordColumns = useMemo(() => {
+    const cols = new Set<string>();
+    for (const [key, type] of Object.entries(modelFieldTypes)) {
+      if (type === 'Record<string, number> | null') cols.add(key);
+    }
+    return cols;
+  }, [modelFieldTypes]);
 
   // Columns that should use the stacks overlay
   const KNOWN_STACKS_COLUMNS = new Set(['stacks', 'perfectStacks']);
@@ -406,6 +416,13 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
         header: key,
         cell: (info) => {
           const val = info.getValue();
+          if (recordColumns.has(key) && val === null) {
+            return (
+              <span className="dt-record-empty" title="Not settable">
+                ∅
+              </span>
+            );
+          }
           if (recordColumns.has(key) && isRecordField(val)) {
             return <RecordCell record={val} />;
           }
@@ -506,8 +523,8 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
 
   const handleCellClick = useCallback(
     (rowId: number, colId: string, value: any) => {
-      if (recordColumns.has(colId) && isRecordField(value)) {
-        setRecordOverlay({ rowId, colId, record: { ...value } });
+      if (recordColumns.has(colId) && (isRecordField(value) || value === null)) {
+        setRecordOverlay({ rowId, colId, record: value === null ? {} : { ...value } });
       } else if (KNOWN_STACKS_COLUMNS.has(colId) && isObjectArrayField(value)) {
         setStacksOverlay({
           rowId,
@@ -534,7 +551,7 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
   );
 
   const handleRecordSave = useCallback(
-    (updated: Record<string, number>) => {
+    (updated: Record<string, number> | null) => {
       if (!recordOverlay) return;
       const { rowId, colId } = recordOverlay;
       setTableData((prev) =>
@@ -624,7 +641,9 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
       template = Object.keys(data[0]).reduce(
         (acc, key) => {
           const sample = data[0][key];
-          if (typeof sample === 'object' && sample !== null) {
+          if (sample === null && nullableRecordColumns.has(key)) {
+            acc[key] = {};
+          } else if (typeof sample === 'object' && sample !== null) {
             acc[key] = Array.isArray(sample) ? [] : {};
           } else if (typeof sample === 'number') {
             acc[key] = 0;
@@ -731,7 +750,8 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
                     const rowId = row.original.__rowId;
                     const colId = cell.column.id;
                     const value = row.original[colId];
-                    const isRecord = recordColumns.has(colId) && isRecordField(value);
+                    const isRecord =
+                      recordColumns.has(colId) && (isRecordField(value) || value === null);
                     const isObjArray = objectArrayColumns.has(colId) && isObjectArrayField(value);
                     const isNestedRecord = nestedRecordColumns.has(colId);
                     const isStrArray = stringArrayColumns.has(colId) && isStringArrayField(value);
@@ -870,6 +890,7 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
         <RecordOverlay
           title={recordOverlay.colId}
           record={recordOverlay.record}
+          nullable={nullableRecordColumns.has(recordOverlay.colId)}
           onSave={handleRecordSave}
           onClose={() => setRecordOverlay(null)}
         />

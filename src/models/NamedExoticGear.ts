@@ -11,8 +11,8 @@ class NamedExoticGear {
   icon: string;
   talent: string[];
   core: CoreType[];
-  attribute1: Record<string, number>;
-  attribute2: Record<string, number>;
+  attribute1: Record<string, number> | null;
+  attribute2: Record<string, number> | null;
   modSlots: number;
   notes: string;
   isExotic: boolean;
@@ -24,8 +24,8 @@ class NamedExoticGear {
     icon: 'string',
     talent: 'string[]',
     core: 'CoreType[]',
-    attribute1: 'Record<string, number>',
-    attribute2: 'Record<string, number>',
+    attribute1: 'Record<string, number> | null',
+    attribute2: 'Record<string, number> | null',
     modSlots: 'number',
     notes: 'string',
     isExotic: 'boolean',
@@ -50,8 +50,8 @@ class NamedExoticGear {
     icon?: string;
     talent?: string[] | string;
     core?: (CoreType | string)[] | string;
-    minor1?: Record<string, number>;
-    minor2?: Record<string, number>;
+    minor1?: Record<string, number> | null;
+    minor2?: Record<string, number> | null;
     modSlots?: number;
     notes?: string;
     isExotic?: boolean;
@@ -62,8 +62,8 @@ class NamedExoticGear {
     this.icon = icon;
     this.talent = Array.isArray(talent) ? talent : talent ? [talent] : [];
     this.core = (Array.isArray(core) ? core : core ? [core] : []).map(parseCoreType);
-    this.attribute1 = parseRecordField(minor1);
-    this.attribute2 = parseRecordField(minor2);
+    this.attribute1 = minor1 === null ? null : parseRecordField(minor1);
+    this.attribute2 = minor2 === null ? null : parseRecordField(minor2);
     this.modSlots = typeof modSlots === 'number' ? modSlots : parseInt(String(modSlots)) || 0;
     this.notes = notes;
     this.isExotic = isExotic;

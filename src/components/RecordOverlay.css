@@ -193,3 +193,17 @@
   opacity: 0.4;
   cursor: default;
 }
+
+.record-overlay-null-btn {
+  padding: 0.35rem 0.75rem;
+  background: rgba(255, 107, 107, 0.1);
+  color: #ff6b6b;
+  border: 1px solid #ff6b6b;
+  border-radius: 2px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.record-overlay-null-btn:hover {
+  background: rgba(255, 107, 107, 0.2);
+}

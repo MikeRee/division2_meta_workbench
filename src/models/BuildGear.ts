@@ -1,6 +1,4 @@
-import { name } from './../../node_modules/@leichtgewicht/ip-codec/types/index.d';
 import { CoreType, parseCoreType } from './CoreValue';
-import { GearModValue, GearModClassification } from './GearMod';
 import { parseEnum } from '../utils/enumParser';
 import Gearset from './Gearset';
 import Brandset from './Brandset';
@@ -55,15 +53,6 @@ class BuildGear {
   }
   private _core?: CoreType;
   get core(): CoreType[] {
-    console.log(
-      'BuildGear.core getter - _core:',
-      this._core,
-      'data:',
-      this.data,
-      'source:',
-      this.source,
-    );
-
     if (this._core) return [this._core];
     if (this.data && 'core' in this.data) {
       if (Array.isArray(this.data.core)) {
@@ -87,7 +76,7 @@ class BuildGear {
     return [];
   }
   private _attribute1?: Record<string, number>;
-  get attribute1(): Record<string, number> {
+  get attribute1(): Record<string, number> | null {
     if (this._attribute1) return this._attribute1;
     if (this.data instanceof NamedExoticGear) {
       return this.data.attribute1;
@@ -96,6 +85,8 @@ class BuildGear {
   }
   setAttribute1(key: string, value: number): string[] {
     if (this.data instanceof NamedExoticGear) {
+      if (this.data.attribute1 === null)
+        return [`Unable to set attribute1 on ${this.data.name}: attribute slot not available`];
       if (this.data.isExotic || Object.keys(this.data.attribute1).length > 0)
         return [`Unable to set attribute1 on ${this.data.name}`];
     }
@@ -103,7 +94,7 @@ class BuildGear {
     return [];
   }
   private _attribute2?: Record<string, number>;
-  get attribute2(): Record<string, number> {
+  get attribute2(): Record<string, number> | null {
     if (this._attribute2) return this._attribute2;
     if (this.data instanceof NamedExoticGear) {
       return this.data.attribute2;
@@ -112,6 +103,8 @@ class BuildGear {
   }
   setAttribute2(key: string, value: number): string[] {
     if (this.data instanceof NamedExoticGear) {
+      if (this.data.attribute2 === null)
+        return [`Unable to set attribute2 on ${this.data.name}: attribute slot not available`];
       if (this.data.isExotic || Object.keys(this.data.attribute2).length > 0)
         return [`Unable to set attribute2 on ${this.data.name}`];
     }
@@ -139,85 +132,10 @@ class BuildGear {
     this._modSlots[index] = { [key]: value };
     return [];
   }
+  get modSlots(): Record<number, Record<string, number>> {
+    return this._modSlots;
+  }
   data: Gearset | Brandset | NamedExoticGear;
-
-  /**
-   * Compatibility getter: converts attribute1 (Record<string, number>) to GearModValue.
-   * Consumers that used the old minor1 property get a GearModValue back.
-   */
-  get minor1(): GearModValue | null {
-    const attrs = this.attribute1;
-    const entries = Object.entries(attrs);
-    if (entries.length === 0) return null;
-    const [key, value] = entries[0];
-    const classification = BuildGear.lookupClassification(key);
-    return new GearModValue({ [key]: value }, classification, key, value);
-  }
-
-  set minor1(val: GearModValue | null) {
-    if (!val || !val.key) {
-      this._attribute1 = undefined;
-      return;
-    }
-    this._attribute1 = { [val.key]: val.value ?? 0 };
-  }
-
-  /**
-   * Compatibility getter: converts attribute2 (Record<string, number>) to GearModValue.
-   */
-  get minor2(): GearModValue | null {
-    const attrs = this.attribute2;
-    const entries = Object.entries(attrs);
-    if (entries.length === 0) return null;
-    const [key, value] = entries[0];
-    const classification = BuildGear.lookupClassification(key);
-    return new GearModValue({ [key]: value }, classification, key, value);
-  }
-
-  set minor2(val: GearModValue | null) {
-    if (!val || !val.key) {
-      this._attribute2 = undefined;
-      return;
-    }
-    this._attribute2 = { [val.key]: val.value ?? 0 };
-  }
-
-  /**
-   * Compatibility getter: converts mod slot 0 to GearModValue.
-   */
-  get minor3(): GearModValue | null {
-    const slot = this._modSlots[0];
-    if (!slot) return null;
-    const entries = Object.entries(slot);
-    if (entries.length === 0) return null;
-    const [key, value] = entries[0];
-    const classification = BuildGear.lookupModClassification(key);
-    return new GearModValue({ [key]: value }, classification, key, value);
-  }
-
-  set minor3(val: GearModValue | null) {
-    if (!val || !val.key) {
-      delete this._modSlots[0];
-      return;
-    }
-    this._modSlots[0] = { [val.key]: val.value ?? 0 };
-  }
-
-  /**
-   * Look up the GearModClassification for a gear attribute key from the static attribute options.
-   */
-  private static lookupClassification(key: string): GearModClassification | undefined {
-    // Classification isn't stored in the simple Record<string, number> options.
-    // Return undefined; consumers already handle missing classification gracefully.
-    return undefined;
-  }
-
-  /**
-   * Look up the GearModClassification for a gear mod key from the static mod attribute options.
-   */
-  private static lookupModClassification(key: string): GearModClassification | undefined {
-    return undefined;
-  }
 
   // Called during App bootstrap Phase 3, after lookup attributes are loaded.
   static initializeGearAttributes(gearAttributes: Record<string, number>) {
@@ -288,21 +206,6 @@ class BuildGear {
     return core as CoreType;
   }
 
-  private mapMinorAttribute(minor: any, offset: number): GearModValue | null {
-    if (!minor || minor === 'mod') {
-      return null;
-    }
-    // Convert Record<string, number> to GearModValue
-    if (typeof minor === 'object') {
-      const entries = Object.entries(minor);
-      if (entries.length > offset) {
-        const [key, value] = entries[offset];
-        return new GearModValue({ [key]: value as number }, undefined, key, value as number);
-      }
-    }
-    return null;
-  }
-
   /** Returns the list of property names available for Blockly dropdowns */
   static blocklyProperties(): [string, string][] {
     return [
@@ -351,8 +254,18 @@ class BuildGear {
       gear._modSlots = json._modSlots;
     }
 
-    // Look up the source model from the clean data store
-    gear.data = BuildGear.lookupData(gear.source, json.name);
+    // Look up the source model from the clean data store.
+    // `name` is a getter on BuildGear so it won't be serialized as an own property.
+    // Extract the name from the serialized `data` object instead.
+    const itemName =
+      json.name ?? (gear.source === GearSource.Brandset ? json.data?.brand : json.data?.name);
+    gear.data = BuildGear.lookupData(gear.source, itemName);
+
+    if (!gear.data) {
+      throw new Error(
+        `BuildGear.fromJSON: could not resolve ${gear.source} "${itemName}" from clean data store`,
+      );
+    }
 
     return gear;
   }

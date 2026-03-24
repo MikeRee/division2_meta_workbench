@@ -180,13 +180,12 @@ class Build {
 
       const core = gear.core.length === 3 ? null : (gear.core[0] ?? null);
 
-      return new LlmGear(
-        gear.name,
-        core,
-        gear.minor1?.key || null,
-        gear.minor2?.key || null,
-        gear.minor3?.key ? [gear.minor3.key] : null,
-      );
+      const attr1Key = gear.attribute1 ? Object.keys(gear.attribute1)[0] || null : null;
+      const attr2Key = gear.attribute2 ? Object.keys(gear.attribute2)[0] || null : null;
+      const modSlot0 = gear.modSlots[0];
+      const modKeys = modSlot0 ? Object.keys(modSlot0).filter(Boolean) : [];
+
+      return new LlmGear(gear.name, core, attr1Key, attr2Key, modKeys.length > 0 ? modKeys : null);
     };
 
     return new LlmBuild({

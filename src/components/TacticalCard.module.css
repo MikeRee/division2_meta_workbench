@@ -109,6 +109,11 @@
     font-weight: 700;
 }
 
+.badgeRowNotSet {
+    opacity: 0.5;
+    filter: grayscale(1);
+}
+
 /* --- Weapon card styles (used by WeaponTacticalCard) --- */
 .gearAttributes {
     position: absolute;

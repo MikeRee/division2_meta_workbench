@@ -4,11 +4,12 @@ import './RecordOverlay.css';
 interface RecordOverlayProps {
   title: string;
   record: Record<string, number>;
-  onSave: (updated: Record<string, number>) => void;
+  nullable?: boolean;
+  onSave: (updated: Record<string, number> | null) => void;
   onClose: () => void;
 }
 
-function RecordOverlay({ title, record, onSave, onClose }: RecordOverlayProps) {
+function RecordOverlay({ title, record, nullable, onSave, onClose }: RecordOverlayProps) {
   const [entries, setEntries] = useState<[string, number][]>(() =>
     Object.entries(record).map(([k, v]) => [k, v]),
   );
@@ -88,6 +89,15 @@ function RecordOverlay({ title, record, onSave, onClose }: RecordOverlayProps) {
             + Add Entry
           </button>
           <div className="record-overlay-actions">
+            {nullable && (
+              <button
+                className="record-overlay-null-btn"
+                onClick={() => onSave(null)}
+                title="Mark this attribute as not settable"
+              >
+                Set Null
+              </button>
+            )}
             <button className="divisiondb-cancel-btn" onClick={onClose}>
               Cancel
             </button>
