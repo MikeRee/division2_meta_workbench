@@ -141,12 +141,28 @@ class Build {
 
       if (weaponSlots.length > 0 || Object.keys(buildSlots).length > 0) {
         const slotSet = new Set(weaponSlots.map((s) => s.toLowerCase()));
+        const allMods: WeaponMod[] = useCleanDataStore.getState().getCleanData('weaponMods') || [];
 
-        const resolveSlot = (availableKey: string): string | null => {
+        const resolveSlot = (
+          availableKey: string,
+        ): Record<string, Record<string, number>> | null => {
           const buildKey = Object.keys(buildSlots).find((k) => k.toLowerCase() === availableKey);
-          if (buildKey) return Object.keys(buildSlots[buildKey])[0] || 'MISSING MOD';
-          if (slotSet.has(availableKey)) return 'MISSING MOD';
-          return 'NOT AN OPTION';
+          if (buildKey) {
+            const bonusData = buildSlots[buildKey];
+            if (bonusData && Object.keys(bonusData).length > 0) {
+              // Look up the mod name by matching slot type and bonus
+              const mod = allMods.find(
+                (m) =>
+                  m.type.toUpperCase() === buildKey.toUpperCase() &&
+                  Object.keys(m.bonus).some((k) => Object.keys(bonusData).includes(k)),
+              );
+              const modName = mod?.name || 'MISSING MOD';
+              return { [modName]: bonusData };
+            }
+            return { 'MISSING MOD': {} };
+          }
+          if (slotSet.has(availableKey)) return null;
+          return null;
         };
 
         const muzzle = resolveSlot('muzzle slot');
@@ -244,25 +260,25 @@ class Build {
       const attachments = llmWeapon.attachments;
       if (attachments) {
         const allMods: WeaponMod[] = storeState.getCleanData('weaponMods') || [];
-        const slotMapping: [string, string][] = [
-          ['MUZZLE SLOT', attachments.muzzleIfOption],
-          ['UNDERBARREL', attachments.underbarrelIfOption],
-          ['MAGAZINE SLOT', attachments.magazineIfOption],
-          ['OPTICS RAIL', attachments.opticsIfOption],
+        const slotFields: [string, Record<string, Record<string, number>> | null][] = [
+          ['muzzle slot', attachments.muzzleIfOption],
+          ['underbarrel', attachments.underbarrelIfOption],
+          ['magazine slot', attachments.magazineIfOption],
+          ['optics rail', attachments.opticsIfOption],
         ];
 
         const slots: Record<string, Record<string, number>> = {};
-        for (const [slotType, bonusKey] of slotMapping) {
-          if (!bonusKey || bonusKey === 'MISSING MOD' || bonusKey === 'NOT AN OPTION') continue;
-          // Find a weapon mod whose type matches and whose bonus contains this key
-          const mod = allMods.find(
-            (m) => m.type.toUpperCase() === slotType && Object.keys(m.bonus).includes(bonusKey),
-          );
-          if (mod) {
-            slots[slotType] = { ...mod.bonus };
-          } else {
-            // Fallback: store the bonus key with value 0
-            slots[slotType] = { [bonusKey]: 0 };
+        for (const [slotKey, attachment] of slotFields) {
+          if (!attachment) continue;
+          const modName = Object.keys(attachment)[0];
+          if (!modName || modName === 'MISSING MOD') continue;
+          const bonusData = attachment[modName];
+
+          // Find the matching weapon mod to get the canonical slot type
+          const mod = allMods.find((m) => m.name === modName && m.type.toLowerCase() === slotKey);
+          const slotType = mod?.type || bw.weapon.modSlots.find((s) => s.toLowerCase() === slotKey);
+          if (slotType) {
+            slots[slotType] = bonusData;
           }
         }
         if (Object.keys(slots).length > 0) {
@@ -315,6 +331,35 @@ class Build {
         if (buildGear.core.length < 3 && llmCore) {
           const coreType = parseCoreType(llmCore);
           buildGear.setCore(coreType);
+        }
+
+        // Restore gear attributes
+        const gearAttributesMap = useLookupStore.getState().gearAttributes;
+        if (gearAttributesMap) {
+          const allGearAttrs = gearAttributesMap.toArray();
+
+          if (
+            llmGear.gearAttrib1 &&
+            buildGear.attribute1 !== null &&
+            Object.keys(buildGear.attribute1).length === 0
+          ) {
+            const attr = allGearAttrs.find((a: any) => a.attribute === llmGear.gearAttrib1);
+            if (attr) buildGear.setAttribute1(attr.attribute, attr.max);
+          }
+
+          if (
+            llmGear.gearAttrib2 &&
+            buildGear.attribute2 !== null &&
+            Object.keys(buildGear.attribute2).length === 0
+          ) {
+            const attr = allGearAttrs.find((a: any) => a.attribute === llmGear.gearAttrib2);
+            if (attr) buildGear.setAttribute2(attr.attribute, attr.max);
+          }
+
+          if (llmGear.gearMod && buildGear.maxModSlots > 0) {
+            const attr = allGearAttrs.find((a: any) => a.attribute === llmGear.gearMod);
+            if (attr) buildGear.setModSlot(0, attr.attribute, attr.max);
+          }
         }
 
         return buildGear;

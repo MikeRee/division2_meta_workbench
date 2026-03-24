@@ -118,10 +118,10 @@ class LlmGear {
 
 class LlmAttachments {
   constructor(
-    public muzzleIfOption: string | null,
-    public underbarrelIfOption: string | null,
-    public magazineIfOption: string | null,
-    public opticsIfOption: string | null,
+    public muzzleIfOption: Record<string, Record<string, number>> | null,
+    public underbarrelIfOption: Record<string, Record<string, number>> | null,
+    public magazineIfOption: Record<string, Record<string, number>> | null,
+    public opticsIfOption: Record<string, Record<string, number>> | null,
   ) {}
 
   toJSON() {

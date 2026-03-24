@@ -1,17 +1,9 @@
 import React, { useState, useEffect, useRef, JSX } from 'react';
 import './ChatWindow.css';
 import useBuildStore from '../stores/useBuildStore';
-import useCleanDataStore from '../stores/useCleanDataStore';
-import useLookupStore from '../stores/useLookupStore';
-import { BuildWeapon } from '../models/BuildWeapon';
-import BuildGear, { GearType } from '../models/BuildGear';
-import Weapon from '../models/Weapon';
+import Build from '../models/Build';
+import LlmBuild from '../models/LlmBuild';
 import { getBasePath } from '../utils/basePath';
-import { fuzzyFind } from '../utils/fuzzySearch';
-import { parseCoreType } from '../models/CoreValue';
-import NamedExoticGear from '../models/NamedExoticGear';
-import Gearset from '../models/Gearset';
-import Brandset from '../models/Brandset';
 
 interface OpenRouterModel {
   id: string;
@@ -163,11 +155,7 @@ function ChatWindow() {
 
     setIsLoadingModels(true);
     try {
-      const response = await fetch('https://openrouter.ai/api/v1/models', {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-        },
-      });
+      const response = await fetch('https://openrouter.ai/api/v1/models');
 
       if (response.ok) {
         const data = await response.json();
@@ -201,277 +189,46 @@ function ChatWindow() {
   const parseAndApplyModel = (
     responseText: string,
   ): { message: string; modelApplied: boolean; modelJson?: string } => {
-    console.log('=== PARSING RESPONSE ===');
-    console.log('Response Text Length:', responseText.length);
-    console.log('Response Text:', responseText);
-
     // Check if response contains the two-part format
     const messageMatch = responseText.match(/---MESSAGE---\s*([\s\S]*?)(?=---MODEL---|$)/);
     const modelMatch = responseText.match(/---MODEL---\s*([\s\S]*?)$/);
 
-    console.log('Message Match Found:', !!messageMatch);
-    console.log('Model Match Found:', !!modelMatch);
-
     if (!messageMatch) {
-      // No structured format, return as-is
-      console.log('No structured format detected, returning raw text');
       return { message: responseText, modelApplied: false };
     }
 
     const message = messageMatch[1].trim();
-    console.log('Extracted Message Length:', message.length);
 
     if (!modelMatch) {
-      // Has MESSAGE but no MODEL
-      console.log('Has MESSAGE but no MODEL section');
       return { message, modelApplied: false };
     }
 
     // Try to parse and apply the MODEL
     try {
       let modelJson = modelMatch[1].trim();
-      console.log('Model JSON:', modelJson);
 
       // Strip markdown code fences if present
       if (modelJson.startsWith('```')) {
         modelJson = modelJson.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
       }
 
-      const llmBuild = JSON.parse(modelJson);
-      console.log('Parsed LlmBuild:', llmBuild);
+      const parsed = JSON.parse(modelJson);
 
-      // Get data stores
-      const cleanDataStore = useCleanDataStore.getState();
-      const weapons = cleanDataStore.getCleanData('weapons');
-      const namedGear = cleanDataStore.getCleanData('namedGear');
-      const gearsets = cleanDataStore.getCleanData('gearsets');
-      const brandsets = cleanDataStore.getCleanData('brandsets');
-      const weaponMods = cleanDataStore.getCleanData('weaponMods');
-      const { updateCurrentBuild } = useBuildStore.getState();
+      const llmBuild = new LlmBuild({
+        primaryWeapon: parsed.primaryWeapon,
+        secondaryWeapon: parsed.secondaryWeapon,
+        pistol: parsed.pistol,
+        mask: parsed.mask,
+        chest: parsed.chest,
+        holster: parsed.holster,
+        backpack: parsed.backpack,
+        gloves: parsed.gloves,
+        kneepads: parsed.kneepads,
+      });
 
-      // Validate data is loaded
-      if (!weapons || !Array.isArray(weapons) || weapons.length === 0) {
-        console.error('Weapons data not loaded');
-        throw new Error('Weapons data not loaded. Please wait for data to load and try again.');
-      }
-      if (!namedGear || !Array.isArray(namedGear)) {
-        console.error('Named gear data not loaded');
-        throw new Error('Gear data not loaded. Please wait for data to load and try again.');
-      }
-      if (!gearsets || !Array.isArray(gearsets)) {
-        console.error('Gearsets data not loaded');
-        throw new Error('Gearsets data not loaded. Please wait for data to load and try again.');
-      }
-      if (!brandsets || !Array.isArray(brandsets)) {
-        console.error('Brandsets data not loaded');
-        throw new Error('Brandsets data not loaded. Please wait for data to load and try again.');
-      }
+      const updates = Build.fromLlm(llmBuild);
+      useBuildStore.getState().updateCurrentBuild(updates);
 
-      console.log(
-        'Data stores validated - weapons:',
-        weapons.length,
-        'namedGear:',
-        namedGear.length,
-        'gearsets:',
-        gearsets.length,
-        'brandsets:',
-        brandsets.length,
-      );
-
-      // Reconstruct BuildWeapon instances
-      const reconstructWeapon = (llmWeapon: any): BuildWeapon | null => {
-        if (!llmWeapon || !llmWeapon.name) return null;
-
-        // Try exact match first
-        let weapon = (weapons as Weapon[]).find((w) => w.name === llmWeapon.name);
-
-        // If no exact match, try fuzzy search
-        if (!weapon) {
-          weapon = fuzzyFind(llmWeapon.name, weapons as Weapon[], (w) => w.name, 0.75) ?? undefined;
-          if (weapon) {
-            console.log(`Fuzzy matched weapon "${llmWeapon.name}" to "${weapon.name}"`);
-          }
-        }
-
-        if (!weapon) {
-          console.warn(`Weapon not found: ${llmWeapon.name}`);
-          return null;
-        }
-
-        const modSlots: Record<string, Record<string, number>> = {};
-
-        // Handle both old format and new attachments format
-        if (llmWeapon.attachments) {
-          if (llmWeapon.attachments.muzzleIfOption) {
-            modSlots.muzzle = { [llmWeapon.attachments.muzzleIfOption]: 0 };
-          }
-          if (llmWeapon.attachments.underbarrelIfOption) {
-            modSlots.underbarrel = { [llmWeapon.attachments.underbarrelIfOption]: 0 };
-          }
-          if (llmWeapon.attachments.magazineIfOption) {
-            modSlots.magazine = { [llmWeapon.attachments.magazineIfOption]: 0 };
-          }
-          if (llmWeapon.attachments.opticsIfOption) {
-            modSlots.optics = { [llmWeapon.attachments.opticsIfOption]: 0 };
-          }
-        } else {
-          // Old format compatibility
-          if (llmWeapon.muzzleIfOption) {
-            modSlots.muzzle = { [llmWeapon.muzzleIfOption]: 0 };
-          }
-          if (llmWeapon.underbarrelIfOption) {
-            modSlots.underbarrel = { [llmWeapon.underbarrelIfOption]: 0 };
-          }
-          if (llmWeapon.magazineIfOption) {
-            modSlots.magazine = { [llmWeapon.magazineIfOption]: 0 };
-          }
-          if (llmWeapon.opticsIfOption) {
-            modSlots.optics = { [llmWeapon.opticsIfOption]: 0 };
-          }
-        }
-
-        return new BuildWeapon(weapon);
-      };
-
-      // Reconstruct BuildGear instances
-      const reconstructGear = (llmGear: any, gearType: GearType): BuildGear | null => {
-        if (!llmGear || !llmGear.name) return null;
-
-        // Build a single combined list with a unified name accessor and source tag
-        const combined: {
-          item: NamedExoticGear | Gearset | Brandset;
-          name: string;
-          source: 'named' | 'gearset' | 'brand';
-        }[] = [
-          ...(namedGear as NamedExoticGear[]).map((ng) => ({
-            item: ng,
-            name: ng.name,
-            source: 'named' as const,
-          })),
-          ...gearsets.map((gs) => ({ item: gs, name: gs.name, source: 'gearset' as const })),
-          ...brandsets.map((bs) => ({ item: bs, name: bs.brand, source: 'brand' as const })),
-        ];
-
-        // Try exact match first
-        let match = combined.find((entry) => entry.name === llmGear.name);
-
-        // If no exact match, try fuzzy search
-        if (!match) {
-          match = fuzzyFind(llmGear.name, combined, (entry) => entry.name, 0.75) ?? undefined;
-          if (match) {
-            console.log(`Fuzzy matched "${llmGear.name}" to "${match.name}"`);
-          }
-        }
-
-        if (!match) {
-          console.log(
-            `Gear not found: "${llmGear.name}" across ${(namedGear as NamedExoticGear[]).length} named, ${gearsets.length} gearsets, ${brandsets.length} brands`,
-          );
-          return null;
-        }
-
-        // Create BuildGear from the found item
-        const buildGear =
-          match.source === 'named'
-            ? new BuildGear(match.item)
-            : new BuildGear(match.item, gearType);
-
-        // Apply core attributes from LlmGear if specified
-        // If the gear already has 3 cores (exotic with all 3), keep them as-is from the data
-        // Otherwise, use the LLM-provided cores (typically just the first one)
-        if (
-          buildGear.core.length < 3 &&
-          llmGear.core &&
-          Array.isArray(llmGear.core) &&
-          llmGear.core.length > 0
-        ) {
-          buildGear.setCore(llmGear.core.map((coreType: string) => parseCoreType(coreType))[0]);
-        }
-
-        // Apply gear attributes from LlmGear if they exist
-        const gearAttributesMap = useLookupStore.getState().gearAttributes;
-
-        if (
-          llmGear.gearAttrib1 &&
-          buildGear.attribute1 !== null &&
-          Object.keys(buildGear.attribute1).length === 0 &&
-          gearAttributesMap
-        ) {
-          const allGearAttrs = gearAttributesMap.toArray();
-          const mod = allGearAttrs.find((m) => m.attribute === llmGear.gearAttrib1);
-          if (mod) {
-            buildGear.setAttribute1(mod.attribute, mod.max);
-          }
-        }
-
-        if (
-          llmGear.gearAttrib2 &&
-          buildGear.attribute2 !== null &&
-          Object.keys(buildGear.attribute2).length === 0 &&
-          gearAttributesMap
-        ) {
-          const allGearAttrs = gearAttributesMap.toArray();
-          const mod = allGearAttrs.find((m) => m.attribute === llmGear.gearAttrib2);
-          if (mod) {
-            buildGear.setAttribute2(mod.attribute, mod.max);
-          }
-        }
-
-        if (llmGear.gearMod && buildGear.maxModSlots > 0 && gearAttributesMap) {
-          const allGearAttrs = gearAttributesMap.toArray();
-          const mod = allGearAttrs.find((m) => m.attribute === llmGear.gearMod);
-          if (mod) {
-            buildGear.setModSlot(0, mod.attribute, mod.max);
-          }
-        }
-
-        return buildGear;
-      };
-
-      // Apply the reconstructed build
-      const updates: any = {};
-
-      if (llmBuild.primaryWeapon !== undefined) {
-        updates.primaryWeapon = reconstructWeapon(llmBuild.primaryWeapon);
-        console.log('Reconstructed primaryWeapon:', updates.primaryWeapon);
-      }
-      if (llmBuild.secondaryWeapon !== undefined) {
-        updates.secondaryWeapon = reconstructWeapon(llmBuild.secondaryWeapon);
-        console.log('Reconstructed secondaryWeapon:', updates.secondaryWeapon);
-      }
-      if (llmBuild.pistol !== undefined) {
-        updates.pistol = reconstructWeapon(llmBuild.pistol);
-        console.log('Reconstructed pistol:', updates.pistol);
-      }
-      if (llmBuild.mask !== undefined) {
-        updates.mask = reconstructGear(llmBuild.mask, GearType.Mask);
-        console.log('Reconstructed mask:', updates.mask);
-      }
-      if (llmBuild.chest !== undefined) {
-        updates.chest = reconstructGear(llmBuild.chest, GearType.Chest);
-        console.log('Reconstructed chest:', updates.chest);
-      }
-      if (llmBuild.holster !== undefined) {
-        updates.holster = reconstructGear(llmBuild.holster, GearType.Holster);
-        console.log('Reconstructed holster:', updates.holster);
-      }
-      if (llmBuild.backpack !== undefined) {
-        updates.backpack = reconstructGear(llmBuild.backpack, GearType.Backpack);
-        console.log('Reconstructed backpack:', updates.backpack);
-      }
-      if (llmBuild.gloves !== undefined) {
-        updates.gloves = reconstructGear(llmBuild.gloves, GearType.Gloves);
-        console.log('Reconstructed gloves:', updates.gloves);
-      }
-      if (llmBuild.kneepads !== undefined) {
-        updates.kneepads = reconstructGear(llmBuild.kneepads, GearType.Kneepads);
-        console.log('Reconstructed kneepads:', updates.kneepads);
-      }
-
-      console.log('Applying updates to build:', updates);
-      updateCurrentBuild(updates);
-
-      console.log('Build updated successfully');
       return { message, modelApplied: true, modelJson };
     } catch (error) {
       console.error('Failed to parse or apply model:', error);
