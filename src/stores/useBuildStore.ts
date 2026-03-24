@@ -6,7 +6,6 @@ import { BuildWeapon } from '../models/BuildWeapon';
 
 // Type for partial build updates
 type BuildData = {
-  id?: string | null;
   name?: string;
   specialization?: any;
   primaryWeapon?: BuildWeapon | null;
@@ -45,13 +44,12 @@ interface BuildState {
   setWatch: (watch: any) => void;
 
   saveCurrentBuild: (name?: string) => string;
-  loadBuild: (buildId: string) => boolean;
-  deleteBuild: (buildId: string) => boolean;
+  loadBuild: (name: string) => boolean;
+  deleteBuild: (name: string) => boolean;
   newBuild: () => void;
-  cloneCurrentBuild: () => void;
   getAllSavedBuilds: () => Build[];
-  getSavedBuild: (buildId: string) => Build | undefined;
-  updateSavedBuild: (buildId: string, updates: Partial<BuildData>) => boolean;
+  getSavedBuild: (name: string) => Build | undefined;
+  updateSavedBuild: (name: string, updates: Partial<BuildData>) => boolean;
   clearAllBuilds: () => void;
   exportCurrentBuild: () => string;
   importBuild: (jsonString: string) => boolean;
@@ -67,16 +65,30 @@ const useBuildStore = create<BuildState>()(
       // Current build being edited
       currentBuild: new Build(),
 
-      // Saved builds map (id -> Build)
+      // Saved builds map (name -> Build)
       savedBuilds: new Map<string, Build>(),
 
       // Actions for current build
       updateCurrentBuild: (updates) => {
         const current = get().currentBuild;
-        // Ensure current is a Build instance or convert it
-        const currentData = current instanceof Build ? current.toJSON() : (current as any);
+        // Preserve live class instances (BuildWeapon / BuildGear) from the current build
+        // instead of serializing to JSON which loses getters and class identity.
         const updated = new Build({
-          ...currentData,
+          name: current.name,
+          specialization: current.specialization,
+          primaryWeapon: current.primaryWeapon,
+          secondaryWeapon: current.secondaryWeapon,
+          pistol: current.pistol,
+          mask: current.mask,
+          chest: current.chest,
+          holster: current.holster,
+          backpack: current.backpack,
+          gloves: current.gloves,
+          kneepads: current.kneepads,
+          skill1: current.skill1,
+          skill2: current.skill2,
+          watch: current.watch,
+          createdAt: current.createdAt,
           ...updates,
           updatedAt: Date.now(),
         });
@@ -138,38 +150,71 @@ const useBuildStore = create<BuildState>()(
       // Save current build
       saveCurrentBuild: (name) => {
         const current = get().currentBuild;
-        const currentData = current instanceof Build ? current.toJSON() : (current as any);
+        const buildName = name || current.name || 'Untitled Build';
         const buildToSave = new Build({
-          ...currentData,
-          name: name || currentData.name || 'Untitled Build',
+          name: buildName,
+          specialization: current.specialization,
+          primaryWeapon: current.primaryWeapon,
+          secondaryWeapon: current.secondaryWeapon,
+          pistol: current.pistol,
+          mask: current.mask,
+          chest: current.chest,
+          holster: current.holster,
+          backpack: current.backpack,
+          gloves: current.gloves,
+          kneepads: current.kneepads,
+          skill1: current.skill1,
+          skill2: current.skill2,
+          watch: current.watch,
+          createdAt: current.createdAt,
           updatedAt: Date.now(),
         });
 
         const savedBuilds = new Map(get().savedBuilds);
-        savedBuilds.set(buildToSave.id, buildToSave);
+        savedBuilds.set(buildName, buildToSave);
 
         set({
           savedBuilds,
           currentBuild: buildToSave,
         });
 
-        return buildToSave.id;
+        return buildName;
       },
 
       // Load a saved build as current
-      loadBuild: (buildId) => {
-        const build = get().savedBuilds.get(buildId);
+      loadBuild: (name) => {
+        const build = get().savedBuilds.get(name);
         if (build) {
-          set({ currentBuild: new Build(build.toJSON()) });
+          // Create a new Build preserving live class instances
+          set({
+            currentBuild: new Build({
+              name: build.name,
+              specialization: build.specialization,
+              primaryWeapon: build.primaryWeapon,
+              secondaryWeapon: build.secondaryWeapon,
+              pistol: build.pistol,
+              mask: build.mask,
+              chest: build.chest,
+              holster: build.holster,
+              backpack: build.backpack,
+              gloves: build.gloves,
+              kneepads: build.kneepads,
+              skill1: build.skill1,
+              skill2: build.skill2,
+              watch: build.watch,
+              createdAt: build.createdAt,
+              updatedAt: build.updatedAt,
+            }),
+          });
           return true;
         }
         return false;
       },
 
       // Delete a saved build
-      deleteBuild: (buildId) => {
+      deleteBuild: (name) => {
         const savedBuilds = new Map(get().savedBuilds);
-        const deleted = savedBuilds.delete(buildId);
+        const deleted = savedBuilds.delete(name);
         if (deleted) {
           set({ savedBuilds });
         }
@@ -181,42 +226,52 @@ const useBuildStore = create<BuildState>()(
         set({ currentBuild: new Build() });
       },
 
-      // Clone current build
-      cloneCurrentBuild: () => {
-        const current = get().currentBuild;
-        const currentData = current instanceof Build ? current : Build.fromJSON(current as any);
-        const cloned = currentData.clone();
-        set({ currentBuild: cloned });
-      },
-
       // Get all saved builds as array
       getAllSavedBuilds: () => {
         return Array.from(get().savedBuilds.values());
       },
 
-      // Get saved build by ID
-      getSavedBuild: (buildId) => {
-        return get().savedBuilds.get(buildId);
+      // Get saved build by name
+      getSavedBuild: (name) => {
+        return get().savedBuilds.get(name);
       },
 
       // Update a saved build
-      updateSavedBuild: (buildId, updates) => {
+      updateSavedBuild: (name, updates) => {
         const savedBuilds = new Map(get().savedBuilds);
-        const build = savedBuilds.get(buildId);
+        const build = savedBuilds.get(name);
 
         if (build) {
-          const buildData = build instanceof Build ? build.toJSON() : (build as any);
           const updated = new Build({
-            ...buildData,
+            name: build.name,
+            specialization: build.specialization,
+            primaryWeapon: build.primaryWeapon,
+            secondaryWeapon: build.secondaryWeapon,
+            pistol: build.pistol,
+            mask: build.mask,
+            chest: build.chest,
+            holster: build.holster,
+            backpack: build.backpack,
+            gloves: build.gloves,
+            kneepads: build.kneepads,
+            skill1: build.skill1,
+            skill2: build.skill2,
+            watch: build.watch,
+            createdAt: build.createdAt,
             ...updates,
-            id: buildId, // Preserve original ID
             updatedAt: Date.now(),
           });
-          savedBuilds.set(buildId, updated);
+          // If name changed, remove old key
+          if (updates.name && updates.name !== name) {
+            savedBuilds.delete(name);
+            savedBuilds.set(updates.name, updated);
+          } else {
+            savedBuilds.set(name, updated);
+          }
           set({ savedBuilds });
 
           // If updating current build, update it too
-          if (get().currentBuild.id === buildId) {
+          if (get().currentBuild.name === name) {
             set({ currentBuild: updated });
           }
           return true;
@@ -235,8 +290,7 @@ const useBuildStore = create<BuildState>()(
       // Export current build as JSON
       exportCurrentBuild: () => {
         const current = get().currentBuild;
-        const currentData = current instanceof Build ? current.toJSON() : (current as any);
-        return JSON.stringify(currentData, null, 2);
+        return JSON.stringify(current.toJSON(), null, 2);
       },
 
       // Import build from JSON
@@ -267,7 +321,7 @@ const useBuildStore = create<BuildState>()(
           if (key === 'savedBuilds' && Array.isArray(value)) {
             try {
               return new Map(
-                value.map(([id, buildData]: [string, any]) => [id, Build.fromJSON(buildData)]),
+                value.map(([name, buildData]: [string, any]) => [name, Build.fromJSON(buildData)]),
               );
             } catch (error) {
               console.warn('Failed to restore savedBuilds from localStorage:', error);
@@ -281,7 +335,7 @@ const useBuildStore = create<BuildState>()(
             return value.toJSON();
           }
           if (key === 'savedBuilds' && value instanceof Map) {
-            return Array.from(value.entries()).map(([id, build]) => [id, build.toJSON()]);
+            return Array.from(value.entries()).map(([name, build]) => [name, build.toJSON()]);
           }
           return value;
         },

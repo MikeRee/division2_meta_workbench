@@ -78,6 +78,10 @@ export class BuildWeapon {
     return BuildWeapon.weaponAttributeOptions;
   }
 
+  static getWeaponAttributeOptions(): Record<string, number> {
+    return BuildWeapon.weaponAttributeOptions;
+  }
+
   constructor(weapon: Weapon) {
     this.weapon = weapon;
     this._modSlots = {};

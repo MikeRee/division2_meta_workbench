@@ -77,15 +77,9 @@ function registerBlockFieldBinding(
       if (field) {
         const suffix = ` [${formatBlocklyValue(value)}]`;
         if (field instanceof Blockly.FieldDropdown) {
-          console.log(
-            `[BlockValueRef] init dropdown ${source} "${dataKey}" on block ${blockId}: ${value}`,
-          );
           field.getOptions(false);
           field.forceRerender();
         } else {
-          console.log(
-            `[BlockValueRef] init label ${source} "${dataKey}" on block ${blockId}: ${value}`,
-          );
           field.setValue(`${dataKey}${suffix}`);
         }
       }
@@ -101,7 +95,6 @@ function unregisterBlockBindings(blockId: string) {
 /** Diff values and update only the block fields whose keys changed */
 function pushChangedLabels() {
   if (!activeBlocklyWorkspace) {
-    console.log('[BlockValueRef] pushChangedLabels skipped: no active workspace');
     return;
   }
 
@@ -131,19 +124,7 @@ function pushChangedLabels() {
   }
 
   if (aggChanges.size === 0 && wpnChanges.size === 0) {
-    console.log('[BlockValueRef] pushChangedLabels: no value changes detected');
     return;
-  }
-
-  for (const key of aggChanges) {
-    console.log(
-      `[BlockValueRef] aggregated "${key}": ${previousAggregatedValues[key] ?? 'undefined'} → ${currentAggregatedValues[key] ?? 'undefined'}`,
-    );
-  }
-  for (const key of wpnChanges) {
-    console.log(
-      `[BlockValueRef] weapon "${key}": ${previousWeaponValues[key] ?? 'undefined'} → ${currentWeaponValues[key] ?? 'undefined'}`,
-    );
   }
 
   for (const binding of blockFieldBindings) {
@@ -171,9 +152,6 @@ function pushChangedLabels() {
     // For dropdown fields, the selected value stays the same — we just force
     // a re-render so the dynamic label generator picks up the new suffix.
     if (field instanceof Blockly.FieldDropdown) {
-      console.log(
-        `[BlockValueRef] dropdown ${binding.source} "${binding.dataKey}" on block ${binding.blockId}: ${prevValue ?? 'undefined'} → ${newValue ?? 'undefined'}`,
-      );
       field.getOptions(false);
       // Re-set the value to itself so Blockly re-resolves the display text
       // from the updated options list — forceRerender alone doesn't do this.
@@ -181,9 +159,6 @@ function pushChangedLabels() {
       field.setValue(null as any);
       field.setValue(currentVal);
     } else {
-      console.log(
-        `[BlockValueRef] label ${binding.source} "${binding.dataKey}" on block ${binding.blockId}: ${prevValue ?? 'undefined'} → ${newValue ?? 'undefined'}`,
-      );
       // For plain label fields, push the new text directly
       field.setValue(`${binding.dataKey}${suffix}`);
     }
@@ -211,7 +186,6 @@ function refreshBlocklyDropdowns() {
 function setBlocklyAggregatedValues(values: Record<string, number>) {
   previousAggregatedValues = { ...currentAggregatedValues };
   currentAggregatedValues = values;
-  console.log('[BlockValueRef] setBlocklyAggregatedValues', Object.keys(values).length, 'keys');
   pushChangedLabels();
   refreshBlocklyDropdowns();
 }
@@ -220,7 +194,6 @@ function setBlocklyAggregatedValues(values: Record<string, number>) {
 function setBlocklyWeaponValues(values: Record<string, number>) {
   previousWeaponValues = { ...currentWeaponValues };
   currentWeaponValues = values;
-  console.log('[BlockValueRef] setBlocklyWeaponValues', values);
   pushChangedLabels();
   refreshBlocklyDropdowns();
 }

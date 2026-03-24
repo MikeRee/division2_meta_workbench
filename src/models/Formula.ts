@@ -203,15 +203,6 @@ export class StatCalculator {
       });
     });
 
-    // Log calculated values
-    Object.entries(calc.values).forEach(([stat, data]) => {
-      const values = [];
-      for (let i = 0; i < data.values.length; i++) {
-        values.push(`${data.labels[i]}:${data.values[i]}`);
-      }
-      console.log(`${stat}: ${data.value}`, values);
-    });
-
     return calc;
   }
 }

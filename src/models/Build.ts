@@ -9,7 +9,8 @@ import { fuzzyFind } from '../utils/fuzzySearch';
 import Gearset from './Gearset';
 import Brandset from './Brandset';
 import NamedExoticGear from './NamedExoticGear';
-
+import Weapon from './Weapon';
+import WeaponMod from './WeaponMod';
 function getDefaultWatchStats(): KeenersWatchStats {
   const keenersWatchData = useLookupStore.getState().keenersWatch;
   const defaults: KeenersWatchStats = {
@@ -35,7 +36,6 @@ function getDefaultWatchStats(): KeenersWatchStats {
 }
 
 class Build {
-  id: string;
   name: string;
   specialization: any;
   primaryWeapon: BuildWeapon | null;
@@ -54,7 +54,6 @@ class Build {
   updatedAt: number;
 
   constructor({
-    id = null,
     name = '',
     specialization = null,
     primaryWeapon = null,
@@ -72,7 +71,6 @@ class Build {
     createdAt = null,
     updatedAt = null,
   }: {
-    id?: string | null;
     name?: string;
     specialization?: any;
     primaryWeapon?: BuildWeapon | null;
@@ -90,7 +88,6 @@ class Build {
     createdAt?: number | null;
     updatedAt?: number | null;
   } = {}) {
-    this.id = id || this.generateId();
     this.name = name;
     this.specialization = specialization;
     this.primaryWeapon = primaryWeapon;
@@ -114,13 +111,13 @@ class Build {
     this.updatedAt = updatedAt || Date.now();
   }
 
-  generateId(): string {
-    return `build_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-  }
-
   toLlm(): LlmBuild {
     const convertWeapon = (weapon: BuildWeapon | null): LlmWeapon | null => {
       if (!weapon) return null;
+      if (!(weapon instanceof BuildWeapon)) {
+        console.warn('convertWeapon: received non-BuildWeapon object, skipping', weapon);
+        return null;
+      }
 
       const attrib1 = Object.keys(weapon.primaryAttribute1)[0] || '';
 
@@ -142,27 +139,22 @@ class Build {
       const buildSlots = weapon.modSlots; // equipped mods (Record<string, Record<string, number>>)
       const weaponSlots = weapon.weapon.modSlots; // available slot names (string[])
 
-      if (Object.keys(buildSlots).length > 0) {
-        // Build has equipped mods — map them
-        const muzzle = buildSlots.muzzle ? Object.keys(buildSlots.muzzle)[0] || null : null;
-        const underbarrel = buildSlots.underbarrel
-          ? Object.keys(buildSlots.underbarrel)[0] || null
-          : null;
-        const magazine = buildSlots.magazine ? Object.keys(buildSlots.magazine)[0] || null : null;
-        const optics = buildSlots.optics ? Object.keys(buildSlots.optics)[0] || null : null;
-
-        if (muzzle || underbarrel || magazine || optics) {
-          attachments = new LlmAttachments(muzzle, underbarrel, magazine, optics);
-        }
-      } else if (weaponSlots.length > 0) {
-        // No mods equipped — show available slots as MISSING MOD, others as NOT AN OPTION
+      if (weaponSlots.length > 0 || Object.keys(buildSlots).length > 0) {
         const slotSet = new Set(weaponSlots.map((s) => s.toLowerCase()));
-        attachments = new LlmAttachments(
-          slotSet.has('muzzle') ? 'MISSING MOD' : 'NOT AN OPTION',
-          slotSet.has('underbarrel') ? 'MISSING MOD' : 'NOT AN OPTION',
-          slotSet.has('magazine') ? 'MISSING MOD' : 'NOT AN OPTION',
-          slotSet.has('optics') ? 'MISSING MOD' : 'NOT AN OPTION',
-        );
+
+        const resolveSlot = (availableKey: string): string | null => {
+          const buildKey = Object.keys(buildSlots).find((k) => k.toLowerCase() === availableKey);
+          if (buildKey) return Object.keys(buildSlots[buildKey])[0] || 'MISSING MOD';
+          if (slotSet.has(availableKey)) return 'MISSING MOD';
+          return 'NOT AN OPTION';
+        };
+
+        const muzzle = resolveSlot('muzzle slot');
+        const underbarrel = resolveSlot('underbarrel');
+        const magazine = resolveSlot('magazine slot');
+        const optics = resolveSlot('optics rail');
+
+        attachments = new LlmAttachments(muzzle, underbarrel, magazine, optics);
       }
 
       return new LlmWeapon(
@@ -177,6 +169,10 @@ class Build {
 
     const convertGear = (gear: BuildGear | null): LlmGear | null => {
       if (!gear) return null;
+      if (!(gear instanceof BuildGear)) {
+        console.warn('convertGear: received non-BuildGear object, skipping', gear);
+        return null;
+      }
 
       const core = gear.core.length === 3 ? null : (gear.core[0] ?? null);
 
@@ -213,11 +209,68 @@ class Build {
     const convertWeapon = (llmWeapon: any): BuildWeapon | null => {
       if (!llmWeapon) return null;
 
-      // This is a simplified conversion - in practice, you'd need to:
-      // 1. Look up the actual Weapon object by name
-      // 2. Reconstruct the modSlots from attachments
-      // For now, returning null as we need more context about available weapons
-      return null;
+      const name: string = llmWeapon.name;
+      const storeState = useCleanDataStore.getState();
+      const weapons: Weapon[] = storeState.getCleanData('weapons') || [];
+
+      const weapon = fuzzyFind(name, weapons, (w) => w.name);
+      if (!weapon) {
+        console.warn(`Build.fromLlm: no weapon match found for "${name}"`);
+        return null;
+      }
+
+      const bw = new BuildWeapon(weapon);
+
+      // Restore primary attribute 2
+      if (llmWeapon.primaryAttrib2) {
+        const weaponAttrs = BuildWeapon.getWeaponAttributeOptions();
+        const val = weaponAttrs[llmWeapon.primaryAttrib2] ?? 0;
+        bw.setPrimaryAttribute2(llmWeapon.primaryAttrib2, val);
+      }
+
+      // Restore secondary attribute
+      if (llmWeapon.secondaryAttrib) {
+        const weaponAttrs = BuildWeapon.getWeaponAttributeOptions();
+        const val = weaponAttrs[llmWeapon.secondaryAttrib] ?? 0;
+        bw.setSecondaryAttribute(llmWeapon.secondaryAttrib, val);
+      }
+
+      // Restore talent
+      if (llmWeapon.talent) {
+        bw.setTalent(llmWeapon.talent);
+      }
+
+      // Restore mod slots from attachments
+      const attachments = llmWeapon.attachments;
+      if (attachments) {
+        const allMods: WeaponMod[] = storeState.getCleanData('weaponMods') || [];
+        const slotMapping: [string, string][] = [
+          ['MUZZLE SLOT', attachments.muzzleIfOption],
+          ['UNDERBARREL', attachments.underbarrelIfOption],
+          ['MAGAZINE SLOT', attachments.magazineIfOption],
+          ['OPTICS RAIL', attachments.opticsIfOption],
+        ];
+
+        const slots: Record<string, Record<string, number>> = {};
+        for (const [slotType, bonusKey] of slotMapping) {
+          if (!bonusKey || bonusKey === 'MISSING MOD' || bonusKey === 'NOT AN OPTION') continue;
+          // Find a weapon mod whose type matches and whose bonus contains this key
+          const mod = allMods.find(
+            (m) => m.type.toUpperCase() === slotType && Object.keys(m.bonus).includes(bonusKey),
+          );
+          if (mod) {
+            slots[slotType] = { ...mod.bonus };
+          } else {
+            // Fallback: store the bonus key with value 0
+            slots[slotType] = { [bonusKey]: 0 };
+          }
+        }
+        if (Object.keys(slots).length > 0) {
+          bw.setModSlots(slots);
+        }
+      }
+
+      return bw;
     };
 
     const convertGear = (llmGear: any, gearType: GearType): BuildGear | null => {
@@ -227,62 +280,48 @@ class Build {
       const llmCore: CoreType | null = llmGear.core ?? null;
 
       const storeState = useCleanDataStore.getState();
-
-      // Try named/exotic gear first
       const namedGear: NamedExoticGear[] = storeState.getCleanData('namedGear') || [];
-      let namedMatch = fuzzyFind(name, namedGear, (ng) => ng.name);
-
-      if (namedMatch) {
-        try {
-          const buildGear = new BuildGear(namedMatch);
-
-          // If the gear has 3 cores (exotic with all 3), keep them as-is from the data
-          // Otherwise (1 core), assign the first LLM-provided core
-          if (buildGear.core.length < 3 && llmCore) {
-            const coreType = parseCoreType(llmCore);
-            buildGear.setCore(coreType);
-          }
-
-          return buildGear;
-        } catch (e) {
-          console.warn(`Build.fromLlm: failed to create BuildGear from named gear "${name}"`, e);
-        }
-      }
-
-      // Try gearsets
       const gearsets: Gearset[] = storeState.getCleanData('gearsets') || [];
-      const gearsetMatch = fuzzyFind(name, gearsets, (gs) => gs.name);
-      if (gearsetMatch) {
-        try {
-          const buildGear = new BuildGear(gearsetMatch, gearType);
-          if (llmCore) {
-            const coreType = parseCoreType(llmCore);
-            buildGear.setCore(coreType);
-          }
-          return buildGear;
-        } catch (e) {
-          console.warn(`Build.fromLlm: failed to create BuildGear from gearset "${name}"`, e);
-        }
-      }
-
-      // Try brandsets
       const brandsets: Brandset[] = storeState.getCleanData('brandsets') || [];
-      const brandMatch = fuzzyFind(name, brandsets, (bs) => bs.brand);
-      if (brandMatch) {
-        try {
-          const buildGear = new BuildGear(brandMatch, gearType);
-          if (llmCore) {
-            const coreType = parseCoreType(llmCore);
-            buildGear.setCore(coreType);
-          }
-          return buildGear;
-        } catch (e) {
-          console.warn(`Build.fromLlm: failed to create BuildGear from brandset "${name}"`, e);
-        }
+
+      // Build a single combined list with a unified name accessor and source tag
+      const combined: {
+        item: NamedExoticGear | Gearset | Brandset;
+        name: string;
+        source: 'named' | 'gearset' | 'brand';
+      }[] = [
+        ...namedGear.map((ng) => ({ item: ng, name: ng.name, source: 'named' as const })),
+        ...gearsets.map((gs) => ({ item: gs, name: gs.name, source: 'gearset' as const })),
+        ...brandsets.map((bs) => ({ item: bs, name: bs.brand, source: 'brand' as const })),
+      ];
+
+      const match = fuzzyFind(name, combined, (entry) => entry.name);
+
+      if (!match) {
+        console.log(
+          `Build.fromLlm: no gear match for "${name}" across ${namedGear.length} named, ${gearsets.length} gearsets, ${brandsets.length} brands`,
+        );
+        return null;
       }
 
-      console.warn(`Build.fromLlm: no match found for gear "${name}"`);
-      return null;
+      try {
+        const buildGear =
+          match.source === 'named'
+            ? new BuildGear(match.item)
+            : new BuildGear(match.item, gearType);
+
+        // If the gear has 3 cores (exotic with all 3), keep them as-is from the data
+        // Otherwise (1 core), assign the first LLM-provided core
+        if (buildGear.core.length < 3 && llmCore) {
+          const coreType = parseCoreType(llmCore);
+          buildGear.setCore(coreType);
+        }
+
+        return buildGear;
+      } catch (e) {
+        console.warn(`Build.fromLlm: failed to create BuildGear from ${match.source} "${name}"`, e);
+        return null;
+      }
     };
 
     return {
@@ -299,63 +338,34 @@ class Build {
   }
 
   toJSON() {
+    const llm = this.toLlm().toJSON();
     return {
-      id: this.id,
       name: this.name,
-      specialization: this.specialization,
-      primaryWeapon: this.primaryWeapon,
-      secondaryWeapon: this.secondaryWeapon,
-      pistol: this.pistol,
-      mask: this.mask,
-      chest: this.chest,
-      holster: this.holster,
-      backpack: this.backpack,
-      gloves: this.gloves,
-      kneepads: this.kneepads,
-      skill1: this.skill1,
-      skill2: this.skill2,
+      ...llm,
       watch: this.watch,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
     };
   }
 
   static fromJSON(json: any): Build {
-    const buildData = { ...json };
+    // json is in LlmBuild format with name and watch added
+    const llmBuild = new LlmBuild({
+      primaryWeapon: json.primaryWeapon,
+      secondaryWeapon: json.secondaryWeapon,
+      pistol: json.pistol,
+      mask: json.mask,
+      chest: json.chest,
+      holster: json.holster,
+      backpack: json.backpack,
+      gloves: json.gloves,
+      kneepads: json.kneepads,
+    });
 
-    // Convert gear slot data to BuildGear instances if they exist and aren't already instances
-    const gearSlots = ['mask', 'chest', 'holster', 'backpack', 'gloves', 'kneepads'] as const;
-    for (const slot of gearSlots) {
-      if (buildData[slot] && !(buildData[slot] instanceof BuildGear)) {
-        try {
-          buildData[slot] = BuildGear.fromJSON(buildData[slot]);
-        } catch (error) {
-          console.warn(`Build.fromJSON: failed to restore ${slot}, keeping raw data`, error);
-        }
-      }
-    }
+    const partial = Build.fromLlm(llmBuild);
 
-    // Convert weapon slot data to BuildWeapon instances if they exist and aren't already instances
-    const weaponSlots = ['primaryWeapon', 'secondaryWeapon', 'pistol'] as const;
-    for (const slot of weaponSlots) {
-      if (buildData[slot] && !(buildData[slot] instanceof BuildWeapon)) {
-        try {
-          buildData[slot] = new BuildWeapon(buildData[slot].weapon);
-        } catch (error) {
-          console.warn(`Build.fromJSON: failed to restore ${slot}, keeping raw data`, error);
-        }
-      }
-    }
-
-    return new Build(buildData);
-  }
-
-  clone(): Build {
     return new Build({
-      ...this.toJSON(),
-      id: null, // Generate new ID for clone
-      createdAt: null,
-      updatedAt: null,
+      name: json.name || '',
+      watch: json.watch || null,
+      ...partial,
     });
   }
 }

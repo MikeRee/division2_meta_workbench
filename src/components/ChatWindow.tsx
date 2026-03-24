@@ -10,6 +10,8 @@ import { getBasePath } from '../utils/basePath';
 import { fuzzyFind } from '../utils/fuzzySearch';
 import { parseCoreType } from '../models/CoreValue';
 import NamedExoticGear from '../models/NamedExoticGear';
+import Gearset from '../models/Gearset';
+import Brandset from '../models/Brandset';
 
 interface OpenRouterModel {
   id: string;
@@ -335,37 +337,44 @@ function ChatWindow() {
       const reconstructGear = (llmGear: any, gearType: GearType): BuildGear | null => {
         if (!llmGear || !llmGear.name) return null;
 
+        // Build a single combined list with a unified name accessor and source tag
+        const combined: {
+          item: NamedExoticGear | Gearset | Brandset;
+          name: string;
+          source: 'named' | 'gearset' | 'brand';
+        }[] = [
+          ...(namedGear as NamedExoticGear[]).map((ng) => ({
+            item: ng,
+            name: ng.name,
+            source: 'named' as const,
+          })),
+          ...gearsets.map((gs) => ({ item: gs, name: gs.name, source: 'gearset' as const })),
+          ...brandsets.map((bs) => ({ item: bs, name: bs.brand, source: 'brand' as const })),
+        ];
+
         // Try exact match first
-        let namedGearItem = (namedGear as NamedExoticGear[]).find((g) => g.name === llmGear.name);
-        let gearsetItem = gearsets.find((g) => g.name === llmGear.name);
-        let brandsetItem = brandsets.find((b) => b.brand === llmGear.name);
+        let match = combined.find((entry) => entry.name === llmGear.name);
 
         // If no exact match, try fuzzy search
-        if (!namedGearItem && !gearsetItem && !brandsetItem) {
-          namedGearItem =
-            fuzzyFind(llmGear.name, namedGear as NamedExoticGear[], (g) => g.name, 0.75) ??
-            undefined;
-          gearsetItem = fuzzyFind(llmGear.name, gearsets, (g) => g.name, 0.75) ?? undefined;
-          brandsetItem = fuzzyFind(llmGear.name, brandsets, (b) => b.brand, 0.75) ?? undefined;
-
-          if (namedGearItem || gearsetItem || brandsetItem) {
-            const matchedName = namedGearItem?.name || gearsetItem?.name || brandsetItem?.brand;
-            console.log(`Fuzzy matched "${llmGear.name}" to "${matchedName}"`);
+        if (!match) {
+          match = fuzzyFind(llmGear.name, combined, (entry) => entry.name, 0.75) ?? undefined;
+          if (match) {
+            console.log(`Fuzzy matched "${llmGear.name}" to "${match.name}"`);
           }
         }
 
-        const foundItem = namedGearItem || gearsetItem || brandsetItem;
-
-        if (!foundItem) {
-          console.warn(`Gear not found: ${llmGear.name}`);
+        if (!match) {
+          console.log(
+            `Gear not found: "${llmGear.name}" across ${(namedGear as NamedExoticGear[]).length} named, ${gearsets.length} gearsets, ${brandsets.length} brands`,
+          );
           return null;
         }
 
         // Create BuildGear from the found item
         const buildGear =
-          gearsetItem || brandsetItem
-            ? new BuildGear(foundItem, gearType)
-            : new BuildGear(foundItem);
+          match.source === 'named'
+            ? new BuildGear(match.item)
+            : new BuildGear(match.item, gearType);
 
         // Apply core attributes from LlmGear if specified
         // If the gear already has 3 cores (exotic with all 3), keep them as-is from the data
