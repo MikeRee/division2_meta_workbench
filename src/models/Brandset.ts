@@ -9,6 +9,10 @@ class Brandset {
   twoPc: Record<string, number>;
   threePc: Record<string, number>;
 
+  get name(): string {
+    return this.brand;
+  }
+
   static readonly FIELD_TYPES = {
     icon: 'string',
     brand: 'string',

@@ -241,7 +241,7 @@ class Build {
           // Otherwise (1 core), assign the first LLM-provided core
           if (buildGear.core.length < 3 && llmCore) {
             const coreType = parseCoreType(llmCore);
-            buildGear.core = [coreType];
+            buildGear.setCore(coreType);
           }
 
           return buildGear;
@@ -258,7 +258,7 @@ class Build {
           const buildGear = new BuildGear(gearsetMatch, gearType);
           if (llmCore) {
             const coreType = parseCoreType(llmCore);
-            buildGear.core = [coreType];
+            buildGear.setCore(coreType);
           }
           return buildGear;
         } catch (e) {
@@ -274,7 +274,7 @@ class Build {
           const buildGear = new BuildGear(brandMatch, gearType);
           if (llmCore) {
             const coreType = parseCoreType(llmCore);
-            buildGear.core = [coreType];
+            buildGear.setCore(coreType);
           }
           return buildGear;
         } catch (e) {

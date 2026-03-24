@@ -13,6 +13,10 @@ class Gearset {
   backpack: string;
   hint: string;
 
+  get icon(): string {
+    return this.logo;
+  }
+
   static readonly FIELD_TYPES = {
     logo: 'string',
     name: 'string',

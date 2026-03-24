@@ -377,7 +377,7 @@ function ChatWindow() {
           Array.isArray(llmGear.core) &&
           llmGear.core.length > 0
         ) {
-          buildGear.core = llmGear.core.map((coreType: string) => parseCoreType(coreType));
+          buildGear.setCore(llmGear.core.map((coreType: string) => parseCoreType(coreType))[0]);
         }
 
         // Apply gear attributes from LlmGear if they exist

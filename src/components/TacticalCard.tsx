@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import styles from './TacticalCard.module.css';
 import BuildGear, { GearSource } from '../models/BuildGear';
 import { getDefaultCoreImage } from '../models/CoreValue';
-import { getDefaultAttrImage, getDefaultModImage } from '../models/GearMod';
+import { getDefaultAttrImage, getDefaultModImage, GearModClassification } from '../models/GearMod';
 
 // Color mapping based on GearSource
 const getGearColors = (source: GearSource | null) => {
@@ -85,87 +85,103 @@ const TacticalCard: React.FC<TacticalCardProps> = ({ buildGear, onClick }) => {
           </div>
         </div>
 
-        <div className={styles.gearAttributes}>
-          {buildGear.minor1 && (
-            <div className={styles.attribute}>
-              {buildGear.minor1.value}
-              {buildGear.minor1.value && buildGear.minor1.value < 1000
-                ? '%'
-                : buildGear.minor1.value && buildGear.minor1.value >= 1000
-                  ? '/s'
-                  : ''}{' '}
-              {buildGear.minor1.key}
+        <div className={styles.badgeList}>
+          {/* Core attribute icons — all on one row */}
+          {buildGear.core && buildGear.core.length > 0 && (
+            <div className={styles.badgeRow}>
+              {buildGear.core.map((coreValue, index) => (
+                <div
+                  key={`core-${index}`}
+                  className={styles.attributeIcon}
+                  dangerouslySetInnerHTML={{
+                    __html: getDefaultCoreImage(coreValue),
+                  }}
+                />
+              ))}
             </div>
           )}
-          {buildGear.minor2 && (
-            <div className={styles.attribute}>
-              {buildGear.minor2.value}
-              {buildGear.minor2.value && buildGear.minor2.value < 1000
-                ? '%'
-                : buildGear.minor2.value && buildGear.minor2.value >= 1000
-                  ? '/s'
-                  : ''}{' '}
-              {buildGear.minor2.key}
-            </div>
-          )}
-          {buildGear.minor3 && (
-            <div className={styles.attribute}>
-              {buildGear.minor3.value}
-              {buildGear.minor3.value && buildGear.minor3.value < 1000
-                ? '%'
-                : buildGear.minor3.value && buildGear.minor3.value >= 1000
-                  ? '/s'
-                  : ''}{' '}
-              {buildGear.minor3.key}
-            </div>
-          )}
-        </div>
 
-        <div className={styles.pipContainer}>
-          {/* Core attribute images */}
-          {buildGear.core &&
-            buildGear.core.map((coreValue, index) => (
+          {/* Minor 1 — icon + label + value */}
+          {buildGear.minor1 && buildGear.minor1.key && (
+            <div className={styles.badgeRow}>
               <div
-                key={index}
                 className={styles.attributeIcon}
                 dangerouslySetInnerHTML={{
-                  __html: getDefaultCoreImage(coreValue),
+                  __html: buildGear.minor1.core
+                    ? getDefaultCoreImage(buildGear.minor1.core)
+                    : getDefaultAttrImage(
+                        buildGear.minor1.classification ?? GearModClassification.Offensive,
+                      ),
                 }}
               />
-            ))}
-
-          {/* Minor 1 attribute image */}
-          {buildGear.minor1 && (buildGear.minor1.classification || buildGear.minor1.core) && (
-            <div
-              className={styles.attributeIcon}
-              dangerouslySetInnerHTML={{
-                __html: buildGear.minor1.core
-                  ? getDefaultCoreImage(buildGear.minor1.core)
-                  : getDefaultAttrImage(buildGear.minor1.classification!),
-              }}
-            />
+              <span className={styles.badgeLabel}>
+                {buildGear.minor1.key}{' '}
+                {buildGear.minor1.value != null && (
+                  <span className={styles.badgeValue}>
+                    {buildGear.minor1.value}
+                    {buildGear.minor1.value < 1000
+                      ? '%'
+                      : buildGear.minor1.value >= 1000
+                        ? '/s'
+                        : ''}
+                  </span>
+                )}
+              </span>
+            </div>
           )}
 
-          {/* Minor 2 attribute image */}
-          {buildGear.minor2 && (buildGear.minor2.classification || buildGear.minor2.core) && (
-            <div
-              className={styles.attributeIcon}
-              dangerouslySetInnerHTML={{
-                __html: buildGear.minor2.core
-                  ? getDefaultCoreImage(buildGear.minor2.core)
-                  : getDefaultAttrImage(buildGear.minor2.classification!),
-              }}
-            />
+          {/* Minor 2 — icon + label + value */}
+          {buildGear.minor2 && buildGear.minor2.key && (
+            <div className={styles.badgeRow}>
+              <div
+                className={styles.attributeIcon}
+                dangerouslySetInnerHTML={{
+                  __html: buildGear.minor2.core
+                    ? getDefaultCoreImage(buildGear.minor2.core)
+                    : getDefaultAttrImage(
+                        buildGear.minor2.classification ?? GearModClassification.Offensive,
+                      ),
+                }}
+              />
+              <span className={styles.badgeLabel}>
+                {buildGear.minor2.key}{' '}
+                {buildGear.minor2.value != null && (
+                  <span className={styles.badgeValue}>
+                    {buildGear.minor2.value}
+                    {buildGear.minor2.value < 1000
+                      ? '%'
+                      : buildGear.minor2.value >= 1000
+                        ? '/s'
+                        : ''}
+                  </span>
+                )}
+              </span>
+            </div>
           )}
 
-          {/* Mod slot image */}
+          {/* Mod slot — icon + label + value */}
           {buildGear.minor3 && buildGear.minor3.classification && (
-            <div
-              className={styles.attributeIcon}
-              dangerouslySetInnerHTML={{
-                __html: getDefaultModImage(buildGear.minor3.classification),
-              }}
-            />
+            <div className={styles.badgeRow}>
+              <div
+                className={styles.attributeIcon}
+                dangerouslySetInnerHTML={{
+                  __html: getDefaultModImage(buildGear.minor3.classification),
+                }}
+              />
+              <span className={styles.badgeLabel}>
+                {buildGear.minor3.key}{' '}
+                {buildGear.minor3.value != null && (
+                  <span className={styles.badgeValue}>
+                    {buildGear.minor3.value}
+                    {buildGear.minor3.value < 1000
+                      ? '%'
+                      : buildGear.minor3.value >= 1000
+                        ? '/s'
+                        : ''}
+                  </span>
+                )}
+              </span>
+            </div>
           )}
         </div>
       </div>

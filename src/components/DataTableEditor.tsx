@@ -15,6 +15,7 @@ import ModSlotsOverlay from './ModSlotsOverlay';
 import StacksOverlay from './StacksOverlay';
 import FixedTalentOverlay from './FixedTalentOverlay';
 import WeaponMod from '../models/WeaponMod';
+import { CoreType } from '../models/CoreValue';
 import {
   useCleanDataStore,
   getModelFields,
@@ -171,6 +172,8 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
     return mods ? WeaponMod.distinctTypes(mods) : [];
   }, []);
 
+  const coreTypeOptions = useMemo(() => Object.values(CoreType), []);
+
   // Available talent names for the fixedTalent overlay
   const availableTalentNames = useMemo(() => {
     if (tableName !== 'weapons') return [];
@@ -215,6 +218,15 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
 
   // Model field types — the source of truth for column type detection
   const modelFieldTypes = useMemo(() => getModelFieldTypes(tableName as MainDataKey), [tableName]);
+
+  // Columns typed as CoreType[] should use CoreType enum values, not mod types
+  const coreTypeColumns = useMemo(() => {
+    const cols = new Set<string>();
+    for (const [key, type] of Object.entries(modelFieldTypes)) {
+      if (type === 'CoreType[]') cols.add(key);
+    }
+    return cols;
+  }, [modelFieldTypes]);
 
   // Columns that are always treated as Record<string, number>
   const KNOWN_RECORD_COLUMNS = new Set(['fixedPrimary1', 'fixedPrimary2', 'fixedSecondary']);
@@ -876,7 +888,9 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
         <ModSlotsOverlay
           title={modSlotsOverlay.colId}
           slots={modSlotsOverlay.slots}
-          availableTypes={availableModTypes}
+          availableTypes={
+            coreTypeColumns.has(modSlotsOverlay.colId) ? coreTypeOptions : availableModTypes
+          }
           onSave={handleModSlotsSave}
           onClose={() => setModSlotsOverlay(null)}
         />

@@ -1,3 +1,4 @@
+import { name } from './../../node_modules/@leichtgewicht/ip-codec/types/index.d';
 import { CoreType, parseCoreType } from './CoreValue';
 import { GearModValue, GearModClassification } from './GearMod';
 import { parseEnum } from '../utils/enumParser';
@@ -44,15 +45,25 @@ class BuildGear {
   private static gearAttributeOptions: Record<string, number> = {};
   private static gearModAttributeOptions: Record<string, number> = {};
 
-  name: string;
+  get name(): string {
+    return this.data.name;
+  }
   source: GearSource;
   type: GearType;
-  icon: string;
+  get icon(): string {
+    return this.data.icon;
+  }
   private _core?: CoreType;
   get core(): CoreType[] {
-    if (this.source == GearSource.Exotic) {
-      return (this.data as NamedExoticGear)?.core;
-    }
+    console.log(
+      'BuildGear.core getter - _core:',
+      this._core,
+      'data:',
+      this.data,
+      'source:',
+      this.source,
+    );
+
     if (this._core) return [this._core];
     if (this.data && 'core' in this.data) {
       if (Array.isArray(this.data.core)) {
@@ -68,12 +79,12 @@ class BuildGear {
     }
     return [];
   }
-  set core(values: CoreType[]) {
-    if (values.length > 0) {
-      this._core = values[0];
-    } else {
-      this._core = undefined;
+  setCore(core: CoreType | undefined): string[] {
+    if (this.source == GearSource.Exotic) {
+      return ['Unable to set core type on exotic gear'];
     }
+    this._core = core;
+    return [];
   }
   private _attribute1?: Record<string, number>;
   get attribute1(): Record<string, number> {
@@ -236,55 +247,33 @@ class BuildGear {
   constructor(item: Gearset | Brandset | NamedExoticGear, gearType?: GearType) {
     this._modSlots = {};
     // Check if it's a GearItem (Gearset, Brandset, or NamedExoticGear)
-    if (this.isGearset(item)) {
+    if (item instanceof Gearset) {
       if (!gearType) {
         throw new Error(
           `Cannot create BuildGear from Gearset "${item.name}" without specifying a gear type. Gearsets must be assigned to a specific gear slot.`,
         );
       }
-      this.name = item.name;
       this.source = GearSource.Gearset;
       this.type = gearType;
-      this.icon = item.logo;
-      this._core = this.mapCore(item.core);
       this.data = item;
-    } else if (this.isBrandset(item)) {
+    } else if (item instanceof Brandset) {
       if (!gearType) {
         throw new Error(
           `Cannot create BuildGear from Brandset "${item.brand}" without specifying a gear type. Brandsets must be assigned to a specific gear slot.`,
         );
       }
-      this.name = item.brand;
       this.source = GearSource.Brandset;
       this.type = gearType;
-      this.icon = item.icon;
-      this._core = this.mapCore(item.core);
       this.data = item;
-    } else if (this.isNamedGear(item)) {
-      this.name = item.name;
+    } else if (item instanceof NamedExoticGear) {
       this.source = item.isExotic ? GearSource.Exotic : GearSource.Named;
       this.type = item.type;
-      this.icon = item.icon;
       this.data = item;
     } else {
       throw new Error(
         'BuildGear constructor requires a Gearset, Brandset, or NamedExoticGear item',
       );
     }
-  }
-
-  private isGearset(item: any): item is Gearset {
-    return item instanceof Gearset || ('logo' in item && 'twoPc' in item && 'fourPc' in item);
-  }
-
-  private isBrandset(item: any): item is Brandset {
-    return item instanceof Brandset || ('brand' in item && 'onePc' in item && !('type' in item));
-  }
-
-  private isNamedGear(item: any): item is NamedExoticGear {
-    return (
-      item instanceof NamedExoticGear || ('talent' in item && 'desc' in item && 'type' in item)
-    );
   }
 
   private mapCore(core: CoreType | Record<CoreType, string[]>): CoreType {
@@ -328,12 +317,9 @@ class BuildGear {
     // This bypasses the constructor since we're deserializing saved data
     const gear = Object.create(BuildGear.prototype);
 
-    gear.name = json.name || '';
     gear.source = parseGearSource(json.source);
 
     gear.type = json.type ? parseGearType(json.type) : null;
-    gear.icon = json.icon || '';
-    gear._modSlots = {};
 
     // Handle core - supports CoreType string or legacy {type, value} object
     if (json.core && Array.isArray(json.core) && json.core.length > 0) {
@@ -343,8 +329,6 @@ class BuildGear {
       gear._core = parseCoreType(json.core);
     } else if (json.core && typeof json.core === 'object' && 'type' in json.core) {
       gear._core = parseCoreType(json.core.type);
-    } else {
-      gear._core = CoreType.WeaponDamage;
     }
 
     // Restore attribute1/attribute2 from minor1/minor2 if present (legacy format)
@@ -368,7 +352,7 @@ class BuildGear {
     }
 
     // Look up the source model from the clean data store
-    gear.data = BuildGear.lookupData(gear.source, gear.name);
+    gear.data = BuildGear.lookupData(gear.source, json.name);
 
     return gear;
   }
