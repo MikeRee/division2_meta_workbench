@@ -570,3 +570,22 @@
   border-color: #d4af37;
   color: #d4af37;
 }
+
+/* Context toggle checkbox on messages */
+.context-toggle {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.context-toggle input[type="checkbox"] {
+  cursor: pointer;
+  width: 14px;
+  height: 14px;
+  accent-color: #d4af37;
+  margin: 0;
+}
+
+.message.excluded {
+  opacity: 0.4;
+}

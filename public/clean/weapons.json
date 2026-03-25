@@ -135,7 +135,11 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 85
+    "hsd": 85,
+    "bonus": {
+      "hsd": 30,
+      "reload speed debuff": 50
+    }
   },
   {
     "type": "assault rifle",
@@ -155,7 +159,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Perfectly Overflowing"
+    ]
   },
   {
     "type": "assault rifle",
@@ -195,7 +202,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Perfect Allegro"
+    ]
   },
   {
     "type": "assault rifle",
@@ -263,7 +273,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Perfect Precision Strike"
+    ]
   },
   {
     "type": "assault rifle",
@@ -320,7 +333,10 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Perfect Optimist"
+    ]
   },
   {
     "type": "assault rifle",
@@ -420,7 +436,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Perfect Pressure Point"
+    ]
   },
   {
     "type": "assault rifle",
@@ -508,7 +527,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Perfect Frenzy"
+    ]
   },
   {
     "type": "assault rifle",
@@ -528,7 +550,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Perfect On Empty"
+    ]
   },
   {
     "type": "assault rifle",
@@ -628,7 +653,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Perfect Killer"
+    ]
   },
   {
     "type": "assault rifle",
@@ -648,7 +676,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Perfect Stabilize"
+    ]
   },
   {
     "type": "assault rifle",
@@ -686,7 +717,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Perfectly Close & Personal"
+    ]
   },
   {
     "type": "assault rifle",
@@ -746,7 +780,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Perfectly Ignited"
+    ]
   },
   {
     "type": "assault rifle",
@@ -766,7 +803,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "bonus": {
+      "base damage": 1782
+    }
   },
   {
     "type": "assault rifle",
@@ -880,7 +920,7 @@
     "type": "assault rifle",
     "variant": "MK16",
     "name": "Lud (SOCOM Mk16)",
-    "rarety": "NONE",
+    "rarety": "NAMED",
     "rpm": 650,
     "baseMagSize": 30,
     "moddedMagSize": 50,
@@ -894,7 +934,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Perfect Streamline"
+    ]
   },
   {
     "type": "assault rifle",
@@ -954,7 +997,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Perfectly Near Sighted"
+    ]
   },
   {
     "type": "assault rifle",
@@ -1020,7 +1066,10 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Perfectly In Sync"
+    ]
   },
   {
     "type": "assault rifle",
@@ -1088,7 +1137,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Future Perfection"
+    ]
   },
   {
     "type": "assault rifle",
@@ -1128,7 +1180,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Perfect Flatline"
+    ]
   },
   {
     "type": "assault rifle",
@@ -1168,7 +1223,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Perfectly Accurate"
+    ]
   },
   {
     "type": "assault rifle",
@@ -1236,7 +1294,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedTalent": [
+      "Perfect Overwhelm"
+    ]
   },
   {
     "type": "lmg",
@@ -1344,7 +1405,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedTalent": [
+      "Perfectly Steady Handed"
+    ]
   },
   {
     "type": "lmg",
@@ -1384,7 +1448,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedTalent": [
+      "Perfect Flatline"
+    ]
   },
   {
     "type": "lmg",
@@ -1404,7 +1471,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedTalent": [
+      "Perfect Precision Strike"
+    ]
   },
   {
     "type": "lmg",
@@ -1504,7 +1574,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedTalent": [
+      "Perfectly Unhinged"
+    ]
   },
   {
     "type": "lmg",
@@ -1524,7 +1597,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedTalent": [
+      "Swift"
+    ]
   },
   {
     "type": "lmg",
@@ -1673,7 +1749,7 @@
     "type": "lmg",
     "variant": "M60",
     "name": "Good Times (Black Market M60 E6)",
-    "rarety": "NONE",
+    "rarety": "NAMED",
     "rpm": 600,
     "baseMagSize": 100,
     "moddedMagSize": 150,
@@ -1687,7 +1763,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedTalent": [
+      "Perfect Fast Hands"
+    ]
   },
   {
     "type": "lmg",
@@ -1785,7 +1864,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedTalent": [
+      "Perfect Thunder Strike"
+    ]
   },
   {
     "type": "lmg",
@@ -1804,7 +1886,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedTalent": [
+      "Perfect Frenzy"
+    ]
   },
   {
     "type": "lmg",
@@ -1869,7 +1954,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedTalent": [
+      "Perfect Sadist"
+    ]
   },
   {
     "type": "lmg",
@@ -1991,7 +2079,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedTalent": [
+      "Perfect Pressure Point"
+    ]
   },
   {
     "type": "lmg",
@@ -2011,7 +2102,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedTalent": [
+      "Perfectly Optimized"
+    ]
   },
   {
     "type": "lmg",
@@ -2118,7 +2212,7 @@
     "type": "smg",
     "variant": "SMG-9",
     "name": "Purist (Converted SMG-9 A2)",
-    "rarety": "NONE",
+    "rarety": "NAMED",
     "rpm": 1,
     "baseMagSize": 32,
     "moddedMagSize": 52,
@@ -2132,7 +2226,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedTalent": [
+      "Perfect Streamline"
+    ]
   },
   {
     "type": "smg",
@@ -2232,7 +2329,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedTalent": [
+      "Perfect Thunder Strike"
+    ]
   },
   {
     "type": "smg",
@@ -2272,7 +2372,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedTalent": [
+      "Perfectly Vindictive"
+    ]
   },
   {
     "type": "smg",
@@ -2354,7 +2457,10 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedTalent": [
+      "Perfectly Strained"
+    ]
   },
   {
     "type": "smg",
@@ -2534,7 +2640,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedTalent": [
+      "Perfect Immobilize"
+    ]
   },
   {
     "type": "smg",
@@ -2554,7 +2663,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedTalent": [
+      "Perfect Killer"
+    ]
   },
   {
     "type": "smg",
@@ -2617,7 +2729,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedTalent": [
+      "Perfect Unwavering"
+    ]
   },
   {
     "type": "smg",
@@ -2782,7 +2897,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "bonus": {
+      "optimal range": 45
+    }
   },
   {
     "type": "smg",
@@ -2829,7 +2947,10 @@
     "optimalRange": 16,
     "modSlots": [],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedTalent": [
+      "Hidden Rock"
+    ]
   },
   {
     "type": "smg",
@@ -2844,7 +2965,10 @@
     "optimalRange": 19,
     "modSlots": [],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedTalent": [
+      "Perfect Stabilize"
+    ]
   },
   {
     "type": "smg",
@@ -2898,7 +3022,10 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedTalent": [
+      "Perfect Preservation"
+    ]
   },
   {
     "type": "smg",
@@ -2966,7 +3093,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedTalent": [
+      "Perfect Outsider"
+    ]
   },
   {
     "type": "smg",
@@ -2986,7 +3116,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedTalent": [
+      "Perfectly Measured"
+    ]
   },
   {
     "type": "smg",
@@ -3069,7 +3202,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedTalent": [
+      "Perfect Sledgehammer"
+    ]
   },
   {
     "type": "shotgun",
@@ -3087,7 +3223,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedTalent": [
+      "Perfectly Extra"
+    ]
   },
   {
     "type": "shotgun",
@@ -3134,7 +3273,10 @@
     "optimalRange": 11,
     "modSlots": [],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedTalent": [
+      "Perfect Pumped Up"
+    ]
   },
   {
     "type": "shotgun",
@@ -3164,7 +3306,10 @@
     "optimalRange": 7,
     "modSlots": [],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedTalent": [
+      "Primer Rounds"
+    ]
   },
   {
     "type": "shotgun",
@@ -3179,7 +3324,10 @@
     "optimalRange": 7,
     "modSlots": [],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "bonus": {
+      "shotgun damage": 17
+    }
   },
   {
     "type": "shotgun",
@@ -3217,7 +3365,10 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedTalent": [
+      "Perfect Distance"
+    ]
   },
   {
     "type": "shotgun",
@@ -3356,7 +3507,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedTalent": [
+      "Perfect Immobilize"
+    ]
   },
   {
     "type": "shotgun",
@@ -3375,7 +3529,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedTalent": [
+      "Perfect Jazz Hands"
+    ]
   },
   {
     "type": "shotgun",
@@ -3465,7 +3622,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedTalent": [
+      "Perfect Pummel"
+    ]
   },
   {
     "type": "shotgun",
@@ -3516,7 +3676,10 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedTalent": [
+      "Perfect Brazen"
+    ]
   },
   {
     "type": "shotgun",
@@ -3680,7 +3843,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedTalent": [
+      "Perfect Brazen"
+    ]
   },
   {
     "type": "shotgun",
@@ -3714,7 +3880,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedTalent": [
+      "Perfect Pummel"
+    ]
   },
   {
     "type": "shotgun",
@@ -3752,7 +3921,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "bonus": {
+      "armor on kill": 10
+    }
   },
   {
     "type": "shotgun",
@@ -3933,7 +4105,10 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedTalent": [
+      "Perfectly Behind You"
+    ]
   },
   {
     "type": "rifle",
@@ -4031,7 +4206,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedTalent": [
+      "Perfect Lucky Shot"
+    ]
   },
   {
     "type": "rifle",
@@ -4051,7 +4229,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedTalent": [
+      "Perfect Sledgehammer"
+    ]
   },
   {
     "type": "rifle",
@@ -4066,7 +4247,10 @@
     "optimalRange": 60,
     "modSlots": [],
     "fixedSlots": [],
-    "hsd": -100
+    "hsd": -100,
+    "fixedTalent": [
+      "Refreshing"
+    ]
   },
   {
     "type": "rifle",
@@ -4189,7 +4373,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedTalent": [
+      "Perfect Spike"
+    ]
   },
   {
     "type": "rifle",
@@ -4337,7 +4524,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedTalent": [
+      "Perfect Perpetuation"
+    ]
   },
   {
     "type": "rifle",
@@ -4415,7 +4605,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedTalent": [
+      "Perfect Rifleman"
+    ]
   },
   {
     "type": "rifle",
@@ -4500,7 +4693,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 61
+    "hsd": 61,
+    "fixedTalent": [
+      "Perfect Soft Spot"
+    ]
   },
   {
     "type": "rifle",
@@ -4540,7 +4736,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedTalent": [
+      "Perfectly In Sync"
+    ]
   },
   {
     "type": "rifle",
@@ -4574,7 +4773,10 @@
       "MAGAZINE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedTalent": [
+      "Perfect Boomerang"
+    ]
   },
   {
     "type": "rifle",
@@ -4662,7 +4864,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedTalent": [
+      "Perfect Eyeless"
+    ]
   },
   {
     "type": "mr",
@@ -4702,7 +4907,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedTalent": [
+      "Perfectly Determined"
+    ]
   },
   {
     "type": "mr",
@@ -4848,7 +5056,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedTalent": [
+      "Perfectly Behind You"
+    ]
   },
   {
     "type": "mr",
@@ -4867,7 +5078,10 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedTalent": [
+      "Perfect Ranger"
+    ]
   },
   {
     "type": "mr",
@@ -4955,7 +5169,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedTalent": [
+      "Perfectly Naked"
+    ]
   },
   {
     "type": "mr",
@@ -4975,7 +5192,11 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "bonus": {
+      "base damage": 230326,
+      "rpm": -200
+    }
   },
   {
     "type": "mr",
@@ -5083,7 +5304,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedTalent": [
+      "Perfect First Blood"
+    ]
   },
   {
     "type": "mr",
@@ -5215,7 +5439,7 @@
     "type": "mr",
     "variant": "M44",
     "name": "Instigator (Custom M44)",
-    "rarety": "NONE",
+    "rarety": "NAMED",
     "rpm": 55,
     "baseMagSize": 5,
     "moddedMagSize": 10,
@@ -5229,7 +5453,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedTalent": [
+      "Perfect Soft Spot"
+    ]
   },
   {
     "type": "mr",
@@ -5246,7 +5473,13 @@
       "OPTICS RAIL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedTalent": [
+      "Twinkling Lights"
+    ],
+    "bonus": {
+      "hsd": 137
+    }
   },
   {
     "type": "mr",
@@ -5265,7 +5498,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "bonus": {
+      "hsd": 137
+    }
   },
   {
     "type": "mr",
@@ -5345,7 +5581,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedTalent": [
+      "Perfect Reformation"
+    ]
   },
   {
     "type": "mr",
@@ -5385,7 +5624,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedTalent": [
+      "Future Perfection"
+    ]
   },
   {
     "type": "mr",
@@ -5449,7 +5691,10 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedTalent": [
+      "Perfect Unwavering"
+    ]
   },
   {
     "type": "pistol",
@@ -5505,7 +5750,10 @@
       "OPTICS RAIL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedTalent": [
+      "Perfect Sadist"
+    ]
   },
   {
     "type": "pistol",
@@ -5630,7 +5878,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedTalent": [
+      "Sport Mode"
+    ]
   },
   {
     "type": "pistol",
@@ -5650,7 +5901,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedTalent": [
+      "Perfect Breadbasket"
+    ]
   },
   {
     "type": "pistol",
@@ -5667,7 +5921,10 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedTalent": [
+      "Perfect Spike"
+    ]
   },
   {
     "type": "pistol",
@@ -5765,7 +6022,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedTalent": [
+      "Perfect Preservation"
+    ]
   },
   {
     "type": "pistol",
@@ -5823,7 +6083,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedTalent": [
+      "Perfect Salvage"
+    ]
   },
   {
     "type": "pistol",
@@ -5980,7 +6243,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedTalent": [
+      "Perfect Optimist"
+    ]
   },
   {
     "type": "pistol",
@@ -6052,7 +6318,10 @@
       "MAGAZINE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedTalent": [
+      "Perfect Finisher"
+    ]
   },
   {
     "type": "pistol",
@@ -6070,7 +6339,10 @@
       "MAGAZINE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedTalent": [
+      "Perfectly Determined"
+    ]
   },
   {
     "type": "pistol",
@@ -6088,7 +6360,11 @@
       "MAGAZINE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "bonus": {
+      "base damage": 10,
+      "rof": -7
+    }
   },
   {
     "type": "pistol",
@@ -6207,6 +6483,9 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "bonus": {
+      "skill tier": 1
+    }
   }
 ]

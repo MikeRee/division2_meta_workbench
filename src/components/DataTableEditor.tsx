@@ -14,6 +14,8 @@ import FixedSlotsOverlay from './FixedSlotsOverlay';
 import ModSlotsOverlay from './ModSlotsOverlay';
 import StacksOverlay from './StacksOverlay';
 import FixedTalentOverlay from './FixedTalentOverlay';
+import TalentPickerModal from './TalentPickerModal';
+import type Talent from '../models/Talent';
 import WeaponMod from '../models/WeaponMod';
 import { CoreType } from '../models/CoreValue';
 import {
@@ -165,6 +167,11 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
     colId: string;
     talents: string[];
   } | null>(null);
+  // Talent-ref picker state (for gearset talent columns)
+  const [talentRefPicker, setTalentRefPicker] = useState<{
+    rowId: number;
+    colId: string;
+  } | null>(null);
 
   // Get available mod types from clean data store
   const availableModTypes = useMemo(() => {
@@ -209,6 +216,12 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
     }
     return [...names].sort();
   }, [tableName, tableData]);
+
+  // Full Talent objects for the talent picker modal
+  const allTalentObjects = useMemo(() => {
+    const raw = useCleanDataStore.getState().getCleanData('talents');
+    return (raw ?? []) as Talent[];
+  }, []);
 
   // Columns that are always treated as object arrays even when all rows are empty
   const KNOWN_OBJECT_ARRAY_COLUMNS = new Set(['stacks', 'perfectStacks']);
@@ -792,31 +805,19 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
                         }
                       >
                         {isEditing && isTalentRef ? (
-                          <select
+                          <button
                             className="dt-cell-input"
-                            value={editValue}
-                            onChange={(e) => {
-                              setEditValue(e.target.value);
-                              setTableData((prev) =>
-                                prev.map((row) =>
-                                  row.__rowId === rowId ? { ...row, [colId]: e.target.value } : row,
-                                ),
-                              );
+                            style={{ cursor: 'pointer', textAlign: 'left' }}
+                            onClick={() => {
+                              setTalentRefPicker({ rowId, colId });
                               setEditingCell(null);
                               setEditValue('');
                             }}
-                            onBlur={cancelEdit}
-                            onKeyDown={handleKeyDown}
                             autoFocus
-                            aria-label={`Edit ${colId}`}
+                            aria-label={`Pick talent for ${colId}`}
                           >
-                            <option value="">— select talent —</option>
-                            {allTalentOptions.map((opt) => (
-                              <option key={opt} value={opt}>
-                                {opt}
-                              </option>
-                            ))}
-                          </select>
+                            {String(value || '— select talent —')}
+                          </button>
                         ) : isEditing && isEnum ? (
                           <select
                             className="dt-cell-input"
@@ -935,6 +936,22 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
           onClose={() => setFixedTalentOverlay(null)}
         />
       )}
+
+      <TalentPickerModal
+        isOpen={!!talentRefPicker}
+        talents={allTalentObjects}
+        onSelect={(talent, isPerfect) => {
+          if (!talentRefPicker) return;
+          const { rowId, colId } = talentRefPicker;
+          const name = isPerfect ? (talent.perfectName ?? talent.name) : talent.name;
+          setTableData((prev) =>
+            prev.map((row) => (row.__rowId === rowId ? { ...row, [colId]: name } : row)),
+          );
+          setTalentRefPicker(null);
+        }}
+        onClose={() => setTalentRefPicker(null)}
+        title="Select Talent"
+      />
 
       {showJsonViewer && (
         <div className="dt-json-backdrop" onClick={() => setShowJsonViewer(false)}>

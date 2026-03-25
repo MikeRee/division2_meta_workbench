@@ -18,6 +18,7 @@ interface ChatMessage {
   timestamp: Date;
   modelApplied?: boolean; // Track if a model was applied from this message
   modelJson?: string; // Store the JSON model that was applied
+  inContext?: boolean; // Whether this message is included in LLM context
 }
 
 interface Prompts {
@@ -40,10 +41,11 @@ function ChatWindow() {
     if (savedMessages) {
       try {
         const parsed = JSON.parse(savedMessages);
-        // Convert timestamp strings back to Date objects
+        // Convert timestamp strings back to Date objects, default inContext to true
         return parsed.map((msg: any) => ({
           ...msg,
           timestamp: new Date(msg.timestamp),
+          inContext: msg.inContext !== undefined ? msg.inContext : true,
         }));
       } catch (error) {
         console.error('Failed to load chat messages:', error);
@@ -375,6 +377,7 @@ function ChatWindow() {
       role: 'user',
       content: inputValue,
       timestamp: new Date(),
+      inContext: true,
     };
 
     setMessages((prev) => [...prev, userMessage]);
@@ -392,6 +395,7 @@ function ChatWindow() {
         role: 'assistant',
         content: '',
         timestamp: new Date(),
+        inContext: true,
       },
     ]);
 
@@ -405,6 +409,7 @@ function ChatWindow() {
       ];
 
       for (const msg of messages) {
+        if (msg.inContext === false) continue; // Skip messages excluded from context
         if (msg.role === 'user') {
           chatMessages.push({
             role: 'user',
@@ -646,8 +651,32 @@ function ChatWindow() {
           </div>
         ) : (
           messages.map((message, index) => (
-            <div key={index} className={`message ${message.role}`}>
+            <div
+              key={index}
+              className={`message ${message.role}${message.inContext === false ? ' excluded' : ''}`}
+            >
               <div className="message-role">
+                <label
+                  className="context-toggle"
+                  title={
+                    message.inContext === false ? 'Excluded from context' : 'Included in context'
+                  }
+                >
+                  <input
+                    type="checkbox"
+                    checked={message.inContext !== false}
+                    onChange={() => {
+                      setMessages((prev) => {
+                        const updated = [...prev];
+                        updated[index] = {
+                          ...updated[index],
+                          inContext: !updated[index].inContext,
+                        };
+                        return updated;
+                      });
+                    }}
+                  />
+                </label>
                 {message.role === 'user' ? 'You' : 'Assistant'}
                 {message.modelApplied && message.modelJson && (
                   <span

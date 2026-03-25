@@ -1,5 +1,8 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import './RecordOverlay.css';
+import TalentPickerModal from './TalentPickerModal';
+import type Talent from '../models/Talent';
+import { useCleanDataStore } from '../stores/useCleanDataStore';
 
 interface FixedTalentOverlayProps {
   title: string;
@@ -17,18 +20,24 @@ function FixedTalentOverlay({
   onClose,
 }: FixedTalentOverlayProps) {
   const [current, setCurrent] = useState<string[]>(() => [...talents]);
-  const [selectedTalent, setSelectedTalent] = useState('');
+  const [pickerOpen, setPickerOpen] = useState(false);
 
-  const addable = useMemo(
-    () => availableTalents.filter((t) => !current.includes(t)),
-    [availableTalents, current],
+  const allTalents = useMemo(() => {
+    const raw = useCleanDataStore.getState().getCleanData('talents');
+    return (raw ?? []) as Talent[];
+  }, []);
+
+  const pickableTalents = useMemo(
+    () =>
+      allTalents.filter((t) => !current.includes(t.name) && !current.includes(t.perfectName ?? '')),
+    [allTalents, current],
   );
 
-  const handleAdd = useCallback(() => {
-    if (!selectedTalent) return;
-    setCurrent((prev) => [...prev, selectedTalent]);
-    setSelectedTalent('');
-  }, [selectedTalent]);
+  const handlePick = useCallback((talent: Talent, isPerfect: boolean) => {
+    const name = isPerfect ? (talent.perfectName ?? talent.name) : talent.name;
+    setCurrent((prev) => [...prev, name]);
+    setPickerOpen(false);
+  }, []);
 
   const handleRemove = useCallback((idx: number) => {
     setCurrent((prev) => prev.filter((_, i) => i !== idx));
@@ -70,22 +79,12 @@ function FixedTalentOverlay({
         </div>
         <div className="record-overlay-footer">
           <div className="modslots-add-row">
-            <select
-              className="modslots-select"
-              value={selectedTalent}
-              onChange={(e) => setSelectedTalent(e.target.value)}
-              disabled={addable.length === 0}
-              aria-label="Select talent to add"
+            <button
+              className="record-overlay-add"
+              onClick={() => setPickerOpen(true)}
+              disabled={pickableTalents.length === 0}
             >
-              <option value="">— add talent —</option>
-              {addable.map((t, i) => (
-                <option key={`${i}-${t}`} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-            <button className="record-overlay-add" onClick={handleAdd} disabled={!selectedTalent}>
-              + Add
+              + Add Talent
             </button>
           </div>
           <div className="record-overlay-actions">
@@ -98,6 +97,14 @@ function FixedTalentOverlay({
           </div>
         </div>
       </div>
+
+      <TalentPickerModal
+        isOpen={pickerOpen}
+        talents={pickableTalents}
+        onSelect={handlePick}
+        onClose={() => setPickerOpen(false)}
+        title="Add Fixed Talent"
+      />
     </div>
   );
 }
