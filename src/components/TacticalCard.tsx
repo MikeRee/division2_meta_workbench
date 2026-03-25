@@ -79,9 +79,12 @@ function getModSlotDisplay(
   const entries = Object.entries(slot);
   if (entries.length === 0) return null;
   const [key, value] = entries[0];
-  const classification =
-    useLookupStore.getState().gearAttributes?.getClassification(key) ??
-    GearModClassification.Offensive;
+  const gearModAttrsMap = useLookupStore.getState().gearModAttributes;
+  const modAttr =
+    gearModAttrsMap instanceof Map
+      ? Array.from(gearModAttrsMap.values()).find((m) => m.attribute === key)
+      : undefined;
+  const classification = modAttr?.classification ?? GearModClassification.Offensive;
   return { key, value, classification };
 }
 

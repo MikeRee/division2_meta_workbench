@@ -373,9 +373,17 @@ class Build {
             if (attr) buildGear.setAttribute2(attr.attribute, attr.max);
           }
 
-          if (llmGear.gearMod && buildGear.maxModSlots > 0) {
-            const attr = allGearAttrs.find((a: any) => a.attribute === llmGear.gearMod);
-            if (attr) buildGear.setModSlot(0, attr.attribute, attr.max);
+          if (llmGear.gearMods && buildGear.maxModSlots > 0) {
+            const gearModAttrsMap = useLookupStore.getState().gearModAttributes;
+            if (gearModAttrsMap instanceof Map) {
+              const allModAttrs = Array.from(gearModAttrsMap.values());
+              llmGear.gearMods.forEach((modName: string, idx: number) => {
+                if (idx < buildGear.maxModSlots) {
+                  const modAttr = allModAttrs.find((m) => m.attribute === modName);
+                  if (modAttr) buildGear.setModSlot(idx, modAttr.attribute, modAttr.max);
+                }
+              });
+            }
           }
         }
 

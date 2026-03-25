@@ -283,11 +283,15 @@ function Build() {
           }
         }
 
-        if (llmGear.gearMod && buildGear.maxModSlots > 0 && gearAttributesMap) {
-          const allGearAttrs = gearAttributesMap.toArray();
-          const mod = allGearAttrs.find((m) => m.attribute === llmGear.gearMod);
-          if (mod) {
-            buildGear.setModSlot(0, mod.attribute, mod.max);
+        if (llmGear.gearMod && buildGear.maxModSlots > 0) {
+          const gearModAttrsMap = useLookupStore.getState().gearModAttributes;
+          if (gearModAttrsMap instanceof Map) {
+            const modAttr = Array.from(gearModAttrsMap.values()).find(
+              (m) => m.attribute === llmGear.gearMod,
+            );
+            if (modAttr) {
+              buildGear.setModSlot(0, modAttr.attribute, modAttr.max);
+            }
           }
         }
 
