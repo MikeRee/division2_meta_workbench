@@ -4,6 +4,7 @@ import useBuildStore from '../stores/useBuildStore';
 import Build from '../models/Build';
 import LlmBuild from '../models/LlmBuild';
 import { getBasePath } from '../utils/basePath';
+import ModelPickerModal from './ModelPickerModal';
 
 interface OpenRouterModel {
   id: string;
@@ -31,10 +32,23 @@ interface Prompts {
 function ChatWindow() {
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [openRouterApiKey, setOpenRouterApiKey] = useState('');
-  const [selectedModel, setSelectedModel] = useState('google/gemini-flash-1.5');
+  const [selectedModel, setSelectedModel] = useState(() => {
+    return localStorage.getItem('openRouterModel') || 'google/gemini-flash-1.5';
+  });
   const [tempApiKey, setTempApiKey] = useState('');
-  const [availableModels, setAvailableModels] = useState<OpenRouterModel[]>([]);
+  const [availableModels, setAvailableModels] = useState<OpenRouterModel[]>(() => {
+    const cached = sessionStorage.getItem('openRouterModelsCache');
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  });
   const [isLoadingModels, setIsLoadingModels] = useState(false);
+  const [isModelPickerOpen, setIsModelPickerOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
     // Load messages from localStorage on initialization
     const savedMessages = localStorage.getItem('chatMessages');
@@ -97,11 +111,10 @@ function ChatWindow() {
     const savedKey = localStorage.getItem('openRouterApiKey');
     if (savedKey) {
       setOpenRouterApiKey(savedKey);
-      fetchAvailableModels(savedKey);
-    }
-    const savedModel = localStorage.getItem('openRouterModel');
-    if (savedModel) {
-      setSelectedModel(savedModel);
+      // Only fetch if no session-cached models
+      if (availableModels.length === 0) {
+        fetchAvailableModels(savedKey);
+      }
     }
 
     // Load prompts from file and localStorage
@@ -174,6 +187,7 @@ function ChatWindow() {
           })
           .sort((a: OpenRouterModel, b: OpenRouterModel) => a.name.localeCompare(b.name));
         setAvailableModels(models);
+        sessionStorage.setItem('openRouterModelsCache', JSON.stringify(models));
 
         // Update selected model if it's not in the list
         if (models.length > 0 && !models.find((m) => m.id === selectedModel)) {
@@ -535,12 +549,6 @@ function ChatWindow() {
     setIsConfigOpen(false);
   };
 
-  const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const model = e.target.value;
-    setSelectedModel(model);
-    localStorage.setItem('openRouterModel', model);
-  };
-
   const handleOpenConfig = () => {
     setTempApiKey(openRouterApiKey);
     setTempPrompts(prompts);
@@ -700,29 +708,16 @@ function ChatWindow() {
       </div>
       <div className="chat-input-area">
         <div className="chat-controls-row">
-          <select
-            className="model-selector"
-            value={selectedModel}
-            onChange={handleModelChange}
+          <button
+            className="model-selector-button"
+            onClick={() => setIsModelPickerOpen(true)}
             disabled={isLoadingModels || availableModels.length === 0 || isGenerating}
+            title={selectedModel}
           >
-            {isLoadingModels ? (
-              <option>Loading models...</option>
-            ) : availableModels.length > 0 ? (
-              availableModels.map((model) => (
-                <option key={model.id} value={model.id}>
-                  {model.name} ({model.promptPrice}/{model.completionPrice} per 1M tokens)
-                </option>
-              ))
-            ) : (
-              <>
-                <option value="google/gemini-flash-1.5">Gemini 1.5 Flash</option>
-                <option value="google/gemini-pro-1.5">Gemini 1.5 Pro</option>
-                <option value="openai/gpt-4o">GPT-4o</option>
-                <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
-              </>
-            )}
-          </select>
+            {isLoadingModels
+              ? 'Loading...'
+              : availableModels.find((m) => m.id === selectedModel)?.name || selectedModel}
+          </button>
           <label className="chat-checkbox">
             <input
               type="checkbox"
@@ -919,6 +914,17 @@ function ChatWindow() {
           </div>
         </div>
       )}
+
+      <ModelPickerModal
+        isOpen={isModelPickerOpen}
+        onClose={() => setIsModelPickerOpen(false)}
+        models={availableModels}
+        selectedModelId={selectedModel}
+        onSelectModel={(modelId) => {
+          setSelectedModel(modelId);
+          localStorage.setItem('openRouterModel', modelId);
+        }}
+      />
     </div>
   );
 }

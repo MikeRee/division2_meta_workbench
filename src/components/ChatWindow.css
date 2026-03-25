@@ -238,24 +238,30 @@
   flex-wrap: wrap;
 }
 
-.model-selector {
-  padding: 0.5rem 0.75rem;
+.model-selector-button {
+  padding: 0.4rem 0.75rem;
   border: 1px solid #3a3a3a;
   border-radius: 2px;
   font-size: 0.8rem;
   background: rgba(0, 0, 0, 0.5);
   color: #d4af37;
   cursor: pointer;
+  text-align: left;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: all 0.2s ease;
 }
 
-.model-selector:disabled {
+.model-selector-button:hover {
+  border-color: #d4af37;
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.model-selector-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
-
-.model-selector:focus {
-  outline: none;
-  border-color: #d4af37;
 }
 
 .chat-options {
