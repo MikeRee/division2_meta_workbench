@@ -7,11 +7,9 @@ import useLookupStore from './stores/useLookupStore';
 import useRawDataStore from './stores/useRawDataStore';
 import { useRulesStore } from './stores/useRulesStore';
 import Weapon from './models/Weapon';
-import WeaponTalent from './models/WeaponTalent';
 import ExoticWeapon from './models/ExoticWeapon';
 import Gearset from './models/Gearset';
 import Brandset from './models/Brandset';
-import GearTalent from './models/GearTalent';
 import Skill from './models/Skill';
 import WeaponMod from './models/WeaponMod';
 import Attribute from './models/Attribute';
@@ -20,12 +18,10 @@ import StatusImmunity from './models/StatusImmunity';
 import { getBasePath } from './utils/basePath';
 import {
   parseWeapons,
-  parseWeaponTalents,
   parseExoticWeapons,
   convertToExoticWeaponObjects,
   parseGearsets,
   parseBrandsets,
-  parseGearTalents,
   parseNamedGear,
   parseSkills,
   parseWeaponMods,
@@ -54,11 +50,9 @@ import NamedExoticGear from './models/NamedExoticGear';
 function App() {
   const [, setDisplayContent] = useState<string>('');
   const [, setWeapons] = useState<Weapon[]>([]);
-  const [, setWeaponTalents] = useState<WeaponTalent[]>([]);
   const [, setExoticWeapons] = useState<ExoticWeapon[]>([]);
   const [, setGearsets] = useState<Gearset[]>([]);
   const [, setBrandsets] = useState<Brandset[]>([]);
-  const [, setGearTalents] = useState<GearTalent[]>([]);
   const [, setNamedGear] = useState<NamedExoticGear[]>([]);
   const [, setSkills] = useState<Skill[]>([]);
   const [, setWeaponMods] = useState<WeaponMod[]>([]);
@@ -145,11 +139,10 @@ function App() {
       const base = getBasePath();
       const dataFiles: Record<string, string> = {
         weapons: `${base}/clean/weapons.json`,
-        weaponTalents: `${base}/clean/weaponTalents.json`,
+        talents: `${base}/clean/talents.json`,
         exoticWeapons: `${base}/clean/exoticWeapons.json`,
         gearsets: `${base}/clean/gearsets.json`,
         brandsets: `${base}/clean/brandsets.json`,
-        gearTalents: `${base}/clean/gearTalents.json`,
         namedGear: `${base}/clean/namedGear.json`,
         skills: `${base}/data/skills.json`,
         weaponMods: `${base}/clean/weaponMods.json`,
@@ -221,11 +214,9 @@ function App() {
       const base = getBasePath();
       const cleanDataFiles: Record<string, string> = {
         weapons: `${base}/clean/weapons.json`,
-        weaponTalents: `${base}/clean/weaponTalents.json`,
         exoticWeapons: `${base}/clean/exoticWeapons.json`,
         gearsets: `${base}/clean/gearsets.json`,
         brandsets: `${base}/clean/brandsets.json`,
-        gearTalents: `${base}/clean/gearTalents.json`,
         namedGear: `${base}/clean/namedGear.json`,
         weaponMods: `${base}/clean/weaponMods.json`,
         talents: `${base}/clean/talents.json`,
@@ -496,68 +487,6 @@ function App() {
     }
   };
 
-  const handleLoadWeaponTalents = async () => {
-    const apiKey = localStorage.getItem('googleApiKey');
-    let spreadsheetId = localStorage.getItem('division2GearSpreadsheet');
-
-    if (!apiKey || !spreadsheetId) {
-      setDisplayContent('Error: Please configure Google API Key and Spreadsheet ID in Config');
-      return;
-    }
-
-    // Extract spreadsheet ID from URL if full URL is provided
-    spreadsheetId = extractSpreadsheetId(spreadsheetId);
-    localStorage.setItem('division2GearSpreadsheet', spreadsheetId);
-
-    setDisplayContent('Loading weapon talents...');
-
-    try {
-      const url = `/api/sheets/v4/spreadsheets/${spreadsheetId}/values/Weapon Talents?key=${apiKey}&valueRenderOption=FORMULA`;
-
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`API Error: ${response.status} ${response.statusText}\n${errorText}`);
-      }
-
-      const data = await response.json();
-
-      if (!data.values || data.values.length === 0) {
-        setDisplayContent('No data found in Weapon Talents tab');
-        return;
-      }
-
-      // Parse weapon talents
-      const talentList = parseWeaponTalents(data);
-      setWeaponTalents(talentList);
-
-      // Store in lookup store
-      useLookupStore.getState().setWeaponTalents(talentList);
-
-      // Convert to JSON for display
-      const talentData = talentList.map((t: any) => ({ ...t }));
-      setDisplayContent(JSON.stringify(talentData, null, 2));
-    } catch (error) {
-      console.error('Full error:', error);
-      const errorMessageText = error instanceof Error ? error.message : String(error);
-      let errorMessage = `Error loading weapon talents: ${errorMessageText}\n\n`;
-      errorMessage += `Spreadsheet ID: ${spreadsheetId}\n`;
-      errorMessage += `API Key configured: ${apiKey ? 'Yes' : 'No'}\n\n`;
-      errorMessage += 'Troubleshooting:\n';
-      errorMessage +=
-        '1. Make sure the spreadsheet is shared publicly or with "Anyone with the link"\n';
-      errorMessage += '2. Verify the Google API Key has Google Sheets API enabled\n';
-      errorMessage += '3. Check that the "Weapon Talents" tab exists in the spreadsheet';
-      setDisplayContent(errorMessage);
-    }
-  };
-
   const handleLoadExoticWeapons = async () => {
     const apiKey = localStorage.getItem('googleApiKey');
     let spreadsheetId = localStorage.getItem('division2GearSpreadsheet');
@@ -797,65 +726,6 @@ function App() {
         '1. Make sure the spreadsheet is shared publicly or with "Anyone with the link"\n';
       errorMessage += '2. Verify the Google API Key has Google Sheets API enabled\n';
       errorMessage += '3. Check that the "Brandsets" tab exists in the spreadsheet';
-      setDisplayContent(errorMessage);
-    }
-  };
-
-  const handleLoadGearTalents = async () => {
-    const apiKey = localStorage.getItem('googleApiKey');
-    let spreadsheetId = localStorage.getItem('division2GearSpreadsheet');
-
-    if (!apiKey || !spreadsheetId) {
-      setDisplayContent('Error: Please configure Google API Key and Spreadsheet ID in Config');
-      return;
-    }
-
-    spreadsheetId = extractSpreadsheetId(spreadsheetId);
-    localStorage.setItem('division2GearSpreadsheet', spreadsheetId);
-
-    setDisplayContent('Loading gear talents...');
-
-    try {
-      const url = `/api/sheets/v4/spreadsheets/${spreadsheetId}/values/Gear Talents?key=${apiKey}&valueRenderOption=FORMULA`;
-
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`API Error: ${response.status} ${response.statusText}\n${errorText}`);
-      }
-
-      const data = await response.json();
-
-      if (!data.values || data.values.length === 0) {
-        setDisplayContent('No data found in Gear Talents tab');
-        return;
-      }
-
-      const talentList = parseGearTalents(data);
-      setGearTalents(talentList);
-
-      // Store in lookup store
-      useLookupStore.getState().setGearTalents(talentList);
-
-      const talentData = talentList.map((t: any) => ({ ...t }));
-      setDisplayContent(JSON.stringify(talentData, null, 2));
-    } catch (error) {
-      console.error('Full error:', error);
-      const errorMessageText = error instanceof Error ? error.message : String(error);
-      let errorMessage = `Error loading gear talents: ${errorMessageText}\n\n`;
-      errorMessage += `Spreadsheet ID: ${spreadsheetId}\n`;
-      errorMessage += `API Key configured: ${apiKey ? 'Yes' : 'No'}\n\n`;
-      errorMessage += 'Troubleshooting:\n';
-      errorMessage +=
-        '1. Make sure the spreadsheet is shared publicly or with "Anyone with the link"\n';
-      errorMessage += '2. Verify the Google API Key has Google Sheets API enabled\n';
-      errorMessage += '3. Check that the "Gear Talents" tab exists in the spreadsheet';
       setDisplayContent(errorMessage);
     }
   };
@@ -1162,11 +1032,9 @@ function App() {
 
     const loadHandlers: Record<string, () => Promise<void>> = {
       weapons: handleLoadWeapons,
-      weaponTalents: handleLoadWeaponTalents,
       exoticWeapons: handleLoadExoticWeapons,
       gearsets: handleLoadGearsets,
       brandsets: handleLoadBrandsets,
-      gearTalents: handleLoadGearTalents,
       namedGear: handleLoadNamedGear,
       skills: handleLoadSkills,
       weaponMods: handleLoadWeaponMods,
@@ -1595,15 +1463,9 @@ function App() {
         const values = data.values;
 
         // Special handling for weapon talents
-        if (dataType === 'weaponTalents') {
-          // Use the original parseWeaponTalents function
-          rawData = parseWeaponTalents({ values });
-        } else if (dataType === 'brandsets') {
+        if (dataType === 'brandsets') {
           // Use the original parseBrandsets function
           rawData = parseBrandsets({ values });
-        } else if (dataType === 'gearTalents') {
-          // Use the original parseGearTalents function
-          rawData = parseGearTalents({ values });
         } else if (dataType === 'weaponMods') {
           // Extract raw weapon mods data without using the model
           let currentType = '';

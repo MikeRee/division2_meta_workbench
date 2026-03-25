@@ -1,12 +1,12 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import Weapon from '../models/Weapon';
-import WeaponTalent from '../models/WeaponTalent';
 import ExoticWeapon from '../models/ExoticWeapon';
 import Gearset from '../models/Gearset';
 import Brandset from '../models/Brandset';
 import Skill from '../models/Skill';
 import WeaponMod from '../models/WeaponMod';
+import Talent from '../models/Talent';
 import Attribute from '../models/Attribute';
 import StatusImmunity from '../models/StatusImmunity';
 import GearMod, { GearModCollection, GearModClassification } from '../models/GearMod';
@@ -14,11 +14,10 @@ import NamedExoticGear from '../models/NamedExoticGear';
 
 interface LookupState {
   weapons: Map<string, Weapon>;
-  weaponTalents: Map<string, WeaponTalent>;
+  talents: Map<string, Talent>;
   exoticWeapons: Map<string, ExoticWeapon>;
   gearsets: Map<string, Gearset>;
   brandsets: Map<string, Brandset>;
-  gearTalents: Map<string, any>;
   namedGear: Map<string, NamedExoticGear>;
   skills: Map<string, Skill>;
   weaponMods: Map<string, WeaponMod>;
@@ -37,11 +36,10 @@ interface LookupState {
   isLoading: boolean;
 
   setWeapons: (weaponList: Weapon[]) => void;
-  setWeaponTalents: (talentList: WeaponTalent[]) => void;
+  setTalents: (talentList: Talent[]) => void;
   setExoticWeapons: (exoticList: ExoticWeapon[]) => void;
   setGearsets: (gearsetList: Gearset[]) => void;
   setBrandsets: (brandsetList: Brandset[]) => void;
-  setGearTalents: (talentList: any[]) => void;
   setNamedGear: (namedGearList: NamedExoticGear[]) => void;
   setSkills: (skillList: Skill[]) => void;
   setWeaponMods: (weaponModList: WeaponMod[]) => void;
@@ -59,11 +57,10 @@ interface LookupState {
   setLoading: (isLoading: boolean) => void;
 
   getWeapon: (name: string) => Weapon | undefined;
-  getWeaponTalent: (name: string) => WeaponTalent | undefined;
+  getTalent: (name: string) => Talent | undefined;
   getExoticWeapon: (name: string) => ExoticWeapon | undefined;
   getGearset: (name: string) => Gearset | undefined;
   getBrandset: (brand: string) => Brandset | undefined;
-  getGearTalent: (name: string) => any | undefined;
   getNamedGear: (name: string) => NamedExoticGear | undefined;
   getSkill: (name: string) => Skill | undefined;
   getWeaponMod: (name: string) => WeaponMod | undefined;
@@ -79,11 +76,12 @@ interface LookupState {
   getPrompt: (key: string) => string | undefined;
 
   getAllWeapons: () => Weapon[];
-  getAllWeaponTalents: () => WeaponTalent[];
+  getAllTalents: () => Talent[];
+  getAllWeaponTalents: () => Talent[];
+  getAllGearTalents: () => Talent[];
   getAllExoticWeapons: () => ExoticWeapon[];
   getAllGearsets: () => Gearset[];
   getAllBrandsets: () => Brandset[];
-  getAllGearTalents: () => any[];
   getAllNamedGear: () => NamedExoticGear[];
   getAllSkills: () => Skill[];
   getAllWeaponMods: () => WeaponMod[];
@@ -115,11 +113,10 @@ const useLookupStore = create<LookupState>()(
     (set, get) => ({
       // Data maps for quick lookup by name
       weapons: new Map<string, Weapon>(),
-      weaponTalents: new Map<string, WeaponTalent>(),
+      talents: new Map<string, Talent>(),
       exoticWeapons: new Map<string, ExoticWeapon>(),
       gearsets: new Map<string, Gearset>(),
       brandsets: new Map<string, Brandset>(),
-      gearTalents: new Map<string, any>(),
       namedGear: new Map<string, NamedExoticGear>(),
       skills: new Map<string, Skill>(),
       weaponMods: new Map<string, WeaponMod>(),
@@ -150,14 +147,14 @@ const useLookupStore = create<LookupState>()(
         set({ weapons: weaponMap, lastUpdated: Date.now() });
       },
 
-      setWeaponTalents: (talentList) => {
-        const talentMap = new Map<string, WeaponTalent>();
+      setTalents: (talentList) => {
+        const talentMap = new Map<string, Talent>();
         talentList.forEach((talent) => {
           if (talent.name) {
             talentMap.set(talent.name, talent);
           }
         });
-        set({ weaponTalents: talentMap, lastUpdated: Date.now() });
+        set({ talents: talentMap, lastUpdated: Date.now() });
       },
 
       setExoticWeapons: (exoticList) => {
@@ -188,17 +185,6 @@ const useLookupStore = create<LookupState>()(
           }
         });
         set({ brandsets: brandsetMap, lastUpdated: Date.now() });
-      },
-
-      setGearTalents: (talentList) => {
-        const gearTalentMap = new Map<string, any>();
-        talentList.forEach((talent) => {
-          const talentName = (talent as any).talent || (talent as any).name;
-          if (talentName) {
-            gearTalentMap.set(talentName, talent);
-          }
-        });
-        set({ gearTalents: gearTalentMap, lastUpdated: Date.now() });
       },
 
       setNamedGear: (namedGearList) => {
@@ -309,11 +295,10 @@ const useLookupStore = create<LookupState>()(
 
       // Lookup methods
       getWeapon: (name) => get().weapons.get(name),
-      getWeaponTalent: (name) => get().weaponTalents.get(name),
+      getTalent: (name) => get().talents.get(name),
       getExoticWeapon: (name) => get().exoticWeapons.get(name),
       getGearset: (name) => get().gearsets.get(name),
       getBrandset: (brand) => get().brandsets.get(brand),
-      getGearTalent: (name) => get().gearTalents.get(name),
       getNamedGear: (name) => get().namedGear.get(name),
       getSkill: (name) => get().skills.get(name),
       getWeaponMod: (name) => get().weaponMods.get(name),
@@ -335,7 +320,17 @@ const useLookupStore = create<LookupState>()(
         return weapons instanceof Map ? Array.from(weapons.values()) : [];
       },
       getAllWeaponTalents: () => {
-        const talents = get().weaponTalents;
+        const talents = get().talents;
+        if (!(talents instanceof Map)) return [];
+        return Array.from(talents.values()).filter((t) => t.type === 'weapon');
+      },
+      getAllGearTalents: () => {
+        const talents = get().talents;
+        if (!(talents instanceof Map)) return [];
+        return Array.from(talents.values()).filter((t) => t.type === 'gear');
+      },
+      getAllTalents: () => {
+        const talents = get().talents;
         return talents instanceof Map ? Array.from(talents.values()) : [];
       },
       getAllExoticWeapons: () => {
@@ -349,10 +344,6 @@ const useLookupStore = create<LookupState>()(
       getAllBrandsets: () => {
         const brandsets = get().brandsets;
         return brandsets instanceof Map ? Array.from(brandsets.values()) : [];
-      },
-      getAllGearTalents: () => {
-        const talents = get().gearTalents;
-        return talents instanceof Map ? Array.from(talents.values()) : [];
       },
       getAllNamedGear: () => {
         const namedGear = get().namedGear;
@@ -451,11 +442,10 @@ const useLookupStore = create<LookupState>()(
       clearAll: () =>
         set({
           weapons: new Map(),
-          weaponTalents: new Map(),
+          talents: new Map(),
           exoticWeapons: new Map(),
           gearsets: new Map(),
           brandsets: new Map(),
-          gearTalents: new Map(),
           namedGear: new Map(),
           skills: new Map(),
           weaponMods: new Map(),
@@ -477,11 +467,10 @@ const useLookupStore = create<LookupState>()(
         reviver: (key, value: any) => {
           const mapKeys = [
             'weapons',
-            'weaponTalents',
+            'talents',
             'exoticWeapons',
             'gearsets',
             'brandsets',
-            'gearTalents',
             'namedGear',
             'skills',
             'weaponMods',
@@ -501,8 +490,8 @@ const useLookupStore = create<LookupState>()(
               switch (key) {
                 case 'weapons':
                   return new Weapon(item);
-                case 'weaponTalents':
-                  return new WeaponTalent(item);
+                case 'talents':
+                  return new Talent(item);
                 case 'exoticWeapons':
                   return new ExoticWeapon(item);
                 case 'gearsets':

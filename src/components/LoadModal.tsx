@@ -80,11 +80,9 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
 
   const [pages, setPages] = useState<Record<string, string>>({
     weapons: 'Weapons',
-    weaponTalents: 'Weapon Talents',
     exoticWeapons: 'Weapons: Named + Exotic',
     gearsets: 'Gearsets',
     brandsets: 'Brandsets',
-    gearTalents: 'Gear Talents',
     namedGear: 'Gear: Named + Exotics',
     skills: 'Skill List',
     weaponMods: 'Weapon Mods',
@@ -1171,39 +1169,6 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
             </button>
           </div>
 
-          <div className="grid-label">{getLabel('Weapon Talents', 'weaponTalents')}</div>
-          <input
-            className="grid-input"
-            value={pages.weaponTalents}
-            onChange={(e) => handlePageChange('weaponTalents', e.target.value)}
-          />
-          <div className="action-buttons">
-            <button
-              className="icon-button"
-              onClick={() => handleLoad('weaponTalents')}
-              title="Load"
-              disabled={loadingStates.weaponTalents}
-            >
-              {loadingStates.weaponTalents ? '⏳' : <MdDownload />}
-            </button>
-            <button
-              className={`icon-button ${dataExists.weaponTalents ? 'has-data' : 'no-data'}`}
-              onClick={() => handleView('weaponTalents')}
-              title="View"
-              disabled={!dataExists.weaponTalents || loadingStates.weaponTalents}
-            >
-              <MdEditDocument />
-            </button>
-            <button
-              className={`icon-button ${cleanDataExists.weaponTalents ? 'has-data' : 'no-data'}`}
-              onClick={() => handleViewClean('weaponTalents')}
-              title="View Clean Data"
-              disabled={loadingStates.weaponTalents}
-            >
-              <MdCleaningServices />
-            </button>
-          </div>
-
           <div className="grid-label">{getLabel('Exotic Weapons', 'exoticWeapons')}</div>
           <input
             className="grid-input"
@@ -1298,39 +1263,6 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
               onClick={() => handleViewClean('brandsets')}
               title="View Clean Data"
               disabled={loadingStates.brandsets}
-            >
-              <MdCleaningServices />
-            </button>
-          </div>
-
-          <div className="grid-label">{getLabel('Gear Talents', 'gearTalents')}</div>
-          <input
-            className="grid-input"
-            value={pages.gearTalents}
-            onChange={(e) => handlePageChange('gearTalents', e.target.value)}
-          />
-          <div className="action-buttons">
-            <button
-              className="icon-button"
-              onClick={() => handleLoad('gearTalents')}
-              title="Load"
-              disabled={loadingStates.gearTalents}
-            >
-              {loadingStates.gearTalents ? '⏳' : <MdDownload />}
-            </button>
-            <button
-              className={`icon-button ${dataExists.gearTalents ? 'has-data' : 'no-data'}`}
-              onClick={() => handleView('gearTalents')}
-              title="View"
-              disabled={!dataExists.gearTalents || loadingStates.gearTalents}
-            >
-              <MdEditDocument />
-            </button>
-            <button
-              className={`icon-button ${cleanDataExists.gearTalents ? 'has-data' : 'no-data'}`}
-              onClick={() => handleViewClean('gearTalents')}
-              title="View Clean Data"
-              disabled={loadingStates.gearTalents}
             >
               <MdCleaningServices />
             </button>

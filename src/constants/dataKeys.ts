@@ -3,11 +3,9 @@
  */
 export const MAIN_DATA_KEYS = [
   'weapons',
-  'weaponTalents',
   'exoticWeapons',
   'gearsets',
   'brandsets',
-  'gearTalents',
   'namedGear',
   'skills',
   'weaponMods',

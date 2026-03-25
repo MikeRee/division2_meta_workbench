@@ -3,7 +3,7 @@ import { BuildWeapon } from '../models/BuildWeapon';
 import { useLookupStore } from '../stores/useLookupStore';
 import { useCleanDataStore } from '../stores/useCleanDataStore';
 import WeaponMod from '../models/WeaponMod';
-import WeaponTalent from '../models/WeaponTalent';
+import Talent from '../models/Talent';
 import './GearEditOverlay.css';
 
 interface WeaponEditOverlayProps {
@@ -17,8 +17,9 @@ function WeaponEditOverlay({ buildWeapon, onSave, onRemove, onClose }: WeaponEdi
   // Still from lookup store — CSV-derived weapon attributes not yet in clean store
   const weaponAttributesMap = useLookupStore((s) => s.weaponAttributes);
 
-  // From clean data store
-  const weaponTalents = (useCleanDataStore((s) => s.data.weaponTalents) ?? []) as WeaponTalent[];
+  // From clean data store — filter talents to weapon type only
+  const allTalents = (useCleanDataStore((s) => s.data.talents) ?? []) as Talent[];
+  const weaponTalents = allTalents.filter((t) => t.type === 'weapon');
   const weaponMods = (useCleanDataStore((s) => s.data.weaponMods) ?? []) as WeaponMod[];
 
   // Available weapon attributes for dropdowns

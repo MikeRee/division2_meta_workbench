@@ -194,7 +194,7 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
     tableName === 'gearsets' ? ['fourPc', 'chest', 'backpack'] : [],
   );
 
-  // All available talent names for gearset talent-ref dropdowns (from talents + gearTalents)
+  // All available talent names for gearset talent-ref dropdowns (from talents)
   const allTalentOptions = useMemo(() => {
     if (tableName !== 'gearsets') return [] as string[];
     const names = new Set<string>();
@@ -202,11 +202,6 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
     if (talents)
       talents.forEach((t: any) => {
         if (t.name) names.add(t.name);
-      });
-    const gearTalents = useCleanDataStore.getState().getCleanData('gearTalents');
-    if (gearTalents)
-      gearTalents.forEach((t: any) => {
-        if (t.talent) names.add(t.talent);
       });
     // Also include any existing values from the data itself (gearset-specific talent names)
     for (const row of tableData) {

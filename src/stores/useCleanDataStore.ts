@@ -2,11 +2,9 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { MAIN_DATA_KEYS, type MainDataKey } from '../constants/dataKeys';
 import Weapon from '../models/Weapon';
-import WeaponTalent from '../models/WeaponTalent';
 import ExoticWeapon from '../models/ExoticWeapon';
 import Gearset from '../models/Gearset';
 import Brandset from '../models/Brandset';
-import GearTalent from '../models/GearTalent';
 import Skill from '../models/Skill';
 import WeaponMod from '../models/WeaponMod';
 import Talent from '../models/Talent';
@@ -15,11 +13,9 @@ import NamedExoticGear from '../models/NamedExoticGear';
 // Type mapping for each clean data key
 export interface CleanDataTypeMap {
   weapons: Weapon[];
-  weaponTalents: WeaponTalent[];
   exoticWeapons: ExoticWeapon[];
   gearsets: Gearset[];
   brandsets: Brandset[];
-  gearTalents: GearTalent[];
   namedGear: NamedExoticGear[];
   skills: Skill[];
   weaponMods: WeaponMod[];
@@ -48,11 +44,9 @@ interface CleanDataState {
  */
 export const CLASS_CONSTRUCTORS: Partial<Record<MainDataKey, new (data: any) => any>> = {
   weapons: Weapon,
-  weaponTalents: WeaponTalent,
   exoticWeapons: ExoticWeapon,
   gearsets: Gearset,
   brandsets: Brandset,
-  gearTalents: GearTalent,
   namedGear: NamedExoticGear,
   skills: Skill,
   weaponMods: WeaponMod,

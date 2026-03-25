@@ -1,8 +1,6 @@
 import Weapon from '../models/Weapon';
-import WeaponTalent from '../models/WeaponTalent';
 import ExoticWeapon from '../models/ExoticWeapon';
 import Gearset from '../models/Gearset';
-import GearTalent from '../models/GearTalent';
 import Skill from '../models/Skill';
 import WeaponMod from '../models/WeaponMod';
 import { CoreType } from '../models/CoreValue';
@@ -168,79 +166,8 @@ export const parseWeapons = (gridData: GridData): Weapon[] => {
   return weaponList;
 };
 
-/**
- * Parses weapon talent data from Google Sheets API response
- * @param {SheetData} data - The API response data containing values
- * @returns {WeaponTalent[]} Array of WeaponTalent objects
- */
-export const parseWeaponTalents = (data: SheetData): WeaponTalent[] => {
-  if (!data.values || data.values.length === 0) {
-    return [];
-  }
-
-  const rows = data.values;
-  let currentWeaponCategory = '';
-  const talentList: WeaponTalent[] = [];
-
-  console.log('Total rows:', rows.length);
-
-  rows.forEach((row, index) => {
-    // Skip completely empty rows
-    if (!row || row.length === 0) return;
-
-    let colA = row[0] || '';
-    const colB = row[1] || '';
-    const colC = row[2] || '';
-    const colD = row[3] || '';
-    const colE = row[4] || '';
-
-    // Extract URL from =IMAGE("url") formula in column A
-    if (colA.startsWith('=IMAGE(') || colA.startsWith('=image(')) {
-      const match = colA.match(/=IMAGE\("([^"]+)"/i);
-      if (match) {
-        colA = match[1]; // Extract the URL
-      }
-    }
-
-    // Debug first 30 rows to see the structure
-    if (index < 30) {
-      console.log(`Row ${index}:`, { colA, colB, colC, colD, colE, rowLength: row.length });
-    }
-
-    // If col B is empty, skip
-    if (!colB.trim()) return;
-
-    // Check if this looks like a header row (first row with "Description", "Perfect", etc.)
-    if (index === 0 && (colC.includes('Perfect') || colD.includes('Description'))) {
-      // This is the header row, but colB contains the first category
-      currentWeaponCategory = colB.trim();
-      console.log(`Found category in header row: "${currentWeaponCategory}"`);
-      return;
-    }
-
-    // If columns C, D, or E have content → it's a talent row
-    // (Category headers only have text in column B)
-    if (colC.trim() || colD.trim() || colE.trim()) {
-      if (currentWeaponCategory) {
-        console.log(
-          `Found talent at row ${index}: name="${colB}" icon="${colA}" category="${currentWeaponCategory}"`,
-        );
-        // Create modified row with extracted icon URL
-        const modifiedRow = [colA, colB, colC, colD, colE];
-        talentList.push(WeaponTalent.fromSheetRow(modifiedRow, currentWeaponCategory));
-      }
-    } else {
-      // Only column B has content → it's a category header
-      currentWeaponCategory = colB.trim();
-      console.log(`Found category at row ${index}: "${currentWeaponCategory}"`);
-    }
-  });
-
-  console.log('Weapon talents parsed:', talentList.length);
-  console.log('First 3 talents:', talentList.slice(0, 3));
-
-  return talentList;
-};
+// TODO: parseWeaponTalents removed — talent data now comes from talents.json
+// This function needs to be migrated to use the unified Talent model if sheet parsing is needed.
 
 /**
  * Parses exotic weapon talents from "Weapons: Named + Exotic" sheet
@@ -622,86 +549,10 @@ export const parseBrandsets = (data: SheetData): any[] => {
   return brandsetList;
 };
 
-/**
- * Parses gear talent data from Google Sheets API response
- * @param {SheetData} data - The API response data containing values
- * @returns {GearTalent[]} Array of GearTalent objects
- */
-export const parseGearTalents = (data: SheetData): GearTalent[] => {
-  if (!data.values || data.values.length === 0) {
-    return [];
-  }
+// TODO: parseGearTalents removed — talent data now comes from talents.json
+// This function needs to be migrated to use the unified Talent model if sheet parsing is needed.
 
-  const rows = data.values;
-  let currentPiece = '';
-  const talentList: GearTalent[] = [];
-
-  console.log('Total rows in Gear Talents:', rows.length);
-
-  rows.forEach((row, index) => {
-    // Skip completely empty rows
-    if (!row || row.length === 0) return;
-
-    const colA = row[0] || '';
-    let colC = row[2] || '';
-    const colD = row[3] || '';
-    const colE = row[4] || '';
-    const colF = row[5] || '';
-    const colG = row[6] || '';
-
-    // Extract URL from =IMAGE("url") formula in column C
-    if (colC.startsWith('=IMAGE(') || colC.startsWith('=image(')) {
-      const match = colC.match(/=IMAGE\("([^"]+)"/i);
-      if (match) {
-        colC = match[1]; // Extract the URL
-      }
-    }
-
-    // Skip the first row (header row with column names)
-    if (index === 0) {
-      return;
-    }
-
-    // FIRST: Check if col A contains a category header and update currentPiece
-    if (colA && colA.toLowerCase().includes('chest')) {
-      currentPiece = 'chest';
-    } else if (colA && colA.toLowerCase().includes('backpack')) {
-      currentPiece = 'backpack';
-    }
-
-    // THEN: Check if this row has talent data (column D has content)
-    const hasTalentData = colD && colD.trim();
-
-    // If this row has talent data AND we now have a current piece set, add it
-    if (hasTalentData && currentPiece) {
-      const modifiedRow = [row[0], row[1], colC, colD, colE, colF, colG];
-      talentList.push(GearTalent.fromSheetRow(modifiedRow, currentPiece));
-    }
-  });
-
-  console.log('Gear talents parsed:', talentList.length);
-
-  return talentList;
-};
-
-/**
- * Converts gear talent list to YAML format
- * @param {GearTalent[]} talentList - Array of GearTalent objects
- * @returns {string} YAML formatted string
- */
-export const convertGearTalentsToYaml = (talentList: GearTalent[]): string => {
-  if (!talentList || talentList.length === 0) {
-    return 'No gear talents found';
-  }
-
-  let yaml = 'gearTalents:\n';
-  talentList.forEach((talent, index) => {
-    yaml += `  - gearTalent_${index + 1}:\n`;
-    yaml += talent.toYAML(6);
-  });
-
-  return yaml;
-};
+// TODO: convertGearTalentsToYaml removed — was coupled to the old GearTalent model.
 
 /**
  * Parses named gear data from "Gear: Named + Exotics" sheet
