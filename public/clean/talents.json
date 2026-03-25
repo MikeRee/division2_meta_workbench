@@ -1456,6 +1456,37 @@
     "perfectBonus": {}
   },
   {
+    "name": "Geri and Freki",
+    "type": "weapon",
+    "perfectName": "",
+    "icon": "",
+    "description": "On trigger pull, fire both barrels at once.\nWhen fired from the right shoulder, hits add offensive primers, and defensive primers when fired drom the left shoulder.\nHits from one shoulder will detonate all of the opposite shoulder's primers when present.\nWhen detonated, each offensive primer deals 100% weapon damage, while each defensive primer grants +4% bonus armor and +10% amplified damage to armor plates for 5s.\nPrimer effectiveness is doubled at 10 stacks.",
+    "perfectDescription": "",
+    "exclusiveTo": ["The Ravenous"],
+    "stacks": [
+      {
+        "size": 10,
+        "duration": 5,
+        "cooldown": 0,
+        "bonus": {
+          "bonus armor": 4,
+          "amplified damage to armor": 10
+        }
+      },
+      {
+        "size": 10,
+        "duration": 5,
+        "cooldown": 0,
+        "bonus": {
+          "weapon damage": 100
+        }
+      }
+    ],
+    "perfectStacks": [],
+    "bonus": {},
+    "perfectBonus": {}
+  },
+  {
     "name": "Transfusion",
     "type": "weapon",
     "perfectName": "",
@@ -1463,7 +1494,7 @@
     "description": "Headshots build stacks (max 8). Healing allies repairs 50% damage per stack. Healed allies receive bonus armor. At max stacks, shots are guaranteed headshots for 8s.",
     "perfectDescription": "",
     "exclusiveTo": [
-      "Geri and Freki"
+      "Bittersweet"
     ],
     "stacks": [
       {

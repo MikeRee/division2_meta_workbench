@@ -233,7 +233,10 @@
         "stability": 20
       }
     },
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Big Game Hunter"
+    ]
   },
   {
     "type": "assault rifle",
@@ -467,7 +470,10 @@
         "weapon handling": 10
       }
     },
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Talent Unnerve"
+    ]
   },
   {
     "type": "assault rifle",
@@ -834,7 +840,10 @@
         "weapon handling": 10
       }
     },
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Actum Est"
+    ]
   },
   {
     "type": "assault rifle",
@@ -1028,7 +1037,11 @@
         "weapon handling": 10
       }
     },
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Eagle Strike",
+      "Tenacity"
+    ]
   },
   {
     "type": "assault rifle",
@@ -1097,7 +1110,10 @@
         "weapon handling": 10
       }
     },
-    "hsd": 55
+    "hsd": 55,
+    "fixedTalent": [
+      "Capacitance"
+    ]
   },
   {
     "type": "assault rifle",
@@ -1254,7 +1270,10 @@
         "stability": 10
       }
     },
-    "hsd": 50
+    "hsd": 50,
+    "fixedTalent": [
+      "Adaptive Instincts"
+    ]
   },
   {
     "type": "lmg",
@@ -1325,7 +1344,10 @@
         "stability": 10
       }
     },
-    "hsd": 65
+    "hsd": 65,
+    "fixedTalent": [
+      "Disruptor Rounds"
+    ]
   },
   {
     "type": "lmg",
@@ -1645,7 +1667,10 @@
         "stability": 10
       }
     },
-    "hsd": 65
+    "hsd": 65,
+    "fixedTalent": [
+      "Plague of the Outcasts"
+    ]
   },
   {
     "type": "lmg",
@@ -1914,7 +1939,10 @@
         "critical hit damage": 10
       }
     },
-    "hsd": 65
+    "hsd": 65,
+    "fixedTalent": [
+      "Ardent"
+    ]
   },
   {
     "type": "lmg",
@@ -1979,7 +2007,10 @@
         "stability": 20
       }
     },
-    "hsd": 65
+    "hsd": 65,
+    "fixedTalent": [
+      "Bullet Hell"
+    ]
   },
   {
     "type": "lmg",
@@ -2133,7 +2164,10 @@
         "reload speed": 10
       }
     },
-    "hsd": 65
+    "hsd": 65,
+    "fixedTalent": [
+      "Pakhan"
+    ]
   },
   {
     "type": "lmg",
@@ -2403,7 +2437,10 @@
         "melee damage": 500
       }
     },
-    "hsd": 50
+    "hsd": 50,
+    "fixedTalent": [
+      "Breathe Free"
+    ]
   },
   {
     "type": "smg",
@@ -2694,7 +2731,10 @@
         "critical hit chance": 10
       }
     },
-    "hsd": 50
+    "hsd": 50,
+    "fixedTalent": [
+      "Rule them all"
+    ]
   },
   {
     "type": "smg",
@@ -3053,7 +3093,10 @@
         "weapon handling": 10
       }
     },
-    "hsd": 50
+    "hsd": 50,
+    "fixedTalent": [
+      "Incessant Chatter"
+    ]
   },
   {
     "type": "smg",
@@ -3147,7 +3190,10 @@
         "stability": 10
       }
     },
-    "hsd": 50
+    "hsd": 50,
+    "fixedTalent": [
+      "Payment in kind"
+    ]
   },
   {
     "type": "shotgun",
@@ -3729,7 +3775,10 @@
         "optimal range": 25
       }
     },
-    "hsd": 25
+    "hsd": 25,
+    "fixedTalent": [
+      "Sandman"
+    ]
   },
   {
     "type": "shotgun",
@@ -3952,7 +4001,10 @@
         "weapon handling": 10
       }
     },
-    "hsd": 45
+    "hsd": 45,
+    "fixedTalent": [
+      "Septic Shock"
+    ]
   },
   {
     "type": "rifle",
@@ -4028,7 +4080,10 @@
         "weapon handling": 15
       }
     },
-    "hsd": 60
+    "hsd": 60,
+    "fixedTalent": [
+      "Binary Trigger"
+    ]
   },
   {
     "type": "rifle",
@@ -4636,7 +4691,8 @@
         "critical hit damage": 5
       }
     },
-    "hsd": 60
+    "hsd": 60,
+    "fixedTalent": ["Geri and Freki"]
   },
   {
     "type": "rifle",
@@ -4804,7 +4860,10 @@
         "stability": 10
       }
     },
-    "hsd": 60
+    "hsd": 60,
+    "fixedTalent": [
+      "Agonizing Bite"
+    ]
   },
   {
     "type": "mr",
@@ -5109,7 +5168,10 @@
         "critical hit chance": 5
       }
     },
-    "hsd": 0
+    "hsd": 0,
+    "fixedTalent": [
+      "High Priority Target"
+    ]
   },
   {
     "type": "mr",
@@ -5224,7 +5286,10 @@
         "stability": 10
       }
     },
-    "hsd": 0
+    "hsd": 0,
+    "fixedTalent": [
+      "Full Stop"
+    ]
   },
   {
     "type": "mr",
@@ -5781,7 +5846,10 @@
         "rate of fire": 15
       }
     },
-    "hsd": 100
+    "hsd": 100,
+    "fixedTalent": [
+      "Liberty or Death"
+    ]
   },
   {
     "type": "pistol",
@@ -6002,7 +6070,10 @@
         "accuracy": 15
       }
     },
-    "hsd": 100
+    "hsd": 100,
+    "fixedTalent": [
+      "Mosquito Song"
+    ]
   },
   {
     "type": "pistol",
@@ -6114,7 +6185,10 @@
         "critical hit chance": 5
       }
     },
-    "hsd": 100
+    "hsd": 100,
+    "fixedTalent": [
+      "Busy Little Bee"
+    ]
   },
   {
     "type": "pistol",
