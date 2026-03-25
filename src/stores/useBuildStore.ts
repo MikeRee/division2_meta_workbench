@@ -25,8 +25,14 @@ type BuildData = {
 };
 
 interface BuildState {
+  builds: [Build, Build, Build, Build];
+  activeBuildIndex: number;
   currentBuild: Build;
   savedBuilds: Map<string, Build>;
+
+  setActiveBuildIndex: (index: number) => void;
+  getBuild: (index: number) => Build;
+  setBuild: (index: number, build: Build) => void;
 
   updateCurrentBuild: (updates: Partial<BuildData>) => void;
   setSpecialization: (specialization: any) => void;
@@ -62,15 +68,39 @@ interface BuildState {
 const useBuildStore = create<BuildState>()(
   persist(
     (set, get) => ({
-      // Current build being edited
+      // 4 build slots
+      builds: [new Build(), new Build(), new Build(), new Build()] as [Build, Build, Build, Build],
+      activeBuildIndex: 0,
+
+      // currentBuild kept in sync as alias for builds[activeBuildIndex]
       currentBuild: new Build(),
 
       // Saved builds map (name -> Build)
       savedBuilds: new Map<string, Build>(),
 
+      setActiveBuildIndex: (index: number) => {
+        if (index < 0 || index > 3) return;
+        set({ activeBuildIndex: index, currentBuild: get().builds[index] });
+      },
+
+      getBuild: (index: number) => {
+        if (index < 0 || index > 3) return get().builds[0];
+        return get().builds[index];
+      },
+
+      setBuild: (index: number, build: Build) => {
+        if (index < 0 || index > 3) return;
+        const builds = [...get().builds] as [Build, Build, Build, Build];
+        builds[index] = build;
+        const patch: any = { builds };
+        if (index === get().activeBuildIndex) patch.currentBuild = build;
+        set(patch);
+      },
+
       // Actions for current build
       updateCurrentBuild: (updates) => {
-        const current = get().currentBuild;
+        const idx = get().activeBuildIndex;
+        const current = get().builds[idx];
         // Preserve live class instances (BuildWeapon / BuildGear) from the current build
         // instead of serializing to JSON which loses getters and class identity.
         const updated = new Build({
@@ -92,7 +122,9 @@ const useBuildStore = create<BuildState>()(
           ...updates,
           updatedAt: Date.now(),
         });
-        set({ currentBuild: updated });
+        const builds = [...get().builds] as [Build, Build, Build, Build];
+        builds[idx] = updated;
+        set({ builds, currentBuild: updated });
       },
 
       setSpecialization: (specialization) => {
@@ -149,7 +181,8 @@ const useBuildStore = create<BuildState>()(
 
       // Save current build
       saveCurrentBuild: (name) => {
-        const current = get().currentBuild;
+        const idx = get().activeBuildIndex;
+        const current = get().builds[idx];
         const buildName = name || current.name || 'Untitled Build';
         const buildToSave = new Build({
           name: buildName,
@@ -173,8 +206,11 @@ const useBuildStore = create<BuildState>()(
         const savedBuilds = new Map(get().savedBuilds);
         savedBuilds.set(buildName, buildToSave);
 
+        const builds = [...get().builds] as [Build, Build, Build, Build];
+        builds[get().activeBuildIndex] = buildToSave;
         set({
           savedBuilds,
+          builds,
           currentBuild: buildToSave,
         });
 
@@ -185,27 +221,28 @@ const useBuildStore = create<BuildState>()(
       loadBuild: (name) => {
         const build = get().savedBuilds.get(name);
         if (build) {
-          // Create a new Build preserving live class instances
-          set({
-            currentBuild: new Build({
-              name: build.name,
-              specialization: build.specialization,
-              primaryWeapon: build.primaryWeapon,
-              secondaryWeapon: build.secondaryWeapon,
-              pistol: build.pistol,
-              mask: build.mask,
-              chest: build.chest,
-              holster: build.holster,
-              backpack: build.backpack,
-              gloves: build.gloves,
-              kneepads: build.kneepads,
-              skill1: build.skill1,
-              skill2: build.skill2,
-              watch: build.watch,
-              createdAt: build.createdAt,
-              updatedAt: build.updatedAt,
-            }),
+          const idx = get().activeBuildIndex;
+          const loaded = new Build({
+            name: build.name,
+            specialization: build.specialization,
+            primaryWeapon: build.primaryWeapon,
+            secondaryWeapon: build.secondaryWeapon,
+            pistol: build.pistol,
+            mask: build.mask,
+            chest: build.chest,
+            holster: build.holster,
+            backpack: build.backpack,
+            gloves: build.gloves,
+            kneepads: build.kneepads,
+            skill1: build.skill1,
+            skill2: build.skill2,
+            watch: build.watch,
+            createdAt: build.createdAt,
+            updatedAt: build.updatedAt,
           });
+          const builds = [...get().builds] as [Build, Build, Build, Build];
+          builds[idx] = loaded;
+          set({ builds, currentBuild: loaded });
           return true;
         }
         return false;
@@ -221,9 +258,13 @@ const useBuildStore = create<BuildState>()(
         return deleted;
       },
 
-      // Create a new empty build
+      // Create a new empty build (resets the active slot)
       newBuild: () => {
-        set({ currentBuild: new Build() });
+        const idx = get().activeBuildIndex;
+        const builds = [...get().builds] as [Build, Build, Build, Build];
+        const empty = new Build();
+        builds[idx] = empty;
+        set({ builds, currentBuild: empty });
       },
 
       // Get all saved builds as array
@@ -271,8 +312,11 @@ const useBuildStore = create<BuildState>()(
           set({ savedBuilds });
 
           // If updating current build, update it too
-          if (get().currentBuild.name === name) {
-            set({ currentBuild: updated });
+          const idx = get().activeBuildIndex;
+          if (get().builds[idx].name === name) {
+            const builds = [...get().builds] as [Build, Build, Build, Build];
+            builds[idx] = updated;
+            set({ builds, currentBuild: updated });
           }
           return true;
         }
@@ -281,15 +325,23 @@ const useBuildStore = create<BuildState>()(
 
       // Clear all saved builds
       clearAllBuilds: () => {
+        const emptyBuilds = [new Build(), new Build(), new Build(), new Build()] as [
+          Build,
+          Build,
+          Build,
+          Build,
+        ];
         set({
           savedBuilds: new Map(),
-          currentBuild: new Build(),
+          builds: emptyBuilds,
+          activeBuildIndex: 0,
+          currentBuild: emptyBuilds[0],
         });
       },
 
       // Export current build as JSON
       exportCurrentBuild: () => {
-        const current = get().currentBuild;
+        const current = get().builds[get().activeBuildIndex];
         return JSON.stringify(current.toJSON(), null, 2);
       },
 
@@ -298,7 +350,10 @@ const useBuildStore = create<BuildState>()(
         try {
           const data = JSON.parse(jsonString);
           const build = Build.fromJSON(data);
-          set({ currentBuild: build });
+          const idx = get().activeBuildIndex;
+          const builds = [...get().builds] as [Build, Build, Build, Build];
+          builds[idx] = build;
+          set({ builds, currentBuild: build });
           return true;
         } catch (error) {
           console.error('Failed to import build:', error);
@@ -310,12 +365,22 @@ const useBuildStore = create<BuildState>()(
       name: 'build-store',
       storage: createJSONStorage(() => localStorage, {
         reviver: (key, value: any) => {
+          if (key === 'builds' && Array.isArray(value)) {
+            try {
+              const restored = value.map((b: any) => (b ? Build.fromJSON(b) : new Build()));
+              while (restored.length < 4) restored.push(new Build());
+              return restored.slice(0, 4) as [Build, Build, Build, Build];
+            } catch (error) {
+              console.warn('Failed to restore builds from localStorage:', error);
+              return [new Build(), new Build(), new Build(), new Build()];
+            }
+          }
           if (key === 'currentBuild' && value) {
+            // Legacy migration: will be handled in onRehydrateStorage
             try {
               return Build.fromJSON(value);
-            } catch (error) {
-              console.warn('Failed to restore currentBuild from localStorage:', error);
-              return new Build(value);
+            } catch {
+              return new Build();
             }
           }
           if (key === 'savedBuilds' && Array.isArray(value)) {
@@ -331,6 +396,9 @@ const useBuildStore = create<BuildState>()(
           return value;
         },
         replacer: (key, value) => {
+          if (key === 'builds' && Array.isArray(value)) {
+            return value.map((b: Build) => (b instanceof Build ? b.toJSON() : b));
+          }
           if (key === 'currentBuild' && value instanceof Build) {
             return value.toJSON();
           }
@@ -340,6 +408,11 @@ const useBuildStore = create<BuildState>()(
           return value;
         },
       }),
+      onRehydrateStorage: () => (state) => {
+        if (!state) return;
+        // Sync currentBuild from builds[activeBuildIndex]
+        state.currentBuild = state.builds[state.activeBuildIndex];
+      },
       skipHydration: true,
     },
   ),

@@ -32,7 +32,10 @@ function Build() {
   const [editGearSlot, setEditGearSlot] = useState<string | null>(null);
   const [editWeaponSlot, setEditWeaponSlot] = useState<string | null>(null);
 
-  const currentBuild = useBuildStore((state) => state.currentBuild);
+  const builds = useBuildStore((state) => state.builds);
+  const activeBuildIndex = useBuildStore((state) => state.activeBuildIndex);
+  const setActiveBuildIndex = useBuildStore((state) => state.setActiveBuildIndex);
+  const currentBuild = builds[activeBuildIndex];
   const updateCurrentBuild = useBuildStore((state) => state.updateCurrentBuild);
   const newBuild = useBuildStore((state) => state.newBuild);
 
@@ -389,10 +392,29 @@ function Build() {
     return `/images/specialties/${name.toLowerCase()}.png`;
   };
 
+  const BUILD_COLORS = ['#e74c3c', '#3498db', '#f1c40f', '#9b59b6'] as const;
+
   return (
     <div className="build-container">
       <div className="build-header">
-        <h2>Build</h2>
+        <div className="build-title-row">
+          <h2>Build</h2>
+          <div className="build-slot-indicators">
+            {builds.map((build, i) => (
+              <button
+                key={i}
+                className={`build-slot-square ${i === activeBuildIndex ? 'active' : ''}`}
+                style={{
+                  borderColor: BUILD_COLORS[i],
+                  backgroundColor: build.isEmpty() ? 'transparent' : BUILD_COLORS[i],
+                }}
+                onClick={() => setActiveBuildIndex(i)}
+                title={`Build ${i + 1}`}
+                aria-label={`Switch to build slot ${i + 1}`}
+              />
+            ))}
+          </div>
+        </div>
         <div className="build-actions">
           <button
             className="icon-button"

@@ -213,6 +213,23 @@ class Build {
     });
   }
 
+  isEmpty(): boolean {
+    return (
+      !this.specialization &&
+      !this.primaryWeapon &&
+      !this.secondaryWeapon &&
+      !this.pistol &&
+      !this.mask &&
+      !this.chest &&
+      !this.holster &&
+      !this.backpack &&
+      !this.gloves &&
+      !this.kneepads &&
+      !this.skill1 &&
+      !this.skill2
+    );
+  }
+
   toView(): Record<string, any> {
     const llm = this.toLlm();
     return llm.toJSON();
