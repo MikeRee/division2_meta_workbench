@@ -1,0 +1,265 @@
+.chat-build-card {
+  margin-top: 0.75rem;
+  border: 1px solid #2a2a2a;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.chat-build-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 0.6rem;
+  background: rgba(212, 175, 55, 0.08);
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.chat-build-header:hover {
+  background: rgba(212, 175, 55, 0.14);
+}
+
+.chat-build-title {
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #d4af37;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.chat-build-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chat-build-send-label {
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  color: #666;
+  letter-spacing: 0.5px;
+  user-select: none;
+}
+
+.chat-build-slots {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.chat-build-slot-square {
+  width: 10px;
+  height: 10px;
+  border: 2px solid;
+  border-radius: 1px;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+  outline: none;
+}
+
+.chat-build-slot-square:hover {
+  transform: scale(1.3);
+  box-shadow: 0 0 6px currentColor;
+}
+
+.chat-build-json-btn {
+  background: transparent;
+  border: 1px solid #555;
+  color: #888;
+  padding: 0 0.35rem;
+  border-radius: 2px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.55rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1.4;
+}
+
+.chat-build-json-btn:hover {
+  border-color: #d4af37;
+  color: #d4af37;
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.chat-build-toggle {
+  font-size: 0.65rem;
+  color: #666;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.chat-build-toggle.expanded {
+  transform: rotate(180deg);
+}
+
+.chat-build-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: #1a1a1a;
+}
+
+/* Section labels */
+.chat-build-section {
+  padding: 0.25rem 0.6rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: #555;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Individual gear/weapon slot row */
+.chat-build-slot {
+  display: flex;
+  flex-direction: column;
+  padding: 0.35rem 0.6rem;
+  background: rgba(0, 0, 0, 0.25);
+  border-left: 2px solid #333;
+  gap: 0.15rem;
+}
+
+.chat-build-slot.brandset {
+  border-left-color: #FFD700;
+}
+
+.chat-build-slot.gearset {
+  border-left-color: #40E0D0;
+}
+
+.chat-build-slot.named {
+  border-left-color: #FFD700;
+}
+
+.chat-build-slot.exotic {
+  border-left-color: #DC2626;
+}
+
+.chat-build-slot-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.chat-build-slot-label {
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  color: #666;
+  text-transform: uppercase;
+  min-width: 58px;
+  flex-shrink: 0;
+}
+
+.chat-build-slot-name {
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #e5e7eb;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-build-slot-name.named-color {
+  color: #FFD700;
+}
+
+.chat-build-slot-name.exotic-color {
+  color: #EF4444;
+}
+
+/* Attribute tags row */
+.chat-build-attrs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.4rem;
+  padding-left: 62px;
+}
+
+.chat-build-attr-tag {
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  color: #999;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.chat-build-attr-tag .attr-icon {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.attr-icon.offensive { background: #e85a5a; }
+.attr-icon.defensive { background: #7FB5F5; }
+.attr-icon.skill { background: #F0D082; }
+.attr-icon.core-weapon { background: #e85a5a; }
+.attr-icon.core-armor { background: #6B96C3; }
+.attr-icon.core-skill { background: #F4C542; }
+.attr-icon.mod { background: #f97316; border-radius: 1px; }
+
+.chat-build-attr-value {
+  color: #ccc;
+  font-weight: 600;
+}
+
+.chat-build-talent {
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  color: #f97316;
+  padding-left: 62px;
+  font-style: italic;
+}
+
+/* Weapon-specific */
+.chat-build-weapon-talent {
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  color: #f97316;
+  padding-left: 62px;
+}
+
+.chat-build-mods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.4rem;
+  padding-left: 62px;
+}
+
+.chat-build-mod-tag {
+  font-family: 'Courier New', monospace;
+  font-size: 0.55rem;
+  color: #777;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.chat-build-mod-tag .mod-dot {
+  width: 5px;
+  height: 5px;
+  background: #f97316;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+/* Empty slot */
+.chat-build-slot.empty {
+  opacity: 0.35;
+}
+
+.chat-build-slot.empty .chat-build-slot-name {
+  color: #555;
+  font-weight: 400;
+  font-style: italic;
+}

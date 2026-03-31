@@ -29,6 +29,14 @@ export enum GearType {
   Kneepads = 'kneepads',
 }
 
+export enum WeaponType {
+  Primary = 'primary',
+  Secondary = 'secondary',
+  Pistol = 'pistol',
+}
+
+export type WeaponOrGearType = GearType | WeaponType;
+
 /**
  * Parse a string into GearType enum
  * @throws Error if value is not a valid GearType

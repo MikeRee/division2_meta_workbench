@@ -5,6 +5,8 @@ import Build from '../models/Build';
 import LlmBuild from '../models/LlmBuild';
 import { getBasePath } from '../utils/basePath';
 import ModelPickerModal from './ModelPickerModal';
+import ChatBuildCard from './ChatBuildCard';
+import useCleanDataStore from '../stores/useCleanDataStore';
 
 interface OpenRouterModel {
   id: string;
@@ -20,6 +22,7 @@ interface ChatMessage {
   modelApplied?: boolean; // Track if a model was applied from this message
   modelJson?: string; // Store the JSON model that was applied
   inContext?: boolean; // Whether this message is included in LLM context
+  buildSnapshot?: any; // Snapshot of the build at the time it was applied
 }
 
 interface Prompts {
@@ -83,6 +86,10 @@ function ChatWindow() {
     const saved = localStorage.getItem('chatIncludeModifiers');
     return saved !== null ? saved === 'true' : false;
   });
+  const [includeGameData, setIncludeGameData] = useState(() => {
+    const saved = localStorage.getItem('chatIncludeGameData');
+    return saved !== null ? saved === 'true' : false;
+  });
   const [seasonalModifierText, setSeasonalModifierText] = useState('');
   const [showSeasonalInput, setShowSeasonalInput] = useState(false);
 
@@ -143,6 +150,33 @@ function ChatWindow() {
     };
 
     loadPrompts();
+
+    // Debug: log prompt data summary to console
+    const logSummary = () => {
+      const storeData = useCleanDataStore.getState().data;
+      console.log('[PromptData] Store keys:', Object.keys(storeData));
+      console.log(
+        '[PromptData] Store data counts:',
+        Object.fromEntries(
+          Object.entries(storeData).map(([k, v]) => [k, Array.isArray(v) ? v.length : typeof v]),
+        ),
+      );
+      const summary = useCleanDataStore.getState().getPromptDataSummary();
+      console.log(`[PromptData] ${summary.charCount} chars, ~${summary.tokenEstimate} tokens`);
+      console.log(summary.text);
+    };
+
+    const state = useCleanDataStore.getState();
+    if (state.data.weapons || state.data.brandsets || state.data.namedGear) {
+      logSummary();
+    } else {
+      const unsub = useCleanDataStore.subscribe((s) => {
+        if (s.data.weapons || s.data.brandsets || s.data.namedGear) {
+          logSummary();
+          unsub();
+        }
+      });
+    }
   }, []);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -204,7 +238,7 @@ function ChatWindow() {
 
   const parseAndApplyModel = (
     responseText: string,
-  ): { message: string; modelApplied: boolean; modelJson?: string } => {
+  ): { message: string; modelApplied: boolean; modelJson?: string; buildSnapshot?: any } => {
     // Check if response contains the two-part format
     const messageMatch = responseText.match(/---MESSAGE---\s*([\s\S]*?)(?=---MODEL---|$)/);
     const modelMatch = responseText.match(/---MODEL---\s*([\s\S]*?)$/);
@@ -245,7 +279,21 @@ function ChatWindow() {
       const updates = Build.fromLlm(llmBuild);
       useBuildStore.getState().updateCurrentBuild(updates);
 
-      return { message, modelApplied: true, modelJson };
+      // Capture a snapshot of the build after applying
+      const snap = useBuildStore.getState().currentBuild;
+      const buildSnapshot = {
+        mask: snap.mask,
+        chest: snap.chest,
+        holster: snap.holster,
+        backpack: snap.backpack,
+        gloves: snap.gloves,
+        kneepads: snap.kneepads,
+        primaryWeapon: snap.primaryWeapon,
+        secondaryWeapon: snap.secondaryWeapon,
+        pistol: snap.pistol,
+      };
+
+      return { message, modelApplied: true, modelJson, buildSnapshot };
     } catch (error) {
       console.error('Failed to parse or apply model:', error);
       return { message: message + '\n\n(Failed to apply build model)', modelApplied: false };
@@ -380,6 +428,14 @@ function ChatWindow() {
       userPrompt += '\n\n' + prompts.seasonal + seasonalModifierText;
     }
 
+    // Add game data if checkbox is checked
+    if (includeGameData) {
+      const { text } = useCleanDataStore.getState().getPromptDataSummary();
+      if (text) {
+        userPrompt += '\n\nAVAILABLE GAME DATA:\n' + text;
+      }
+    }
+
     console.log('=== OPENROUTER REQUEST ===');
     console.log('User Input:', inputValue);
     console.log('Include Build:', includeBuild);
@@ -482,7 +538,7 @@ function ChatWindow() {
         console.log('Extracted Text:', text);
 
         // Parse the response and apply model if present
-        const { message, modelApplied, modelJson } = parseAndApplyModel(text);
+        const { message, modelApplied, modelJson, buildSnapshot } = parseAndApplyModel(text);
 
         console.log('=== PARSED RESPONSE ===');
         console.log('Message:', message);
@@ -495,6 +551,7 @@ function ChatWindow() {
             lastMessage.content = message;
             lastMessage.modelApplied = modelApplied;
             lastMessage.modelJson = modelJson;
+            lastMessage.buildSnapshot = buildSnapshot;
           }
           return [...newMessages];
         });
@@ -686,20 +743,18 @@ function ChatWindow() {
                   />
                 </label>
                 {message.role === 'user' ? 'You' : 'Assistant'}
-                {message.modelApplied && message.modelJson && (
-                  <span
-                    className="model-applied-badge clickable"
-                    onClick={() => {
-                      setViewingJson(message.modelJson || '');
-                      setShowJsonViewer(true);
-                    }}
-                    title="Click to view JSON model"
-                  >
-                    ✓ Build Updated
-                  </span>
-                )}
               </div>
               <div className="message-content">{renderMarkdown(message.content)}</div>
+              {message.modelApplied && (
+                <ChatBuildCard
+                  buildSnapshot={message.buildSnapshot}
+                  modelJson={message.modelJson}
+                  onViewJson={(json) => {
+                    setViewingJson(json);
+                    setShowJsonViewer(true);
+                  }}
+                />
+              )}
             </div>
           ))
         )}
@@ -727,7 +782,18 @@ function ChatWindow() {
                 localStorage.setItem('chatIncludeBuild', String(e.target.checked));
               }}
             />
-            Build
+            Add Build
+          </label>
+          <label className="chat-checkbox">
+            <input
+              type="checkbox"
+              checked={includeGameData}
+              onChange={(e) => {
+                setIncludeGameData(e.target.checked);
+                localStorage.setItem('chatIncludeGameData', String(e.target.checked));
+              }}
+            />
+            Game Data
           </label>
           <label className="chat-checkbox">
             <input

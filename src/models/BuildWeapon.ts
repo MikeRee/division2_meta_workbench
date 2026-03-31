@@ -69,6 +69,10 @@ export class BuildWeapon {
     this._talents = talent;
   }
 
+  get bonus(): Record<string, number> {
+    return this.weapon.bonus;
+  }
+
   // Called during App bootstrap Phase 3, after lookup attributes are loaded.
   static initializeWeaponAttributes(weaponAttributes: Record<string, number>) {
     BuildWeapon.weaponAttributeOptions = weaponAttributes;

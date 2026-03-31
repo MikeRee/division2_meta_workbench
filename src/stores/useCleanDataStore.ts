@@ -9,6 +9,7 @@ import Skill from '../models/Skill';
 import WeaponMod from '../models/WeaponMod';
 import Talent from '../models/Talent';
 import NamedExoticGear from '../models/NamedExoticGear';
+import { serializePromptData } from '../utils/promptDataSerializer';
 
 // Type mapping for each clean data key
 export interface CleanDataTypeMap {
@@ -37,6 +38,7 @@ interface CleanDataState {
   clearAll: () => void;
   setProcessing: (isProcessing: boolean) => void;
   getAttributeVocabulary: () => [string, string][];
+  getPromptDataSummary: () => { text: string; charCount: number; tokenEstimate: number };
 }
 
 /**
@@ -209,6 +211,10 @@ const useCleanDataStore = create<CleanDataState>()(
 
         const sorted = Array.from(names).sort();
         return sorted.map((n) => [n, n] as [string, string]);
+      },
+
+      getPromptDataSummary: () => {
+        return serializePromptData(get().data);
       },
     }),
     {

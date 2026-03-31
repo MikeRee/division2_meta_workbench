@@ -1,7 +1,7 @@
 import Brandset from '../models/Brandset';
 import Gearset from '../models/Gearset';
 import Build from './Build';
-import BuildGear, { GearSource, GearType } from './BuildGear';
+import BuildGear, { GearSource, GearType, WeaponOrGearType, WeaponType } from './BuildGear';
 import { BuildWeapon } from './BuildWeapon';
 import useCleanDataStore from '../stores/useCleanDataStore';
 import { CoreType } from './CoreValue';
@@ -34,11 +34,15 @@ export class CalculatedData {
 
 export class StatCalculator {
   values: Record<string, CalculatedData> = {};
-  cores: Partial<Record<CoreType, GearType[]>> = {};
+  cores: Partial<Record<CoreType, WeaponOrGearType[]>> = {};
 
   add(stat: string, source: string, label: string, value: number): void {
     if (!this.values[stat]) {
       this.values[stat] = new CalculatedData();
+    }
+    if (stat == 'skill tier') {
+      if (!this.cores[CoreType.SkillTier]) this.cores[CoreType.SkillTier] = [];
+      this.cores[CoreType.SkillTier]!.push(WeaponType.Pistol);
     }
     this.values[stat].add(source, label, value);
   }
@@ -188,6 +192,7 @@ export class StatCalculator {
         const [key, value] = Object.entries(sa)[0] ?? [];
         if (key && value != null) calc.add(key, wName, 'Attribute', value);
       }
+      Object.entries(weapon.bonus).forEach(([key, val]) => calc.add(key, wName, 'Bonus', val));
       Object.entries(weapon.modSlots ?? {}).forEach(([slotName, modStats]) => {
         Object.entries(modStats ?? {}).forEach(([key, value]) => {
           calc.add(key, wName, slotName, value);
