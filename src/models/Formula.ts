@@ -1,7 +1,7 @@
 import Brandset from '../models/Brandset';
 import Gearset from '../models/Gearset';
 import Build from './Build';
-import BuildGear, { GearSource, GearType, WeaponOrGearType, WeaponType } from './BuildGear';
+import BuildGear, { GearSource, GearType, WeaponType } from './BuildGear';
 import { BuildWeapon } from './BuildWeapon';
 import useCleanDataStore from '../stores/useCleanDataStore';
 import { CoreType } from './CoreValue';
@@ -34,15 +34,19 @@ export class CalculatedData {
 
 export class StatCalculator {
   values: Record<string, CalculatedData> = {};
-  cores: Partial<Record<CoreType, WeaponOrGearType[]>> = {};
+  cores: Partial<Record<CoreType, string[]>> = {};
 
   add(stat: string, source: string, label: string, value: number): void {
+    console.log(
+      `[StatCalculator] add: stat="${stat}", source="${source}", label="${label}", value=${value}`,
+    );
+
     if (!this.values[stat]) {
       this.values[stat] = new CalculatedData();
     }
     if (stat == 'skill tier') {
       if (!this.cores[CoreType.SkillTier]) this.cores[CoreType.SkillTier] = [];
-      this.cores[CoreType.SkillTier]!.push(WeaponType.Pistol);
+      this.cores[CoreType.SkillTier]!.push(source);
     }
     this.values[stat].add(source, label, value);
   }
@@ -176,7 +180,12 @@ export class StatCalculator {
     // Load weapon stats based on selected weapon slot
     const weapon = build[weaponSlot] as BuildWeapon | null;
     if (weapon) {
-      const wName = weapon.weapon?.name ?? 'Unknown Weapon';
+      const wName =
+        weaponSlot === 'primaryWeapon'
+          ? 'Primary'
+          : weaponSlot === 'secondaryWeapon'
+            ? 'Secondary'
+            : 'Pistol';
       const pa1 = weapon.primaryAttribute1;
       if (pa1) {
         const [key, value] = Object.entries(pa1)[0] ?? [];

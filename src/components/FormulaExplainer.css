@@ -1,0 +1,236 @@
+.formula-explainer-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.formula-explainer-content {
+  background: #0a0a0a;
+  border-radius: 2px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  border: 1px solid #3a3a3a;
+}
+
+.formula-explainer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.formula-explainer-header h3 {
+  margin: 0;
+  color: #d4af37;
+  font-size: 1.1rem;
+}
+
+.formula-explainer-header .close-btn {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.formula-explainer-header .close-btn:hover {
+  color: #d4af37;
+}
+
+.formula-explainer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Result banner */
+.fe-result-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 10px 14px;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid #3a3a3a;
+  border-radius: 2px;
+}
+
+.fe-result-label {
+  color: #999;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.fe-result-value {
+  color: #d4af37;
+  font-size: 1.6rem;
+  font-weight: 700;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Formula code */
+.fe-formula-code {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #2a2a2a;
+  border-radius: 2px;
+  padding: 10px 14px;
+  color: #a0d8b0;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* Input blocks container */
+.fe-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Each input block */
+.fe-input-block {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid #2a2a2a;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.fe-input-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-left: 3px solid #999;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.fe-input-call {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.fe-input-total {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #e0e0e0;
+}
+
+/* Breakdown table */
+.fe-breakdown-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+
+.fe-breakdown-table thead {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.fe-breakdown-table th {
+  padding: 5px 12px;
+  color: #666;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.65rem;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.fe-th-source {
+  text-align: left;
+}
+
+.fe-th-value {
+  text-align: right;
+  width: 100px;
+}
+
+.fe-th-running {
+  text-align: right;
+  width: 110px;
+}
+
+.fe-breakdown-table td {
+  padding: 4px 12px;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.fe-td-source {
+  color: #b0b0b0;
+  text-align: left;
+}
+
+.fe-td-value {
+  color: #e0e0e0;
+  text-align: right;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-weight: 500;
+}
+
+.fe-td-running {
+  color: #888;
+  text-align: right;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-weight: 600;
+}
+
+/* Highlight the last running total row to match the header total */
+.fe-breakdown-table tbody tr:last-child .fe-td-running {
+  color: #d4af37;
+}
+
+/* Scrollbar */
+.formula-explainer-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.formula-explainer-body::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+.formula-explainer-body::-webkit-scrollbar-thumb {
+  background: #3a3a3a;
+  border-radius: 3px;
+}
+
+.formula-explainer-body::-webkit-scrollbar-thumb:hover {
+  background: #4a4a4a;
+}
+
+@media (max-width: 768px) {
+  .formula-explainer-content {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .fe-th-running,
+  .fe-td-running {
+    width: 80px;
+  }
+}

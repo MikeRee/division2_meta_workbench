@@ -5,12 +5,13 @@ import { KeenersWatchStats } from './KeenersWatchStats';
 import LlmBuild, { LlmWeapon, LlmGear, LlmAttachments } from './LlmBuild';
 import { useLookupStore } from '../stores/useLookupStore';
 import useCleanDataStore from '../stores/useCleanDataStore';
-import { fuzzyFind } from '../utils/fuzzySearch';
+import { fuzzyFind, fuzzyMatchKey } from '../utils/fuzzySearch';
 import Gearset from './Gearset';
 import Brandset from './Brandset';
 import NamedExoticGear from './NamedExoticGear';
 import Weapon from './Weapon';
 import WeaponMod from './WeaponMod';
+import Specialization from './Specialization';
 function getDefaultWatchStats(): KeenersWatchStats {
   const keenersWatchData = useLookupStore.getState().keenersWatch;
   const defaults: KeenersWatchStats = {
@@ -37,7 +38,7 @@ function getDefaultWatchStats(): KeenersWatchStats {
 
 class Build {
   name: string;
-  specialization: any;
+  specialization: Specialization | null;
   primaryWeapon: BuildWeapon | null;
   secondaryWeapon: BuildWeapon | null;
   pistol: BuildWeapon | null;
@@ -72,7 +73,7 @@ class Build {
     updatedAt = null,
   }: {
     name?: string;
-    specialization?: any;
+    specialization?: Specialization | null;
     primaryWeapon?: BuildWeapon | null;
     secondaryWeapon?: BuildWeapon | null;
     pistol?: BuildWeapon | null;
@@ -233,7 +234,7 @@ class Build {
   toView(): Record<string, any> {
     const llm = this.toLlm();
     const result: Record<string, any> = {};
-    if (this.specialization) result.specialization = this.specialization;
+    if (this.specialization) result.specialization = this.specialization.name;
     return { ...result, ...llm.toJSON() };
   }
 
@@ -259,15 +260,19 @@ class Build {
       // Restore primary attribute 2
       if (llmWeapon.primaryAttrib2) {
         const weaponAttrs = BuildWeapon.getWeaponAttributeOptions();
-        const val = weaponAttrs[llmWeapon.primaryAttrib2] ?? 0;
-        bw.setPrimaryAttribute2(llmWeapon.primaryAttrib2, val);
+        const matchedKey = fuzzyMatchKey(llmWeapon.primaryAttrib2, weaponAttrs);
+        const key = matchedKey ?? llmWeapon.primaryAttrib2;
+        const val = weaponAttrs[key] ?? 0;
+        bw.setPrimaryAttribute2(key, val);
       }
 
       // Restore secondary attribute
       if (llmWeapon.secondaryAttrib) {
         const weaponAttrs = BuildWeapon.getWeaponAttributeOptions();
-        const val = weaponAttrs[llmWeapon.secondaryAttrib] ?? 0;
-        bw.setSecondaryAttribute(llmWeapon.secondaryAttrib, val);
+        const matchedKey = fuzzyMatchKey(llmWeapon.secondaryAttrib, weaponAttrs);
+        const key = matchedKey ?? llmWeapon.secondaryAttrib;
+        const val = weaponAttrs[key] ?? 0;
+        bw.setSecondaryAttribute(key, val);
       }
 
       // Restore talent
@@ -413,7 +418,7 @@ class Build {
     const llm = this.toLlm().toJSON();
     return {
       name: this.name,
-      specialization: this.specialization || null,
+      specialization: this.specialization?.name || null,
       ...llm,
       watch: this.watch,
     };
@@ -435,9 +440,19 @@ class Build {
 
     const partial = Build.fromLlm(llmBuild);
 
+    // Resolve specialization from name string
+    let spec: Specialization | null = null;
+    const specName =
+      typeof json.specialization === 'string' ? json.specialization : json.specialization?.name;
+    if (specName) {
+      const specializations: Specialization[] =
+        useCleanDataStore.getState().getCleanData('specializations') || [];
+      spec = specializations.find((s) => s.name === specName) || null;
+    }
+
     return new Build({
       name: json.name || '',
-      specialization: json.specialization || null,
+      specialization: spec,
       watch: json.watch || null,
       ...partial,
     });

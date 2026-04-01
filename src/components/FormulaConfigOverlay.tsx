@@ -646,6 +646,20 @@ function registerCustomBlocks() {
     const decimals = block.getFieldValue('DECIMALS');
     return [`round(${value}, ${decimals})`, 0];
   };
+
+  Blockly.Blocks['weapon_type_damage'] = {
+    init(this: Blockly.Block) {
+      this.appendDummyInput().appendField('weapon type damage');
+      this.setOutput(true, 'Number');
+      this.setColour(30);
+      this.setTooltip(
+        'Sum of the active weapon type damage bonus (e.g. assault rifle damage when an AR is selected)',
+      );
+    },
+  };
+  javascriptGenerator.forBlock['weapon_type_damage'] = function () {
+    return [`getWeaponTypeDamage()`, 0];
+  };
 }
 
 const TOOLBOX: Blockly.utils.toolbox.ToolboxDefinition = {
@@ -661,6 +675,7 @@ const TOOLBOX: Blockly.utils.toolbox.ToolboxDefinition = {
         { kind: 'block', type: 'stat_sum_all' },
         { kind: 'block', type: 'stat_percent_all' },
         { kind: 'block', type: 'stat_core' },
+        { kind: 'block', type: 'weapon_type_damage' },
       ],
     },
     {
@@ -892,6 +907,13 @@ function formatFormulaResult(value: number, type: FormulaType): string {
   return formatAggValue(value);
 }
 
+/** Map a weapon type string to its corresponding damage stat name in the aggregated values */
+function weaponTypeToDamageStat(weaponType: string): string {
+  const t = weaponType.toLowerCase();
+  if (t === 'mr') return 'mmr damage';
+  return t + ' damage';
+}
+
 /**
  * Evaluate a Blockly-generated formula code string against the current build context.
  * Returns the numeric result, or null if the formula is empty/invalid.
@@ -911,6 +933,11 @@ function evaluateFormula(
     const getBaseWeapon = (prop: string) => weaponBaseValues[prop] ?? 0;
     const getBaseGear = (prop: string) => aggregatedValues[prop.toLowerCase()] ?? 0;
     const getCore = (core: string) => coreValues[core.toLowerCase()] ?? 0;
+    const getWeaponTypeDamage = () => {
+      const wType = weaponBaseValues['weaponType'] as unknown as string;
+      if (!wType) return 0;
+      return aggregatedValues[weaponTypeToDamageStat(wType)] ?? 0;
+    };
     const round = (value: number, decimals: number) => {
       const factor = Math.pow(10, decimals);
       return Math.round(value * factor) / factor;
@@ -920,10 +947,11 @@ function evaluateFormula(
       'getBaseWeapon',
       'getBaseGear',
       'getCore',
+      'getWeaponTypeDamage',
       'round',
       `return (${cleanCode});`,
     );
-    const result = fn(sumAll, getBaseWeapon, getBaseGear, getCore, round);
+    const result = fn(sumAll, getBaseWeapon, getBaseGear, getCore, getWeaponTypeDamage, round);
     if (typeof result === 'number' && isFinite(result)) return result;
     return null;
   } catch {
@@ -993,7 +1021,8 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
       damage: base.damage || 0,
       optimalRange: base.optimalRange || 0,
       hsd: base.hsd || 0,
-    } as Record<string, number>;
+      weaponType: base.type || '',
+    } as unknown as Record<string, number>;
   }, [currentBuild, selectedWeaponSlot]);
 
   useEffect(() => {

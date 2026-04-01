@@ -18,6 +18,7 @@ import KeenersWatch from './KeenersWatch';
 import { KeenersWatchStats } from '../models/KeenersWatchStats';
 import NamedExoticGear, { MinorAttribute } from '../models/NamedExoticGear';
 import GearEditOverlay from './GearEditOverlay';
+import Specialization from '../models/Specialization';
 import WeaponEditOverlay from './WeaponEditOverlay';
 import { getBasePath } from '../utils/basePath';
 
@@ -200,7 +201,7 @@ function Build() {
     return buildGearList;
   };
 
-  const handleSelect = (value: string | BuildGear | BuildWeapon) => {
+  const handleSelect = (value: string | BuildGear | BuildWeapon | Specialization) => {
     if (overlayType) {
       updateCurrentBuild({ [overlayType]: value } as any);
     }
@@ -300,8 +301,12 @@ function Build() {
       };
 
       // Build the updates object
+      const specName = llmBuild.specialization || '';
+      const specObj = specName
+        ? specializations.find((s: Specialization) => s.name === specName) || null
+        : null;
       const updates: any = {
-        specialization: llmBuild.specialization || '',
+        specialization: specObj,
         skill1: llmBuild.skill1 || '',
         skill2: llmBuild.skill2 || '',
         watch: llmBuild.watch || currentBuild.watch || undefined,
@@ -442,8 +447,8 @@ function Build() {
           {currentBuild.specialization ? (
             <div className="specialization-cell" onClick={() => handleCellClick('specialization')}>
               <img
-                src={getSpecializationImage(currentBuild.specialization)}
-                alt={currentBuild.specialization}
+                src={getSpecializationImage(currentBuild.specialization.name)}
+                alt={currentBuild.specialization.name}
                 className="specialization-image"
               />
             </div>
@@ -621,7 +626,7 @@ function Build() {
                       src={getSpecializationImage(item.name)}
                       alt={item.name}
                       className="specialization-item"
-                      onClick={() => handleSelect(item.name)}
+                      onClick={() => handleSelect(item as Specialization)}
                     />
                   ))
                 ) : (

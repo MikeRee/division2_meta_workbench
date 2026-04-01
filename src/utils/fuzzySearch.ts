@@ -160,3 +160,36 @@ export function fuzzyFind<T>(
 
   return bestMatch;
 }
+
+/**
+ * Fuzzy-match a search string against the keys of a Record and return the best matching key.
+ * Useful when LLM output uses slightly different wording than canonical attribute names.
+ * @param searchStr The string to match (e.g. "damage to target out of cover")
+ * @param record The record whose keys are canonical names (e.g. { "dmg to target out of cover": 10 })
+ * @param threshold Minimum similarity score to accept (default 0.7)
+ * @returns The best matching key, or null if nothing meets the threshold
+ */
+export function fuzzyMatchKey(
+  searchStr: string,
+  record: Record<string, number>,
+  threshold: number = 0.7,
+): string | null {
+  const keys = Object.keys(record);
+  if (!searchStr || keys.length === 0) return null;
+
+  // Exact match short-circuit
+  if (record[searchStr] !== undefined) return searchStr;
+
+  let bestKey: string | null = null;
+  let bestScore = threshold;
+
+  for (const key of keys) {
+    const score = similarityScore(searchStr, key);
+    if (score > bestScore) {
+      bestScore = score;
+      bestKey = key;
+    }
+  }
+
+  return bestKey;
+}

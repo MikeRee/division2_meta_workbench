@@ -7,10 +7,18 @@ import type { Formula } from '../models/Formula';
 import useBuildStore from '../stores/useBuildStore';
 import { useFormulaStore } from '../stores/useFormulaStore';
 import FormulaConfigOverlay from './FormulaConfigOverlay';
+import FormulaExplainer from './FormulaExplainer';
 
 const BUILD_COLORS = ['#e74c3c', '#3498db', '#f1c40f', '#9b59b6'] as const;
 
 type WeaponSlot = 'primaryWeapon' | 'secondaryWeapon' | 'pistol';
+
+/** Map a weapon type string to its corresponding damage stat name in the aggregated values */
+function weaponTypeToDamageStat(weaponType: string): string {
+  const t = weaponType.toLowerCase();
+  if (t === 'mr') return 'mmr damage';
+  return t + ' damage';
+}
 
 /** Evaluate a formula against a given set of aggregated values, weapon base values, and core values */
 function evaluateFormulaWith(
@@ -27,6 +35,11 @@ function evaluateFormulaWith(
     const getBaseWeapon = (prop: string) => weaponBaseValues[prop] ?? 0;
     const getBaseGear = (prop: string) => aggregatedValues[prop.toLowerCase()] ?? 0;
     const getCore = (core: string) => coreValues[core.toLowerCase()] ?? 0;
+    const getWeaponTypeDamage = () => {
+      const wType = weaponBaseValues['weaponType'] as unknown as string;
+      if (!wType) return 0;
+      return aggregatedValues[weaponTypeToDamageStat(wType)] ?? 0;
+    };
     const round = (value: number, decimals: number) => {
       const factor = Math.pow(10, decimals);
       return Math.round(value * factor) / factor;
@@ -36,10 +49,11 @@ function evaluateFormulaWith(
       'getBaseWeapon',
       'getBaseGear',
       'getCore',
+      'getWeaponTypeDamage',
       'round',
       `return (${cleanCode});`,
     );
-    const result = fn(sumAll, getBaseWeapon, getBaseGear, getCore, round);
+    const result = fn(sumAll, getBaseWeapon, getBaseGear, getCore, getWeaponTypeDamage, round);
     if (typeof result === 'number' && isFinite(result)) return result;
     return null;
   } catch {
@@ -74,6 +88,10 @@ function Stats() {
   const formulas = useFormulaStore((s) => s.formulas);
   const [selectedWeaponSlot, setSelectedWeaponSlot] = useState<WeaponSlot>('primaryWeapon');
   const [showFormulaConfig, setShowFormulaConfig] = useState(false);
+  const [explainerFormula, setExplainerFormula] = useState<{
+    formula: Formula;
+    result: number | null;
+  } | null>(null);
 
   // Compute stats for all builds that have data
   const allBuildResults = useMemo(() => {
@@ -104,6 +122,7 @@ function Stats() {
         wpnBase.damage = base.damage || 0;
         wpnBase.optimalRange = base.optimalRange || 0;
         wpnBase.hsd = base.hsd || 0;
+        (wpnBase as any).weaponType = base.type || '';
       }
 
       const formulaResults = new Map<string, number | null>();
@@ -149,7 +168,8 @@ function Stats() {
       damage: base.damage || 0,
       optimalRange: base.optimalRange || 0,
       hsd: base.hsd || 0,
-    } as Record<string, number>;
+      weaponType: base.type || '',
+    } as unknown as Record<string, number>;
   }, [currentBuild, selectedWeaponSlot]);
 
   const aggregatedValues = useMemo(() => calc.toRecord(), [calc]);
@@ -270,7 +290,12 @@ function Stats() {
                   const maxVal = formulaMaxValues.get(formula.label) || 1;
 
                   return (
-                    <div key={idx} className="stat-row">
+                    <div
+                      key={idx}
+                      className="stat-row"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => setExplainerFormula({ formula, result: activeResult })}
+                    >
                       <div className="stat-info">
                         <span className="stat-name">{formula.label}</span>
                         <div className="stat-bars-container">
@@ -319,6 +344,17 @@ function Stats() {
       <FormulaConfigOverlay
         isOpen={showFormulaConfig}
         onClose={() => setShowFormulaConfig(false)}
+      />
+      <FormulaExplainer
+        isOpen={explainerFormula !== null}
+        onClose={() => setExplainerFormula(null)}
+        formula={explainerFormula?.formula ?? null}
+        result={explainerFormula?.result ?? null}
+        aggregatedValues={aggregatedValues}
+        weaponBaseValues={weaponBaseValues}
+        coreValues={coreValues}
+        calcValues={calc.values}
+        coreSources={calc.cores}
       />
     </div>
   );

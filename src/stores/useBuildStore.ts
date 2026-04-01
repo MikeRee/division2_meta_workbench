@@ -3,11 +3,12 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import Build from '../models/Build';
 import BuildGear from '../models/BuildGear';
 import { BuildWeapon } from '../models/BuildWeapon';
+import Specialization from '../models/Specialization';
 
 // Type for partial build updates
 type BuildData = {
   name?: string;
-  specialization?: any;
+  specialization?: Specialization | null;
   primaryWeapon?: BuildWeapon | null;
   secondaryWeapon?: BuildWeapon | null;
   pistol?: BuildWeapon | null;
@@ -35,7 +36,7 @@ interface BuildState {
   setBuild: (index: number, build: Build) => void;
 
   updateCurrentBuild: (updates: Partial<BuildData>) => void;
-  setSpecialization: (specialization: any) => void;
+  setSpecialization: (specialization: Specialization | null) => void;
   setPrimaryWeapon: (primaryWeapon: any) => void;
   setSecondaryWeapon: (secondaryWeapon: any) => void;
   setPistol: (pistol: any) => void;
