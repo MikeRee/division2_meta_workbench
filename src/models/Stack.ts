@@ -1,6 +1,7 @@
 import Talent from './Talent';
 
 class Stack {
+  name?: string;
   size: number;
   talent: Talent;
   bonus: Record<string, number>;
@@ -13,7 +14,9 @@ class Stack {
     bonus: Record<string, number> = {},
     duration = 0,
     cooldown = 0,
+    name?: string,
   ) {
+    this.name = name;
     this.size = size;
     this.talent = talent;
     this.bonus = bonus;

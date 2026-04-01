@@ -232,7 +232,9 @@ class Build {
 
   toView(): Record<string, any> {
     const llm = this.toLlm();
-    return llm.toJSON();
+    const result: Record<string, any> = {};
+    if (this.specialization) result.specialization = this.specialization;
+    return { ...result, ...llm.toJSON() };
   }
 
   static fromLlm(llmBuild: LlmBuild): Partial<Build> {
@@ -411,13 +413,14 @@ class Build {
     const llm = this.toLlm().toJSON();
     return {
       name: this.name,
+      specialization: this.specialization || null,
       ...llm,
       watch: this.watch,
     };
   }
 
   static fromJSON(json: any): Build {
-    // json is in LlmBuild format with name and watch added
+    // json is in LlmBuild format with name, specialization, and watch added
     const llmBuild = new LlmBuild({
       primaryWeapon: json.primaryWeapon,
       secondaryWeapon: json.secondaryWeapon,
@@ -434,6 +437,7 @@ class Build {
 
     return new Build({
       name: json.name || '',
+      specialization: json.specialization || null,
       watch: json.watch || null,
       ...partial,
     });

@@ -208,6 +208,13 @@ export class StatCalculator {
       });
     });
 
+    // Add specialty bonuses
+    if (build.specialization?.bonuses) {
+      for (const [stat, value] of Object.entries(build.specialization.bonuses)) {
+        calc.add(stat, build.specialization.name || 'Specialization', 'Bonus', value as number);
+      }
+    }
+
     return calc;
   }
 }

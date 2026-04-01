@@ -19,6 +19,7 @@ import { KeenersWatchStats } from '../models/KeenersWatchStats';
 import NamedExoticGear, { MinorAttribute } from '../models/NamedExoticGear';
 import GearEditOverlay from './GearEditOverlay';
 import WeaponEditOverlay from './WeaponEditOverlay';
+import { getBasePath } from '../utils/basePath';
 
 const GEAR_SLOTS = ['mask', 'chest', 'holster', 'backpack', 'gloves', 'kneepads'] as const;
 const WEAPON_SLOTS = ['primaryWeapon', 'secondaryWeapon', 'pistol'] as const;
@@ -393,7 +394,7 @@ function Build() {
   const isWeaponSelection = ['primaryWeapon', 'secondaryWeapon', 'pistol'].includes(overlayType);
 
   const getSpecializationImage = (name: string) => {
-    return `/images/specialties/${name.toLowerCase()}.png`;
+    return `${getBasePath()}/images/specialties/${name.toLowerCase()}.png`;
   };
 
   const BUILD_COLORS = ['#e74c3c', '#3498db', '#f1c40f', '#9b59b6'] as const;
