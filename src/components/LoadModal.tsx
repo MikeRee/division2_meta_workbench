@@ -80,7 +80,6 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
 
   const [pages, setPages] = useState<Record<string, string>>({
     weapons: 'Weapons',
-    exoticWeapons: 'Weapons: Named + Exotic',
     gearsets: 'Gearsets',
     brandsets: 'Brandsets',
     namedGear: 'Gear: Named + Exotics',
@@ -648,14 +647,6 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
         modSlots: 'array',
         hsd: 'number',
       },
-      exoticWeapons: {
-        type: 'string',
-        variant: 'string',
-        name: 'string',
-        talentName: 'string',
-        talentDesc: 'string',
-        modSlots: 'object',
-      },
       weaponMods: {
         type: 'string',
         slot: 'string',
@@ -1164,39 +1155,6 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
               onClick={() => handleViewClean('weapons')}
               title="View Clean Data"
               disabled={loadingStates.weapons}
-            >
-              <MdCleaningServices />
-            </button>
-          </div>
-
-          <div className="grid-label">{getLabel('Exotic Weapons', 'exoticWeapons')}</div>
-          <input
-            className="grid-input"
-            value={pages.exoticWeapons}
-            onChange={(e) => handlePageChange('exoticWeapons', e.target.value)}
-          />
-          <div className="action-buttons">
-            <button
-              className="icon-button"
-              onClick={() => handleLoad('exoticWeapons')}
-              title="Load"
-              disabled={loadingStates.exoticWeapons}
-            >
-              {loadingStates.exoticWeapons ? '⏳' : <MdDownload />}
-            </button>
-            <button
-              className={`icon-button ${dataExists.exoticWeapons ? 'has-data' : 'no-data'}`}
-              onClick={() => handleView('exoticWeapons')}
-              title="View"
-              disabled={!dataExists.exoticWeapons || loadingStates.exoticWeapons}
-            >
-              <MdEditDocument />
-            </button>
-            <button
-              className={`icon-button ${cleanDataExists.exoticWeapons ? 'has-data' : 'no-data'}`}
-              onClick={() => handleViewClean('exoticWeapons')}
-              title="View Clean Data"
-              disabled={loadingStates.exoticWeapons}
             >
               <MdCleaningServices />
             </button>

@@ -8,7 +8,6 @@ import useLookupStore from './stores/useLookupStore';
 import useRawDataStore from './stores/useRawDataStore';
 import { useRulesStore } from './stores/useRulesStore';
 import Weapon from './models/Weapon';
-import ExoticWeapon from './models/ExoticWeapon';
 import Gearset from './models/Gearset';
 import Brandset from './models/Brandset';
 import Skill from './models/Skill';
@@ -19,8 +18,6 @@ import StatusImmunity from './models/StatusImmunity';
 import { getBasePath } from './utils/basePath';
 import {
   parseWeapons,
-  parseExoticWeapons,
-  convertToExoticWeaponObjects,
   parseGearsets,
   parseBrandsets,
   parseNamedGear,
@@ -43,7 +40,6 @@ import {
   processBrandsetData,
   processGearsetData,
   processWeaponModData,
-  processExoticWeaponData,
 } from './utils/dataNormalizer';
 import './App.css';
 import NamedExoticGear from './models/NamedExoticGear';
@@ -51,7 +47,6 @@ import NamedExoticGear from './models/NamedExoticGear';
 function App() {
   const [, setDisplayContent] = useState<string>('');
   const [, setWeapons] = useState<Weapon[]>([]);
-  const [, setExoticWeapons] = useState<ExoticWeapon[]>([]);
   const [, setGearsets] = useState<Gearset[]>([]);
   const [, setBrandsets] = useState<Brandset[]>([]);
   const [, setNamedGear] = useState<NamedExoticGear[]>([]);
@@ -151,7 +146,6 @@ function App() {
       const dataFiles: Record<string, string> = {
         weapons: `${base}/clean/weapons.json`,
         talents: `${base}/clean/talents.json`,
-        exoticWeapons: `${base}/clean/exoticWeapons.json`,
         gearsets: `${base}/clean/gearsets.json`,
         brandsets: `${base}/clean/brandsets.json`,
         namedGear: `${base}/clean/namedGear.json`,
@@ -225,7 +219,6 @@ function App() {
       const base = getBasePath();
       const cleanDataFiles: Record<string, string> = {
         weapons: `${base}/clean/weapons.json`,
-        exoticWeapons: `${base}/clean/exoticWeapons.json`,
         gearsets: `${base}/clean/gearsets.json`,
         brandsets: `${base}/clean/brandsets.json`,
         namedGear: `${base}/clean/namedGear.json`,
@@ -494,109 +487,6 @@ function App() {
       errorMessage += '2. Verify the Google API Key has Google Sheets API enabled\n';
       errorMessage += '3. Check that the "Weapons" tab exists in the spreadsheet\n';
       errorMessage += '4. Ensure the spreadsheet ID is correct (from the URL)';
-      setDisplayContent(errorMessage);
-    }
-  };
-
-  const handleLoadExoticWeapons = async () => {
-    const apiKey = localStorage.getItem('googleApiKey');
-    let spreadsheetId = localStorage.getItem('division2GearSpreadsheet');
-
-    if (!apiKey || !spreadsheetId) {
-      setDisplayContent('Error: Please configure Google API Key and Spreadsheet ID in Config');
-      return;
-    }
-
-    // Extract spreadsheet ID from URL if full URL is provided
-    spreadsheetId = extractSpreadsheetId(spreadsheetId);
-    localStorage.setItem('division2GearSpreadsheet', spreadsheetId);
-
-    setDisplayContent('Loading exotic weapons...');
-
-    try {
-      // First, fetch all sheets to find the correct sheet name/index
-      const metaUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?key=${apiKey}`;
-      const metaResponse = await fetch(metaUrl);
-
-      if (!metaResponse.ok) {
-        throw new Error(`Failed to fetch spreadsheet metadata: ${metaResponse.status}`);
-      }
-
-      const metaData = await metaResponse.json();
-      const targetSheet = metaData.sheets.find(
-        (sheet: any) =>
-          sheet.properties.title.includes('Named') && sheet.properties.title.includes('Exotic'),
-      );
-
-      if (!targetSheet) {
-        setDisplayContent(
-          'Error: Could not find "Weapons: Named + Exotic" sheet. Available sheets: ' +
-            metaData.sheets.map((s: any) => s.properties.title).join(', '),
-        );
-        return;
-      }
-
-      const sheetName = targetSheet.properties.title;
-      console.log('Found sheet:', sheetName);
-
-      // Fetch with formatting data to get text colors using the exact sheet name
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?key=${apiKey}&ranges=${encodeURIComponent(sheetName)}&includeGridData=true`;
-
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`API Error: ${response.status} ${response.statusText}\n${errorText}`);
-      }
-
-      const data = await response.json();
-
-      if (
-        !data.sheets ||
-        data.sheets.length === 0 ||
-        !data.sheets[0].data ||
-        !data.sheets[0].data[0].rowData
-      ) {
-        setDisplayContent('No data found in Weapons: Named + Exotic tab');
-        return;
-      }
-
-      // Parse data into raw objects
-      const rawExoticData = parseExoticWeapons(data.sheets[0].data[0]);
-
-      // Load regex patterns for normalization
-      const patternsResponse = await fetch(`${getBasePath()}/data/regexPatterns.json`);
-      const patterns = await patternsResponse.json();
-
-      // Normalize the data
-      const normalizedExoticData = processExoticWeaponData(rawExoticData, patterns.exoticWeapons);
-
-      // Convert to ExoticWeapon objects
-      const exoticList = convertToExoticWeaponObjects(normalizedExoticData);
-      setExoticWeapons(exoticList);
-
-      // Store in lookup store
-      useLookupStore.getState().setExoticWeapons(exoticList);
-
-      // Convert to JSON for display
-      const exoticData = exoticList.map((e: any) => ({ ...e }));
-      setDisplayContent(JSON.stringify(exoticData, null, 2));
-    } catch (error) {
-      console.error('Full error:', error);
-      const errorMessageText = error instanceof Error ? error.message : String(error);
-      let errorMessage = `Error loading exotic weapons: ${errorMessageText}\n\n`;
-      errorMessage += `Spreadsheet ID: ${spreadsheetId}\n`;
-      errorMessage += `API Key configured: ${apiKey ? 'Yes' : 'No'}\n\n`;
-      errorMessage += 'Troubleshooting:\n';
-      errorMessage +=
-        '1. Make sure the spreadsheet is shared publicly or with "Anyone with the link"\n';
-      errorMessage += '2. Verify the Google API Key has Google Sheets API enabled\n';
-      errorMessage += '3. Check that the "Weapons: Named + Exotic" tab exists in the spreadsheet';
       setDisplayContent(errorMessage);
     }
   };
@@ -1043,7 +933,6 @@ function App() {
 
     const loadHandlers: Record<string, () => Promise<void>> = {
       weapons: handleLoadWeapons,
-      exoticWeapons: handleLoadExoticWeapons,
       gearsets: handleLoadGearsets,
       brandsets: handleLoadBrandsets,
       namedGear: handleLoadNamedGear,
@@ -1174,13 +1063,11 @@ function App() {
 
     try {
       let url: string;
-      let useGridData = ['weapons', 'exoticWeapons', 'gearsets', 'namedGear', 'skills'].includes(
-        dataType,
-      );
+      let useGridData = ['weapons', 'gearsets', 'namedGear', 'skills'].includes(dataType);
 
       if (useGridData) {
         // For sheets that need grid data (color formatting, etc.)
-        if (dataType === 'exoticWeapons' || dataType === 'namedGear') {
+        if (dataType === 'namedGear') {
           // Find the correct sheet name first
           const metaUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?key=${apiKey}`;
           const metaResponse = await fetch(metaUrl);
@@ -1189,13 +1076,7 @@ function App() {
           const metaData = await metaResponse.json();
           const targetSheet = metaData.sheets.find((sheet: any) => {
             const title = sheet.properties.title.toLowerCase();
-            if (dataType === 'exoticWeapons') {
-              return (
-                title.includes('weapon') && title.includes('named') && title.includes('exotic')
-              );
-            } else {
-              return title.includes('gear') && title.includes('named') && title.includes('exotic');
-            }
+            return title.includes('gear') && title.includes('named') && title.includes('exotic');
           });
 
           if (!targetSheet) throw new Error(`Could not find sheet for ${dataType}`);
@@ -1243,92 +1124,6 @@ function App() {
           // Use the original parseWeapons function
           const weaponList = parseWeapons(gridData);
           rawData = weaponList.map((w: any) => ({ ...w }));
-        } else if (dataType === 'exoticWeapons') {
-          // For exotic weapons, we need formulas for icons
-          // Make a second call with FORMULA option
-          console.log(`[${dataType}] Fetching formulas for icon extraction...`);
-          const formulaUrl = `/api/sheets/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(pageName)}?key=${apiKey}&valueRenderOption=FORMULA`;
-          const formulaResponse = await fetch(formulaUrl);
-          const formulaData = await formulaResponse.json();
-
-          console.log(`[${dataType}] Formula data rows:`, formulaData.values?.length);
-
-          // Use the original parseExoticWeapons function with grid data
-          const exoticDataWithoutIcons = parseExoticWeapons(gridData);
-
-          console.log(`[${dataType}] Parsed exotic weapons:`, Object.keys(exoticDataWithoutIcons));
-
-          // Extract icons from formula data
-          if (formulaData.values) {
-            const formulaValues = formulaData.values;
-
-            for (let i = 1; i < formulaValues.length; i++) {
-              const row = formulaValues[i] || [];
-              const colC = row[2] || '';
-              const colD = row[3] || '';
-
-              // Check if column C has a weapon name (not a formula)
-              if (colC && colC.trim() && !colC.startsWith('=')) {
-                const weaponName = colC.trim();
-
-                console.log(
-                  `[${dataType}] Row ${i}: name="${weaponName}", colD="${colD.substring(0, 50)}"`,
-                );
-
-                // Check if this weapon exists in our parsed exotic weapons
-                if (exoticDataWithoutIcons[weaponName]) {
-                  const icons: string[] = [];
-
-                  // Check PREVIOUS row for first icon in column D
-                  if (i - 1 >= 0) {
-                    const prevRow = formulaValues[i - 1] || [];
-                    const prevColD = prevRow[3] || '';
-
-                    console.log(
-                      `[${dataType}] Row ${i - 1} (prev): colD="${prevColD.substring(0, 50)}"`,
-                    );
-
-                    if (
-                      prevColD &&
-                      prevColD.trim() &&
-                      (prevColD.startsWith('=IMAGE(') || prevColD.startsWith('=image('))
-                    ) {
-                      let icon1 = prevColD.trim();
-                      const match = icon1.match(/=IMAGE\("([^"]+)"/i);
-                      if (match) {
-                        icon1 = match[1];
-                        icons.push(icon1);
-                        console.log(`[${dataType}] Found first icon for ${weaponName}:`, icon1);
-                      }
-                    }
-                  }
-
-                  // Extract second icon from column D of current row (where the name is)
-                  if (
-                    colD &&
-                    colD.trim() &&
-                    (colD.startsWith('=IMAGE(') || colD.startsWith('=image('))
-                  ) {
-                    let icon2 = colD.trim();
-                    const match = icon2.match(/=IMAGE\("([^"]+)"/i);
-                    if (match) {
-                      icon2 = match[1];
-                      icons.push(icon2);
-                      console.log(`[${dataType}] Found second icon for ${weaponName}:`, icon2);
-                    }
-                  }
-
-                  exoticDataWithoutIcons[weaponName].icons = icons;
-                  console.log(
-                    `[${dataType}] Set ${icons.length} icon(s) for ${weaponName}:`,
-                    icons,
-                  );
-                }
-              }
-            }
-          }
-
-          rawData = Object.values(exoticDataWithoutIcons);
         } else if (dataType === 'namedGear') {
           // For named gear, we need formulas for icons
           // Make a second call with FORMULA option

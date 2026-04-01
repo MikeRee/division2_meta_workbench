@@ -3,7 +3,6 @@
  */
 export const MAIN_DATA_KEYS = [
   'weapons',
-  'exoticWeapons',
   'gearsets',
   'brandsets',
   'namedGear',

@@ -12,6 +12,7 @@ const CHART = `graph LR
   gearsets["Gearsets"]
   brandsets["Brandsets"]
   namedGear["NamedExoticGear"]
+  specializations["Specializations"]
   weapons --- weaponMods
   weapons --- talents
   gearsets --- talents
@@ -25,7 +26,15 @@ const MERMAID_CONFIG = {
   flowchart: { htmlLabels: true, curve: 'basis' as const },
 };
 
-const TABLE_NAMES = ['weapons', 'weaponMods', 'talents', 'gearsets', 'brandsets', 'namedGear'];
+const TABLE_NAMES = [
+  'weapons',
+  'weaponMods',
+  'talents',
+  'gearsets',
+  'brandsets',
+  'namedGear',
+  'specializations',
+];
 
 interface DivisionDBModalProps {
   isOpen: boolean;
@@ -47,6 +56,7 @@ function DivisionDBModal({ isOpen, onClose }: DivisionDBModalProps) {
     'gearsets',
     'brandsets',
     'namedGear',
+    'specializations',
   ];
 
   useEffect(() => {

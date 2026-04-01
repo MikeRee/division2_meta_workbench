@@ -1,5 +1,4 @@
 import Weapon from '../models/Weapon';
-import ExoticWeapon from '../models/ExoticWeapon';
 import Gearset from '../models/Gearset';
 import Skill from '../models/Skill';
 import WeaponMod from '../models/WeaponMod';
@@ -306,17 +305,6 @@ export const parseExoticWeapons = (gridData: GridData): Record<string, any> => {
   console.log('Exotic weapons parsed:', Object.keys(exoticData).length);
 
   return exoticData;
-};
-
-/**
- * Converts exotic weapon data to ExoticWeapon objects after normalization
- * @param {Record<string, any>} exoticWeaponData - Normalized exotic weapon data
- * @returns {ExoticWeapon[]} Array of ExoticWeapon objects
- */
-export const convertToExoticWeaponObjects = (
-  exoticWeaponData: Record<string, any>,
-): ExoticWeapon[] => {
-  return Object.values(exoticWeaponData).map((data) => new ExoticWeapon(data));
 };
 
 /**

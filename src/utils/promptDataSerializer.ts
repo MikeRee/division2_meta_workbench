@@ -20,14 +20,6 @@ export function serializePromptData(data: Partial<CleanDataTypeMap>): {
     weaponsByType.get(type)!.push(w.name);
   }
 
-  // Exotic weapons grouped by type
-  const exotics = data.exoticWeapons ?? [];
-  for (const ew of exotics) {
-    const type = ew.type.toLowerCase();
-    if (!weaponsByType.has(type)) weaponsByType.set(type, []);
-    weaponsByType.get(type)!.push(`${ew.name} [exotic]`);
-  }
-
   // Emit all weapons grouped by type
   if (weaponsByType.size > 0) {
     sections.push('WEAPONS:');

@@ -2,26 +2,25 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { MAIN_DATA_KEYS, type MainDataKey } from '../constants/dataKeys';
 import Weapon from '../models/Weapon';
-import ExoticWeapon from '../models/ExoticWeapon';
 import Gearset from '../models/Gearset';
 import Brandset from '../models/Brandset';
 import Skill from '../models/Skill';
 import WeaponMod from '../models/WeaponMod';
 import Talent from '../models/Talent';
+import Specialization from '../models/Specialization';
 import NamedExoticGear from '../models/NamedExoticGear';
 import { serializePromptData } from '../utils/promptDataSerializer';
 
 // Type mapping for each clean data key
 export interface CleanDataTypeMap {
   weapons: Weapon[];
-  exoticWeapons: ExoticWeapon[];
   gearsets: Gearset[];
   brandsets: Brandset[];
   namedGear: NamedExoticGear[];
   skills: Skill[];
   weaponMods: WeaponMod[];
   talents: Talent[];
-  specializations: any[]; // No specific model yet
+  specializations: Specialization[];
 }
 
 interface CleanDataState {
@@ -46,14 +45,13 @@ interface CleanDataState {
  */
 export const CLASS_CONSTRUCTORS: Partial<Record<MainDataKey, new (data: any) => any>> = {
   weapons: Weapon,
-  exoticWeapons: ExoticWeapon,
   gearsets: Gearset,
   brandsets: Brandset,
   namedGear: NamedExoticGear,
   skills: Skill,
   weaponMods: WeaponMod,
   talents: Talent,
-  // specializations has no class constructor
+  specializations: Specialization,
 };
 
 /**
@@ -153,16 +151,6 @@ const useCleanDataStore = create<CleanDataState>()(
       getAttributeVocabulary: () => {
         const names = new Set<string>();
         const data = get().data;
-
-        // ExoticWeapon: modSlots.*.attribute
-        const exotics = data.exoticWeapons;
-        if (exotics) {
-          for (const ew of exotics) {
-            for (const mod of Object.values(ew.modSlots)) {
-              if (mod.attribute) names.add(mod.attribute);
-            }
-          }
-        }
 
         // Gearset: twoPc, threePc (Record<string, number>)
         const gearsets = data.gearsets;
