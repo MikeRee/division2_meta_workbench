@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import TitleBar from './components/TitleBar';
 import BuildComponent from './components/Build';
 import Stats from './components/Stats';
+import { MdBuild, MdBarChart } from 'react-icons/md';
 
 import useLookupStore from './stores/useLookupStore';
 import useRawDataStore from './stores/useRawDataStore';
@@ -56,6 +57,16 @@ function App() {
   const [, setNamedGear] = useState<NamedExoticGear[]>([]);
   const [, setSkills] = useState<Skill[]>([]);
   const [, setWeaponMods] = useState<WeaponMod[]>([]);
+
+  // Responsive: track if we're in mobile layout
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 900);
+  const [activePane, setActivePane] = useState<'build' | 'stats'>('build');
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 900);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Load JSON data on app startup
   useEffect(() => {
@@ -1538,9 +1549,25 @@ function App() {
   return (
     <div className="app">
       <TitleBar onLoadData={handleLoad2Data} />
+      {isMobile && (
+        <div className="pane-toggle">
+          <button
+            className={`pane-toggle-btn${activePane === 'build' ? ' active' : ''}`}
+            onClick={() => setActivePane('build')}
+          >
+            <MdBuild /> Build
+          </button>
+          <button
+            className={`pane-toggle-btn${activePane === 'stats' ? ' active' : ''}`}
+            onClick={() => setActivePane('stats')}
+          >
+            <MdBarChart /> Stats
+          </button>
+        </div>
+      )}
       <div className="main-content">
-        <BuildComponent />
-        <Stats />
+        {(!isMobile || activePane === 'build') && <BuildComponent />}
+        {(!isMobile || activePane === 'stats') && <Stats />}
       </div>
     </div>
   );

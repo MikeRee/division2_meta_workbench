@@ -317,3 +317,25 @@
 .build-container::-webkit-scrollbar-thumb:hover {
   background: #4a4a4a;
 }
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .build-container {
+    flex: 1;
+    padding: 0.75rem;
+  }
+
+  .build-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .overlay-content {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .overlay-list {
+    grid-template-columns: 1fr;
+  }
+}

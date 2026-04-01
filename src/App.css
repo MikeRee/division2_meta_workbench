@@ -13,3 +13,56 @@
   gap: 1rem;
   overflow: hidden;
 }
+
+/* Pane toggle buttons (mobile only) */
+.pane-toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.pane-toggle-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  color: #777;
+  border: 1px solid #2a2a2a;
+  border-radius: 2px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pane-toggle-btn:hover {
+  color: #aaa;
+  border-color: #3a3a3a;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.pane-toggle-btn.active {
+  color: #d4af37;
+  border-color: #d4af37;
+  background: rgba(212, 175, 55, 0.1);
+}
+
+/* Responsive: single pane layout */
+@media (max-width: 900px) {
+  .app {
+    padding: 0.5rem;
+  }
+
+  .main-content {
+    flex-direction: column;
+  }
+
+  .main-content > * {
+    flex: 1;
+  }
+}
