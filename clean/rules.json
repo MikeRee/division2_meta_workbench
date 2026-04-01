@@ -118,7 +118,7 @@
         "rules": []
       },
       {
-        "destination": "flag",
+        "destination": "rarety",
         "source": "flag",
         "rules": []
       },
