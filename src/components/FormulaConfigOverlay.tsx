@@ -22,6 +22,7 @@ import {
   MdCheck,
   MdClose,
 } from 'react-icons/md';
+import { getDependents, getAvailableCalculations } from '../utils/formulaDeps';
 import './FormulaConfigOverlay.css';
 
 interface FormulaConfigOverlayProps {
@@ -39,6 +40,10 @@ let currentAggregatedValues: Record<string, number> = {};
 let currentWeaponValues: Record<string, number> = {};
 // Module-level ref to the active Blockly workspace for forcing re-renders
 let activeBlocklyWorkspace: Blockly.WorkspaceSvg | null = null;
+// Module-level state for the label of the formula currently being edited (for filtering calc refs)
+let currentEditingFormulaLabel: string = '';
+// Module-level cache of evaluated calculation results (label -> value)
+let calculationResultsCache: Record<string, number> = {};
 
 /**
  * BlockValueRef tracks which block fields are bound to which data keys.
@@ -660,6 +665,35 @@ function registerCustomBlocks() {
   javascriptGenerator.forBlock['weapon_type_damage'] = function () {
     return [`getWeaponTypeDamage()`, 0];
   };
+
+  // --- Calculation reference block ---
+  Blockly.Blocks['stat_calculation'] = {
+    init(this: Blockly.Block) {
+      this.appendDummyInput()
+        .appendField('calculation')
+        .appendField(
+          new Blockly.FieldDropdown(() => {
+            const allFormulas = useFormulaStore.getState().formulas;
+            const available = getAvailableCalculations(allFormulas, currentEditingFormulaLabel);
+            if (available.length === 0)
+              return [['(no calculations available)', '']] as [string, string][];
+            return available.map((label) => {
+              const val = calculationResultsCache[label];
+              const suffix = val !== undefined ? ` [${formatBlocklyValue(val)}]` : '';
+              return [label + suffix, label] as [string, string];
+            });
+          }),
+          'CALC',
+        );
+      this.setOutput(true, 'Number');
+      this.setColour(330);
+      this.setTooltip('Reference the result of another calculation');
+    },
+  };
+  javascriptGenerator.forBlock['stat_calculation'] = function (block: Blockly.Block) {
+    const calc = block.getFieldValue('CALC');
+    return [`getCalculation("${calc}")`, 0];
+  };
 }
 
 const TOOLBOX: Blockly.utils.toolbox.ToolboxDefinition = {
@@ -676,6 +710,7 @@ const TOOLBOX: Blockly.utils.toolbox.ToolboxDefinition = {
         { kind: 'block', type: 'stat_percent_all' },
         { kind: 'block', type: 'stat_core' },
         { kind: 'block', type: 'weapon_type_damage' },
+        { kind: 'block', type: 'stat_calculation' },
       ],
     },
     {
@@ -732,6 +767,7 @@ function BlocklyEditor({
 
   useEffect(() => {
     registerCustomBlocks();
+    currentEditingFormulaLabel = formula.label;
     if (!blocklyDiv.current) return;
 
     const workspace = Blockly.inject(blocklyDiv.current, {
@@ -942,6 +978,7 @@ function evaluateFormula(
       const factor = Math.pow(10, decimals);
       return Math.round(value * factor) / factor;
     };
+    const getCalculation = (label: string) => calculationResultsCache[label] ?? 0;
     const fn = new Function(
       'sumAll',
       'getBaseWeapon',
@@ -949,9 +986,18 @@ function evaluateFormula(
       'getCore',
       'getWeaponTypeDamage',
       'round',
+      'getCalculation',
       `return (${cleanCode});`,
     );
-    const result = fn(sumAll, getBaseWeapon, getBaseGear, getCore, getWeaponTypeDamage, round);
+    const result = fn(
+      sumAll,
+      getBaseWeapon,
+      getBaseGear,
+      getCore,
+      getWeaponTypeDamage,
+      round,
+      getCalculation,
+    );
     if (typeof result === 'number' && isFinite(result)) return result;
     return null;
   } catch {
@@ -1038,6 +1084,36 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
     }
     return cores;
   }, [aggregatedValues]);
+
+  // Keep calculation results cache up to date for Blockly dropdown and evaluation
+  useEffect(() => {
+    const agg = aggregatedValues.toRecord();
+    const cache: Record<string, number> = {};
+    // Evaluate all formulas and cache results (order doesn't matter for cache display)
+    for (const categoryFormulas of Object.values(formulas)) {
+      for (const f of categoryFormulas) {
+        const result = evaluateFormula(f.formula, agg, weaponBaseValues, coreValues);
+        if (result !== null) {
+          cache[f.label] = result;
+        }
+      }
+    }
+    calculationResultsCache = cache;
+  }, [formulas, aggregatedValues, weaponBaseValues, coreValues]);
+
+  const handleDeleteFormula = useCallback(
+    (category: string, index: number) => {
+      const formula = (formulas[category] || [])[index];
+      if (!formula) return;
+      const dependents = getDependents(formulas, formula.label);
+      if (dependents.length > 0) {
+        alert(`Cannot delete "${formula.label}" — it is required by: ${dependents.join(', ')}`);
+        return;
+      }
+      removeFormula(category, index);
+    },
+    [formulas, removeFormula],
+  );
 
   // Build weapon slot labels
   const getWeaponSlotLabel = (slot: 'primary' | 'secondary' | 'pistol'): string => {
@@ -1292,7 +1368,7 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
                               <MdEdit />
                             </button>
                             <button
-                              onClick={() => removeFormula(selectedCategory, idx)}
+                              onClick={() => handleDeleteFormula(selectedCategory, idx)}
                               title="Delete"
                             >
                               <MdDelete />

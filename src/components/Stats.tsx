@@ -6,6 +6,7 @@ import { StatCalculator, FormulaType } from '../models/Formula';
 import type { Formula } from '../models/Formula';
 import useBuildStore from '../stores/useBuildStore';
 import { useFormulaStore } from '../stores/useFormulaStore';
+import { topologicalSort } from '../utils/formulaDeps';
 import FormulaConfigOverlay from './FormulaConfigOverlay';
 import FormulaExplainer from './FormulaExplainer';
 
@@ -26,6 +27,7 @@ function evaluateFormulaWith(
   aggregatedValues: Record<string, number>,
   weaponBaseValues: Record<string, number>,
   coreValues: Record<string, number>,
+  calcCache: Record<string, number> = {},
 ): number | null {
   if (!formula.formula || !formula.formula.trim()) return null;
   try {
@@ -44,6 +46,7 @@ function evaluateFormulaWith(
       const factor = Math.pow(10, decimals);
       return Math.round(value * factor) / factor;
     };
+    const getCalculation = (label: string) => calcCache[label] ?? 0;
     const fn = new Function(
       'sumAll',
       'getBaseWeapon',
@@ -51,9 +54,18 @@ function evaluateFormulaWith(
       'getCore',
       'getWeaponTypeDamage',
       'round',
+      'getCalculation',
       `return (${cleanCode});`,
     );
-    const result = fn(sumAll, getBaseWeapon, getBaseGear, getCore, getWeaponTypeDamage, round);
+    const result = fn(
+      sumAll,
+      getBaseWeapon,
+      getBaseGear,
+      getCore,
+      getWeaponTypeDamage,
+      round,
+      getCalculation,
+    );
     if (typeof result === 'number' && isFinite(result)) return result;
     return null;
   } catch {
@@ -96,6 +108,9 @@ function Stats() {
   // Compute stats for all builds that have data
   const allBuildResults = useMemo(() => {
     const allFormulas = Object.values(formulas).flat();
+    const evalOrder = topologicalSort(formulas);
+    const formulaByLabel = new Map<string, Formula>();
+    allFormulas.forEach((f) => formulaByLabel.set(f.label, f));
     const results: BuildFormulaResults[] = [];
 
     builds.forEach((build, i) => {
@@ -125,10 +140,21 @@ function Stats() {
         (wpnBase as any).weaponType = base.type || '';
       }
 
+      // Evaluate in topological order so dependencies resolve first
+      const calcCache: Record<string, number> = {};
       const formulaResults = new Map<string, number | null>();
+      for (const label of evalOrder) {
+        const f = formulaByLabel.get(label);
+        if (!f) continue;
+        const result = evaluateFormulaWith(f, agg, wpnBase, cores, calcCache);
+        formulaResults.set(label, result);
+        if (result !== null) calcCache[label] = result;
+      }
+      // Also evaluate any formulas not in the topo sort (shouldn't happen, but safety)
       allFormulas.forEach((f) => {
-        const key = f.label;
-        formulaResults.set(key, evaluateFormulaWith(f, agg, wpnBase, cores));
+        if (!formulaResults.has(f.label)) {
+          formulaResults.set(f.label, evaluateFormulaWith(f, agg, wpnBase, cores, calcCache));
+        }
       });
 
       results.push({
@@ -173,6 +199,22 @@ function Stats() {
   }, [currentBuild, selectedWeaponSlot]);
 
   const aggregatedValues = useMemo(() => calc.toRecord(), [calc]);
+
+  // Build a calculation cache for the active build (for inline evaluation in render)
+  const activeCalcCache = useMemo(() => {
+    const evalOrder = topologicalSort(formulas);
+    const allFormulas = Object.values(formulas).flat();
+    const formulaByLabel = new Map<string, Formula>();
+    allFormulas.forEach((f) => formulaByLabel.set(f.label, f));
+    const cache: Record<string, number> = {};
+    for (const label of evalOrder) {
+      const f = formulaByLabel.get(label);
+      if (!f) continue;
+      const result = evaluateFormulaWith(f, aggregatedValues, weaponBaseValues, coreValues, cache);
+      if (result !== null) cache[label] = result;
+    }
+    return cache;
+  }, [formulas, aggregatedValues, weaponBaseValues, coreValues]);
 
   const offenseCount = coreValues[CoreType.WeaponDamage.toLowerCase()] ?? 0;
   const defenseCount = coreValues[CoreType.Armor.toLowerCase()] ?? 0;
@@ -286,6 +328,7 @@ function Stats() {
                     aggregatedValues,
                     weaponBaseValues,
                     coreValues,
+                    activeCalcCache,
                   );
                   const maxVal = formulaMaxValues.get(formula.label) || 1;
 
