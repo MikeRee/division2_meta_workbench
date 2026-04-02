@@ -6,7 +6,9 @@
     "icon": "",
     "talent": [],
     "core": ["weapon damage"],
-    "attribute1": {},
+    "attribute1": {
+      "headshot damage": 20
+    },
     "attribute2": {},
     "modSlots": 1,
     "notes": "\"If the first shot doesn't drop 'em, the second one will. Or the third, third's usually good.\"",
@@ -19,7 +21,9 @@
     "icon": "",
     "talent": [],
     "core": ["armor"],
-    "attribute1": {},
+    "attribute1": {
+      "scanner pulse haste": 100
+    },
     "attribute2": {},
     "modSlots": 1,
     "notes": "\"Through glass and steel; looking at you; a view so cruel.\"",
@@ -33,7 +37,7 @@
     "talent": [],
     "core": ["armor"],
     "attribute1": {},
-    "attribute2": {},
+    "attribute2": null,
     "modSlots": 2,
     "notes": "\"Revenge is a dish best served cold.\"- Someone who remembers you",
     "isExotic": false
@@ -45,7 +49,9 @@
     "icon": "",
     "talent": [],
     "core": ["weapon damage"],
-    "attribute1": {},
+    "attribute1": {
+      "optimal range": 50
+    },
     "attribute2": {},
     "modSlots": 1,
     "notes": "\"So far be distant; and good night, sweet friend\" - A Midsummer Night's Dream",
@@ -58,7 +64,9 @@
     "icon": "",
     "talent": [],
     "core": ["armor"],
-    "attribute1": {},
+    "attribute1": {
+      "damage to health": 14
+    },
     "attribute2": {},
     "modSlots": 1,
     "notes": "\"No whimper. No bang. Just silence. The end of all things.\"",
@@ -565,7 +573,9 @@
     "icon": "",
     "talent": [],
     "core": ["armor"],
-    "attribute1": {},
+    "attribute1": {
+      "armor on kill": 10
+    },
     "attribute2": {},
     "modSlots": 0,
     "notes": "\"Most people are white-knuckling their way through life, sterss levels off the charts. Working dead-end jobs paying off their loans, student debts and fucking lattes. \nThat shit will kill you without clarity in your life, and nothing brings clarity like hanging off the side of a mountain.\"",
@@ -578,7 +588,9 @@
     "icon": "",
     "talent": [],
     "core": ["weapon damage"],
-    "attribute1": {},
+    "attribute1": {
+      "damage to armor": 8
+    },
     "attribute2": {},
     "modSlots": 0,
     "notes": "\"Never met a man I couldn't break. Apply enough pressure on a small enough point, and anything cracks.\"",
@@ -591,7 +603,9 @@
     "icon": "",
     "talent": [],
     "core": ["skill tier"],
-    "attribute1": {},
+    "attribute1": {
+      "skill health": 25
+    },
     "attribute2": {},
     "modSlots": 0,
     "notes": "\"Life is horrible. Once you realise that, it's easier to appreciate the moments that are the exceptions. Makes it all a bit more realistic to endure.\"",
@@ -604,7 +618,9 @@
     "icon": "",
     "talent": [],
     "core": ["weapon damage"],
-    "attribute1": {},
+    "attribute1": {
+      "weapon handling": 15
+    },
     "attribute2": {},
     "modSlots": 0,
     "notes": "\"Just wait until I get my hands on them.\" \n- Saint",
@@ -617,7 +633,9 @@
     "icon": "",
     "talent": [],
     "core": ["weapon damage"],
-    "attribute1": {},
+    "attribute1": {
+      "status effects": 16
+    },
     "attribute2": {},
     "modSlots": 0,
     "notes": "\"You can tell a lot about a person from their handshake. It's also a great pathogenic delivery system.\"",
@@ -630,7 +648,9 @@
     "icon": "",
     "talent": [],
     "core": ["skill tier"],
-    "attribute1": {},
+    "attribute1": {
+      "shield health": 50
+    },
     "attribute2": {},
     "modSlots": 0,
     "notes": "\"The space in between is where you want to be. Not the hammer. Not the anvil. You are the impact, \nthe energy, the potential. Bend or break, you will find purpose. And in purpose, there is truth.\"",
@@ -643,7 +663,9 @@
     "icon": "",
     "talent": [],
     "core": ["armor"],
-    "attribute1": {},
+    "attribute1": {
+      "ammo capacity": 10
+    },
     "attribute2": {},
     "modSlots": 0,
     "notes": "\"Whaddya mean yer outta ammo? Dig around in that mess you call a holster and find something to shove in your gun and shoot!\" \n- True Sons platoon leader",
@@ -656,7 +678,9 @@
     "icon": "",
     "talent": [],
     "core": ["armor"],
-    "attribute1": {},
+    "attribute1": {
+      "weapon damage": 10
+    },
     "attribute2": {},
     "modSlots": 0,
     "notes": "-",
@@ -669,7 +693,9 @@
     "icon": "",
     "talent": [],
     "core": ["weapon damage"],
-    "attribute1": {},
+    "attribute1": {
+      "accuracy": 38
+    },
     "attribute2": {},
     "modSlots": 0,
     "notes": "\"It's all in the hip.\"",
@@ -682,7 +708,9 @@
     "icon": "",
     "talent": [],
     "core": ["weapon damage"],
-    "attribute1": {},
+    "attribute1": {
+      "rate of fire": 5
+    },
     "attribute2": {},
     "modSlots": 0,
     "notes": "",
@@ -695,7 +723,10 @@
     "icon": "",
     "talent": [],
     "core": ["skill tier"],
-    "attribute1": {},
+    "attribute1": {
+      "melee damage": 500,
+      "pistol damage": 11
+    },
     "attribute2": {},
     "modSlots": 0,
     "notes": "\"Rip and tear!\"",
@@ -708,7 +739,9 @@
     "icon": "",
     "talent": [],
     "core": ["weapon damage"],
-    "attribute1": {},
+    "attribute1": {
+      "dmg to target out of cover": 8
+    },
     "attribute2": {},
     "modSlots": 0,
     "notes": "\"Ever heard of an atheist in a foxhole? Me neither.\"",
@@ -747,7 +780,9 @@
     "icon": "",
     "talent": [],
     "core": ["skill tier"],
-    "attribute1": {},
+    "attribute1": {
+      "armor regen": 1
+    },
     "attribute2": {},
     "modSlots": 0,
     "notes": "\"Fall down seven times, get up eight.\"",
@@ -760,7 +795,9 @@
     "icon": "",
     "talent": [],
     "core": ["skill tier"],
-    "attribute1": {},
+    "attribute1": {
+      "status effects": 16
+    },
     "attribute2": {},
     "modSlots": 0,
     "notes": "\"I'm not in danger, you're in danger\"",
@@ -773,7 +810,9 @@
     "icon": "",
     "talent": [],
     "core": ["weapon damage"],
-    "attribute1": {},
+    "attribute1": {
+      "reduced threat": 50
+    },
     "attribute2": {},
     "modSlots": 0,
     "notes": "\"No sudden movements.\"",

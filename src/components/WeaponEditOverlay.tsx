@@ -265,11 +265,17 @@ function WeaponEditOverlay({ buildWeapon, onSave, onRemove, onClose }: WeaponEdi
                     aria-label={`${slotName} mod`}
                   >
                     <option value="">None</option>
-                    {getModsForSlot(slotName).map((m) => (
-                      <option key={m.name} value={m.name}>
-                        {m.name}
-                      </option>
-                    ))}
+                    {getModsForSlot(slotName).map((m) => {
+                      const bonusStr = Object.entries(m.bonus)
+                        .map(([k, v]) => `${k} ${v}${v < 1000 ? '%' : '/s'}`)
+                        .join(', ');
+                      return (
+                        <option key={m.name} value={m.name}>
+                          {m.name}
+                          {bonusStr ? ` — ${bonusStr}` : ''}
+                        </option>
+                      );
+                    })}
                   </select>
                 </div>
               ))}

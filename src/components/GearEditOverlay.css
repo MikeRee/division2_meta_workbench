@@ -82,6 +82,9 @@
   border-radius: 2px;
   font-size: 0.85rem;
   cursor: pointer;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .gear-edit-select:focus {
@@ -98,10 +101,12 @@
   display: flex;
   gap: 0.4rem;
   align-items: center;
+  min-width: 0;
 }
 
 .gear-edit-attr-row select {
   flex: 2;
+  min-width: 0;
 }
 
 .gear-edit-attr-row input {
