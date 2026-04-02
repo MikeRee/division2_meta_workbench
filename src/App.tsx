@@ -84,12 +84,11 @@ function App() {
 
       // Initialize BuildWeapon with weapon attributes
       const weaponAttrs: Record<string, number> = {};
-      if (lookupState.weaponAttributes instanceof Map) {
-        lookupState.weaponAttributes.forEach((attr: any) => {
-          if (attr.attribute) {
-            weaponAttrs[attr.attribute] = parseFloat(attr.max?.toString().replace('%', '')) || 0;
-          }
-        });
+      if (lookupState.weaponAttributes && typeof lookupState.weaponAttributes === 'object') {
+        for (const [name, max] of Object.entries(lookupState.weaponAttributes)) {
+          weaponAttrs[name] =
+            typeof max === 'number' ? max : parseFloat(String(max).replace('%', '')) || 0;
+        }
       }
       BuildWeapon.initializeWeaponAttributes(weaponAttrs);
 
@@ -225,6 +224,11 @@ function App() {
         weaponMods: `${base}/clean/weaponMods.json`,
         talents: `${base}/clean/talents.json`,
         specializations: `${base}/clean/specializations.json`,
+        gearMods: `${base}/clean/gearMods.json`,
+        gearAttributes: `${base}/clean/gearAttributes.json`,
+        weaponAttributes: `${base}/clean/weaponAttributes.json`,
+        weaponTypeAttributes: `${base}/clean/weaponTypeAttributes.json`,
+        keenersWatch: `${base}/clean/keenersWatch.json`,
       };
 
       const cleanStore = useCleanDataStore.getState();
@@ -252,7 +256,7 @@ function App() {
     const loadLookupData = async () => {
       // Skip if lookup store already has lookup data (e.g. from localStorage)
       const store = useLookupStore.getState();
-      if (store.weaponAttributes.size > 0 && store.keenersWatch.size > 0) {
+      if (Object.keys(store.weaponAttributes).length > 0 && store.keenersWatch.size > 0) {
         return;
       }
 
@@ -270,10 +274,7 @@ function App() {
 
         // Load weapon attributes
         if (lookups.weaponAttributes) {
-          const attrs = Object.entries(lookups.weaponAttributes).map(
-            ([name, max]) => new Attribute({ attribute: name, max: `${max}%` }),
-          );
-          store.setWeaponAttributes(attrs);
+          store.setWeaponAttributes(lookups.weaponAttributes);
           console.log('Loaded weaponAttributes from lookups.json');
         }
 
@@ -359,7 +360,15 @@ function App() {
         {
           key: 'weaponAttributes',
           filename: 'weapon_attributes.csv',
-          parser: parseWeaponAttributes,
+          parser: (csvText: string) => {
+            const attrList = parseWeaponAttributes(csvText);
+            const record: Record<string, number> = {};
+            attrList.forEach((a: any) => {
+              if (a.attribute)
+                record[a.attribute] = parseFloat(String(a.max).replace('%', '')) || 0;
+            });
+            return record;
+          },
           setter: 'setWeaponAttributes',
         },
         {
@@ -876,10 +885,16 @@ function App() {
       let setterName = '';
 
       switch (csvKey) {
-        case 'weaponAttributes':
-          parsedData = parseWeaponAttributes(csvText);
-          setterName = 'setWeaponAttributes';
-          break;
+        case 'weaponAttributes': {
+          const attrList = parseWeaponAttributes(csvText);
+          const record: Record<string, number> = {};
+          attrList.forEach((a: any) => {
+            if (a.attribute) record[a.attribute] = parseFloat(String(a.max).replace('%', '')) || 0;
+          });
+          (useLookupStore.getState() as any).setWeaponAttributes(record);
+          setDisplayContent(`Loaded ${Object.keys(record).length} weapon attributes`);
+          return;
+        }
         case 'weaponTypeAttributes':
           parsedData = parseWeaponTypeAttributes(csvText);
           setterName = 'setWeaponTypeAttributes';

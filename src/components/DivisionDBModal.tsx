@@ -47,7 +47,14 @@ function DivisionDBModal({ isOpen, onClose }: DivisionDBModalProps) {
 
     if (TABLE_EDITOR_SUPPORTED.includes(tableName)) {
       setEditMode('table');
-      setTableEditorData(data ? data.map((item: any) => ({ ...item })) : []);
+      if (data && Array.isArray(data)) {
+        setTableEditorData(data.map((item: any) => ({ ...item })));
+      } else if (data && typeof data === 'object') {
+        // Record-style data (e.g. weaponAttributes) — wrap for table editor
+        setTableEditorData(Object.entries(data).map(([k, v]) => ({ attribute: k, max: v })));
+      } else {
+        setTableEditorData([]);
+      }
     } else {
       setEditMode('json');
       setEditedJson(JSON.stringify(data || [], null, 2));
@@ -56,7 +63,18 @@ function DivisionDBModal({ isOpen, onClose }: DivisionDBModalProps) {
 
   const handleTableSave = (updatedData: any[]) => {
     if (!editingTable) return;
-    useCleanDataStore.getState().setCleanData(editingTable as MainDataKey, updatedData);
+    // For record-style data (e.g. weaponAttributes), convert back from array
+    if (editingTable === 'weaponAttributes') {
+      const record: Record<string, number> = {};
+      updatedData.forEach((item: any) => {
+        if (item.attribute)
+          record[item.attribute] =
+            typeof item.max === 'number' ? item.max : parseFloat(item.max) || 0;
+      });
+      useCleanDataStore.getState().setCleanData(editingTable as MainDataKey, record as any);
+    } else {
+      useCleanDataStore.getState().setCleanData(editingTable as MainDataKey, updatedData);
+    }
     setEditingTable(null);
     setTableEditorData([]);
   };

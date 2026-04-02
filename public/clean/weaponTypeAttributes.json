@@ -1,20 +1,8 @@
-{
-  "assault rifle": {
-    "health damage": 21
-  },
-  "lmg": {
-    "dmg to target out of cover": 12
-  },
-  "smg": {
-    "critical hit chance": 21
-  },
-  "shotgun": {
-    "damage to armor": 12
-  },
-  "rifle": {
-    "critical hit damage": 17
-  },
-  "mmr": {
-    "headshot damage": 111
-  }
-}
+[
+  { "weaponType": "assault rifle", "attribute": "health damage", "max": "21" },
+  { "weaponType": "lmg", "attribute": "dmg to target out of cover", "max": "12" },
+  { "weaponType": "smg", "attribute": "critical hit chance", "max": "21" },
+  { "weaponType": "shotgun", "attribute": "damage to armor", "max": "12" },
+  { "weaponType": "rifle", "attribute": "critical hit damage", "max": "17" },
+  { "weaponType": "mmr", "attribute": "headshot damage", "max": "111" }
+]

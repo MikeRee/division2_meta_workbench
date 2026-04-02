@@ -9,7 +9,6 @@ import WeaponMod from '../models/WeaponMod';
 import Talent from '../models/Talent';
 import Specialization from '../models/Specialization';
 import NamedExoticGear from '../models/NamedExoticGear';
-import WeaponAttribute from '../models/WeaponAttribute';
 import GearAttribute from '../models/GearAttribute';
 import KeenersWatchAttribute from '../models/KeenersWatchAttribute';
 import WeaponTypeAttribute from '../models/WeaponTypeAttribute';
@@ -26,7 +25,7 @@ export interface CleanDataTypeMap {
   weaponMods: WeaponMod[];
   talents: Talent[];
   specializations: Specialization[];
-  weaponAttributes: WeaponAttribute[];
+  weaponAttributes: Record<string, number>;
   gearAttributes: GearAttribute[];
   keenersWatch: KeenersWatchAttribute[];
   weaponTypeAttributes: WeaponTypeAttribute[];
@@ -62,7 +61,6 @@ export const CLASS_CONSTRUCTORS: Partial<Record<MainDataKey, new (data: any) => 
   weaponMods: WeaponMod,
   talents: Talent,
   specializations: Specialization,
-  weaponAttributes: WeaponAttribute,
   gearAttributes: GearAttribute,
   keenersWatch: KeenersWatchAttribute,
   weaponTypeAttributes: WeaponTypeAttribute,

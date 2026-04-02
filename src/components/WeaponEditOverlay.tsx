@@ -14,8 +14,8 @@ interface WeaponEditOverlayProps {
 }
 
 function WeaponEditOverlay({ buildWeapon, onSave, onRemove, onClose }: WeaponEditOverlayProps) {
-  // Still from lookup store — CSV-derived weapon attributes not yet in clean store
-  const weaponAttributesMap = useLookupStore((s) => s.weaponAttributes);
+  // From lookup store — weapon attributes as Record<string, number>
+  const weaponAttributesRecord = useLookupStore((s) => s.weaponAttributes);
 
   // From clean data store — filter talents to weapon type only
   const allTalents = (useCleanDataStore((s) => s.data.talents) ?? []) as Talent[];
@@ -24,12 +24,12 @@ function WeaponEditOverlay({ buildWeapon, onSave, onRemove, onClose }: WeaponEdi
 
   // Available weapon attributes for dropdowns
   const weaponAttrs = useMemo(() => {
-    if (!(weaponAttributesMap instanceof Map)) return [];
-    return Array.from(weaponAttributesMap.values()).map((a) => ({
-      key: a.attribute,
-      max: parseFloat(a.max) || 0,
+    if (!weaponAttributesRecord || typeof weaponAttributesRecord !== 'object') return [];
+    return Object.entries(weaponAttributesRecord).map(([key, max]) => ({
+      key,
+      max,
     }));
-  }, [weaponAttributesMap]);
+  }, [weaponAttributesRecord]);
 
   // Primary Attribute 1 — always derived, read-only
   const pa1 = buildWeapon.primaryAttribute1;
