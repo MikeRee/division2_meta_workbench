@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './TitleBar.css';
 import { MdStorage, MdChat, MdTune } from 'react-icons/md';
+import { FaGithub } from 'react-icons/fa';
 import LoadModal from './LoadModal';
 import DivisionDBModal from './DivisionDBModal';
 import ChatWindow from './ChatWindow';
@@ -38,6 +39,15 @@ function TitleBar({ onLoadData }: TitleBarProps) {
         <h1 className="title">Division 2 Meta Workbench</h1>
         <VersionCheck />
         <div className="action-buttons">
+          <a
+            className="icon-button"
+            href="https://github.com/MikeRee/division2_meta_workbench"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="GitHub Repository"
+          >
+            <FaGithub />
+          </a>
           <button className="icon-button" onClick={() => setIsChatOpen(true)} title="Chat">
             <MdChat />
           </button>
