@@ -58,7 +58,7 @@ function TitleBar({ onLoadData }: TitleBarProps) {
             <MdStorage />
             {staleCount > 0 && <span className="db-badge">{staleCount}</span>}
           </button>
-          <button onClick={() => setIsLoadModalOpen(true)}>Load</button>
+          {/* <button onClick={() => setIsLoadModalOpen(true)}>Load</button> */}
         </div>
       </div>
       {isChatOpen && (
