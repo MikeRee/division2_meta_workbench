@@ -1,0 +1,128 @@
+.stacks-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stacks-apply-max {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #d4af37;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  padding: 0.25rem 0;
+}
+
+.stacks-apply-max input[type='checkbox'] {
+  accent-color: #d4af37;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+.stacks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stack-item {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #1a1a1a;
+  border-radius: 2px;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.stack-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #2a2a2a;
+}
+
+.stack-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stack-source {
+  color: #999;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stack-talent {
+  color: #b0b0b0;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.stack-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.stack-input {
+  width: 48px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #3a3a3a;
+  border-radius: 2px;
+  color: #d4af37;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  text-align: center;
+  outline: none;
+}
+
+.stack-input:focus {
+  border-color: #d4af37;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+}
+
+.stack-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.stack-input::-webkit-inner-spin-button,
+.stack-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.stack-max {
+  color: #666;
+  font-size: 0.75rem;
+}
+
+.stack-effects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.stack-effect {
+  color: #4caf50;
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.stacks-empty {
+  color: #666;
+  font-size: 0.8rem;
+  text-align: center;
+  padding: 1rem;
+}

@@ -6,7 +6,7 @@ import { useBuildStore } from '../stores/useBuildStore';
 import { useCleanDataStore } from '../stores/useCleanDataStore';
 import Weapon from '../models/Weapon';
 import Skill from '../models/Skill';
-import BuildGear, { GearSource } from '../models/BuildGear';
+import BuildGear from '../models/BuildGear';
 import { GearType } from '../models/BuildGear';
 import { CoreType, getDefaultMinorAttributes } from '../models/CoreValue';
 import { GearModValue, GearModClassification } from '../models/GearMod';
@@ -21,6 +21,8 @@ import GearEditOverlay from './GearEditOverlay';
 import Specialization from '../models/Specialization';
 import WeaponEditOverlay from './WeaponEditOverlay';
 import { getBasePath } from '../utils/basePath';
+import BuildModel from '../models/Build';
+import LlmBuild from '../models/LlmBuild';
 
 const GEAR_SLOTS = ['mask', 'chest', 'holster', 'backpack', 'gloves', 'kneepads'] as const;
 const WEAPON_SLOTS = ['primaryWeapon', 'secondaryWeapon', 'pistol'] as const;
@@ -232,104 +234,37 @@ function Build() {
 
   const handleJsonSave = (jsonString: string) => {
     try {
-      const llmBuild = JSON.parse(jsonString);
+      const parsed = JSON.parse(jsonString);
 
-      // Reconstruct BuildWeapon instances by looking up weapons by name
-      const reconstructWeapon = (llmWeapon: any): BuildWeapon | null => {
-        if (!llmWeapon || !llmWeapon.name) return null;
+      // Use the same Build.fromLlm path as the chat Build Loadout
+      const llmBuild = new LlmBuild({
+        primaryWeapon: parsed.primaryWeapon,
+        secondaryWeapon: parsed.secondaryWeapon,
+        pistol: parsed.pistol,
+        mask: parsed.mask,
+        chest: parsed.chest,
+        holster: parsed.holster,
+        backpack: parsed.backpack,
+        gloves: parsed.gloves,
+        kneepads: parsed.kneepads,
+      });
 
-        // Find the weapon by name
-        const weapon = (weapons as Weapon[]).find((w) => w.name === llmWeapon.name);
-        if (!weapon) {
-          console.warn(`Weapon not found: ${llmWeapon.name}`);
-          return null;
-        }
+      const updates = BuildModel.fromLlm(llmBuild);
 
-        return new BuildWeapon(weapon);
-      };
-
-      // Reconstruct BuildGear instances by looking up gear by name
-      const reconstructGear = (llmGear: any, gearType: GearType): BuildGear | null => {
-        if (!llmGear || !llmGear.name) return null;
-
-        // Find the gear in namedGear, gearsets, or brandsets
-        const namedGearItem = (namedGear as NamedExoticGear[]).find((g) => g.name === llmGear.name);
-        const gearsetItem = gearsets.find((g) => g.name === llmGear.name);
-        const brandsetItem = brandsets.find((b) => b.brand === llmGear.name);
-
-        const foundItem = namedGearItem || gearsetItem || brandsetItem;
-
-        if (!foundItem) {
-          console.warn(`Gear not found: ${llmGear.name}`);
-          return null;
-        }
-
-        // Create BuildGear from the found item
-        const buildGear =
-          gearsetItem || brandsetItem
-            ? new BuildGear(foundItem, gearType)
-            : new BuildGear(foundItem);
-
-        // Apply attributes from LlmGear if they exist
-        if (
-          llmGear.gearAttrib1 &&
-          buildGear.attribute1 !== null &&
-          Object.keys(buildGear.attribute1).length === 0
-        ) {
-          const allGearAttrs = useCleanDataStore.getState().getGearAttributesList();
-          const mod = allGearAttrs.find((m) => m.attribute === llmGear.gearAttrib1);
-          if (mod) {
-            buildGear.setAttribute1(mod.attribute, mod.max);
-          }
-        }
-
-        if (
-          llmGear.gearAttrib2 &&
-          buildGear.attribute2 !== null &&
-          Object.keys(buildGear.attribute2).length === 0
-        ) {
-          const allGearAttrs = useCleanDataStore.getState().getGearAttributesList();
-          const mod = allGearAttrs.find((m) => m.attribute === llmGear.gearAttrib2);
-          if (mod) {
-            buildGear.setAttribute2(mod.attribute, mod.max);
-          }
-        }
-
-        if (llmGear.gearMod && buildGear.maxModSlots > 0) {
-          const gearModAttrsList = useCleanDataStore.getState().getGearModAttributesList();
-          if (gearModAttrsList.length > 0) {
-            const modAttr = gearModAttrsList.find((m) => m.attribute === llmGear.gearMod);
-            if (modAttr) {
-              buildGear.setModSlot(0, modAttr.attribute, modAttr.max);
-            }
-          }
-        }
-
-        return buildGear;
-      };
-
-      // Build the updates object
-      const specName = llmBuild.specialization || '';
+      // Preserve specialization, skills, and watch from the parsed JSON or current build
+      const specName = parsed.specialization || '';
       const specObj = specName
         ? specializations.find((s: Specialization) => s.name === specName) || null
         : null;
-      const updates: any = {
-        specialization: specObj,
-        skill1: llmBuild.skill1 || '',
-        skill2: llmBuild.skill2 || '',
-        watch: llmBuild.watch || currentBuild.watch || undefined,
-        primaryWeapon: reconstructWeapon(llmBuild.primaryWeapon),
-        secondaryWeapon: reconstructWeapon(llmBuild.secondaryWeapon),
-        pistol: reconstructWeapon(llmBuild.pistol),
-        mask: reconstructGear(llmBuild.mask, GearType.Mask),
-        chest: reconstructGear(llmBuild.chest, GearType.Chest),
-        holster: reconstructGear(llmBuild.holster, GearType.Holster),
-        backpack: reconstructGear(llmBuild.backpack, GearType.Backpack),
-        gloves: reconstructGear(llmBuild.gloves, GearType.Gloves),
-        kneepads: reconstructGear(llmBuild.kneepads, GearType.Kneepads),
-      };
 
-      updateCurrentBuild(updates);
+      updateCurrentBuild({
+        ...updates,
+        specialization: specObj,
+        skill1: parsed.skill1 || '',
+        skill2: parsed.skill2 || '',
+        watch: parsed.watch || currentBuild.watch || undefined,
+      });
+
       alert('Build updated successfully!');
     } catch (error: any) {
       alert(`Failed to update build: ${error.message}`);

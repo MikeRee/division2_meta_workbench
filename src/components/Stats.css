@@ -44,6 +44,12 @@
   background: rgba(212, 175, 55, 0.1);
 }
 
+.stats-config-btn.active {
+  color: #d4af37;
+  border-color: #d4af37;
+  background: rgba(212, 175, 55, 0.15);
+}
+
 .stats-container h2 {
   margin: 0;
   color: #d4af37;

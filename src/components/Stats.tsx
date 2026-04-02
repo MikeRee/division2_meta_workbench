@@ -1,15 +1,17 @@
 import { useMemo, useState } from 'react';
-import { MdSettings } from 'react-icons/md';
+import { MdSettings, MdLayers } from 'react-icons/md';
 import './Stats.css';
 import { CoreType } from '../models/CoreValue';
 import { StatCalculator, FormulaType } from '../models/Formula';
 import type { Formula } from '../models/Formula';
 import useBuildStore from '../stores/useBuildStore';
+import useCleanDataStore from '../stores/useCleanDataStore';
 import { useFormulaStore } from '../stores/useFormulaStore';
 import useAdjustmentStore from '../stores/useAdjustmentStore';
 import { topologicalSort } from '../utils/formulaDeps';
 import FormulaConfigOverlay from './FormulaConfigOverlay';
 import FormulaExplainer from './FormulaExplainer';
+import StacksPanel from './StacksPanel';
 
 const BUILD_COLORS = ['#e74c3c', '#3498db', '#f1c40f', '#9b59b6'] as const;
 
@@ -106,8 +108,11 @@ function Stats() {
   const adjustmentModifiers = useAdjustmentStore((s) => s.modifiers);
   const personalAccuracy = useAdjustmentStore((s) => s.personalAccuracy);
   const headshotPercentage = useAdjustmentStore((s) => s.headshotPercentage);
+  const allStackValues = useBuildStore((s) => s.stackValues);
+  const applyMaxStacks = useBuildStore((s) => s.applyMaxStacks);
   const [selectedWeaponSlot, setSelectedWeaponSlot] = useState<WeaponSlot>('primaryWeapon');
   const [showFormulaConfig, setShowFormulaConfig] = useState(false);
+  const [showStacks, setShowStacks] = useState(false);
   const [explainerFormula, setExplainerFormula] = useState<{
     formula: Formula;
     result: number | null;
@@ -135,12 +140,22 @@ function Stats() {
     const formulaByLabel = new Map<string, Formula>();
     allFormulas.forEach((f) => formulaByLabel.set(f.label, f));
     const results: BuildFormulaResults[] = [];
+    const talentsData: any[] = useCleanDataStore.getState().getCleanData('talents') || [];
 
     builds.forEach((build, i) => {
       if (build.isEmpty()) return;
 
       const slot = pickWeaponSlot(build, selectedWeaponSlot);
-      const calc = StatCalculator.forBuild(build, slot);
+      let effectiveStackValues = allStackValues[i];
+      if (applyMaxStacks) {
+        const buildStacks = StatCalculator.collectBuildStacks(build, talentsData, slot);
+        const maxed: Record<string, number> = {};
+        buildStacks.forEach((s) => {
+          maxed[s.key] = s.max;
+        });
+        effectiveStackValues = maxed;
+      }
+      const calc = StatCalculator.forBuild(build, slot, effectiveStackValues);
       injectModifiers(calc);
 
       const cores: Record<string, number> = {};
@@ -194,14 +209,44 @@ function Stats() {
     });
 
     return results;
-  }, [builds, activeBuildIndex, formulas, selectedWeaponSlot, adjustmentModifiers, personalValues]);
+  }, [
+    builds,
+    activeBuildIndex,
+    formulas,
+    selectedWeaponSlot,
+    adjustmentModifiers,
+    personalValues,
+    allStackValues,
+    applyMaxStacks,
+  ]);
 
   // Active build calc for core counts and the displayed value
   const calc = useMemo(() => {
-    const c = StatCalculator.forBuild(currentBuild, selectedWeaponSlot);
+    const talentsData: any[] = useCleanDataStore.getState().getCleanData('talents') || [];
+    let effectiveStackValues = allStackValues[activeBuildIndex];
+    if (applyMaxStacks) {
+      const buildStacks = StatCalculator.collectBuildStacks(
+        currentBuild,
+        talentsData,
+        selectedWeaponSlot,
+      );
+      const maxed: Record<string, number> = {};
+      buildStacks.forEach((s) => {
+        maxed[s.key] = s.max;
+      });
+      effectiveStackValues = maxed;
+    }
+    const c = StatCalculator.forBuild(currentBuild, selectedWeaponSlot, effectiveStackValues);
     injectModifiers(c);
     return c;
-  }, [currentBuild, selectedWeaponSlot, adjustmentModifiers]);
+  }, [
+    currentBuild,
+    selectedWeaponSlot,
+    adjustmentModifiers,
+    allStackValues,
+    applyMaxStacks,
+    activeBuildIndex,
+  ]);
 
   const coreValues = useMemo(() => {
     const cores: Record<string, number> = {};
@@ -315,6 +360,13 @@ function Stats() {
             <option value="pistol">{getWeaponSlotLabel('pistol')}</option>
           </select>
           <button
+            className={`stats-config-btn ${showStacks ? 'active' : ''}`}
+            onClick={() => setShowStacks(!showStacks)}
+            title="Toggle Stacks"
+          >
+            <MdLayers />
+          </button>
+          <button
             className="stats-config-btn"
             onClick={() => setShowFormulaConfig(true)}
             title="Configure Stat Formulas"
@@ -342,6 +394,8 @@ function Stats() {
           <div className="core-summary-bar" />
         </div>
       </div>
+
+      {showStacks && <StacksPanel weaponSlot={selectedWeaponSlot} />}
 
       <div className="stats-content">
         {categories.length === 0 && (

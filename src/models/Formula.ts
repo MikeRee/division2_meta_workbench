@@ -6,6 +6,7 @@ import { BuildWeapon } from './BuildWeapon';
 import useCleanDataStore from '../stores/useCleanDataStore';
 import { CoreType } from './CoreValue';
 import NamedExoticGear from './NamedExoticGear';
+import Talent from './Talent';
 
 export enum FormulaType {
   Percent = 'percent',
@@ -63,6 +64,7 @@ export class StatCalculator {
   static forBuild(
     build: Build,
     weaponSlot: 'primaryWeapon' | 'secondaryWeapon' | 'pistol',
+    stackValues: Record<string, number> = {},
   ): StatCalculator {
     const calc = new StatCalculator();
 
@@ -224,6 +226,152 @@ export class StatCalculator {
       }
     }
 
+    // Add stack contributions from talents
+    const talents: Talent[] = useCleanDataStore.getState().getCleanData('talents') || [];
+    const allStacks = StatCalculator.collectBuildStacks(build, talents, weaponSlot);
+    for (const stack of allStacks) {
+      const stackKey = stack.key;
+      const assigned = stackValues[stackKey] ?? 0;
+      if (assigned > 0) {
+        for (const [stat, perStack] of Object.entries(stack.bonus)) {
+          calc.add(stat, stack.source, `Stack x${assigned}`, perStack * assigned);
+        }
+      }
+    }
+
     return calc;
+  }
+
+  /** Collect all stacks from a build's talents (gear + weapons + specialization) */
+  static collectBuildStacks(
+    build: Build,
+    talents: Talent[],
+    weaponSlot?: 'primaryWeapon' | 'secondaryWeapon' | 'pistol',
+  ): {
+    key: string;
+    source: string;
+    talentName: string;
+    bonus: Record<string, number>;
+    max: number;
+  }[] {
+    const result: {
+      key: string;
+      source: string;
+      talentName: string;
+      bonus: Record<string, number>;
+      max: number;
+    }[] = [];
+    const talentByName = new Map<string, Talent>();
+    talents.forEach((t) => {
+      talentByName.set(t.name.toLowerCase(), t);
+      if (t.perfectName) talentByName.set(t.perfectName.toLowerCase(), t);
+    });
+
+    const addTalentStacks = (talentNames: string[], source: string) => {
+      for (const tName of talentNames) {
+        const talent = talentByName.get(tName.toLowerCase());
+        if (!talent) continue;
+        // Check if this is a perfect talent name
+        const isPerfect = talent.perfectName?.toLowerCase() === tName.toLowerCase();
+        const stacks =
+          isPerfect && talent.perfectStacks.length > 0 ? talent.perfectStacks : talent.stacks;
+        stacks.forEach((stack, idx) => {
+          if (stack.size > 0 && Object.keys(stack.bonus).length > 0) {
+            const key = `${source}:${tName}:${idx}`;
+            result.push({
+              key,
+              source,
+              talentName: tName,
+              bonus: stack.bonus,
+              max: stack.size,
+            });
+          }
+        });
+      }
+    };
+
+    // Gear talents
+    const gearPieces: { slot: string; gear: any }[] = [
+      { slot: 'Mask', gear: build.mask },
+      { slot: 'Chest', gear: build.chest },
+      { slot: 'Holster', gear: build.holster },
+      { slot: 'Backpack', gear: build.backpack },
+      { slot: 'Gloves', gear: build.gloves },
+      { slot: 'Kneepads', gear: build.kneepads },
+    ];
+    // Count gearset pieces per set name for fourPc talent eligibility
+    const gearsetCounts = new Map<string, number>();
+    const hasNinjabike = build.backpack?.name?.includes('NinjaBike') ?? false;
+    for (const { gear } of gearPieces) {
+      if (!gear?.data || gear.source !== GearSource.Gearset) continue;
+      const gs = gear.data as Gearset;
+      gearsetCounts.set(gs.name, (gearsetCounts.get(gs.name) ?? 0) + 1);
+    }
+
+    // Track which fourPc talents have already been added to avoid duplicates
+    const addedFourPc = new Set<string>();
+
+    for (const { slot, gear } of gearPieces) {
+      if (!gear?.data) continue;
+      let talentNames: string[] = [];
+      if (gear.source === GearSource.Gearset) {
+        const gs = gear.data as Gearset;
+        const slotLower = slot.toLowerCase();
+        // Chest and backpack have slot-specific gearset talents
+        if (slotLower === 'chest' && gs.chest) talentNames.push(gs.chest);
+        else if (slotLower === 'backpack' && gs.backpack) talentNames.push(gs.backpack);
+        // fourPc talent only activates with 4+ pieces (NinjaBike adds 1), added once per set
+        const count = (gearsetCounts.get(gs.name) ?? 0) + (hasNinjabike ? 1 : 0);
+        if (count >= 4 && gs.fourPc && !addedFourPc.has(gs.fourPc)) {
+          talentNames.push(gs.fourPc);
+          addedFourPc.add(gs.fourPc);
+        }
+      } else {
+        talentNames = gear.data.talent || [];
+      }
+      addTalentStacks(talentNames, slot);
+    }
+
+    // Weapon talents – only include the selected weapon slot when specified
+    const weaponSlots: { slot: string; weapon: any }[] = weaponSlot
+      ? [
+          {
+            slot:
+              weaponSlot === 'primaryWeapon'
+                ? 'Primary'
+                : weaponSlot === 'secondaryWeapon'
+                  ? 'Secondary'
+                  : 'Pistol',
+            weapon: build[weaponSlot],
+          },
+        ]
+      : [
+          { slot: 'Primary', weapon: build.primaryWeapon },
+          { slot: 'Secondary', weapon: build.secondaryWeapon },
+          { slot: 'Pistol', weapon: build.pistol },
+        ];
+    for (const { slot, weapon } of weaponSlots) {
+      if (!weapon) continue;
+      const talentNames = weapon.talents || [];
+      addTalentStacks(talentNames, slot);
+    }
+
+    // Specialization stacks
+    if (build.specialization?.stacks) {
+      build.specialization.stacks.forEach((stack: any, idx: number) => {
+        if (stack.size > 0 && Object.keys(stack.bonus).length > 0) {
+          const key = `Specialization:${build.specialization!.name}:${idx}`;
+          result.push({
+            key,
+            source: build.specialization!.name || 'Specialization',
+            talentName: build.specialization!.name,
+            bonus: stack.bonus,
+            max: stack.size,
+          });
+        }
+      });
+    }
+
+    return result;
   }
 }

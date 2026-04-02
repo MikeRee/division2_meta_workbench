@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import './ChatBuildCard.css';
 import Build from '../models/Build';
 import BuildGear, { GearSource } from '../models/BuildGear';
 import { BuildWeapon } from '../models/BuildWeapon';
 import { CoreType } from '../models/CoreValue';
 import { GearModClassification } from '../models/GearMod';
+import LlmBuild from '../models/LlmBuild';
 import NamedExoticGear from '../models/NamedExoticGear';
 import { Rarety } from '../constants/dataKeys';
 import useCleanDataStore from '../stores/useCleanDataStore';
@@ -225,20 +226,53 @@ interface ChatBuildCardProps {
   onViewJson?: (json: string) => void;
 }
 
+/**
+ * Reconstruct a full Build from the raw model JSON using Build.fromLlm.
+ * This ensures proper class instances (BuildGear / BuildWeapon) with working
+ * getters, even after a localStorage round-trip where class identity is lost.
+ */
+function reconstructBuildFromJson(json: string): Partial<Build> | null {
+  try {
+    const parsed = JSON.parse(json);
+    const llmBuild = new LlmBuild({
+      primaryWeapon: parsed.primaryWeapon,
+      secondaryWeapon: parsed.secondaryWeapon,
+      pistol: parsed.pistol,
+      mask: parsed.mask,
+      chest: parsed.chest,
+      holster: parsed.holster,
+      backpack: parsed.backpack,
+      gloves: parsed.gloves,
+      kneepads: parsed.kneepads,
+    });
+    return Build.fromLlm(llmBuild);
+  } catch (e) {
+    console.warn('ChatBuildCard: failed to reconstruct build from modelJson', e);
+    return null;
+  }
+}
+
 const ChatBuildCard: React.FC<ChatBuildCardProps> = ({ buildSnapshot, modelJson, onViewJson }) => {
   const [expanded, setExpanded] = useState(true);
 
   const builds = useBuildStore((s) => s.builds);
   const setBuild = useBuildStore((s) => s.setBuild);
   const currentBuild = useBuildStore((s) => s.currentBuild);
-  const build = buildSnapshot || currentBuild;
+
+  // Always reconstruct from modelJson when available to guarantee proper class
+  // instances. Falls back to buildSnapshot or currentBuild if no JSON is present.
+  const reconstructed = useMemo(
+    () => (modelJson ? reconstructBuildFromJson(modelJson) : null),
+    [modelJson],
+  );
+  const build = reconstructed || buildSnapshot || currentBuild;
 
   const handleSendTo = (index: number) => {
     const target = builds[index];
     if (target && !target.isEmpty()) {
       if (!confirm(`Build slot ${index + 1} has data. Overwrite it?`)) return;
     }
-    // Create a new Build from the snapshot data
+    // Apply the already-reconstructed model directly — no re-parsing needed
     const newBuild = new Build({
       primaryWeapon: build.primaryWeapon,
       secondaryWeapon: build.secondaryWeapon,

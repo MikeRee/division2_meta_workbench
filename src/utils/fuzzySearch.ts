@@ -51,7 +51,26 @@ function normalizeString(str: string): string {
 }
 
 /**
- * Calculate similarity score between two strings (0-1, where 1 is exact match)
+ * Calculate similarity score between two individual words (0-1)
+ */
+function wordSimilarity(w1: string, w2: string): number {
+  if (w1 === w2) return 1;
+  const maxLen = Math.max(w1.length, w2.length);
+  if (maxLen === 0) return 1;
+  return 1 - levenshteinDistance(w1, w2) / maxLen;
+}
+
+/**
+ * Calculate similarity score between two strings (0-1, where 1 is exact match).
+ * Uses multiple strategies and returns the highest score:
+ *  1. Exact normalized match
+ *  2. Substring / prefix containment
+ *  3. Levenshtein distance on full strings
+ *  4. Word-overlap: counts how many words from the shorter string appear in the
+ *     longer string (with per-word fuzzy tolerance for spelling issues).
+ *     This is the key strategy that lets "Striker's Knapsack" match
+ *     "Striker's Battlegear" — the shared word "strikers" is found even though
+ *     "knapsack" doesn't appear in the candidate at all.
  */
 function similarityScore(str1: string, str2: string): number {
   const normalized1 = normalizeString(str1);
@@ -59,33 +78,74 @@ function similarityScore(str1: string, str2: string): number {
 
   if (normalized1 === normalized2) return 1;
 
-  // Check for partial matches (substring or prefix)
-  // If str1 is fully contained in str2, give it a high score
+  let best = 0;
+
+  // --- Strategy 1: substring / prefix containment ---
   if (normalized2.includes(normalized1)) {
-    // Score based on how much of str2 is matched by str1
-    // If str1 matches the beginning of str2, give it an even higher score
-    if (normalized2.startsWith(normalized1)) {
-      return 0.95; // Very high score for prefix matches
-    }
-    return 0.85; // High score for substring matches
+    best = Math.max(best, normalized2.startsWith(normalized1) ? 0.95 : 0.85);
   }
-
-  // Check if str2 is contained in str1 (less common but possible)
   if (normalized1.includes(normalized2)) {
-    return 0.85;
+    best = Math.max(best, 0.85);
   }
 
+  // --- Strategy 2: Levenshtein on full strings ---
   const maxLen = Math.max(normalized1.length, normalized2.length);
-  if (maxLen === 0) return 1;
+  if (maxLen > 0) {
+    best = Math.max(best, 1 - levenshteinDistance(normalized1, normalized2) / maxLen);
+  }
 
-  const distance = levenshteinDistance(normalized1, normalized2);
-  return 1 - distance / maxLen;
+  // --- Strategy 3: word-overlap with fuzzy per-word matching ---
+  const words1 = normalized1.split(' ').filter(Boolean);
+  const words2 = normalized2.split(' ').filter(Boolean);
+
+  if (words1.length > 0 && words2.length > 0) {
+    // For each word in the search string, find the best matching word in the
+    // candidate. A word is considered "matched" if its per-word similarity is
+    // above a tolerance threshold (0.75 allows minor spelling differences).
+    const WORD_MATCH_THRESHOLD = 0.75;
+
+    // Score from perspective of words1 matching into words2
+    let matched1 = 0;
+    for (const w1 of words1) {
+      let bestWordScore = 0;
+      for (const w2 of words2) {
+        bestWordScore = Math.max(bestWordScore, wordSimilarity(w1, w2));
+      }
+      if (bestWordScore >= WORD_MATCH_THRESHOLD) matched1++;
+    }
+
+    // Score from perspective of words2 matching into words1
+    let matched2 = 0;
+    for (const w2 of words2) {
+      let bestWordScore = 0;
+      for (const w1 of words1) {
+        bestWordScore = Math.max(bestWordScore, wordSimilarity(w1, w2));
+      }
+      if (bestWordScore >= WORD_MATCH_THRESHOLD) matched2++;
+    }
+
+    // Use the ratio of matched words from the shorter side as the overlap score.
+    // Weight it so that even 1 distinctive word matching gives a reasonable score,
+    // but more overlap is always better.
+    const overlapRatio1 = matched1 / words1.length;
+    const overlapRatio2 = matched2 / words2.length;
+    // Take the max of both perspectives — this handles asymmetric lengths well
+    const overlapScore = Math.max(overlapRatio1, overlapRatio2);
+
+    // Scale: 100% overlap → 0.95, 50% overlap → ~0.70, 1 of 2 words → 0.70
+    const scaledOverlap = 0.45 + overlapScore * 0.5;
+    best = Math.max(best, scaledOverlap);
+  }
+
+  return best;
 }
 
 /**
- * Common gear type suffixes to strip from search strings
+ * Common gear type suffixes to strip from search strings.
+ * Includes both literal slot names and common LLM-invented piece names.
  */
 const GEAR_TYPE_SUFFIXES = [
+  // Literal slot names
   'mask',
   'chest',
   'holster',
@@ -95,7 +155,26 @@ const GEAR_TYPE_SUFFIXES = [
   'masks',
   'chests',
   'holsters',
-  'backpacks', // plural forms
+  'backpacks',
+  // Common LLM-invented piece names for gearsets
+  'breastplate',
+  'knapsack',
+  'gauntlets',
+  'greaves',
+  'helmet',
+  'vest',
+  'harness',
+  'pads',
+  'guard',
+  'guards',
+  'plate',
+  'wrap',
+  'wraps',
+  'visor',
+  'facemask',
+  'chestpiece',
+  'legguards',
+  'armguards',
 ];
 
 /**
@@ -105,11 +184,10 @@ function stripGearTypeSuffix(searchStr: string): string {
   const normalized = normalizeString(searchStr);
   const words = normalized.split(' ');
 
-  // Check if the last word is a gear type
+  // Check if the last word is a gear type suffix
   if (words.length > 1) {
     const lastWord = words[words.length - 1];
     if (GEAR_TYPE_SUFFIXES.includes(lastWord)) {
-      // Remove the last word and return
       return words.slice(0, -1).join(' ');
     }
   }
@@ -118,39 +196,49 @@ function stripGearTypeSuffix(searchStr: string): string {
 }
 
 /**
- * Find the best match from an array of items based on a search string
+ * Find the best match from an array of items based on a search string.
+ * Always returns the best-guess match — there is no minimum threshold.
+ * Uses multiple scoring strategies including word-overlap and Levenshtein
+ * to handle LLM-invented names, spelling variations, and gear-type suffixes.
+ *
  * @param searchStr The string to search for
  * @param items Array of items to search through
  * @param getItemName Function to extract the name from each item
- * @param threshold Minimum similarity score (0-1) to consider a match
- * @returns The best matching item or null if no match above threshold
+ * @returns The best matching item, or null only if searchStr is empty or items is empty
  */
 export function fuzzyFind<T>(
   searchStr: string,
   items: T[],
   getItemName: (item: T) => string,
-  threshold: number = 0.7,
 ): T | null {
   if (!searchStr || items.length === 0) return null;
 
   let bestMatch: T | null = null;
-  let bestScore = threshold;
+  let bestScore = 0;
 
-  // Try with gear type suffix stripped
   const strippedSearch = stripGearTypeSuffix(searchStr);
   const normalizedSearch = normalizeString(searchStr);
 
   for (const item of items) {
     const itemName = getItemName(item);
+    const normalizedItem = normalizeString(itemName);
+    const strippedItem = stripGearTypeSuffix(itemName);
 
-    // Try both original and stripped versions
-    const scoreOriginal = similarityScore(searchStr, itemName);
-    const scoreStripped =
-      strippedSearch !== normalizedSearch
-        ? similarityScore(strippedSearch, normalizeString(itemName))
-        : 0;
+    // Score using multiple combinations of original / stripped strings
+    const scores = [similarityScore(searchStr, itemName)];
 
-    const score = Math.max(scoreOriginal, scoreStripped);
+    // If stripping changed the search string, also try stripped search vs both forms
+    if (strippedSearch !== normalizedSearch) {
+      scores.push(similarityScore(strippedSearch, normalizedItem));
+      scores.push(similarityScore(strippedSearch, strippedItem));
+    }
+
+    // If stripping changed the item name, also try original search vs stripped item
+    if (strippedItem !== normalizedItem) {
+      scores.push(similarityScore(normalizedSearch, strippedItem));
+    }
+
+    const score = Math.max(...scores);
 
     if (score > bestScore) {
       bestScore = score;

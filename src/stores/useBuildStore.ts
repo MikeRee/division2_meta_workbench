@@ -30,8 +30,18 @@ interface BuildState {
   activeBuildIndex: number;
   currentBuild: Build;
   savedBuilds: Map<string, Build>;
+  // Stack values per build slot: buildIndex -> (stackKey -> assignedCount)
+  stackValues: [
+    Record<string, number>,
+    Record<string, number>,
+    Record<string, number>,
+    Record<string, number>,
+  ];
+  applyMaxStacks: boolean;
 
   setActiveBuildIndex: (index: number) => void;
+  setStackValue: (stackKey: string, value: number) => void;
+  setApplyMaxStacks: (apply: boolean) => void;
   getBuild: (index: number) => Build;
   setBuild: (index: number, build: Build) => void;
 
@@ -79,9 +89,34 @@ const useBuildStore = create<BuildState>()(
       // Saved builds map (name -> Build)
       savedBuilds: new Map<string, Build>(),
 
+      // Stack values per build slot
+      stackValues: [{}, {}, {}, {}] as [
+        Record<string, number>,
+        Record<string, number>,
+        Record<string, number>,
+        Record<string, number>,
+      ],
+      applyMaxStacks: false,
+
       setActiveBuildIndex: (index: number) => {
         if (index < 0 || index > 3) return;
         set({ activeBuildIndex: index, currentBuild: get().builds[index] });
+      },
+
+      setStackValue: (stackKey: string, value: number) => {
+        const idx = get().activeBuildIndex;
+        const stackValues = [...get().stackValues] as [
+          Record<string, number>,
+          Record<string, number>,
+          Record<string, number>,
+          Record<string, number>,
+        ];
+        stackValues[idx] = { ...stackValues[idx], [stackKey]: value };
+        set({ stackValues });
+      },
+
+      setApplyMaxStacks: (apply: boolean) => {
+        set({ applyMaxStacks: apply });
       },
 
       getBuild: (index: number) => {
@@ -265,7 +300,14 @@ const useBuildStore = create<BuildState>()(
         const builds = [...get().builds] as [Build, Build, Build, Build];
         const empty = new Build();
         builds[idx] = empty;
-        set({ builds, currentBuild: empty });
+        const stackValues = [...get().stackValues] as [
+          Record<string, number>,
+          Record<string, number>,
+          Record<string, number>,
+          Record<string, number>,
+        ];
+        stackValues[idx] = {};
+        set({ builds, currentBuild: empty, stackValues });
       },
 
       // Get all saved builds as array
@@ -337,6 +379,12 @@ const useBuildStore = create<BuildState>()(
           builds: emptyBuilds,
           activeBuildIndex: 0,
           currentBuild: emptyBuilds[0],
+          stackValues: [{}, {}, {}, {}] as [
+            Record<string, number>,
+            Record<string, number>,
+            Record<string, number>,
+            Record<string, number>,
+          ],
         });
       },
 
