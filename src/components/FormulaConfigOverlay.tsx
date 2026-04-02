@@ -38,6 +38,8 @@ const gearProps = BuildGear.blocklyProperties();
 let currentAggregatedValues: Record<string, number> = {};
 // Module-level state for the selected weapon's base stats
 let currentWeaponValues: Record<string, number> = {};
+// Module-level state for core attribute counts (e.g. weapon damage core count)
+let currentCoreValues: Record<string, number> = {};
 // Module-level ref to the active Blockly workspace for forcing re-renders
 let activeBlocklyWorkspace: Blockly.WorkspaceSvg | null = null;
 // Module-level state for the label of the formula currently being edited (for filtering calc refs)
@@ -211,11 +213,17 @@ function setBlocklyPersonalValues(values: Record<string, number>) {
   refreshBlocklyDropdowns();
 }
 
+// Function to update the core attribute counts (called from React component)
+function setBlocklyCoreValues(values: Record<string, number>) {
+  currentCoreValues = values;
+  refreshBlocklyDropdowns();
+}
+
 // Helper to format value for display in dropdown
 function formatBlocklyValue(value: number): string {
-  if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
-  if (value >= 1000) return `${(value / 1000).toFixed(1)}K`;
-  if (!Number.isInteger(value)) return value.toFixed(1);
+  if (value >= 1000000) return `${(value / 1000000).toFixed(2)}M`;
+  if (value >= 1000) return `${(value / 1000).toFixed(2)}K`;
+  if (!Number.isInteger(value)) return value.toFixed(2);
   return value.toString();
 }
 
@@ -223,6 +231,16 @@ function formatBlocklyValue(value: number): string {
 function getValueSuffix(key: string): string {
   const lowerKey = key.toLowerCase();
   const value = currentAggregatedValues[lowerKey];
+  if (value !== undefined) {
+    return ` [${formatBlocklyValue(value)}]`;
+  }
+  return '';
+}
+
+// Helper to get core attribute count suffix for the core dropdown
+function getCoreValueSuffix(key: string): string {
+  const lowerKey = key.toLowerCase();
+  const value = currentCoreValues[lowerKey];
   if (value !== undefined) {
     return ` [${formatBlocklyValue(value)}]`;
   }
@@ -238,7 +256,13 @@ function getWeaponValueSuffix(key: string): string {
   return '';
 }
 
-const MATH_BLOCK_TYPES = ['stat_add', 'stat_subtract', 'stat_multiply', 'stat_divide'];
+const MATH_BLOCK_TYPES = [
+  'stat_add',
+  'stat_subtract',
+  'stat_multiply',
+  'stat_divide',
+  'stat_percent_additive',
+];
 
 /**
  * Walk every math block in the active workspace, evaluate its sub-expression,
@@ -519,7 +543,7 @@ function registerCustomBlocks() {
         .appendField(
           new Blockly.FieldDropdown(() => {
             return coreTypeOptions.map(
-              ([label, value]) => [label + getValueSuffix(value), value] as [string, string],
+              ([label, value]) => [label + getCoreValueSuffix(value), value] as [string, string],
             );
           }),
           'CORE',
@@ -728,6 +752,109 @@ function registerCustomBlocks() {
     const calc = block.getFieldValue('CALC');
     return [`getCalculation("${calc}")`, 0];
   };
+
+  // --- Percent Additive block: base(X) += percentAll(A) += percentAll(B) ... ---
+  // Computes: BASE * (1 + %A) * (1 + %B) * ...
+  // First input is the base value, each subsequent input compounds multiplicatively.
+  /** Rebuild inputs on a percent_additive block, preserving connections. */
+  function rebuildPercentAdditiveInputs(block: any, targetCount: number): void {
+    // Save existing connections
+    const saved: (Blockly.Connection | null)[] = [];
+    for (let i = 0; i < block.inputCount_; i++) {
+      const input = block.getInput(`INPUT_${i}`);
+      saved.push(input?.connection?.targetConnection ?? null);
+    }
+
+    // Remove result row
+    if (block.getInput('RESULT_ROW')) block.removeInput('RESULT_ROW');
+
+    // Remove all current value inputs
+    for (let i = block.inputCount_ - 1; i >= 0; i--) {
+      if (block.getInput(`INPUT_${i}`)) block.removeInput(`INPUT_${i}`);
+    }
+
+    // Create new inputs
+    for (let i = 0; i < targetCount; i++) {
+      const inp = block.appendValueInput(`INPUT_${i}`).setCheck('Number');
+      if (i === 0) {
+        inp.appendField('base');
+      } else {
+        inp.appendField('+% of');
+      }
+    }
+    block.inputCount_ = targetCount;
+
+    // Reconnect saved connections
+    for (let i = 0; i < Math.min(saved.length, targetCount); i++) {
+      if (saved[i]) {
+        const input = block.getInput(`INPUT_${i}`);
+        input?.connection?.connect(saved[i]);
+      }
+    }
+
+    // Re-add result row with +/− buttons
+    const resultRow = block.appendDummyInput('RESULT_ROW');
+    resultRow.appendField(new Blockly.FieldLabel('= ?'), 'RESULT');
+    resultRow.appendField(
+      new Blockly.FieldImage(PLUS_SVG, 16, 16, '+', () => {
+        rebuildPercentAdditiveInputs(block, block.inputCount_ + 1);
+      }),
+    );
+    if (targetCount > 2) {
+      resultRow.appendField(
+        new Blockly.FieldImage(MINUS_SVG, 16, 16, '−', () => {
+          if (block.inputCount_ > 2) {
+            rebuildPercentAdditiveInputs(block, block.inputCount_ - 1);
+          }
+        }),
+      );
+    }
+  }
+
+  Blockly.Blocks['stat_percent_additive'] = {
+    init(this: any) {
+      this.inputCount_ = 2;
+      this.appendValueInput('INPUT_0').setCheck('Number').appendField('base');
+      this.appendValueInput('INPUT_1').setCheck('Number').appendField('+% of');
+      const resultRow = this.appendDummyInput('RESULT_ROW');
+      resultRow.appendField(new Blockly.FieldLabel('= ?'), 'RESULT');
+      resultRow.appendField(
+        new Blockly.FieldImage(PLUS_SVG, 16, 16, '+', () => {
+          rebuildPercentAdditiveInputs(this, this.inputCount_ + 1);
+        }),
+      );
+      this.setOutput(true, 'Number');
+      this.setColour(45);
+      this.setInputsInline(false);
+      this.setTooltip(
+        'Compound percentage: base × (1 + %bonus1) × (1 + %bonus2) × …\n' +
+          'First input is the base value. Each "+% of" input compounds multiplicatively.',
+      );
+    },
+
+    saveExtraState(this: any): { inputs: number } {
+      return { inputs: this.inputCount_ };
+    },
+
+    loadExtraState(this: any, state: { inputs: number }): void {
+      const count = state.inputs || 2;
+      if (count !== this.inputCount_) {
+        rebuildPercentAdditiveInputs(this, count);
+      }
+    },
+  };
+
+  // Code gen: BASE * (1 + A) * (1 + B) * ... — each step compounds
+  javascriptGenerator.forBlock['stat_percent_additive'] = function (block: any): [string, number] {
+    const base = javascriptGenerator.valueToCode(block, 'INPUT_0', 0) || '0';
+    const multipliers: string[] = [];
+    for (let i = 1; i < block.inputCount_; i++) {
+      const val = javascriptGenerator.valueToCode(block, `INPUT_${i}`, 0) || '0';
+      multipliers.push(`(1 + ${val})`);
+    }
+    if (multipliers.length === 0) return [base, 0];
+    return [`(${base} * ${multipliers.join(' * ')})`, 0];
+  };
 }
 
 const TOOLBOX: Blockly.utils.toolbox.ToolboxDefinition = {
@@ -757,6 +884,7 @@ const TOOLBOX: Blockly.utils.toolbox.ToolboxDefinition = {
         { kind: 'block', type: 'stat_subtract' },
         { kind: 'block', type: 'stat_multiply' },
         { kind: 'block', type: 'stat_divide' },
+        { kind: 'block', type: 'stat_percent_additive' },
         { kind: 'block', type: 'stat_round' },
         { kind: 'block', type: 'stat_constant' },
       ],
@@ -1007,7 +1135,7 @@ function evaluateFormula(
     const getWeaponTypeDamage = () => {
       const wType = weaponBaseValues['weaponType'] as unknown as string;
       if (!wType) return 0;
-      return aggregatedValues[weaponTypeToDamageStat(wType)] ?? 0;
+      return (aggregatedValues[weaponTypeToDamageStat(wType)] ?? 0) / 100;
     };
     const round = (value: number, decimals: number) => {
       const factor = Math.pow(10, decimals);
@@ -1132,6 +1260,11 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
     }
     return cores;
   }, [aggregatedValues]);
+
+  // Sync core values to module-level state for Blockly dropdown callbacks
+  useEffect(() => {
+    setBlocklyCoreValues(coreValues);
+  }, [coreValues]);
 
   // Keep calculation results cache up to date for Blockly dropdown and evaluation
   useEffect(() => {

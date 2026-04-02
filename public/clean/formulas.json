@@ -1,111 +1,6 @@
 {
   "Weapon Stats": [
     {
-      "label": "Weapon Damage",
-      "block": {
-        "blocks": {
-          "languageVersion": 0,
-          "blocks": [
-            {
-              "type": "stat_add",
-              "id": "9_7(G$=;yV3F$;p5~SJo",
-              "x": 70,
-              "y": 110,
-              "extraState": {
-                "inputs": 3
-              },
-              "inputs": {
-                "INPUT_0": {
-                  "block": {
-                    "type": "base_weapon",
-                    "id": "a7!M=~gU0JGH#t5LOQ]^",
-                    "fields": {
-                      "PROP": "damage"
-                    }
-                  }
-                },
-                "INPUT_1": {
-                  "block": {
-                    "type": "stat_multiply",
-                    "id": "?z]#hi0CJOLwNl42j0aF",
-                    "extraState": {
-                      "inputs": 3
-                    },
-                    "inputs": {
-                      "INPUT_0": {
-                        "block": {
-                          "type": "base_weapon",
-                          "id": "QhgznDfGGV.|~+rd6[vQ",
-                          "fields": {
-                            "PROP": "damage"
-                          }
-                        }
-                      },
-                      "INPUT_1": {
-                        "block": {
-                          "type": "stat_core",
-                          "id": "h(WAyD8c[A2sukioW8gu",
-                          "fields": {
-                            "CORE": "weapon damage"
-                          }
-                        }
-                      },
-                      "INPUT_2": {
-                        "block": {
-                          "type": "stat_constant",
-                          "id": "jBU{SE.P{i|cY%yxT3!x",
-                          "fields": {
-                            "VALUE": ".15"
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                "INPUT_2": {
-                  "block": {
-                    "type": "stat_multiply",
-                    "id": "wILe}xdUTK/4XcfyBu$w",
-                    "extraState": {
-                      "inputs": 3
-                    },
-                    "inputs": {
-                      "INPUT_0": {
-                        "block": {
-                          "type": "base_weapon",
-                          "id": "!J5sqT:$/q]y}Whl@=xY",
-                          "fields": {
-                            "PROP": "damage"
-                          }
-                        }
-                      },
-                      "INPUT_1": {
-                        "block": {
-                          "type": "weapon_type_damage",
-                          "id": "B!$/^THrK_8DH[@US|0a"
-                        }
-                      },
-                      "INPUT_2": {
-                        "block": {
-                          "type": "stat_constant",
-                          "id": "oE,XN{^4B6nA?)2Z)toJ",
-                          "fields": {
-                            "VALUE": ".15"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          ]
-        }
-      },
-      "type": "number",
-      "formula": "(getBaseWeapon(\"damage\") + (getBaseWeapon(\"damage\") * getCore(\"weapon damage\") * 0.15) + (getBaseWeapon(\"damage\") * getWeaponTypeDamage() * 0.15));\n"
-    },
-    {
       "label": "DPS",
       "block": {
         "blocks": {
@@ -139,10 +34,30 @@
                       },
                       "INPUT_1": {
                         "block": {
-                          "type": "base_weapon",
-                          "id": "1@r6D?#[EbO=BSIGSt?!",
-                          "fields": {
-                            "PROP": "rpm"
+                          "type": "stat_percent_additive",
+                          "id": "1VV7W%C)MXWdr{WF:al^",
+                          "extraState": {
+                            "inputs": 2
+                          },
+                          "inputs": {
+                            "INPUT_0": {
+                              "block": {
+                                "type": "base_weapon",
+                                "id": "1@r6D?#[EbO=BSIGSt?!",
+                                "fields": {
+                                  "PROP": "rpm"
+                                }
+                              }
+                            },
+                            "INPUT_1": {
+                              "block": {
+                                "type": "stat_percent_all",
+                                "id": "Q`2d_)fqua?;=9hvnqwg",
+                                "fields": {
+                                  "ATTR": "rate of fire"
+                                }
+                              }
+                            }
                           }
                         }
                       }
@@ -164,7 +79,85 @@
         }
       },
       "type": "number",
-      "formula": "((getCalculation(\"Weapon Damage\") * getBaseWeapon(\"rpm\")) / 60);\n"
+      "formula": "((getCalculation(\"Weapon Damage\") * (getBaseWeapon(\"rpm\") * (1 + (sumAll(\"rate of fire\") / 100)))) / 60);\n"
+    },
+    {
+      "label": "Weapon Damage",
+      "block": {
+        "blocks": {
+          "languageVersion": 0,
+          "blocks": [
+            {
+              "type": "stat_percent_additive",
+              "id": "L}0@N6./BU|3BJaOLMp7",
+              "x": 290,
+              "y": -10,
+              "extraState": {
+                "inputs": 2
+              },
+              "inputs": {
+                "INPUT_0": {
+                  "block": {
+                    "type": "base_weapon",
+                    "id": "a7!M=~gU0JGH#t5LOQ]^",
+                    "fields": {
+                      "PROP": "damage"
+                    }
+                  }
+                },
+                "INPUT_1": {
+                  "block": {
+                    "type": "stat_add",
+                    "id": "*}0=uN6DSFG3oJjTkQ__",
+                    "extraState": {
+                      "inputs": 2
+                    },
+                    "inputs": {
+                      "INPUT_0": {
+                        "block": {
+                          "type": "stat_multiply",
+                          "id": "!n{$N`km/)KMSG@2?D*S",
+                          "extraState": {
+                            "inputs": 2
+                          },
+                          "inputs": {
+                            "INPUT_0": {
+                              "block": {
+                                "type": "stat_core",
+                                "id": "h(WAyD8c[A2sukioW8gu",
+                                "fields": {
+                                  "CORE": "weapon damage"
+                                }
+                              }
+                            },
+                            "INPUT_1": {
+                              "block": {
+                                "type": "stat_constant",
+                                "id": "oE,XN{^4B6nA?)2Z)toJ",
+                                "fields": {
+                                  "VALUE": ".15"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "INPUT_1": {
+                        "block": {
+                          "type": "weapon_type_damage",
+                          "id": "B!$/^THrK_8DH[@US|0a"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "type": "number",
+      "formula": "(getBaseWeapon(\"damage\") * (1 + ((getCore(\"weapon damage\") * 0.15) + getWeaponTypeDamage())));\n"
     },
     {
       "label": "PvP Weapon Damage",

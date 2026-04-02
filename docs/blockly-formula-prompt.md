@@ -241,36 +241,49 @@ These are the attribute keys that can appear across gear, weapons, brand sets, g
     - Output: Number
     - Generated code: `round(VALUE, DECIMALS)`
 
-11. **stat_constant** — A literal constant value.
+11. **stat_percent_additive** — Compound percentage: base × (1 + %A) × (1 + %B) × …
+    - First input: BASE (Number) — the base value
+    - Subsequent inputs: +% of (Number) — each is a percentage bonus that compounds multiplicatively
+    - Variable number of inputs (click + to add more bonus steps, − to remove)
+    - Output: Number
+    - Generated code: `(BASE * (1 + A) * (1 + B) * ...)`
+    - Use this for Division 2's multiplicative damage formula where each bonus category compounds separately
+    - Example: base weapon damage with weapon damage% and weapon type damage%:
+      - BASE = `getBaseWeapon("damage")`
+      - +% of = `stat_percent_all("weapon damage")`
+      - +% of = `stat_percent_all("assault rifle damage")`
+      - Result: `damage * (1 + weaponDmg%) * (1 + arDmg%)`
+
+12. **stat_constant** — A literal constant value.
     - Field: VALUE (text, default "0")
     - Output: any
     - Generated code: the number itself, or a quoted string if non-numeric
 
 ### Logic Blocks
 
-12. **logic_if_then_else** — Ternary: if COND then THEN else ELSE
+13. **logic_if_then_else** — Ternary: if COND then THEN else ELSE
     - Inputs: COND (Boolean), THEN (any), ELSE (any)
     - Output: any
     - Generated code: `(COND ? THEN : ELSE)`
 
-13. **logic_compare** — Compare two values.
+14. **logic_compare** — Compare two values.
     - Inputs: A (any), B (any)
     - Dropdown field "OP": one of `===`, `!==`, `<`, `>`, `<=`, `>=`
     - Output: Boolean
     - Generated code: `(A OP B)`
 
-14. **logic_and_or** — Combine two booleans.
+15. **logic_and_or** — Combine two booleans.
     - Inputs: A (Boolean), B (Boolean)
     - Dropdown field "OP": `&&` or `||`
     - Output: Boolean
     - Generated code: `(A OP B)`
 
-15. **logic_not** — Negate a boolean.
+16. **logic_not** — Negate a boolean.
     - Input: VAL (Boolean)
     - Output: Boolean
     - Generated code: `(!VAL)`
 
-16. **logic_boolean** — Boolean constant.
+17. **logic_boolean** — Boolean constant.
     - Dropdown field "BOOL": `true` or `false`
     - Output: Boolean
 

@@ -44,7 +44,7 @@ function evaluateFormulaWith(
     const getWeaponTypeDamage = () => {
       const wType = weaponBaseValues['weaponType'] as unknown as string;
       if (!wType) return 0;
-      return aggregatedValues[weaponTypeToDamageStat(wType)] ?? 0;
+      return (aggregatedValues[weaponTypeToDamageStat(wType)] ?? 0) / 100;
     };
     const round = (value: number, decimals: number) => {
       const factor = Math.pow(10, decimals);
