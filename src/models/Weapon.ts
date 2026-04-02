@@ -17,7 +17,6 @@ class Weapon {
   fixedSecondary: Record<string, number>;
   fixedSlots: Record<string, Record<string, number>>;
   fixedTalent: string[];
-  talents: string[];
   bonus: Record<string, number>;
   hsd: number;
 
@@ -38,7 +37,6 @@ class Weapon {
     fixedSecondary: 'Record<string, number>',
     fixedSlots: 'Record<string, Record<string, number>>',
     fixedTalent: 'string[]',
-    talents: 'string[]',
     bonus: 'Record<string, number>',
     hsd: 'number',
   } as const;
@@ -90,7 +88,6 @@ class Weapon {
     this.fixedSecondary = this.parseRecordField(data.fixedSecondary);
 
     this.fixedTalent = Array.isArray(data.fixedTalent) ? data.fixedTalent : [];
-    this.talents = Array.isArray(data.talents) ? data.talents : [];
 
     this.bonus = this.parseRecordField(data.bonus);
   }

@@ -9,7 +9,6 @@ const CLOUD_NODES: { key: string; label: string; x: number; y: number }[] = [
   { key: 'weapons', label: 'Weapons', x: 14, y: 12 },
   { key: 'weaponMods', label: 'Weapon Mods', x: 52, y: 5 },
   { key: 'weaponAttributes', label: 'Weapon Attributes', x: 82, y: 10 },
-  { key: 'weaponTypeAttributes', label: 'Weapon Type Attrs', x: 4, y: 38 },
   { key: 'talents', label: 'Talents', x: 35, y: 33 },
   { key: 'brandsets', label: 'Brandsets', x: 68, y: 30 },
   { key: 'gearsets', label: 'Gearsets', x: 90, y: 42 },

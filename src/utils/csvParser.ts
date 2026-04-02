@@ -61,19 +61,6 @@ export const parseWeaponAttributes = (csvText: string): Attribute[] => {
 };
 
 /**
- * Parses weapon type attributes CSV
- * @param {string} csvText - CSV text content
- * @returns {Attribute[]}
- */
-export const parseWeaponTypeAttributes = (csvText: string): Attribute[] => {
-  const rows = parseCSV(csvText);
-  return rows
-    .slice(1) // Skip header
-    .filter((row) => row[0] && row[0].trim())
-    .map((row) => Attribute.fromCSVRow(row, 'weaponType'));
-};
-
-/**
  * Parses gear attributes CSV
  * @param {string} csvText - CSV text content
  * @returns {GearMod[]}

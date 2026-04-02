@@ -17,7 +17,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -37,7 +43,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -56,7 +68,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -76,7 +94,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -96,7 +120,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -116,7 +146,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -139,6 +175,12 @@
     "bonus": {
       "hsd": 30,
       "reload speed debuff": 50
+    },
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
     }
   },
   {
@@ -162,7 +204,13 @@
     "hsd": 55,
     "fixedTalent": [
       "Perfectly Overflowing"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -182,7 +230,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -205,7 +259,13 @@
     "hsd": 55,
     "fixedTalent": [
       "Perfect Allegro"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -236,7 +296,13 @@
     "hsd": 55,
     "fixedTalent": [
       "Big Game Hunter"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -256,7 +322,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -279,7 +351,13 @@
     "hsd": 55,
     "fixedTalent": [
       "Perfect Precision Strike"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -298,7 +376,13 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -317,7 +401,13 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -339,7 +429,13 @@
     "hsd": 55,
     "fixedTalent": [
       "Perfect Optimist"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -359,7 +455,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -379,7 +481,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -399,7 +507,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -419,7 +533,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -442,7 +562,13 @@
     "hsd": 55,
     "fixedTalent": [
       "Perfect Pressure Point"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -473,7 +599,13 @@
     "hsd": 55,
     "fixedTalent": [
       "Talent Unnerve"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -493,7 +625,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -513,7 +651,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -536,7 +680,13 @@
     "hsd": 55,
     "fixedTalent": [
       "Perfect Frenzy"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -559,7 +709,13 @@
     "hsd": 55,
     "fixedTalent": [
       "Perfect On Empty"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -579,7 +735,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -599,7 +761,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -619,7 +787,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -639,7 +813,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -662,7 +842,13 @@
     "hsd": 55,
     "fixedTalent": [
       "Perfect Killer"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -685,7 +871,13 @@
     "hsd": 55,
     "fixedTalent": [
       "Perfect Stabilize"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -704,7 +896,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -726,7 +924,13 @@
     "hsd": 55,
     "fixedTalent": [
       "Perfectly Close & Personal"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -746,7 +950,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -766,7 +976,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -789,7 +1005,13 @@
     "hsd": 55,
     "fixedTalent": [
       "Perfectly Ignited"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -812,6 +1034,12 @@
     "hsd": 55,
     "bonus": {
       "base damage": 1782
+    },
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
     }
   },
   {
@@ -843,7 +1071,13 @@
     "hsd": 55,
     "fixedTalent": [
       "Actum Est"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -863,7 +1097,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -883,7 +1123,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -903,7 +1149,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -923,7 +1175,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -946,7 +1204,13 @@
     "hsd": 55,
     "fixedTalent": [
       "Perfect Streamline"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -966,7 +1230,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -986,7 +1256,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -1009,7 +1285,13 @@
     "hsd": 55,
     "fixedTalent": [
       "Perfectly Near Sighted"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -1041,7 +1323,13 @@
     "fixedTalent": [
       "Eagle Strike",
       "Tenacity"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -1060,7 +1348,13 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -1082,7 +1376,13 @@
     "hsd": 55,
     "fixedTalent": [
       "Perfectly In Sync"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -1113,7 +1413,13 @@
     "hsd": 55,
     "fixedTalent": [
       "Capacitance"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -1133,7 +1439,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -1156,7 +1468,13 @@
     "hsd": 55,
     "fixedTalent": [
       "Future Perfection"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -1176,7 +1494,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -1199,7 +1523,13 @@
     "hsd": 55,
     "fixedTalent": [
       "Perfect Flatline"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -1219,7 +1549,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 55
+    "hsd": 55,
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -1242,7 +1578,13 @@
     "hsd": 55,
     "fixedTalent": [
       "Perfectly Accurate"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "assault rifle",
@@ -1273,7 +1615,13 @@
     "hsd": 50,
     "fixedTalent": [
       "Adaptive Instincts"
-    ]
+    ],
+    "fixedPrimary1": {
+      "assault rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "health damage": 21
+    }
   },
   {
     "type": "lmg",
@@ -1293,7 +1641,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1316,7 +1670,13 @@
     "hsd": 65,
     "fixedTalent": [
       "Perfect Overwhelm"
-    ]
+    ],
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1347,7 +1707,13 @@
     "hsd": 65,
     "fixedTalent": [
       "Disruptor Rounds"
-    ]
+    ],
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1367,7 +1733,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1387,7 +1759,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1407,7 +1785,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1430,7 +1814,13 @@
     "hsd": 65,
     "fixedTalent": [
       "Perfectly Steady Handed"
-    ]
+    ],
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1450,7 +1840,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1473,7 +1869,13 @@
     "hsd": 65,
     "fixedTalent": [
       "Perfect Flatline"
-    ]
+    ],
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1496,7 +1898,13 @@
     "hsd": 65,
     "fixedTalent": [
       "Perfect Precision Strike"
-    ]
+    ],
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1516,7 +1924,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1536,7 +1950,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1556,7 +1976,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1576,7 +2002,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1599,7 +2031,13 @@
     "hsd": 65,
     "fixedTalent": [
       "Perfectly Unhinged"
-    ]
+    ],
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1622,7 +2060,13 @@
     "hsd": 65,
     "fixedTalent": [
       "Swift"
-    ]
+    ],
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1642,7 +2086,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1670,7 +2120,13 @@
     "hsd": 65,
     "fixedTalent": [
       "Plague of the Outcasts"
-    ]
+    ],
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1689,7 +2145,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1709,7 +2171,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1729,7 +2197,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1748,7 +2222,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1768,7 +2248,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1791,7 +2277,13 @@
     "hsd": 65,
     "fixedTalent": [
       "Perfect Fast Hands"
-    ]
+    ],
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1810,7 +2302,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1830,7 +2328,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1850,7 +2354,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1870,7 +2380,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 66
+    "hsd": 66,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1892,7 +2408,13 @@
     "hsd": 65,
     "fixedTalent": [
       "Perfect Thunder Strike"
-    ]
+    ],
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1914,7 +2436,13 @@
     "hsd": 65,
     "fixedTalent": [
       "Perfect Frenzy"
-    ]
+    ],
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1942,7 +2470,13 @@
     "hsd": 65,
     "fixedTalent": [
       "Ardent"
-    ]
+    ],
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1962,7 +2496,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -1985,7 +2525,13 @@
     "hsd": 65,
     "fixedTalent": [
       "Perfect Sadist"
-    ]
+    ],
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -2010,7 +2556,13 @@
     "hsd": 65,
     "fixedTalent": [
       "Bullet Hell"
-    ]
+    ],
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -2030,7 +2582,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -2050,7 +2608,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -2070,7 +2634,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -2090,7 +2660,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -2113,7 +2689,13 @@
     "hsd": 65,
     "fixedTalent": [
       "Perfect Pressure Point"
-    ]
+    ],
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -2136,7 +2718,13 @@
     "hsd": 65,
     "fixedTalent": [
       "Perfectly Optimized"
-    ]
+    ],
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -2167,7 +2755,13 @@
     "hsd": 65,
     "fixedTalent": [
       "Pakhan"
-    ]
+    ],
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "lmg",
@@ -2182,7 +2776,13 @@
     "optimalRange": 35,
     "modSlots": [],
     "fixedSlots": [],
-    "hsd": 65
+    "hsd": 65,
+    "fixedPrimary1": {
+      "lmg damage": 15
+    },
+    "fixedPrimary2": {
+      "dmg to target out of cover": 12
+    }
   },
   {
     "type": "smg",
@@ -2202,7 +2802,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2221,7 +2827,13 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2240,7 +2852,13 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2263,7 +2881,13 @@
     "hsd": 50,
     "fixedTalent": [
       "Perfect Streamline"
-    ]
+    ],
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2283,7 +2907,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2303,7 +2933,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2323,7 +2959,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2343,7 +2985,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2366,7 +3014,13 @@
     "hsd": 50,
     "fixedTalent": [
       "Perfect Thunder Strike"
-    ]
+    ],
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2386,7 +3040,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2409,7 +3069,13 @@
     "hsd": 50,
     "fixedTalent": [
       "Perfectly Vindictive"
-    ]
+    ],
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2440,7 +3106,13 @@
     "hsd": 50,
     "fixedTalent": [
       "Breathe Free"
-    ]
+    ],
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2458,7 +3130,13 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2476,7 +3154,13 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2497,7 +3181,13 @@
     "hsd": 50,
     "fixedTalent": [
       "Perfectly Strained"
-    ]
+    ],
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2517,7 +3207,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2537,7 +3233,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2557,7 +3259,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2577,7 +3285,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2597,7 +3311,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2617,7 +3337,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2637,7 +3363,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2657,7 +3389,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2680,7 +3418,13 @@
     "hsd": 50,
     "fixedTalent": [
       "Perfect Immobilize"
-    ]
+    ],
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2703,7 +3447,13 @@
     "hsd": 50,
     "fixedTalent": [
       "Perfect Killer"
-    ]
+    ],
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2734,7 +3484,13 @@
     "hsd": 50,
     "fixedTalent": [
       "Rule them all"
-    ]
+    ],
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2751,7 +3507,13 @@
       "3$"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2772,7 +3534,13 @@
     "hsd": 50,
     "fixedTalent": [
       "Perfect Unwavering"
-    ]
+    ],
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2797,7 +3565,13 @@
         "critical hit chance": 15
       }
     },
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2817,7 +3591,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2837,7 +3617,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2857,7 +3643,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2877,7 +3669,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2897,7 +3695,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2917,7 +3721,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2940,6 +3750,12 @@
     "hsd": 50,
     "bonus": {
       "optimal range": 45
+    },
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
     }
   },
   {
@@ -2957,7 +3773,13 @@
       "OPTICS RAIL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2972,7 +3794,13 @@
     "optimalRange": 19,
     "modSlots": [],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -2990,7 +3818,13 @@
     "hsd": 50,
     "fixedTalent": [
       "Hidden Rock"
-    ]
+    ],
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -3008,7 +3842,13 @@
     "hsd": 50,
     "fixedTalent": [
       "Perfect Stabilize"
-    ]
+    ],
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -3026,7 +3866,13 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -3044,7 +3890,13 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -3065,7 +3917,13 @@
     "hsd": 50,
     "fixedTalent": [
       "Perfect Preservation"
-    ]
+    ],
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -3096,7 +3954,13 @@
     "hsd": 50,
     "fixedTalent": [
       "Incessant Chatter"
-    ]
+    ],
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -3116,7 +3980,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 50
+    "hsd": 50,
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -3139,7 +4009,13 @@
     "hsd": 50,
     "fixedTalent": [
       "Perfect Outsider"
-    ]
+    ],
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -3162,7 +4038,13 @@
     "hsd": 50,
     "fixedTalent": [
       "Perfectly Measured"
-    ]
+    ],
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "smg",
@@ -3193,7 +4075,13 @@
     "hsd": 50,
     "fixedTalent": [
       "Payment in kind"
-    ]
+    ],
+    "fixedPrimary1": {
+      "smg damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit chance": 21
+    }
   },
   {
     "type": "shotgun",
@@ -3211,7 +4099,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3229,7 +4123,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3251,7 +4151,13 @@
     "hsd": 45,
     "fixedTalent": [
       "Perfect Sledgehammer"
-    ]
+    ],
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3272,7 +4178,13 @@
     "hsd": 45,
     "fixedTalent": [
       "Perfectly Extra"
-    ]
+    ],
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3289,7 +4201,13 @@
       "0$"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3304,7 +4222,13 @@
     "optimalRange": 11,
     "modSlots": [],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3322,7 +4246,13 @@
     "hsd": 45,
     "fixedTalent": [
       "Perfect Pumped Up"
-    ]
+    ],
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3337,7 +4267,13 @@
     "optimalRange": 7,
     "modSlots": [],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3355,7 +4291,13 @@
     "hsd": 45,
     "fixedTalent": [
       "Primer Rounds"
-    ]
+    ],
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3373,6 +4315,12 @@
     "hsd": 45,
     "bonus": {
       "shotgun damage": 17
+    },
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
     }
   },
   {
@@ -3392,7 +4340,13 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3414,7 +4368,13 @@
     "hsd": 45,
     "fixedTalent": [
       "Perfect Distance"
-    ]
+    ],
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3439,7 +4399,13 @@
         "stability": 20
       }
     },
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3458,7 +4424,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3477,7 +4449,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3496,7 +4474,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3515,7 +4499,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3534,7 +4524,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3556,7 +4552,13 @@
     "hsd": 45,
     "fixedTalent": [
       "Perfect Immobilize"
-    ]
+    ],
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3578,7 +4580,13 @@
     "hsd": 45,
     "fixedTalent": [
       "Perfect Jazz Hands"
-    ]
+    ],
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3596,7 +4604,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3614,7 +4628,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3632,7 +4652,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3650,7 +4676,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3671,7 +4703,13 @@
     "hsd": 45,
     "fixedTalent": [
       "Perfect Pummel"
-    ]
+    ],
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3688,7 +4726,13 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3705,7 +4749,13 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3725,7 +4775,13 @@
     "hsd": 45,
     "fixedTalent": [
       "Perfect Brazen"
-    ]
+    ],
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3750,7 +4806,13 @@
         "optimal range": 25
       }
     },
-    "hsd": 25
+    "hsd": 25,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3778,7 +4840,13 @@
     "hsd": 25,
     "fixedTalent": [
       "Sandman"
-    ]
+    ],
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3797,7 +4865,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3816,7 +4890,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3835,7 +4915,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3854,7 +4940,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3873,7 +4965,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3895,7 +4993,13 @@
     "hsd": 45,
     "fixedTalent": [
       "Perfect Brazen"
-    ]
+    ],
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3910,7 +5014,13 @@
     "optimalRange": 0,
     "modSlots": [],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3932,7 +5042,13 @@
     "hsd": 45,
     "fixedTalent": [
       "Perfect Pummel"
-    ]
+    ],
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3951,7 +5067,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 45
+    "hsd": 45,
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "shotgun",
@@ -3973,6 +5095,12 @@
     "hsd": 45,
     "bonus": {
       "armor on kill": 10
+    },
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
     }
   },
   {
@@ -4004,7 +5132,13 @@
     "hsd": 45,
     "fixedTalent": [
       "Septic Shock"
-    ]
+    ],
+    "fixedPrimary1": {
+      "shotgun damage": 15
+    },
+    "fixedPrimary2": {
+      "damage to armor": 12
+    }
   },
   {
     "type": "rifle",
@@ -4024,7 +5158,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4052,7 +5192,13 @@
         "weapon handling": 15
       }
     },
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4083,7 +5229,13 @@
     "hsd": 60,
     "fixedTalent": [
       "Binary Trigger"
-    ]
+    ],
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4103,7 +5255,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4122,7 +5280,13 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4141,7 +5305,13 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4163,7 +5333,13 @@
     "hsd": 60,
     "fixedTalent": [
       "Perfectly Behind You"
-    ]
+    ],
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4182,7 +5358,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4202,7 +5384,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4222,7 +5410,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4242,7 +5436,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4264,7 +5464,13 @@
     "hsd": 60,
     "fixedTalent": [
       "Perfect Lucky Shot"
-    ]
+    ],
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4287,7 +5493,13 @@
     "hsd": 60,
     "fixedTalent": [
       "Perfect Sledgehammer"
-    ]
+    ],
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4305,7 +5517,13 @@
     "hsd": -100,
     "fixedTalent": [
       "Refreshing"
-    ]
+    ],
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4320,7 +5538,13 @@
     "optimalRange": 60,
     "modSlots": [],
     "fixedSlots": [],
-    "hsd": 70
+    "hsd": 70,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4348,7 +5572,13 @@
         "weapon handling": 10
       }
     },
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4368,7 +5598,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4388,7 +5624,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4408,7 +5650,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4431,7 +5679,13 @@
     "hsd": 60,
     "fixedTalent": [
       "Perfect Spike"
-    ]
+    ],
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4451,7 +5705,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4471,7 +5731,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4499,7 +5765,13 @@
         "stability": 15
       }
     },
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4519,7 +5791,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4539,7 +5817,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4559,7 +5843,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4582,7 +5872,13 @@
     "hsd": 60,
     "fixedTalent": [
       "Perfect Perpetuation"
-    ]
+    ],
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4602,7 +5898,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4622,7 +5924,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4641,7 +5949,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4663,7 +5977,13 @@
     "hsd": 60,
     "fixedTalent": [
       "Perfect Rifleman"
-    ]
+    ],
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4692,7 +6012,15 @@
       }
     },
     "hsd": 60,
-    "fixedTalent": ["Geri and Freki"]
+    "fixedTalent": [
+      "Geri and Freki"
+    ],
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4711,7 +6039,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4730,7 +6064,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4752,7 +6092,13 @@
     "hsd": 61,
     "fixedTalent": [
       "Perfect Soft Spot"
-    ]
+    ],
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4772,7 +6118,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4795,7 +6147,13 @@
     "hsd": 60,
     "fixedTalent": [
       "Perfectly In Sync"
-    ]
+    ],
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4812,7 +6170,13 @@
       "MAGAZINE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 60
+    "hsd": 60,
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4832,7 +6196,13 @@
     "hsd": 60,
     "fixedTalent": [
       "Perfect Boomerang"
-    ]
+    ],
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "rifle",
@@ -4863,7 +6233,13 @@
     "hsd": 60,
     "fixedTalent": [
       "Agonizing Bite"
-    ]
+    ],
+    "fixedPrimary1": {
+      "rifle damage": 15
+    },
+    "fixedPrimary2": {
+      "critical hit damage": 17
+    }
   },
   {
     "type": "mr",
@@ -4883,7 +6259,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -4903,7 +6285,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -4926,7 +6314,13 @@
     "hsd": 0,
     "fixedTalent": [
       "Perfect Eyeless"
-    ]
+    ],
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -4946,7 +6340,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -4969,7 +6369,13 @@
     "hsd": 0,
     "fixedTalent": [
       "Perfectly Determined"
-    ]
+    ],
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -4997,7 +6403,13 @@
         "stability": 20
       }
     },
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5017,7 +6429,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5037,7 +6455,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5057,7 +6481,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5076,7 +6506,13 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5095,7 +6531,13 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5118,7 +6560,13 @@
     "hsd": 0,
     "fixedTalent": [
       "Perfectly Behind You"
-    ]
+    ],
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5140,7 +6588,13 @@
     "hsd": 0,
     "fixedTalent": [
       "Perfect Ranger"
-    ]
+    ],
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5171,7 +6625,13 @@
     "hsd": 0,
     "fixedTalent": [
       "High Priority Target"
-    ]
+    ],
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5191,7 +6651,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5211,7 +6677,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5234,7 +6706,13 @@
     "hsd": 0,
     "fixedTalent": [
       "Perfectly Naked"
-    ]
+    ],
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5258,6 +6736,12 @@
     "bonus": {
       "base damage": 230326,
       "rpm": -200
+    },
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
     }
   },
   {
@@ -5289,7 +6773,13 @@
     "hsd": 0,
     "fixedTalent": [
       "Full Stop"
-    ]
+    ],
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5309,7 +6799,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5329,7 +6825,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5349,7 +6851,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5372,7 +6880,13 @@
     "hsd": 0,
     "fixedTalent": [
       "Perfect First Blood"
-    ]
+    ],
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5400,7 +6914,13 @@
         "stability": 10
       }
     },
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5419,7 +6939,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5438,7 +6964,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5458,7 +6990,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5478,7 +7016,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5498,7 +7042,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5521,7 +7071,13 @@
     "hsd": 0,
     "fixedTalent": [
       "Perfect Soft Spot"
-    ]
+    ],
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5544,6 +7100,12 @@
     ],
     "bonus": {
       "hsd": 137
+    },
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
     }
   },
   {
@@ -5566,6 +7128,12 @@
     "hsd": 0,
     "bonus": {
       "hsd": 137
+    },
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
     }
   },
   {
@@ -5586,7 +7154,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5606,7 +7180,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5626,7 +7206,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5649,7 +7235,13 @@
     "hsd": 0,
     "fixedTalent": [
       "Perfect Reformation"
-    ]
+    ],
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5669,7 +7261,13 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5692,7 +7290,13 @@
     "hsd": 0,
     "fixedTalent": [
       "Future Perfection"
-    ]
+    ],
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "mr",
@@ -5720,7 +7324,13 @@
         "weapon handling": 5
       }
     },
-    "hsd": 0
+    "hsd": 0,
+    "fixedPrimary1": {
+      "mmr damage": 15
+    },
+    "fixedPrimary2": {
+      "headshot damage": 111
+    }
   },
   {
     "type": "pistol",
@@ -5738,7 +7348,10 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -5759,7 +7372,10 @@
     "hsd": 100,
     "fixedTalent": [
       "Perfect Unwavering"
-    ]
+    ],
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -5781,7 +7397,10 @@
         "critical hit chance": 15
       }
     },
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -5798,7 +7417,10 @@
       "OPTICS RAIL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -5818,7 +7440,10 @@
     "hsd": 100,
     "fixedTalent": [
       "Perfect Sadist"
-    ]
+    ],
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -5849,7 +7474,10 @@
     "hsd": 100,
     "fixedTalent": [
       "Liberty or Death"
-    ]
+    ],
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -5866,7 +7494,10 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -5886,7 +7517,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -5906,7 +7540,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -5926,7 +7563,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -5949,7 +7589,10 @@
     "hsd": 100,
     "fixedTalent": [
       "Sport Mode"
-    ]
+    ],
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -5972,7 +7615,10 @@
     "hsd": 100,
     "fixedTalent": [
       "Perfect Breadbasket"
-    ]
+    ],
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -5992,7 +7638,10 @@
     "hsd": 100,
     "fixedTalent": [
       "Perfect Spike"
-    ]
+    ],
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6010,7 +7659,10 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6028,7 +7680,10 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6048,7 +7703,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6073,7 +7731,10 @@
     "hsd": 100,
     "fixedTalent": [
       "Mosquito Song"
-    ]
+    ],
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6096,7 +7757,10 @@
     "hsd": 100,
     "fixedTalent": [
       "Perfect Preservation"
-    ]
+    ],
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6116,7 +7780,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6134,7 +7801,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6157,7 +7827,10 @@
     "hsd": 100,
     "fixedTalent": [
       "Perfect Salvage"
-    ]
+    ],
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6188,7 +7861,10 @@
     "hsd": 100,
     "fixedTalent": [
       "Busy Little Bee"
-    ]
+    ],
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6207,7 +7883,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6226,7 +7905,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6245,7 +7927,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6263,7 +7948,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6281,7 +7969,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6298,7 +7989,10 @@
       "MUZZLE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6320,7 +8014,10 @@
     "hsd": 100,
     "fixedTalent": [
       "Perfect Optimist"
-    ]
+    ],
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6338,7 +8035,10 @@
       "MAGAZINE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6356,7 +8056,10 @@
       "MAGAZINE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6374,7 +8077,10 @@
       "MAGAZINE SLOT"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6395,7 +8101,10 @@
     "hsd": 100,
     "fixedTalent": [
       "Perfect Finisher"
-    ]
+    ],
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6416,7 +8125,10 @@
     "hsd": 100,
     "fixedTalent": [
       "Perfectly Determined"
-    ]
+    ],
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6438,6 +8150,9 @@
     "bonus": {
       "base damage": 10,
       "rof": -7
+    },
+    "fixedPrimary1": {
+      "pistol damage": 15
     }
   },
   {
@@ -6460,7 +8175,10 @@
         "accuracy": 20
       }
     },
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6479,7 +8197,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6498,7 +8219,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6517,7 +8241,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6537,7 +8264,10 @@
       "UNDERBARREL"
     ],
     "fixedSlots": [],
-    "hsd": 100
+    "hsd": 100,
+    "fixedPrimary1": {
+      "pistol damage": 15
+    }
   },
   {
     "type": "pistol",
@@ -6560,6 +8290,9 @@
     "hsd": 100,
     "bonus": {
       "skill tier": 1
+    },
+    "fixedPrimary1": {
+      "pistol damage": 15
     }
   }
 ]

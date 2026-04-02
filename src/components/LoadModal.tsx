@@ -89,11 +89,6 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
 
   const csvFiles = [
     { key: 'weaponAttributes', label: 'Weapon Attributes', filename: 'weapon_attributes.csv' },
-    {
-      key: 'weaponTypeAttributes',
-      label: 'Weapon Type Attributes',
-      filename: 'weapon_type_attributes.csv',
-    },
     { key: 'gearAttributes', label: 'Gear Attributes', filename: 'gear_attributes.csv' },
     { key: 'gearMods', label: 'Gear Mods', filename: 'gear_mods.csv' },
     { key: 'keenersWatch', label: "Keener's Watch Stats", filename: 'keeners_watch_max_stats.csv' },
@@ -132,7 +127,6 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
       // Check CSV files and load from lookups.json if needed
       const lookupTypes = [
         'weaponAttributes',
-        'weaponTypeAttributes',
         'gearAttributes',
         'gearMods',
         'keenersWatch',
@@ -308,7 +302,6 @@ function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
     // If clean data is empty and this is a lookup-based type, try to load from lookups.json
     const lookupTypes = [
       'weaponAttributes',
-      'weaponTypeAttributes',
       'gearAttributes',
       'gearMods',
       'keenersWatch',

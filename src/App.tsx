@@ -29,7 +29,6 @@ import {
 import {
   loadCSVFile,
   parseWeaponAttributes,
-  parseWeaponTypeAttributes,
   parseGearAttributes,
   parseGearMods,
   parseKeenersWatch,
@@ -218,7 +217,6 @@ function App() {
         gearMods: `${base}/clean/gearMods.json`,
         gearAttributes: `${base}/clean/gearAttributes.json`,
         weaponAttributes: `${base}/clean/weaponAttributes.json`,
-        weaponTypeAttributes: `${base}/clean/weaponTypeAttributes.json`,
         keenersWatch: `${base}/clean/keenersWatch.json`,
         prompts: `${base}/clean/prompts.json`,
       };
@@ -274,19 +272,6 @@ function App() {
         if (lookups.weaponAttributes) {
           store.setWeaponAttributes(lookups.weaponAttributes);
           console.log('Loaded weaponAttributes from lookups.json');
-        }
-
-        // Load weapon type attributes
-        if (lookups.weaponTypeAttributes) {
-          const attrs = Object.entries(lookups.weaponTypeAttributes).flatMap(
-            ([weapon, attrObj]: [string, any]) =>
-              Object.entries(attrObj).map(
-                ([attr, max]) =>
-                  new Attribute({ weaponType: weapon, attribute: attr, max: `${max}%` }),
-              ),
-          );
-          store.setWeaponTypeAttributes(attrs);
-          console.log('Loaded weaponTypeAttributes from lookups.json');
         }
 
         // Load gear attributes
@@ -368,12 +353,6 @@ function App() {
             return record;
           },
           setter: 'setWeaponAttributes',
-        },
-        {
-          key: 'weaponTypeAttributes',
-          filename: 'weapon_type_attributes.csv',
-          parser: parseWeaponTypeAttributes,
-          setter: 'setWeaponTypeAttributes',
         },
         {
           key: 'gearAttributes',
@@ -893,10 +872,6 @@ function App() {
           setDisplayContent(`Loaded ${Object.keys(record).length} weapon attributes`);
           return;
         }
-        case 'weaponTypeAttributes':
-          parsedData = parseWeaponTypeAttributes(csvText);
-          setterName = 'setWeaponTypeAttributes';
-          break;
         case 'gearAttributes':
           parsedData = parseGearAttributes(csvText);
           setterName = 'setGearAttributes';

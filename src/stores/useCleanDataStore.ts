@@ -11,7 +11,6 @@ import Specialization from '../models/Specialization';
 import NamedExoticGear from '../models/NamedExoticGear';
 import GearAttribute from '../models/GearAttribute';
 import KeenersWatchAttribute from '../models/KeenersWatchAttribute';
-import WeaponTypeAttribute from '../models/WeaponTypeAttribute';
 import GearModAttribute from '../models/GearModAttribute';
 import { serializePromptData } from '../utils/promptDataSerializer';
 
@@ -28,7 +27,6 @@ export interface CleanDataTypeMap {
   weaponAttributes: Record<string, number>;
   gearAttributes: GearAttribute[];
   keenersWatch: KeenersWatchAttribute[];
-  weaponTypeAttributes: WeaponTypeAttribute[];
   gearMods: GearModAttribute[];
   prompts: Record<string, string>;
 }
@@ -71,7 +69,6 @@ export const CLASS_CONSTRUCTORS: Partial<Record<MainDataKey, new (data: any) => 
   specializations: Specialization,
   gearAttributes: GearAttribute,
   keenersWatch: KeenersWatchAttribute,
-  weaponTypeAttributes: WeaponTypeAttribute,
   gearMods: GearModAttribute,
 };
 

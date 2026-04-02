@@ -37,9 +37,9 @@ export class StatCalculator {
   cores: Partial<Record<CoreType, string[]>> = {};
 
   add(stat: string, source: string, label: string, value: number): void {
-    console.log(
-      `[StatCalculator] add: stat="${stat}", source="${source}", label="${label}", value=${value}`,
-    );
+    // console.log(
+    //   `[StatCalculator] add: stat="${stat}", source="${source}", label="${label}", value=${value}`,
+    // );
 
     if (!this.values[stat]) {
       this.values[stat] = new CalculatedData();

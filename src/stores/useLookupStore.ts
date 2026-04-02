@@ -22,7 +22,6 @@ interface LookupState {
   specializations: Map<string, any>;
 
   weaponAttributes: Record<string, number>;
-  weaponTypeAttributes: Map<string, Attribute>;
   gearAttributes: GearModCollection | null;
   gearModAttributes: Map<string, GearMod>;
   keenersWatch: Map<string, Attribute>;
@@ -43,7 +42,6 @@ interface LookupState {
   setSpecializations: (specializationList: any[]) => void;
 
   setWeaponAttributes: (attrs: Record<string, number>) => void;
-  setWeaponTypeAttributes: (attributeList: Attribute[]) => void;
   setGearAttributes: (attributeList: GearMod[]) => void;
   setGearModAttributes: (attributeList: GearMod[]) => void;
   setKeenersWatch: (attributeList: Attribute[]) => void;
@@ -63,7 +61,6 @@ interface LookupState {
   getSpecialization: (name: string) => any | undefined;
 
   getWeaponAttribute: (key: string) => number | undefined;
-  getWeaponTypeAttribute: (key: string) => Attribute | undefined;
   getGearAttributes: () => GearModCollection | null;
   getGearModAttribute: (key: string) => GearMod | undefined;
   getKeenersWatchStat: (key: string) => Attribute | undefined;
@@ -83,7 +80,6 @@ interface LookupState {
   getAllSpecializations: () => any[];
 
   getAllWeaponAttributes: () => Record<string, number>;
-  getAllWeaponTypeAttributes: () => Attribute[];
   getAllGearAttributes: () => GearMod[];
   getAllGearModAttributes: () => GearMod[];
   getAllKeenersWatch: () => Attribute[];
@@ -121,7 +117,6 @@ const useLookupStore = create<LookupState>()(
 
       // CSV data maps
       weaponAttributes: {} as Record<string, number>,
-      weaponTypeAttributes: new Map<string, Attribute>(),
       gearAttributes: null,
       gearModAttributes: new Map<string, GearMod>(),
       keenersWatch: new Map<string, Attribute>(),
@@ -219,15 +214,6 @@ const useLookupStore = create<LookupState>()(
         set({ weaponAttributes: attrs, lastUpdated: Date.now() });
       },
 
-      setWeaponTypeAttributes: (attributeList) => {
-        const attributeMap = new Map<string, Attribute>();
-        attributeList.forEach((attr) => {
-          const key = attr.getKey();
-          attributeMap.set(key, attr);
-        });
-        set({ weaponTypeAttributes: attributeMap, lastUpdated: Date.now() });
-      },
-
       setGearAttributes: (attributeList) => {
         const collection = new GearModCollection(attributeList);
         set({ gearAttributes: collection, lastUpdated: Date.now() });
@@ -287,7 +273,6 @@ const useLookupStore = create<LookupState>()(
 
       // CSV data lookup methods
       getWeaponAttribute: (key) => get().weaponAttributes[key],
-      getWeaponTypeAttribute: (key) => get().weaponTypeAttributes.get(key),
       getGearAttributes: () => get().gearAttributes,
       getGearModAttribute: (key) => get().gearModAttributes.get(key),
       getKeenersWatchStat: (key) => get().keenersWatch.get(key),
@@ -341,7 +326,6 @@ const useLookupStore = create<LookupState>()(
 
       // CSV data get all methods
       getAllWeaponAttributes: () => get().weaponAttributes,
-      getAllWeaponTypeAttributes: () => Array.from(get().weaponTypeAttributes.values()),
       getAllGearAttributes: () => {
         const collection = get().gearAttributes;
         if (!collection) return [];
@@ -366,13 +350,6 @@ const useLookupStore = create<LookupState>()(
         if (wa && typeof wa === 'object') {
           for (const key of Object.keys(wa)) {
             if (key) names.add(key);
-          }
-        }
-
-        // weaponTypeAttributes: Map<string, Attribute>
-        if (state.weaponTypeAttributes instanceof Map) {
-          for (const attr of state.weaponTypeAttributes.values()) {
-            if (attr.attribute) names.add(attr.attribute);
           }
         }
 
@@ -428,7 +405,6 @@ const useLookupStore = create<LookupState>()(
           weaponMods: new Map(),
           specializations: new Map(),
           weaponAttributes: {} as Record<string, number>,
-          weaponTypeAttributes: new Map(),
           gearAttributes: null,
           gearModAttributes: new Map(),
           keenersWatch: new Map(),
@@ -451,7 +427,6 @@ const useLookupStore = create<LookupState>()(
             'skills',
             'weaponMods',
             'specializations',
-            'weaponTypeAttributes',
             'gearModAttributes',
             'keenersWatch',
             'statusImmunities',
@@ -477,7 +452,6 @@ const useLookupStore = create<LookupState>()(
                   return new Skill(item);
                 case 'weaponMods':
                   return new WeaponMod(item);
-                case 'weaponTypeAttributes':
                 case 'keenersWatch':
                   return new Attribute(item);
                 case 'gearModAttributes':

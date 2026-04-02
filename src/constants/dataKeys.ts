@@ -13,7 +13,6 @@ export const MAIN_DATA_KEYS = [
   'weaponAttributes',
   'gearAttributes',
   'keenersWatch',
-  'weaponTypeAttributes',
   'gearMods',
   'prompts',
 ] as const;
@@ -23,7 +22,6 @@ export const MAIN_DATA_KEYS = [
  */
 export const LOOKUP_DATA_KEYS = [
   'weaponAttributes',
-  'weaponTypeAttributes',
   'gearAttributes',
   'gearMods',
   'keenersWatch',
