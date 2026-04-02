@@ -7,12 +7,15 @@ import { getBasePath } from '../utils/basePath';
 import ModelPickerModal from './ModelPickerModal';
 import ChatBuildCard from './ChatBuildCard';
 import useCleanDataStore from '../stores/useCleanDataStore';
+import { useDataFreshnessStore, hashString } from '../stores/useDataFreshnessStore';
 
 interface OpenRouterModel {
   id: string;
   name: string;
   promptPrice: string;
   completionPrice: string;
+  promptPriceRaw: number;
+  completionPriceRaw: number;
 }
 
 interface ChatMessage {
@@ -23,6 +26,7 @@ interface ChatMessage {
   modelJson?: string; // Store the JSON model that was applied
   inContext?: boolean; // Whether this message is included in LLM context
   buildSnapshot?: any; // Snapshot of the build at the time it was applied
+  cost?: { promptTokens: number; completionTokens: number; totalCost: number }; // Cost info for assistant messages
 }
 
 interface Prompts {
@@ -114,6 +118,11 @@ function ChatWindow() {
   const [jsonEditorOpen, setJsonEditorOpen] = useState(false);
   const [jsonEditorValue, setJsonEditorValue] = useState('');
 
+  // Prompts freshness tracking — compare in-memory prompts against disk file
+  const [promptsStale, setPromptsStale] = useState(false);
+  const [reloadingPrompts, setReloadingPrompts] = useState(false);
+  const diskPromptsRef = useRef<Prompts | null>(null);
+
   useEffect(() => {
     const savedKey = localStorage.getItem('openRouterApiKey');
     if (savedKey) {
@@ -127,9 +136,17 @@ function ChatWindow() {
     // Load prompts from file and localStorage
     const loadPrompts = async () => {
       try {
-        const response = await fetch(`${getBasePath()}/clean/prompts.json`);
+        const response = await fetch(`${getBasePath()}/clean/prompts.json`, { cache: 'no-store' });
         if (response.ok) {
           const defaultPrompts = await response.json();
+
+          // Store what's on disk for comparison
+          diskPromptsRef.current = {
+            system: defaultPrompts.system || '',
+            query: defaultPrompts.query || '',
+            seasonal: defaultPrompts.seasonal || '',
+            existing: defaultPrompts.existing || '',
+          };
 
           // Load saved prompts from localStorage or use defaults
           const savedPrompts: Prompts = {
@@ -143,6 +160,12 @@ function ChatWindow() {
 
           setPrompts(savedPrompts);
           setTempPrompts(savedPrompts);
+
+          // Check if what we're using differs from what's on disk
+          const isDifferent = (Object.keys(diskPromptsRef.current) as Array<keyof Prompts>).some(
+            (k) => savedPrompts[k] !== diskPromptsRef.current![k],
+          );
+          setPromptsStale(isDifferent);
         }
       } catch (error) {
         console.error('Failed to load prompts:', error);
@@ -150,6 +173,37 @@ function ChatWindow() {
     };
 
     loadPrompts();
+  }, []);
+
+  // Periodically check if prompts.json on disk differs from what we're using
+  useEffect(() => {
+    const checkPromptsOnDisk = async () => {
+      try {
+        const response = await fetch(`${getBasePath()}/clean/prompts.json`, { cache: 'no-store' });
+        if (!response.ok) return;
+        const diskData = await response.json();
+        const disk: Prompts = {
+          system: diskData.system || '',
+          query: diskData.query || '',
+          seasonal: diskData.seasonal || '',
+          existing: diskData.existing || '',
+        };
+        diskPromptsRef.current = disk;
+
+        setPrompts((current) => {
+          const isDifferent = (Object.keys(disk) as Array<keyof Prompts>).some(
+            (k) => current[k] !== disk[k],
+          );
+          setPromptsStale(isDifferent);
+          return current;
+        });
+      } catch {
+        // skip
+      }
+    };
+
+    const interval = setInterval(checkPromptsOnDisk, 5 * 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -190,6 +244,8 @@ function ChatWindow() {
               name: model.name || model.id,
               promptPrice: promptPrice < 0.01 ? 'free' : `$${promptPrice.toFixed(2)}`,
               completionPrice: completionPrice < 0.01 ? 'free' : `$${completionPrice.toFixed(2)}`,
+              promptPriceRaw: promptPrice,
+              completionPriceRaw: completionPrice,
             };
           })
           .sort((a: OpenRouterModel, b: OpenRouterModel) => a.name.localeCompare(b.name));
@@ -212,64 +268,83 @@ function ChatWindow() {
   const parseAndApplyModel = (
     responseText: string,
   ): { message: string; modelApplied: boolean; modelJson?: string; buildSnapshot?: any } => {
-    // Check if response contains the two-part format
-    const messageMatch = responseText.match(/---MESSAGE---\s*([\s\S]*?)(?=---MODEL---|$)/);
-    const modelMatch = responseText.match(/---MODEL---\s*([\s\S]*?)$/);
+    // Try structured JSON format first (from response_format)
+    let message: string;
+    let modelObj: any = null;
+    let modelJson: string | undefined;
 
-    if (!messageMatch) {
-      return { message: responseText, modelApplied: false };
+    try {
+      const structured = JSON.parse(responseText);
+      if (structured.message !== undefined) {
+        message = structured.message;
+        modelObj = structured.model;
+        if (modelObj) modelJson = JSON.stringify(modelObj, null, 2);
+      } else {
+        // Valid JSON but not our schema — treat as raw text
+        message = responseText;
+      }
+    } catch {
+      // Not JSON — fall back to ---MESSAGE---/---MODEL--- markers
+      const messageMatch = responseText.match(/---MESSAGE---\s*([\s\S]*?)(?=---MODEL---|$)/);
+      const modelMatch = responseText.match(/---MODEL---\s*([\s\S]*?)$/);
+
+      if (!messageMatch) {
+        return { message: responseText, modelApplied: false };
+      }
+
+      message = messageMatch[1].trim();
+
+      if (modelMatch) {
+        try {
+          let raw = modelMatch[1].trim();
+          if (raw.startsWith('```')) {
+            raw = raw.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+          }
+          modelObj = JSON.parse(raw);
+          modelJson = raw;
+        } catch (err) {
+          console.error('Failed to parse model JSON from markers:', err);
+          return { message: message + '\n\n(Failed to apply build model)', modelApplied: false };
+        }
+      }
     }
 
-    const message = messageMatch[1].trim();
-
-    if (!modelMatch) {
+    if (!modelObj) {
       return { message, modelApplied: false };
     }
 
-    // Try to parse and apply the MODEL
+    // Build a snapshot for the ChatBuildCard without auto-applying to any slot.
+    // The user can choose which slot to send it to via the "Send To" buttons.
     try {
-      let modelJson = modelMatch[1].trim();
-
-      // Strip markdown code fences if present
-      if (modelJson.startsWith('```')) {
-        modelJson = modelJson.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
-      }
-
-      const parsed = JSON.parse(modelJson);
-
       const llmBuild = new LlmBuild({
-        primaryWeapon: parsed.primaryWeapon,
-        secondaryWeapon: parsed.secondaryWeapon,
-        pistol: parsed.pistol,
-        mask: parsed.mask,
-        chest: parsed.chest,
-        holster: parsed.holster,
-        backpack: parsed.backpack,
-        gloves: parsed.gloves,
-        kneepads: parsed.kneepads,
+        primaryWeapon: modelObj.primaryWeapon,
+        secondaryWeapon: modelObj.secondaryWeapon,
+        pistol: modelObj.pistol,
+        mask: modelObj.mask,
+        chest: modelObj.chest,
+        holster: modelObj.holster,
+        backpack: modelObj.backpack,
+        gloves: modelObj.gloves,
+        kneepads: modelObj.kneepads,
       });
 
-      const updates = Build.fromLlm(llmBuild);
-      useBuildStore.getState().updateCurrentBuild(updates);
-
-      // Capture a snapshot of the build after applying
-      const snap = useBuildStore.getState().currentBuild;
+      const reconstructed = Build.fromLlm(llmBuild);
       const buildSnapshot = {
-        mask: snap.mask,
-        chest: snap.chest,
-        holster: snap.holster,
-        backpack: snap.backpack,
-        gloves: snap.gloves,
-        kneepads: snap.kneepads,
-        primaryWeapon: snap.primaryWeapon,
-        secondaryWeapon: snap.secondaryWeapon,
-        pistol: snap.pistol,
+        mask: reconstructed.mask ?? null,
+        chest: reconstructed.chest ?? null,
+        holster: reconstructed.holster ?? null,
+        backpack: reconstructed.backpack ?? null,
+        gloves: reconstructed.gloves ?? null,
+        kneepads: reconstructed.kneepads ?? null,
+        primaryWeapon: reconstructed.primaryWeapon ?? null,
+        secondaryWeapon: reconstructed.secondaryWeapon ?? null,
+        pistol: reconstructed.pistol ?? null,
       };
 
       return { message, modelApplied: true, modelJson, buildSnapshot };
     } catch (error) {
-      console.error('Failed to parse or apply model:', error);
-      return { message: message + '\n\n(Failed to apply build model)', modelApplied: false };
+      console.error('Failed to parse build model:', error);
+      return { message: message + '\n\n(Failed to parse build model)', modelApplied: false };
     }
   };
 
@@ -484,8 +559,160 @@ function ChatWindow() {
         body: JSON.stringify({
           model: selectedModel,
           messages: chatMessages,
-          temperature: 0.7,
+          temperature: 0.1,
           max_tokens: 8192,
+          provider: { require_parameters: true },
+          response_format: {
+            type: 'json_schema',
+            json_schema: {
+              name: 'chat_response',
+              strict: true,
+              schema: {
+                type: 'object',
+                properties: {
+                  model: {
+                    description: 'The Division 2 build data object',
+                    anyOf: [
+                      {
+                        type: 'object',
+                        properties: {
+                          specialization: { type: 'string' },
+                          primaryWeapon: {
+                            type: 'object',
+                            properties: {
+                              name: { type: 'string' },
+                              primaryAttrib1: { type: 'string' },
+                              primaryAttrib2: { type: 'string' },
+                              secondaryAttrib: { type: 'string' },
+                              talent: { type: 'string' },
+                              attachments: { type: 'object' },
+                            },
+                            required: ['name', 'primaryAttrib1', 'attachments'],
+                            additionalProperties: false,
+                          },
+                          secondaryWeapon: {
+                            type: 'object',
+                            properties: {
+                              name: { type: 'string' },
+                              primaryAttrib1: { type: 'string' },
+                              primaryAttrib2: { type: 'string' },
+                              secondaryAttrib: { type: 'string' },
+                              talent: { type: 'string' },
+                              attachments: { type: 'object' },
+                            },
+                            required: ['name', 'primaryAttrib1', 'attachments'],
+                            additionalProperties: false,
+                          },
+                          pistol: {
+                            type: 'object',
+                            properties: {
+                              name: { type: 'string' },
+                              primaryAttrib1: { type: 'string' },
+                              talent: { type: 'string' },
+                              attachments: { type: 'object' },
+                            },
+                            required: ['name', 'primaryAttrib1', 'attachments'],
+                            additionalProperties: false,
+                          },
+                          mask: {
+                            type: 'object',
+                            properties: {
+                              name: { type: 'string' },
+                              core: { type: 'string' },
+                              gearAttrib1: { type: 'string' },
+                              gearAttrib2: { type: 'string' },
+                              gearMods: { type: 'array', items: { type: 'string' } },
+                            },
+                            required: ['name', 'core', 'gearAttrib1'],
+                            additionalProperties: false,
+                          },
+                          chest: {
+                            type: 'object',
+                            properties: {
+                              name: { type: 'string' },
+                              core: { type: 'string' },
+                              gearAttrib1: { type: 'string' },
+                              gearAttrib2: { type: 'string' },
+                              talent: { type: 'string' },
+                              gearMods: { type: 'array', items: { type: 'string' } },
+                            },
+                            required: ['name', 'core', 'gearAttrib1', 'talent'],
+                            additionalProperties: false,
+                          },
+                          holster: {
+                            type: 'object',
+                            properties: {
+                              name: { type: 'string' },
+                              core: { type: 'string' },
+                              gearAttrib1: { type: 'string' },
+                              gearAttrib2: { type: 'string' },
+                            },
+                            required: ['name', 'core', 'gearAttrib1'],
+                            additionalProperties: false,
+                          },
+                          backpack: {
+                            type: 'object',
+                            properties: {
+                              name: { type: 'string' },
+                              core: { type: 'string' },
+                              gearAttrib1: { type: 'string' },
+                              gearAttrib2: { type: 'string' },
+                              talent: { type: 'string' },
+                              gearMods: { type: 'array', items: { type: 'string' } },
+                            },
+                            required: ['name', 'core', 'gearAttrib1', 'talent'],
+                            additionalProperties: false,
+                          },
+                          gloves: {
+                            type: 'object',
+                            properties: {
+                              name: { type: 'string' },
+                              core: { type: 'string' },
+                              gearAttrib1: { type: 'string' },
+                              gearAttrib2: { type: 'string' },
+                            },
+                            required: ['name', 'core', 'gearAttrib1'],
+                            additionalProperties: false,
+                          },
+                          kneepads: {
+                            type: 'object',
+                            properties: {
+                              name: { type: 'string' },
+                              core: { type: 'string' },
+                              gearAttrib1: { type: 'string' },
+                              gearAttrib2: { type: 'string' },
+                            },
+                            required: ['name', 'core', 'gearAttrib1'],
+                            additionalProperties: false,
+                          },
+                        },
+                        required: [
+                          'specialization',
+                          'primaryWeapon',
+                          'secondaryWeapon',
+                          'pistol',
+                          'mask',
+                          'chest',
+                          'holster',
+                          'backpack',
+                          'gloves',
+                          'kneepads',
+                        ],
+                        additionalProperties: false,
+                      },
+                      { type: 'null' },
+                    ],
+                  },
+                  message: {
+                    type: 'string',
+                    description: 'Full Markdown response to the user',
+                  },
+                },
+                required: ['model', 'message'],
+                additionalProperties: false,
+              },
+            },
+          },
         }),
       });
 
@@ -513,9 +740,28 @@ function ChatWindow() {
         // Parse the response and apply model if present
         const { message, modelApplied, modelJson, buildSnapshot } = parseAndApplyModel(text);
 
+        // Calculate cost from usage data
+        let cost: ChatMessage['cost'] = undefined;
+        const usage = data.usage;
+        const promptTokens = usage?.prompt_tokens ?? 0;
+        const completionTokens = usage?.completion_tokens ?? 0;
+        if (promptTokens || completionTokens) {
+          const currentModel = availableModels.find((m) => m.id === selectedModel);
+          const promptPricePer1M = currentModel?.promptPriceRaw ?? 0;
+          const completionPricePer1M = currentModel?.completionPriceRaw ?? 0;
+          const promptCost = (promptTokens / 1_000_000) * promptPricePer1M;
+          const completionCost = (completionTokens / 1_000_000) * completionPricePer1M;
+          cost = {
+            promptTokens,
+            completionTokens,
+            totalCost: promptCost + completionCost,
+          };
+        }
+
         console.log('=== PARSED RESPONSE ===');
         console.log('Message:', message);
         console.log('Model Applied:', modelApplied);
+        console.log('Cost:', cost);
 
         setMessages((prev) => {
           const newMessages = [...prev];
@@ -525,13 +771,14 @@ function ChatWindow() {
             lastMessage.modelApplied = modelApplied;
             lastMessage.modelJson = modelJson;
             lastMessage.buildSnapshot = buildSnapshot;
+            lastMessage.cost = cost;
           }
           return [...newMessages];
         });
 
         if (modelApplied) {
-          setLlmStatus('Build updated successfully!');
-          setTimeout(() => setLlmStatus(''), 2000);
+          setLlmStatus('Build ready — use Send To to apply it');
+          setTimeout(() => setLlmStatus(''), 3000);
         }
       } else {
         throw new Error('No response content from model');
@@ -575,6 +822,14 @@ function ChatWindow() {
       localStorage.setItem(`openRouterPrompt_${key}`, value);
     });
     setPrompts(tempPrompts);
+
+    // Re-check if saved prompts now differ from disk
+    if (diskPromptsRef.current) {
+      const isDifferent = (Object.keys(diskPromptsRef.current) as Array<keyof Prompts>).some(
+        (k) => tempPrompts[k] !== diskPromptsRef.current![k],
+      );
+      setPromptsStale(isDifferent);
+    }
 
     setIsConfigOpen(false);
   };
@@ -652,6 +907,40 @@ function ChatWindow() {
     setJsonEditorValue('');
   };
 
+  const handleReloadPrompts = async () => {
+    setReloadingPrompts(true);
+    try {
+      const response = await fetch(`${getBasePath()}/clean/prompts.json`, { cache: 'no-store' });
+      if (response.ok) {
+        const text = await response.text();
+        const defaultPrompts = JSON.parse(text);
+
+        // Clear any localStorage overrides so we pick up the new defaults
+        const keys: Array<keyof Prompts> = ['system', 'query', 'seasonal', 'existing'];
+        keys.forEach((k) => localStorage.removeItem(`openRouterPrompt_${k}`));
+
+        const fresh: Prompts = {
+          system: defaultPrompts.system || '',
+          query: defaultPrompts.query || '',
+          seasonal: defaultPrompts.seasonal || '',
+          existing: defaultPrompts.existing || '',
+        };
+        setPrompts(fresh);
+        setTempPrompts(fresh);
+        diskPromptsRef.current = fresh;
+        setPromptsStale(false);
+
+        // Also update the freshness store baseline so DivisionDB modal stays in sync
+        useDataFreshnessStore.getState().setLoadedHash('prompts', hashString(text));
+        useDataFreshnessStore.getState().markFresh('prompts');
+      }
+    } catch (error) {
+      console.error('Failed to reload prompts:', error);
+    } finally {
+      setReloadingPrompts(false);
+    }
+  };
+
   return (
     <div className="chat-window">
       <div className="chat-header">
@@ -680,12 +969,56 @@ function ChatWindow() {
           </button>
         </div>
       </div>
+      {promptsStale && (
+        <div className="chat-stale-banner">
+          <span>Prompts have changed on disk</span>
+          <button onClick={handleReloadPrompts} disabled={reloadingPrompts}>
+            {reloadingPrompts ? 'Reloading…' : '↻ Reload'}
+          </button>
+        </div>
+      )}
       <div className="chat-messages">
         {messages.length === 0 ? (
           <div className="empty-state">
-            {openRouterApiKey
-              ? 'Start a conversation...'
-              : 'Configure your OpenRouter API key to start chatting'}
+            {openRouterApiKey ? (
+              <div className="onboarding">
+                <div className="onboarding-section">
+                  <div className="onboarding-heading">Choosing a model</div>
+                  <p className="onboarding-text">
+                    Initial testing was done against{' '}
+                    <span className="highlight">Gemini 3 Flash Preview</span>. Click the model
+                    button below to pick a different one. If you find a model that works well, open
+                    a GitHub issue with your results so we can track tested models.
+                  </p>
+                </div>
+
+                <div className="onboarding-section">
+                  <div className="onboarding-heading">Chat options</div>
+                  <ul className="onboarding-list">
+                    <li>
+                      <span className="highlight">Add Build</span> — sends your current loadout to
+                      the LLM so it can refine or critique what you already have.
+                    </li>
+                    <li>
+                      <span className="highlight">Game Data</span> — includes gear sets, brand sets,
+                      talents, and other reference data so the model can make accurate suggestions.
+                    </li>
+                    <li>
+                      <span className="highlight">Modifiers</span> — attach seasonal or event
+                      modifier text (click to expand) so the model accounts for active global
+                      effects.
+                    </li>
+                  </ul>
+                  <p className="onboarding-text">
+                    To change or update the prompts sent to the model, open{' '}
+                    <span className="highlight">⚙️ Configuration</span> and edit them under the
+                    Prompts section.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              'Configure your OpenRouter API key to start chatting'
+            )}
           </div>
         ) : (
           messages.map((message, index) => (
@@ -718,6 +1051,15 @@ function ChatWindow() {
                 {message.role === 'user' ? 'You' : 'Assistant'}
               </div>
               <div className="message-content">{renderMarkdown(message.content)}</div>
+              {message.cost && (
+                <div className="message-cost">
+                  {message.cost.promptTokens.toLocaleString()} in ·{' '}
+                  {message.cost.completionTokens.toLocaleString()} out · $
+                  {message.cost.totalCost < 0.0001
+                    ? message.cost.totalCost.toExponential(2)
+                    : message.cost.totalCost.toFixed(4)}
+                </div>
+              )}
               {message.modelApplied && (
                 <ChatBuildCard
                   buildSnapshot={message.buildSnapshot}
@@ -926,20 +1268,24 @@ function ChatWindow() {
               <button
                 onClick={() => {
                   try {
-                    // Parse and validate JSON
+                    // Parse JSON and apply directly to the current build slot
                     const parsed = JSON.parse(viewingJson);
-
-                    // Use the same parseAndApplyModel logic by wrapping in MODEL format
-                    const wrappedJson = `---MESSAGE---\nBuild applied from JSON viewer\n\n---MODEL---\n${viewingJson}`;
-                    const { modelApplied } = parseAndApplyModel(wrappedJson);
-
-                    if (modelApplied) {
-                      setLlmStatus('Build applied successfully!');
-                      setTimeout(() => setLlmStatus(''), 2000);
-                      setShowJsonViewer(false);
-                    } else {
-                      alert('Failed to apply build. Check console for errors.');
-                    }
+                    const llmBuild = new LlmBuild({
+                      primaryWeapon: parsed.primaryWeapon,
+                      secondaryWeapon: parsed.secondaryWeapon,
+                      pistol: parsed.pistol,
+                      mask: parsed.mask,
+                      chest: parsed.chest,
+                      holster: parsed.holster,
+                      backpack: parsed.backpack,
+                      gloves: parsed.gloves,
+                      kneepads: parsed.kneepads,
+                    });
+                    const updates = Build.fromLlm(llmBuild);
+                    useBuildStore.getState().updateCurrentBuild(updates);
+                    setLlmStatus('Build applied successfully!');
+                    setTimeout(() => setLlmStatus(''), 2000);
+                    setShowJsonViewer(false);
                   } catch (error) {
                     alert('Invalid JSON format. Please check your syntax.');
                     console.error('JSON parse error:', error);

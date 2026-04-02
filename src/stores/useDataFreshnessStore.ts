@@ -5,7 +5,7 @@ import { useFormulaStore } from './useFormulaStore';
 import type { MainDataKey } from '../constants/dataKeys';
 
 /** Simple string hash for comparison (djb2) */
-function hashString(str: string): number {
+export function hashString(str: string): number {
   let hash = 5381;
   for (let i = 0; i < str.length; i++) {
     hash = ((hash << 5) + hash + str.charCodeAt(i)) | 0;
