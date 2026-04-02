@@ -25,7 +25,12 @@
     },
     "threePc": {
       "armor on kill": 15
-    }
+    },
+    "missing": [
+      "chest",
+      "holster",
+      "kneepads"
+    ]
   },
   {
     "icon": "https://i.imgur.com/iCDOWbj.png",
@@ -151,7 +156,12 @@
     },
     "threePc": {
       "pulse resistance": 40
-    }
+    },
+    "missing": [
+      "backpack",
+      "holster",
+      "kneepads"
+    ]
   },
   {
     "icon": "https://puu.sh/D4eDq.png",
@@ -165,7 +175,12 @@
     },
     "threePc": {
       "skill haste": 30
-    }
+    },
+    "missing": [
+      "mask",
+      "holster",
+      "kneepads"
+    ]
   },
   {
     "icon": "https://i.imgur.com/Lp0klc0.png",
@@ -179,7 +194,12 @@
     },
     "threePc": {
       "status effect": 25
-    }
+    },
+    "missing": [
+      "gloves",
+      "holster",
+      "kneepads"
+    ]
   },
   {
     "icon": "https://i.imgur.com/HKDlGkL.png",
@@ -235,7 +255,12 @@
     },
     "threePc": {
       "skill damage": 18
-    }
+    },
+    "missing": [
+      "gloves",
+      "holster",
+      "kneepads"
+    ]
   },
   {
     "icon": "https://puu.sh/D4eDF.png",
@@ -249,7 +274,12 @@
     },
     "threePc": {
       "repair skills": 52
-    }
+    },
+    "missing": [
+      "chest",
+      "gloves",
+      "kneepads"
+    ]
   },
   {
     "icon": "",
@@ -291,7 +321,12 @@
     },
     "threePc": {
       "damage to armor": 5
-    }
+    },
+    "missing": [
+      "mask",
+      "gloves",
+      "kneepads"
+    ]
   },
   {
     "icon": "",
@@ -333,7 +368,12 @@
     },
     "threePc": {
       "accuracy": 50
-    }
+    },
+    "missing": [
+      "chest",
+      "backpack",
+      "gloves"
+    ]
   },
   {
     "icon": "https://puu.sh/D4eDy.png",
@@ -347,7 +387,12 @@
     },
     "threePc": {
       "stability": 50
-    }
+    },
+    "missing": [
+      "mask",
+      "gloves",
+      "holster"
+    ]
   },
   {
     "icon": "https://i.imgur.com/m5j0yqs.png",
@@ -403,7 +448,12 @@
     },
     "threePc": {
       "weapon handling": 30
-    }
+    },
+    "missing": [
+      "mask",
+      "backpack",
+      "holster"
+    ]
   },
   {
     "icon": "https://puu.sh/D4eDD.png",
@@ -417,7 +467,12 @@
     },
     "threePc": {
       "ammo capacity": 50
-    }
+    },
+    "missing": [
+      "mask",
+      "holster",
+      "kneepads"
+    ]
   },
   {
     "icon": "https://puu.sh/D4eDE.png",
@@ -431,7 +486,12 @@
     },
     "threePc": {
       "critical hit damage": 13
-    }
+    },
+    "missing": [
+      "gloves",
+      "holster",
+      "kneepads"
+    ]
   },
   {
     "icon": "https://puu.sh/D4eDG.png",
@@ -445,7 +505,12 @@
     },
     "threePc": {
       "critical hit chance": 8
-    }
+    },
+    "missing": [
+      "backpack",
+      "holster",
+      "kneepads"
+    ]
   },
   {
     "icon": "",

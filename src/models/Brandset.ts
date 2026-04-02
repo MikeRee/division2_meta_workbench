@@ -8,6 +8,7 @@ class Brandset {
   onePc: Record<string, number>;
   twoPc: Record<string, number>;
   threePc: Record<string, number>;
+  missing: string[];
 
   get name(): string {
     return this.brand;
@@ -20,6 +21,7 @@ class Brandset {
     onePc: 'Record<string, number>',
     twoPc: 'Record<string, number>',
     threePc: 'Record<string, number>',
+    missing: 'string[]',
   } as const;
 
   constructor({
@@ -29,6 +31,7 @@ class Brandset {
     onePc = {},
     twoPc = {},
     threePc = {},
+    missing = [],
   }: Partial<Brandset> = {}) {
     this.icon = icon;
     this.brand = brand;
@@ -36,6 +39,7 @@ class Brandset {
     this.onePc = parseStatModifiers(onePc);
     this.twoPc = parseStatModifiers(twoPc);
     this.threePc = parseStatModifiers(threePc);
+    this.missing = missing;
   }
 }
 

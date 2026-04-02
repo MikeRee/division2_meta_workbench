@@ -184,10 +184,13 @@ function Build() {
       buildGearList.push(new BuildGear(gearset, gearType));
     });
 
-    // 3. Add Brandset items for this gear type
+    // 3. Add Brandset items for this gear type (skip if gear type is in the brand's missing list)
     brandsets.forEach((brandset) => {
       if (!brandset.core) {
         console.warn(`Brandset "${brandset.brand}" has no core attribute defined, skipping`);
+        return;
+      }
+      if (brandset.missing?.includes(gearType)) {
         return;
       }
       buildGearList.push(new BuildGear(brandset, gearType));
