@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import './Build.css';
-import { MdWatch, MdFolderOpen, MdRefresh } from 'react-icons/md';
+import { MdWatch, MdFolderOpen, MdRefresh, MdViewModule, MdViewList } from 'react-icons/md';
+import BuildItemizedView from './BuildItemizedView';
 import { useBuildStore } from '../stores/useBuildStore';
 import { useCleanDataStore } from '../stores/useCleanDataStore';
 import Weapon from '../models/Weapon';
@@ -32,6 +33,7 @@ function Build() {
   const [showWatchOverlay, setShowWatchOverlay] = useState(false);
   const [editGearSlot, setEditGearSlot] = useState<string | null>(null);
   const [editWeaponSlot, setEditWeaponSlot] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'cards' | 'list'>('cards');
 
   const builds = useBuildStore((state) => state.builds);
   const activeBuildIndex = useBuildStore((state) => state.activeBuildIndex);
@@ -434,6 +436,13 @@ function Build() {
         <div className="build-actions">
           <button
             className="icon-button"
+            onClick={() => setViewMode(viewMode === 'cards' ? 'list' : 'cards')}
+            title={viewMode === 'cards' ? 'Switch to List View' : 'Switch to Card View'}
+          >
+            {viewMode === 'cards' ? <MdViewList /> : <MdViewModule />}
+          </button>
+          <button
+            className="icon-button"
             onClick={() => setShowWatchOverlay(true)}
             title="Keener's Watch"
           >
@@ -448,140 +457,150 @@ function Build() {
         </div>
       </div>
 
-      <div className="build-content">
-        <div className="build-row">
-          {currentBuild.specialization ? (
-            <div className="specialization-cell" onClick={() => handleCellClick('specialization')}>
-              <img
-                src={getSpecializationImage(currentBuild.specialization.name)}
-                alt={currentBuild.specialization.name}
-                className="specialization-image"
+      {viewMode === 'list' ? (
+        <BuildItemizedView build={currentBuild} onCellClick={handleCellClick} />
+      ) : (
+        <div className="build-content">
+          <div className="build-row">
+            {currentBuild.specialization ? (
+              <div
+                className="specialization-cell"
+                onClick={() => handleCellClick('specialization')}
+              >
+                <img
+                  src={getSpecializationImage(currentBuild.specialization.name)}
+                  alt={currentBuild.specialization.name}
+                  className="specialization-image"
+                />
+              </div>
+            ) : (
+              <div className="build-cell" onClick={() => handleCellClick('specialization')}>
+                <span className="cell-label">Specialization</span>
+                <span className="cell-value">Select...</span>
+              </div>
+            )}
+            {currentBuild.pistol ? (
+              <WeaponTacticalCard
+                buildWeapon={currentBuild.pistol}
+                onClick={() => handleCellClick('pistol')}
               />
-            </div>
-          ) : (
-            <div className="build-cell" onClick={() => handleCellClick('specialization')}>
-              <span className="cell-label">Specialization</span>
-              <span className="cell-value">Select...</span>
-            </div>
-          )}
-          {currentBuild.pistol ? (
-            <WeaponTacticalCard
-              buildWeapon={currentBuild.pistol}
-              onClick={() => handleCellClick('pistol')}
-            />
-          ) : (
-            <div className="build-cell" onClick={() => handleCellClick('pistol')}>
-              <span className="cell-label">Pistol</span>
-              <span className="cell-value">Select...</span>
-            </div>
-          )}
-        </div>
-
-        <div className="build-row weapons-row">
-          {currentBuild.primaryWeapon ? (
-            <WeaponTacticalCard
-              buildWeapon={currentBuild.primaryWeapon}
-              onClick={() => handleCellClick('primaryWeapon')}
-            />
-          ) : (
-            <div className="build-cell" onClick={() => handleCellClick('primaryWeapon')}>
-              <span className="cell-label">Weapon 1</span>
-              <span className="cell-value">Select...</span>
-            </div>
-          )}
-          {currentBuild.secondaryWeapon ? (
-            <WeaponTacticalCard
-              buildWeapon={currentBuild.secondaryWeapon}
-              onClick={() => handleCellClick('secondaryWeapon')}
-            />
-          ) : (
-            <div className="build-cell" onClick={() => handleCellClick('secondaryWeapon')}>
-              <span className="cell-label">Weapon 2</span>
-              <span className="cell-value">Select...</span>
-            </div>
-          )}
-        </div>
-
-        <div className="build-row gear-row">
-          {currentBuild.mask ? (
-            <TacticalCard buildGear={currentBuild.mask} onClick={() => handleCellClick('mask')} />
-          ) : (
-            <div className="build-cell" onClick={() => handleCellClick('mask')}>
-              <span className="cell-label">Mask</span>
-              <span className="cell-value">Select...</span>
-            </div>
-          )}
-          {currentBuild.backpack ? (
-            <TacticalCard
-              buildGear={currentBuild.backpack}
-              onClick={() => handleCellClick('backpack')}
-            />
-          ) : (
-            <div className="build-cell" onClick={() => handleCellClick('backpack')}>
-              <span className="cell-label">Backpack</span>
-              <span className="cell-value">Select...</span>
-            </div>
-          )}
-        </div>
-
-        <div className="build-row gear-row">
-          {currentBuild.chest ? (
-            <TacticalCard buildGear={currentBuild.chest} onClick={() => handleCellClick('chest')} />
-          ) : (
-            <div className="build-cell" onClick={() => handleCellClick('chest')}>
-              <span className="cell-label">Chest</span>
-              <span className="cell-value">Select...</span>
-            </div>
-          )}
-          {currentBuild.gloves ? (
-            <TacticalCard
-              buildGear={currentBuild.gloves}
-              onClick={() => handleCellClick('gloves')}
-            />
-          ) : (
-            <div className="build-cell" onClick={() => handleCellClick('gloves')}>
-              <span className="cell-label">Gloves</span>
-              <span className="cell-value">Select...</span>
-            </div>
-          )}
-        </div>
-
-        <div className="build-row gear-row">
-          {currentBuild.holster ? (
-            <TacticalCard
-              buildGear={currentBuild.holster}
-              onClick={() => handleCellClick('holster')}
-            />
-          ) : (
-            <div className="build-cell" onClick={() => handleCellClick('holster')}>
-              <span className="cell-label">Holster</span>
-              <span className="cell-value">Select...</span>
-            </div>
-          )}
-          {currentBuild.kneepads ? (
-            <TacticalCard
-              buildGear={currentBuild.kneepads}
-              onClick={() => handleCellClick('kneepads')}
-            />
-          ) : (
-            <div className="build-cell" onClick={() => handleCellClick('kneepads')}>
-              <span className="cell-label">Kneepads</span>
-              <span className="cell-value">Select...</span>
-            </div>
-          )}
-        </div>
-
-        <div className="build-row skills-row">
-          <div className="build-cell" onClick={() => handleCellClick('skill1')}>
-            <span className="cell-label">Skill 1</span>
-            <span className="cell-value">{currentBuild.skill1 || 'Select...'}</span>
+            ) : (
+              <div className="build-cell" onClick={() => handleCellClick('pistol')}>
+                <span className="cell-label">Pistol</span>
+                <span className="cell-value">Select...</span>
+              </div>
+            )}
           </div>
-          <div className="build-cell" onClick={() => handleCellClick('skill2')}>
-            <span className="cell-label">Skill 2</span>
-            <span className="cell-value">{currentBuild.skill2 || 'Select...'}</span>
+
+          <div className="build-row weapons-row">
+            {currentBuild.primaryWeapon ? (
+              <WeaponTacticalCard
+                buildWeapon={currentBuild.primaryWeapon}
+                onClick={() => handleCellClick('primaryWeapon')}
+              />
+            ) : (
+              <div className="build-cell" onClick={() => handleCellClick('primaryWeapon')}>
+                <span className="cell-label">Weapon 1</span>
+                <span className="cell-value">Select...</span>
+              </div>
+            )}
+            {currentBuild.secondaryWeapon ? (
+              <WeaponTacticalCard
+                buildWeapon={currentBuild.secondaryWeapon}
+                onClick={() => handleCellClick('secondaryWeapon')}
+              />
+            ) : (
+              <div className="build-cell" onClick={() => handleCellClick('secondaryWeapon')}>
+                <span className="cell-label">Weapon 2</span>
+                <span className="cell-value">Select...</span>
+              </div>
+            )}
+          </div>
+
+          <div className="build-row gear-row">
+            {currentBuild.mask ? (
+              <TacticalCard buildGear={currentBuild.mask} onClick={() => handleCellClick('mask')} />
+            ) : (
+              <div className="build-cell" onClick={() => handleCellClick('mask')}>
+                <span className="cell-label">Mask</span>
+                <span className="cell-value">Select...</span>
+              </div>
+            )}
+            {currentBuild.backpack ? (
+              <TacticalCard
+                buildGear={currentBuild.backpack}
+                onClick={() => handleCellClick('backpack')}
+              />
+            ) : (
+              <div className="build-cell" onClick={() => handleCellClick('backpack')}>
+                <span className="cell-label">Backpack</span>
+                <span className="cell-value">Select...</span>
+              </div>
+            )}
+          </div>
+
+          <div className="build-row gear-row">
+            {currentBuild.chest ? (
+              <TacticalCard
+                buildGear={currentBuild.chest}
+                onClick={() => handleCellClick('chest')}
+              />
+            ) : (
+              <div className="build-cell" onClick={() => handleCellClick('chest')}>
+                <span className="cell-label">Chest</span>
+                <span className="cell-value">Select...</span>
+              </div>
+            )}
+            {currentBuild.gloves ? (
+              <TacticalCard
+                buildGear={currentBuild.gloves}
+                onClick={() => handleCellClick('gloves')}
+              />
+            ) : (
+              <div className="build-cell" onClick={() => handleCellClick('gloves')}>
+                <span className="cell-label">Gloves</span>
+                <span className="cell-value">Select...</span>
+              </div>
+            )}
+          </div>
+
+          <div className="build-row gear-row">
+            {currentBuild.holster ? (
+              <TacticalCard
+                buildGear={currentBuild.holster}
+                onClick={() => handleCellClick('holster')}
+              />
+            ) : (
+              <div className="build-cell" onClick={() => handleCellClick('holster')}>
+                <span className="cell-label">Holster</span>
+                <span className="cell-value">Select...</span>
+              </div>
+            )}
+            {currentBuild.kneepads ? (
+              <TacticalCard
+                buildGear={currentBuild.kneepads}
+                onClick={() => handleCellClick('kneepads')}
+              />
+            ) : (
+              <div className="build-cell" onClick={() => handleCellClick('kneepads')}>
+                <span className="cell-label">Kneepads</span>
+                <span className="cell-value">Select...</span>
+              </div>
+            )}
+          </div>
+
+          <div className="build-row skills-row">
+            <div className="build-cell" onClick={() => handleCellClick('skill1')}>
+              <span className="cell-label">Skill 1</span>
+              <span className="cell-value">{currentBuild.skill1 || 'Select...'}</span>
+            </div>
+            <div className="build-cell" onClick={() => handleCellClick('skill2')}>
+              <span className="cell-label">Skill 2</span>
+              <span className="cell-value">{currentBuild.skill2 || 'Select...'}</span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {showOverlay && (
         <div className="overlay-backdrop" onClick={() => setShowOverlay(false)}>
