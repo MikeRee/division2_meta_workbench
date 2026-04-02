@@ -3,7 +3,7 @@ import styles from './TacticalCard.module.css';
 import BuildGear, { GearSource } from '../models/BuildGear';
 import { getDefaultCoreImage } from '../models/CoreValue';
 import { getDefaultAttrImage, getDefaultModImage, GearModClassification } from '../models/GearMod';
-import useLookupStore from '../stores/useLookupStore';
+import useCleanDataStore from '../stores/useCleanDataStore';
 
 // Color mapping based on GearSource
 const getGearColors = (source: GearSource | null) => {
@@ -66,7 +66,7 @@ function getAttrDisplay(
   if (entries.length === 0) return 'not-set';
   const [key, value] = entries[0];
   const classification =
-    useLookupStore.getState().gearAttributes?.getClassification(key) ??
+    (useCleanDataStore.getState().getGearAttributeClassification(key) as GearModClassification) ??
     GearModClassification.Offensive;
   return { key, value, classification };
 }
@@ -79,12 +79,10 @@ function getModSlotDisplay(
   const entries = Object.entries(slot);
   if (entries.length === 0) return null;
   const [key, value] = entries[0];
-  const gearModAttrsMap = useLookupStore.getState().gearModAttributes;
-  const modAttr =
-    gearModAttrsMap instanceof Map
-      ? Array.from(gearModAttrsMap.values()).find((m) => m.attribute === key)
-      : undefined;
-  const classification = modAttr?.classification ?? GearModClassification.Offensive;
+  const gearModAttrs = useCleanDataStore.getState().getGearModAttributesList();
+  const modAttr = gearModAttrs.find((m) => m.attribute === key);
+  const classification =
+    (modAttr?.classification as GearModClassification) ?? GearModClassification.Offensive;
   return { key, value, classification };
 }
 

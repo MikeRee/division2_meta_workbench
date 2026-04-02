@@ -3,7 +3,7 @@ import styles from './TacticalCard.module.css';
 import { BuildWeapon } from '../models/BuildWeapon';
 import { getDefaultAttrImage, GearModClassification } from '../models/GearMod';
 import { Rarety } from '../constants/dataKeys';
-import useLookupStore from '../stores/useLookupStore';
+import useCleanDataStore from '../stores/useCleanDataStore';
 
 // Color mapping based on weapon rarety
 const getWeaponColors = (rarety: Rarety) => {
@@ -78,7 +78,7 @@ function renderAttrRow(attrs: Record<string, number> | null, emptyLabel: string)
 
   const [key, value] = entries[0];
   const classification =
-    useLookupStore.getState().gearAttributes?.getClassification(key) ??
+    (useCleanDataStore.getState().getGearAttributeClassification(key) as GearModClassification) ??
     getAttributeClassification(key);
 
   return (

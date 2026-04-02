@@ -100,6 +100,9 @@ interface LookupState {
 }
 
 /**
+ * @deprecated Use useCleanDataStore instead. This store is kept only for legacy
+ * Google Sheets import handlers in App.tsx and will be removed in a future release.
+ *
  * LookupStore - Caches all loaded models from Google Sheets
  * Provides both full lists and lookup by name functionality
  */

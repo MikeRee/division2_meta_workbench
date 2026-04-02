@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { BuildWeapon } from '../models/BuildWeapon';
-import { useLookupStore } from '../stores/useLookupStore';
 import { useCleanDataStore } from '../stores/useCleanDataStore';
 import WeaponMod from '../models/WeaponMod';
 import Talent from '../models/Talent';
@@ -14,8 +13,8 @@ interface WeaponEditOverlayProps {
 }
 
 function WeaponEditOverlay({ buildWeapon, onSave, onRemove, onClose }: WeaponEditOverlayProps) {
-  // From lookup store — weapon attributes as Record<string, number>
-  const weaponAttributesRecord = useLookupStore((s) => s.weaponAttributes);
+  // From clean data store — weapon attributes as Record<string, number>
+  const weaponAttributesRecord = useCleanDataStore((s) => s.data.weaponAttributes) ?? {};
 
   // From clean data store — filter talents to weapon type only
   const allTalents = (useCleanDataStore((s) => s.data.talents) ?? []) as Talent[];

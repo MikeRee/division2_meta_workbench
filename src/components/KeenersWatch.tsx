@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import './KeenersWatch.css';
 import { KeenersWatchStats } from '../models/KeenersWatchStats';
-import { useLookupStore } from '../stores/useLookupStore';
+import { useCleanDataStore } from '../stores/useCleanDataStore';
 
 interface KeenersWatchProps {
   stats: KeenersWatchStats | null;
@@ -9,9 +9,9 @@ interface KeenersWatchProps {
 }
 
 function KeenersWatch({ stats, onChange }: KeenersWatchProps) {
-  const keenersWatchData = useLookupStore(state => state.keenersWatch);
-  
-  // Build default stats and max values from CSV data
+  const keenersWatchData = useCleanDataStore((s) => s.data.keenersWatch);
+
+  // Build default stats and max values from clean data
   const { defaultStats, maxValues } = useMemo(() => {
     const defaults: KeenersWatchStats = {
       Offensive: {},
@@ -20,27 +20,28 @@ function KeenersWatch({ stats, onChange }: KeenersWatchProps) {
       Handling: {},
     };
     const maxVals: Record<string, number> = {};
-    
-    if (keenersWatchData instanceof Map) {
+
+    if (keenersWatchData) {
       keenersWatchData.forEach((attr) => {
-        // Capitalize the first letter of category to match KeenersWatchStats interface
         const rawCategory = attr.category;
-        const category = rawCategory 
-          ? (rawCategory.charAt(0).toUpperCase() + rawCategory.slice(1)) as keyof KeenersWatchStats
+        const category = rawCategory
+          ? ((rawCategory.charAt(0).toUpperCase() +
+              rawCategory.slice(1)) as keyof KeenersWatchStats)
           : null;
         const statName = attr.attribute;
         const maxValue = parseFloat(attr.max.toString().replace('%', '')) || 0;
-        
-        // Validate category exists in defaults before setting
+
         if (category && statName && defaults[category]) {
           defaults[category][statName] = maxValue;
           maxVals[statName] = maxValue;
         } else if (rawCategory && statName) {
-          console.warn(`Invalid Keener's Watch category: "${rawCategory}" (normalized: "${category}") for stat "${statName}"`);
+          console.warn(
+            `Invalid Keener's Watch category: "${rawCategory}" (normalized: "${category}") for stat "${statName}"`,
+          );
         }
       });
     }
-    
+
     return { defaultStats: defaults, maxValues: maxVals };
   }, [keenersWatchData]);
 
@@ -64,7 +65,7 @@ function KeenersWatch({ stats, onChange }: KeenersWatchProps) {
 
   const renderStatGroup = (category: keyof KeenersWatchStats, label: string) => {
     const categoryStats = currentStats[category];
-    
+
     return (
       <div className={`watch-quadrant watch-${category.toLowerCase()}`}>
         <div className="quadrant-label">{label}</div>

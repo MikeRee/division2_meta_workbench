@@ -1,15 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import './Build.css';
 import { MdWatch, MdFolderOpen, MdRefresh } from 'react-icons/md';
 import { useBuildStore } from '../stores/useBuildStore';
-import { useLookupStore } from '../stores/useLookupStore';
 import { useCleanDataStore } from '../stores/useCleanDataStore';
 import Weapon from '../models/Weapon';
 import Skill from '../models/Skill';
 import BuildGear, { GearSource } from '../models/BuildGear';
 import { GearType } from '../models/BuildGear';
 import { CoreType, getDefaultMinorAttributes } from '../models/CoreValue';
-import { GearModValue } from '../models/GearMod';
+import { GearModValue, GearModClassification } from '../models/GearMod';
 import TacticalCard from './TacticalCard';
 import WeaponTacticalCard from './WeaponTacticalCard';
 import { BuildWeapon } from '../models/BuildWeapon';
@@ -50,16 +49,27 @@ function Build() {
   const gearsets = useCleanDataStore((s) => s.data.gearsets) ?? [];
   const weaponMods = useCleanDataStore((s) => s.data.weaponMods) ?? [];
 
-  // Still from lookup store — CSV-derived data not yet in clean store
-  const gearAttributesMap = useLookupStore((state) => state.gearAttributes);
+  // From clean data store — gear attributes (select raw data, derive in useMemo to avoid infinite loop)
+  const rawGearAttributes = useCleanDataStore((s) => s.data.gearAttributes);
+  const gearAttributesList = useMemo(() => {
+    if (!rawGearAttributes) return [];
+    return rawGearAttributes.map((a) => ({
+      attribute: a.attribute,
+      max: parseFloat(String(a.max).replace('%', '')) || 0,
+      classification: a.classification,
+    }));
+  }, [rawGearAttributes]);
 
   // Initialize BuildGear with gear attributes when they're loaded
   useEffect(() => {
-    if (gearAttributesMap) {
-      const gearAttrs = gearAttributesMap.getAll();
+    if (gearAttributesList.length > 0) {
+      const gearAttrs: Record<string, number> = {};
+      gearAttributesList.forEach((a) => {
+        gearAttrs[a.attribute] = a.max;
+      });
       BuildGear.initializeGearAttributes(gearAttrs);
     }
-  }, [gearAttributesMap]);
+  }, [gearAttributesList]);
 
   const handleCellClick = (type: string) => {
     // If item is already set, open edit overlay instead of selection
@@ -110,10 +120,10 @@ function Build() {
         return new GearModValue(minorAttr, key as CoreType, key, value);
       }
 
-      // Check missingMappings first, then gearModCollection
-      const missingMapping = useLookupStore.getState().getMissingMapping(key);
-      const classification =
-        missingMapping || useLookupStore.getState().gearAttributes?.getClassification(key);
+      // Look up classification from clean data store
+      const classification = useCleanDataStore.getState().getGearAttributeClassification(key) as
+        | GearModClassification
+        | undefined;
 
       return new GearModValue(minorAttr, classification!, key, value);
     } else if (
@@ -121,11 +131,10 @@ function Build() {
       defaultMinorKey !== null &&
       minorAttr[defaultMinorKey] !== undefined
     ) {
-      // Check missingMappings first, then gearModCollection
-      const missingMapping = useLookupStore.getState().getMissingMapping(defaultMinorKey);
-      const classification =
-        missingMapping ||
-        useLookupStore.getState().gearAttributes?.getClassification(defaultMinorKey);
+      // Look up classification from clean data store
+      const classification = useCleanDataStore
+        .getState()
+        .getGearAttributeClassification(defaultMinorKey) as GearModClassification | undefined;
 
       return new GearModValue(
         minorAttr,
@@ -165,11 +174,9 @@ function Build() {
 
       // Get all possible gear mods as a Record<string, number>
       const allGearMods: Record<string, number> = {};
-      if (gearAttributesMap instanceof Map) {
-        for (const [key, gearMod] of gearAttributesMap.entries()) {
-          allGearMods[gearMod.attribute] = gearMod.max;
-        }
-      }
+      gearAttributesList.forEach((a) => {
+        allGearMods[a.attribute] = a.max;
+      });
 
       // Process minor attributes
       buildGearList.push(new BuildGear(gear));
@@ -265,10 +272,9 @@ function Build() {
         if (
           llmGear.gearAttrib1 &&
           buildGear.attribute1 !== null &&
-          Object.keys(buildGear.attribute1).length === 0 &&
-          gearAttributesMap
+          Object.keys(buildGear.attribute1).length === 0
         ) {
-          const allGearAttrs = gearAttributesMap.toArray();
+          const allGearAttrs = useCleanDataStore.getState().getGearAttributesList();
           const mod = allGearAttrs.find((m) => m.attribute === llmGear.gearAttrib1);
           if (mod) {
             buildGear.setAttribute1(mod.attribute, mod.max);
@@ -278,10 +284,9 @@ function Build() {
         if (
           llmGear.gearAttrib2 &&
           buildGear.attribute2 !== null &&
-          Object.keys(buildGear.attribute2).length === 0 &&
-          gearAttributesMap
+          Object.keys(buildGear.attribute2).length === 0
         ) {
-          const allGearAttrs = gearAttributesMap.toArray();
+          const allGearAttrs = useCleanDataStore.getState().getGearAttributesList();
           const mod = allGearAttrs.find((m) => m.attribute === llmGear.gearAttrib2);
           if (mod) {
             buildGear.setAttribute2(mod.attribute, mod.max);
@@ -289,11 +294,9 @@ function Build() {
         }
 
         if (llmGear.gearMod && buildGear.maxModSlots > 0) {
-          const gearModAttrsMap = useLookupStore.getState().gearModAttributes;
-          if (gearModAttrsMap instanceof Map) {
-            const modAttr = Array.from(gearModAttrsMap.values()).find(
-              (m) => m.attribute === llmGear.gearMod,
-            );
+          const gearModAttrsList = useCleanDataStore.getState().getGearModAttributesList();
+          if (gearModAttrsList.length > 0) {
+            const modAttr = gearModAttrsList.find((m) => m.attribute === llmGear.gearMod);
             if (modAttr) {
               buildGear.setModSlot(0, modAttr.attribute, modAttr.max);
             }

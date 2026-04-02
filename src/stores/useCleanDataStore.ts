@@ -30,6 +30,7 @@ export interface CleanDataTypeMap {
   keenersWatch: KeenersWatchAttribute[];
   weaponTypeAttributes: WeaponTypeAttribute[];
   gearMods: GearModAttribute[];
+  prompts: Record<string, string>;
 }
 
 interface CleanDataState {
@@ -47,6 +48,13 @@ interface CleanDataState {
   setProcessing: (isProcessing: boolean) => void;
   getAttributeVocabulary: () => [string, string][];
   getPromptDataSummary: () => { text: string; charCount: number; tokenEstimate: number };
+
+  // Lookup helpers (replaces useLookupStore)
+  getGearAttributeClassification: (attr: string) => string | undefined;
+  getGearAttributesList: () => { attribute: string; max: number; classification: string }[];
+  getGearModAttributesList: () => { attribute: string; max: number; classification: string }[];
+  getKeenersWatchMap: () => Map<string, { category: string; attribute: string; max: number }>;
+  getWeaponAttributesRecord: () => Record<string, number>;
 }
 
 /**
@@ -216,6 +224,54 @@ const useCleanDataStore = create<CleanDataState>()(
 
       getPromptDataSummary: () => {
         return serializePromptData(get().data);
+      },
+
+      // Lookup helpers (replaces useLookupStore)
+      getGearAttributeClassification: (attr: string) => {
+        const gearAttrs = get().data.gearAttributes;
+        if (!gearAttrs) return undefined;
+        const found = gearAttrs.find((a) => a.attribute.toLowerCase() === attr.toLowerCase());
+        return found?.classification;
+      },
+
+      getGearAttributesList: () => {
+        const gearAttrs = get().data.gearAttributes;
+        if (!gearAttrs) return [];
+        return gearAttrs.map((a) => ({
+          attribute: a.attribute,
+          max: parseFloat(String(a.max).replace('%', '')) || 0,
+          classification: a.classification,
+        }));
+      },
+
+      getGearModAttributesList: () => {
+        const gearMods = get().data.gearMods;
+        if (!gearMods) return [];
+        return gearMods.map((a) => ({
+          attribute: a.attribute,
+          max: parseFloat(String(a.max).replace('%', '')) || 0,
+          classification: a.classification,
+        }));
+      },
+
+      getKeenersWatchMap: () => {
+        const kw = get().data.keenersWatch;
+        const map = new Map<string, { category: string; attribute: string; max: number }>();
+        if (!kw) return map;
+        for (const attr of kw) {
+          map.set(`${attr.category}:${attr.attribute}`, {
+            category: attr.category,
+            attribute: attr.attribute,
+            max: parseFloat(String(attr.max).replace('%', '')) || 0,
+          });
+        }
+        return map;
+      },
+
+      getWeaponAttributesRecord: () => {
+        const wa = get().data.weaponAttributes;
+        if (!wa || typeof wa !== 'object') return {};
+        return wa;
       },
     }),
     {

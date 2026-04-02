@@ -5,6 +5,7 @@ import Stats from './components/Stats';
 import { MdBuild, MdBarChart } from 'react-icons/md';
 
 import useLookupStore from './stores/useLookupStore';
+import useCleanDataStore from './stores/useCleanDataStore';
 import useRawDataStore from './stores/useRawDataStore';
 import { useRulesStore } from './stores/useRulesStore';
 import Weapon from './models/Weapon';
@@ -69,7 +70,6 @@ function App() {
       // Phase 1: Rehydrate lookup and clean data stores from localStorage
       useLookupStore.persist.rehydrate();
 
-      const { useCleanDataStore } = await import('./stores/useCleanDataStore');
       useCleanDataStore.persist.rehydrate();
       console.log('Phase 1 complete: Lookup and clean data stores rehydrated');
 
@@ -80,48 +80,39 @@ function App() {
 
       // Phase 3: Initialize static model attributes from loaded lookups
       const { BuildWeapon } = await import('./models/BuildWeapon');
-      const lookupState = useLookupStore.getState();
 
-      // Initialize BuildWeapon with weapon attributes
+      // Initialize BuildWeapon with weapon attributes from clean store
+      const cleanState = useCleanDataStore.getState();
       const weaponAttrs: Record<string, number> = {};
-      if (lookupState.weaponAttributes && typeof lookupState.weaponAttributes === 'object') {
-        for (const [name, max] of Object.entries(lookupState.weaponAttributes)) {
+      const cleanWeaponAttrs = cleanState.getCleanData('weaponAttributes');
+      if (cleanWeaponAttrs && typeof cleanWeaponAttrs === 'object') {
+        for (const [name, max] of Object.entries(cleanWeaponAttrs)) {
           weaponAttrs[name] =
             typeof max === 'number' ? max : parseFloat(String(max).replace('%', '')) || 0;
         }
       }
       BuildWeapon.initializeWeaponAttributes(weaponAttrs);
 
-      // Initialize BuildGear with gear attributes
+      // Initialize BuildGear with gear attributes from clean store
       const { default: BuildGear } = await import('./models/BuildGear');
       const gearAttrs: Record<string, number> = {};
-      const gearAttrCollection = lookupState.gearAttributes;
-      if (gearAttrCollection) {
-        const allMods = gearAttrCollection.toArray?.() || [];
-        allMods.forEach((mod: any) => {
-          if (mod.attribute) {
-            gearAttrs[mod.attribute] =
-              typeof mod.max === 'number' ? mod.max : parseFloat(mod.max) || 0;
-          }
-        });
-      }
+      const gearAttrsList = cleanState.getGearAttributesList();
+      gearAttrsList.forEach((attr) => {
+        gearAttrs[attr.attribute] = attr.max;
+      });
       BuildGear.initializeGearAttributes(gearAttrs);
 
-      // Initialize BuildGear with gear mod attributes (for mod slots on mask/backpack/chest)
+      // Initialize BuildGear with gear mod attributes from clean store
       const gearModAttrs: Record<string, number> = {};
-      if (lookupState.gearModAttributes instanceof Map) {
-        lookupState.gearModAttributes.forEach((mod: any) => {
-          if (mod.attribute) {
-            gearModAttrs[mod.attribute] =
-              typeof mod.max === 'number' ? mod.max : parseFloat(mod.max) || 0;
-          }
-        });
-      }
+      const gearModAttrsList = cleanState.getGearModAttributesList();
+      gearModAttrsList.forEach((attr) => {
+        gearModAttrs[attr.attribute] = attr.max;
+      });
       BuildGear.initializeGearModAttributes(gearModAttrs);
       console.log('Phase 3 complete: BuildWeapon and BuildGear static attributes initialized');
 
       // Phase 4: Load game data into lookup and clean stores (can run in parallel now)
-      await Promise.all([loadJsonData(), loadCleanData(useCleanDataStore)]);
+      await Promise.all([loadJsonData(), loadCleanData()]);
       console.log('Phase 4 complete: Game data loaded into lookup and clean stores');
 
       // Phase 5: Bootstrap formula store if empty
@@ -214,7 +205,7 @@ function App() {
       }
     };
 
-    const loadCleanData = async (useCleanDataStore: any) => {
+    const loadCleanData = async () => {
       const base = getBasePath();
       const cleanDataFiles: Record<string, string> = {
         weapons: `${base}/clean/weapons.json`,
@@ -229,6 +220,7 @@ function App() {
         weaponAttributes: `${base}/clean/weaponAttributes.json`,
         weaponTypeAttributes: `${base}/clean/weaponTypeAttributes.json`,
         keenersWatch: `${base}/clean/keenersWatch.json`,
+        prompts: `${base}/clean/prompts.json`,
       };
 
       const cleanStore = useCleanDataStore.getState();
@@ -254,7 +246,13 @@ function App() {
 
     // Load lookup data from lookups.json
     const loadLookupData = async () => {
-      // Skip if lookup store already has lookup data (e.g. from localStorage)
+      // Skip if clean store already has data (e.g. from localStorage)
+      const cleanStore = useCleanDataStore.getState();
+      if (cleanStore.hasCleanData('weaponAttributes') && cleanStore.hasCleanData('keenersWatch')) {
+        return;
+      }
+
+      // Also skip if lookup store already has data (legacy path)
       const store = useLookupStore.getState();
       if (Object.keys(store.weaponAttributes).length > 0 && store.keenersWatch.size > 0) {
         return;

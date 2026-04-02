@@ -3,7 +3,6 @@ import { BuildWeapon } from './BuildWeapon';
 import { CoreType, parseCoreType } from './CoreValue';
 import { KeenersWatchStats } from './KeenersWatchStats';
 import LlmBuild, { LlmWeapon, LlmGear, LlmAttachments } from './LlmBuild';
-import { useLookupStore } from '../stores/useLookupStore';
 import useCleanDataStore from '../stores/useCleanDataStore';
 import { fuzzyFind, fuzzyMatchKey } from '../utils/fuzzySearch';
 import Gearset from './Gearset';
@@ -13,14 +12,14 @@ import Weapon from './Weapon';
 import WeaponMod from './WeaponMod';
 import Specialization from './Specialization';
 function getDefaultWatchStats(): KeenersWatchStats {
-  const keenersWatchData = useLookupStore.getState().keenersWatch;
+  const keenersWatchData = useCleanDataStore.getState().getCleanData('keenersWatch');
   const defaults: KeenersWatchStats = {
     Offensive: {},
     Defensive: {},
     Utility: {},
     Handling: {},
   };
-  if (keenersWatchData instanceof Map && keenersWatchData.size > 0) {
+  if (keenersWatchData && keenersWatchData.length > 0) {
     keenersWatchData.forEach((attr: any) => {
       const rawCategory = attr.category;
       const category = rawCategory
@@ -358,16 +357,14 @@ class Build {
         }
 
         // Restore gear attributes
-        const gearAttributesMap = useLookupStore.getState().gearAttributes;
-        if (gearAttributesMap) {
-          const allGearAttrs = gearAttributesMap.toArray();
-
+        const gearAttributesList = useCleanDataStore.getState().getGearAttributesList();
+        if (gearAttributesList.length > 0) {
           if (
             llmGear.gearAttrib1 &&
             buildGear.attribute1 !== null &&
             Object.keys(buildGear.attribute1).length === 0
           ) {
-            const attr = allGearAttrs.find((a: any) => a.attribute === llmGear.gearAttrib1);
+            const attr = gearAttributesList.find((a) => a.attribute === llmGear.gearAttrib1);
             if (attr) buildGear.setAttribute1(attr.attribute, attr.max);
           }
 
@@ -376,17 +373,16 @@ class Build {
             buildGear.attribute2 !== null &&
             Object.keys(buildGear.attribute2).length === 0
           ) {
-            const attr = allGearAttrs.find((a: any) => a.attribute === llmGear.gearAttrib2);
+            const attr = gearAttributesList.find((a) => a.attribute === llmGear.gearAttrib2);
             if (attr) buildGear.setAttribute2(attr.attribute, attr.max);
           }
 
           if (llmGear.gearMods && buildGear.maxModSlots > 0) {
-            const gearModAttrsMap = useLookupStore.getState().gearModAttributes;
-            if (gearModAttrsMap instanceof Map) {
-              const allModAttrs = Array.from(gearModAttrsMap.values());
+            const gearModAttrsList = useCleanDataStore.getState().getGearModAttributesList();
+            if (gearModAttrsList.length > 0) {
               llmGear.gearMods.forEach((modName: string, idx: number) => {
                 if (idx < buildGear.maxModSlots) {
-                  const modAttr = allModAttrs.find((m) => m.attribute === modName);
+                  const modAttr = gearModAttrsList.find((m) => m.attribute === modName);
                   if (modAttr) buildGear.setModSlot(idx, modAttr.attribute, modAttr.max);
                 }
               });

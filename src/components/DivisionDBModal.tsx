@@ -16,8 +16,9 @@ const CLOUD_NODES: { key: string; label: string; x: number; y: number }[] = [
   { key: 'namedGear', label: 'Named / Exotic Gear', x: 10, y: 65 },
   { key: 'gearAttributes', label: 'Gear Attributes', x: 42, y: 60 },
   { key: 'gearMods', label: 'Gear Mods', x: 74, y: 62 },
-  { key: 'specializations', label: 'Specializations', x: 22, y: 88 },
-  { key: 'keenersWatch', label: "Keener's Watch", x: 62, y: 88 },
+  { key: 'specializations', label: 'Specializations', x: 12, y: 88 },
+  { key: 'prompts', label: 'Prompts', x: 42, y: 88 },
+  { key: 'keenersWatch', label: "Keener's Watch", x: 72, y: 88 },
 ];
 
 const CONNECTIONS: [string, string][] = [
@@ -34,16 +35,29 @@ interface DivisionDBModalProps {
 
 function DivisionDBModal({ isOpen, onClose }: DivisionDBModalProps) {
   const [editingTable, setEditingTable] = useState<string | null>(null);
-  const [editMode, setEditMode] = useState<'table' | 'json'>('json');
+  const [editMode, setEditMode] = useState<'table' | 'json' | 'prompts'>('json');
   const [editedJson, setEditedJson] = useState('');
   const [tableEditorData, setTableEditorData] = useState<any[]>([]);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+  const [promptsData, setPromptsData] = useState<Record<string, string>>({});
+  const [editingPromptKey, setEditingPromptKey] = useState<string | null>(null);
 
   const TABLE_EDITOR_SUPPORTED = CLOUD_NODES.map((n) => n.key);
 
   const openEditor = (tableName: string) => {
     const data = useCleanDataStore.getState().getCleanData(tableName as MainDataKey);
     setEditingTable(tableName);
+
+    if (tableName === 'prompts') {
+      setEditMode('prompts');
+      setPromptsData(
+        data && typeof data === 'object' && !Array.isArray(data)
+          ? { ...(data as Record<string, string>) }
+          : {},
+      );
+      setEditingPromptKey(null);
+      return;
+    }
 
     if (TABLE_EDITOR_SUPPORTED.includes(tableName)) {
       setEditMode('table');
@@ -95,6 +109,8 @@ function DivisionDBModal({ isOpen, onClose }: DivisionDBModalProps) {
     setEditingTable(null);
     setEditedJson('');
     setTableEditorData([]);
+    setPromptsData({});
+    setEditingPromptKey(null);
   };
 
   if (!isOpen) return null;
@@ -194,6 +210,75 @@ function DivisionDBModal({ isOpen, onClose }: DivisionDBModalProps) {
                 Cancel
               </button>
               <button className="divisiondb-save-btn" onClick={handleSave}>
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {editingTable === 'prompts' && editMode === 'prompts' && (
+        <div className="divisiondb-edit-backdrop" onClick={handleCancelEdit}>
+          <div
+            className="divisiondb-edit-content divisiondb-prompts-editor"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="divisiondb-edit-header">
+              <h3>Prompts</h3>
+              <button className="divisiondb-close" onClick={handleCancelEdit}>
+                &times;
+              </button>
+            </div>
+            <div className="divisiondb-edit-body">
+              {editingPromptKey === null ? (
+                <div className="divisiondb-prompts-list">
+                  {Object.keys(promptsData).map((key) => (
+                    <button
+                      key={key}
+                      className="divisiondb-prompt-item"
+                      onClick={() => setEditingPromptKey(key)}
+                    >
+                      <span className="divisiondb-prompt-key">{key}</span>
+                      <span className="divisiondb-prompt-preview">
+                        {promptsData[key].slice(0, 80)}
+                        {promptsData[key].length > 80 ? '…' : ''}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <>
+                  <div className="divisiondb-prompt-edit-header">
+                    <button
+                      className="divisiondb-cancel-btn"
+                      onClick={() => setEditingPromptKey(null)}
+                    >
+                      ← Back
+                    </button>
+                    <span className="divisiondb-prompt-edit-label">{editingPromptKey}</span>
+                  </div>
+                  <textarea
+                    className="divisiondb-edit-markdown"
+                    value={promptsData[editingPromptKey] ?? ''}
+                    onChange={(e) =>
+                      setPromptsData((prev) => ({ ...prev, [editingPromptKey!]: e.target.value }))
+                    }
+                    spellCheck={false}
+                  />
+                </>
+              )}
+            </div>
+            <div className="divisiondb-edit-actions">
+              <button className="divisiondb-cancel-btn" onClick={handleCancelEdit}>
+                Cancel
+              </button>
+              <button
+                className="divisiondb-save-btn"
+                onClick={() => {
+                  useCleanDataStore.getState().setCleanData('prompts', promptsData);
+                  handleCancelEdit();
+                }}
+              >
                 Save
               </button>
             </div>

@@ -232,3 +232,82 @@
   margin-top: 0.5rem;
   font-style: italic;
 }
+
+/* Prompts editor */
+.divisiondb-prompts-editor {
+  max-width: 900px;
+}
+
+.divisiondb-prompts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.divisiondb-prompt-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  background: rgba(30, 30, 30, 0.6);
+  border: 1px solid #3a3a3a;
+  border-radius: 2px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.divisiondb-prompt-item:hover {
+  border-color: #d4af37;
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.divisiondb-prompt-key {
+  color: #d4af37;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.divisiondb-prompt-preview {
+  color: #888;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.divisiondb-prompt-edit-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.divisiondb-prompt-edit-label {
+  color: #d4af37;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.divisiondb-edit-markdown {
+  width: 100%;
+  min-height: 400px;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  color: #e0e0e0;
+  border: 1px solid #3a3a3a;
+  border-radius: 2px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  resize: vertical;
+  line-height: 1.6;
+  box-sizing: border-box;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.divisiondb-edit-markdown:focus {
+  outline: none;
+  border-color: #d4af37;
+}

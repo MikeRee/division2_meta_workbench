@@ -7,7 +7,7 @@ import { CoreType } from '../models/CoreValue';
 import { GearModClassification } from '../models/GearMod';
 import NamedExoticGear from '../models/NamedExoticGear';
 import { Rarety } from '../constants/dataKeys';
-import useLookupStore from '../stores/useLookupStore';
+import useCleanDataStore from '../stores/useCleanDataStore';
 import useBuildStore from '../stores/useBuildStore';
 
 const BUILD_COLORS = ['#e74c3c', '#3498db', '#f1c40f', '#9b59b6'] as const;
@@ -33,7 +33,7 @@ function getCoreIconClass(core: CoreType): string {
 }
 
 function getClassificationClass(key: string): string {
-  const classification = useLookupStore.getState().gearAttributes?.getClassification(key);
+  const classification = useCleanDataStore.getState().getGearAttributeClassification(key);
   switch (classification) {
     case GearModClassification.Defensive:
       return 'defensive';

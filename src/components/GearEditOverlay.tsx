@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import BuildGear, { GearSource } from '../models/BuildGear';
 import { CoreType } from '../models/CoreValue';
-import { useLookupStore } from '../stores/useLookupStore';
+import { useCleanDataStore } from '../stores/useCleanDataStore';
 import './GearEditOverlay.css';
 
 interface GearEditOverlayProps {
@@ -12,18 +12,24 @@ interface GearEditOverlayProps {
 }
 
 function GearEditOverlay({ buildGear, onSave, onRemove, onClose }: GearEditOverlayProps) {
-  const gearAttributes = useLookupStore((s) => s.gearAttributes);
-  const gearModAttributesMap = useLookupStore((s) => s.gearModAttributes);
+  const rawGearAttributes = useCleanDataStore((s) => s.data.gearAttributes);
+  const rawGearMods = useCleanDataStore((s) => s.data.gearMods);
 
   const allAttrs = useMemo(() => {
-    if (!gearAttributes) return [];
-    return gearAttributes.toArray().map((m) => ({ key: m.attribute, max: m.max }));
-  }, [gearAttributes]);
+    if (!rawGearAttributes) return [];
+    return rawGearAttributes.map((a) => ({
+      key: a.attribute,
+      max: parseFloat(String(a.max).replace('%', '')) || 0,
+    }));
+  }, [rawGearAttributes]);
 
   const allModAttrs = useMemo(() => {
-    if (!(gearModAttributesMap instanceof Map)) return [];
-    return Array.from(gearModAttributesMap.values()).map((m) => ({ key: m.attribute, max: m.max }));
-  }, [gearModAttributesMap]);
+    if (!rawGearMods) return [];
+    return rawGearMods.map((a) => ({
+      key: a.attribute,
+      max: parseFloat(String(a.max).replace('%', '')) || 0,
+    }));
+  }, [rawGearMods]);
 
   // Core: exotic gear has 3 cores (all fixed)
   const coreFixed = buildGear.source === GearSource.Exotic || buildGear.core.length === 3;

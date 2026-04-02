@@ -15,6 +15,7 @@ export const MAIN_DATA_KEYS = [
   'keenersWatch',
   'weaponTypeAttributes',
   'gearMods',
+  'prompts',
 ] as const;
 
 /**

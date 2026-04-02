@@ -4,7 +4,6 @@ import 'blockly/blocks';
 import 'blockly/javascript';
 import { javascriptGenerator } from 'blockly/javascript';
 import { useFormulaStore } from '../stores/useFormulaStore';
-import { useLookupStore } from '../stores/useLookupStore';
 import { useCleanDataStore } from '../stores/useCleanDataStore';
 import useBuildStore from '../stores/useBuildStore';
 import useAdjustmentStore from '../stores/useAdjustmentStore';
@@ -466,10 +465,8 @@ function registerCustomBlocks() {
         .appendField('sum all')
         .appendField(
           new Blockly.FieldDropdown(() => {
-            const lookupVocab = useLookupStore.getState().getAttributeVocabulary();
             const cleanVocab = useCleanDataStore.getState().getAttributeVocabulary();
-            const merged = new Map<string, string>([...lookupVocab, ...cleanVocab]);
-            const vocab = Array.from(merged.entries())
+            const vocab = cleanVocab
               .map(([k, v]) => [k + getValueSuffix(k), v] as [string, string])
               .sort((a, b) => a[0].localeCompare(b[0]));
             return vocab.length > 0 ? vocab : [['(no data loaded)', '']];
@@ -492,10 +489,8 @@ function registerCustomBlocks() {
         .appendField('percent all')
         .appendField(
           new Blockly.FieldDropdown(() => {
-            const lookupVocab = useLookupStore.getState().getAttributeVocabulary();
             const cleanVocab = useCleanDataStore.getState().getAttributeVocabulary();
-            const merged = new Map<string, string>([...lookupVocab, ...cleanVocab]);
-            const vocab = Array.from(merged.entries())
+            const vocab = cleanVocab
               .map(([k, v]) => [k + getValueSuffix(k), v] as [string, string])
               .sort((a, b) => a[0].localeCompare(b[0]));
             return vocab.length > 0 ? vocab : [['(no data loaded)', '']];
