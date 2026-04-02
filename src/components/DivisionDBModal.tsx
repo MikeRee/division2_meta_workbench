@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import './DivisionDBModal.css';
 import { useCleanDataStore } from '../stores/useCleanDataStore';
+import { useDataFreshnessStore } from '../stores/useDataFreshnessStore';
+import { useFormulaStore } from '../stores/useFormulaStore';
+import type { TrackableKey } from '../stores/useDataFreshnessStore';
 import type { MainDataKey } from '../constants/dataKeys';
 import DataTableEditor from './DataTableEditor';
 
@@ -18,6 +21,7 @@ const CLOUD_NODES: { key: string; label: string; x: number; y: number }[] = [
   { key: 'specializations', label: 'Specializations', x: 12, y: 88 },
   { key: 'prompts', label: 'Prompts', x: 42, y: 88 },
   { key: 'keenersWatch', label: "Keener's Watch", x: 72, y: 88 },
+  { key: 'formulas', label: 'Formulas', x: 52, y: 42 },
 ];
 
 const CONNECTIONS: [string, string][] = [
@@ -41,9 +45,30 @@ function DivisionDBModal({ isOpen, onClose }: DivisionDBModalProps) {
   const [promptsData, setPromptsData] = useState<Record<string, string>>({});
   const [editingPromptKey, setEditingPromptKey] = useState<string | null>(null);
 
+  const staleKeys = useDataFreshnessStore((s) => s.staleKeys);
+  const checking = useDataFreshnessStore((s) => s.checking);
+  const checkFreshness = useDataFreshnessStore((s) => s.checkFreshness);
+  const reloadStaleData = useDataFreshnessStore((s) => s.reloadStaleData);
+  const [reloading, setReloading] = useState(false);
+
+  const handleReload = async () => {
+    setReloading(true);
+    await reloadStaleData();
+    setReloading(false);
+  };
+
   const TABLE_EDITOR_SUPPORTED = CLOUD_NODES.map((n) => n.key);
 
   const openEditor = (tableName: string) => {
+    setEditingTable(tableName);
+
+    if (tableName === 'formulas') {
+      const formulaData = useFormulaStore.getState().formulas;
+      setEditMode('json');
+      setEditedJson(JSON.stringify(formulaData, null, 2));
+      return;
+    }
+
     const data = useCleanDataStore.getState().getCleanData(tableName as MainDataKey);
     setEditingTable(tableName);
 
@@ -96,7 +121,11 @@ function DivisionDBModal({ isOpen, onClose }: DivisionDBModalProps) {
     if (!editingTable) return;
     try {
       const parsed = JSON.parse(editedJson);
-      useCleanDataStore.getState().setCleanData(editingTable as MainDataKey, parsed);
+      if (editingTable === 'formulas') {
+        useFormulaStore.getState().setAllFormulas(parsed);
+      } else {
+        useCleanDataStore.getState().setCleanData(editingTable as MainDataKey, parsed);
+      }
       setEditingTable(null);
       setEditedJson('');
     } catch (err: any) {
@@ -131,9 +160,31 @@ function DivisionDBModal({ isOpen, onClose }: DivisionDBModalProps) {
       <div className="divisiondb-content" onClick={(e) => e.stopPropagation()}>
         <div className="divisiondb-header">
           <h2>DivisionDB</h2>
-          <button className="divisiondb-close" onClick={onClose}>
-            &times;
-          </button>
+          <div className="divisiondb-header-actions">
+            {staleKeys.size > 0 && (
+              <button
+                className="divisiondb-reload-btn"
+                onClick={handleReload}
+                disabled={reloading}
+                title={`Reload ${staleKeys.size} updated table(s) from disk`}
+              >
+                {reloading
+                  ? 'Reloading…'
+                  : `↻ Reload ${staleKeys.size} update${staleKeys.size === 1 ? '' : 's'}`}
+              </button>
+            )}
+            <button
+              className="divisiondb-check-btn"
+              onClick={() => checkFreshness()}
+              disabled={checking}
+              title="Check for data updates"
+            >
+              {checking ? '…' : '⟳'}
+            </button>
+            <button className="divisiondb-close" onClick={onClose}>
+              &times;
+            </button>
+          </div>
         </div>
         <div className="divisiondb-body">
           <div className="divisiondb-cloud">
@@ -160,15 +211,17 @@ function DivisionDBModal({ isOpen, onClose }: DivisionDBModalProps) {
             {CLOUD_NODES.map((node) => {
               const connected = isConnected(node.key);
               const dimmed = hoveredNode && !connected;
+              const isStale = staleKeys.has(node.key as TrackableKey);
               return (
                 <button
                   key={node.key}
-                  className={`divisiondb-cloud-node${connected ? ' connected' : ''}${dimmed ? ' dimmed' : ''}`}
+                  className={`divisiondb-cloud-node${connected ? ' connected' : ''}${dimmed ? ' dimmed' : ''}${isStale ? ' stale' : ''}`}
                   style={{ left: `${node.x}%`, top: `${node.y}%` }}
                   onClick={() => openEditor(node.key)}
                   onMouseEnter={() => setHoveredNode(node.key)}
                   onMouseLeave={() => setHoveredNode(null)}
                 >
+                  {isStale && <span className="divisiondb-stale-dot" />}
                   {node.label}
                 </button>
               );

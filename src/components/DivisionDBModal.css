@@ -311,3 +311,76 @@
   outline: none;
   border-color: #d4af37;
 }
+
+/* Header actions row */
+.divisiondb-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Reload button */
+.divisiondb-reload-btn {
+  padding: 0.35rem 0.75rem;
+  background: rgba(255, 152, 0, 0.12);
+  color: #ff9800;
+  border: 1px solid rgba(255, 152, 0, 0.4);
+  border-radius: 2px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.divisiondb-reload-btn:hover:not(:disabled) {
+  background: rgba(255, 152, 0, 0.25);
+}
+
+.divisiondb-reload-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* Check freshness button */
+.divisiondb-check-btn {
+  background: transparent;
+  border: none;
+  color: #999;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem 0.4rem;
+  transition: color 0.2s ease;
+  line-height: 1;
+}
+
+.divisiondb-check-btn:hover:not(:disabled) {
+  color: #d4af37;
+}
+
+.divisiondb-check-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Stale cloud node */
+.divisiondb-cloud-node.stale {
+  border-color: #ff9800;
+  color: #ff9800;
+}
+
+.divisiondb-stale-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff9800;
+  margin-right: 0.35rem;
+  vertical-align: middle;
+  animation: stale-blink 1.5s infinite;
+}
+
+@keyframes stale-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}

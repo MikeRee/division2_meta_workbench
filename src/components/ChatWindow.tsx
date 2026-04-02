@@ -150,33 +150,6 @@ function ChatWindow() {
     };
 
     loadPrompts();
-
-    // Debug: log prompt data summary to console
-    const logSummary = () => {
-      const storeData = useCleanDataStore.getState().data;
-      console.log('[PromptData] Store keys:', Object.keys(storeData));
-      console.log(
-        '[PromptData] Store data counts:',
-        Object.fromEntries(
-          Object.entries(storeData).map(([k, v]) => [k, Array.isArray(v) ? v.length : typeof v]),
-        ),
-      );
-      const summary = useCleanDataStore.getState().getPromptDataSummary();
-      console.log(`[PromptData] ${summary.charCount} chars, ~${summary.tokenEstimate} tokens`);
-      console.log(summary.text);
-    };
-
-    const state = useCleanDataStore.getState();
-    if (state.data.weapons || state.data.brandsets || state.data.namedGear) {
-      logSummary();
-    } else {
-      const unsub = useCleanDataStore.subscribe((s) => {
-        if (s.data.weapons || s.data.brandsets || s.data.namedGear) {
-          logSummary();
-          unsub();
-        }
-      });
-    }
   }, []);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);

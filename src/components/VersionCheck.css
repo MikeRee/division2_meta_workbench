@@ -1,0 +1,58 @@
+.version-check {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  color: #888;
+  padding: 0.2rem 0.5rem;
+  border-radius: 2px;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.version-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #555;
+  flex-shrink: 0;
+}
+
+.version-check.current .version-dot {
+  background: #4caf50;
+  box-shadow: 0 0 4px rgba(76, 175, 80, 0.5);
+}
+
+.version-check.stale .version-dot {
+  background: #ff9800;
+  box-shadow: 0 0 4px rgba(255, 152, 0, 0.5);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.version-check.stale .version-label {
+  color: #ff9800;
+}
+
+.version-label {
+  user-select: none;
+}
+
+.version-update-btn {
+  background: rgba(255, 152, 0, 0.15);
+  color: #ff9800;
+  border: 1px solid rgba(255, 152, 0, 0.4);
+  border-radius: 2px;
+  padding: 0.1rem 0.4rem;
+  font-size: 0.65rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.version-update-btn:hover {
+  background: rgba(255, 152, 0, 0.3);
+}

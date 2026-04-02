@@ -131,3 +131,37 @@
     justify-content: center;
   }
 }
+
+/* DB staleness badge */
+.icon-button {
+  position: relative;
+}
+
+.icon-button.db-stale {
+  border-color: #ff9800;
+  color: #ff9800;
+  animation: db-pulse 2s infinite;
+}
+
+@keyframes db-pulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(255, 152, 0, 0.3); }
+  50% { box-shadow: 0 0 12px rgba(255, 152, 0, 0.6); }
+}
+
+.db-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #ff9800;
+  color: #000;
+  font-size: 0.55rem;
+  font-weight: 700;
+  min-width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  pointer-events: none;
+}

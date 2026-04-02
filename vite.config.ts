@@ -1,8 +1,24 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
+const buildTimestamp = new Date().toISOString();
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    {
+      name: 'inject-build-timestamp',
+      transformIndexHtml(html) {
+        return html.replace(
+          '</head>',
+          `  <meta name="build-timestamp" content="${buildTimestamp}">\n</head>`,
+        );
+      },
+    },
+  ],
+  define: {
+    __BUILD_TIMESTAMP__: JSON.stringify(buildTimestamp),
+  },
   base: '/division2_meta_workbench/',
   server: {
     host: '0.0.0.0',

@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './TitleBar.css';
 import { MdStorage, MdChat, MdTune } from 'react-icons/md';
 import LoadModal from './LoadModal';
 import DivisionDBModal from './DivisionDBModal';
 import ChatWindow from './ChatWindow';
 import AdjustmentModifiersOverlay from './AdjustmentModifiersOverlay';
+import VersionCheck from './VersionCheck';
+import { useDataFreshnessStore } from '../stores/useDataFreshnessStore';
 
 interface TitleBarProps {
   onLoadData: (dataType: string, pageName: string, isCSV?: boolean) => Promise<void>;
@@ -16,10 +18,25 @@ function TitleBar({ onLoadData }: TitleBarProps) {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isAdjustmentsOpen, setIsAdjustmentsOpen] = useState(false);
 
+  const staleCount = useDataFreshnessStore((s) => s.staleKeys.size);
+  const checkFreshness = useDataFreshnessStore((s) => s.checkFreshness);
+
+  // Check freshness on mount and every 5 minutes
+  useEffect(() => {
+    // Small delay so clean data store finishes loading first
+    const initial = setTimeout(() => checkFreshness(), 5000);
+    const interval = setInterval(() => checkFreshness(), 5 * 60 * 1000);
+    return () => {
+      clearTimeout(initial);
+      clearInterval(interval);
+    };
+  }, [checkFreshness]);
+
   return (
     <>
       <div className="title-bar">
         <h1 className="title">Division 2 Meta Workbench</h1>
+        <VersionCheck />
         <div className="action-buttons">
           <button className="icon-button" onClick={() => setIsChatOpen(true)} title="Chat">
             <MdChat />
@@ -31,8 +48,15 @@ function TitleBar({ onLoadData }: TitleBarProps) {
           >
             <MdTune />
           </button>
-          <button className="icon-button" onClick={() => setIsDBModalOpen(true)} title="DivisionDB">
+          <button
+            className={`icon-button${staleCount > 0 ? ' db-stale' : ''}`}
+            onClick={() => setIsDBModalOpen(true)}
+            title={
+              staleCount > 0 ? `DivisionDB — ${staleCount} table(s) have updates` : 'DivisionDB'
+            }
+          >
             <MdStorage />
+            {staleCount > 0 && <span className="db-badge">{staleCount}</span>}
           </button>
           <button onClick={() => setIsLoadModalOpen(true)}>Load</button>
         </div>
