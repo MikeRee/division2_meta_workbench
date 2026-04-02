@@ -49,7 +49,7 @@
 .build-slot-square.active {
   box-shadow: 0 0 4px currentColor;
   border: 3.5px solid;
-  transform: scale(1.15);
+  transform: scale(1.75);
 }
 
 .build-actions {

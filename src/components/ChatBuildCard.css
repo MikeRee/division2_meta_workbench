@@ -62,7 +62,7 @@
 }
 
 .chat-build-slot-square:hover {
-  transform: scale(1.3);
+  transform: scale(1.75);
   box-shadow: 0 0 6px currentColor;
 }
 
