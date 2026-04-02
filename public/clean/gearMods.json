@@ -1,0 +1,19 @@
+{
+  "offensive": {
+    "critical hit chance": 6,
+    "critical hit damage": 12,
+    "headshot damage": 10
+  },
+  "defensive": {
+    "protection from elites": 13,
+    "armor on kill": 18935,
+    "status effect resistance": 10,
+    "pulse resistance": 10,
+    "incoming repairs": 20
+  },
+  "skill": {
+    "skill haste": 12,
+    "skill duration": 10,
+    "repair skills": 20
+  }
+}

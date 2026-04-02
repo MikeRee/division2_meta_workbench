@@ -1,0 +1,20 @@
+{
+  "assault rifle": {
+    "health damage": 21
+  },
+  "lmg": {
+    "dmg to target out of cover": 12
+  },
+  "smg": {
+    "critical hit chance": 21
+  },
+  "shotgun": {
+    "damage to armor": 12
+  },
+  "rifle": {
+    "critical hit damage": 17
+  },
+  "mmr": {
+    "headshot damage": 111
+  }
+}

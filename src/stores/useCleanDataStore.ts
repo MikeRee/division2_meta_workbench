@@ -9,6 +9,11 @@ import WeaponMod from '../models/WeaponMod';
 import Talent from '../models/Talent';
 import Specialization from '../models/Specialization';
 import NamedExoticGear from '../models/NamedExoticGear';
+import WeaponAttribute from '../models/WeaponAttribute';
+import GearAttribute from '../models/GearAttribute';
+import KeenersWatchAttribute from '../models/KeenersWatchAttribute';
+import WeaponTypeAttribute from '../models/WeaponTypeAttribute';
+import GearModAttribute from '../models/GearModAttribute';
 import { serializePromptData } from '../utils/promptDataSerializer';
 
 // Type mapping for each clean data key
@@ -21,6 +26,11 @@ export interface CleanDataTypeMap {
   weaponMods: WeaponMod[];
   talents: Talent[];
   specializations: Specialization[];
+  weaponAttributes: WeaponAttribute[];
+  gearAttributes: GearAttribute[];
+  keenersWatch: KeenersWatchAttribute[];
+  weaponTypeAttributes: WeaponTypeAttribute[];
+  gearMods: GearModAttribute[];
 }
 
 interface CleanDataState {
@@ -52,6 +62,11 @@ export const CLASS_CONSTRUCTORS: Partial<Record<MainDataKey, new (data: any) => 
   weaponMods: WeaponMod,
   talents: Talent,
   specializations: Specialization,
+  weaponAttributes: WeaponAttribute,
+  gearAttributes: GearAttribute,
+  keenersWatch: KeenersWatchAttribute,
+  weaponTypeAttributes: WeaponTypeAttribute,
+  gearMods: GearModAttribute,
 };
 
 /**

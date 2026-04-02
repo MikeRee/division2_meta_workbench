@@ -10,6 +10,11 @@ export const MAIN_DATA_KEYS = [
   'weaponMods',
   'talents',
   'specializations',
+  'weaponAttributes',
+  'gearAttributes',
+  'keenersWatch',
+  'weaponTypeAttributes',
+  'gearMods',
 ] as const;
 
 /**

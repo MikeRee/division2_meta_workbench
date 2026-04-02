@@ -1,39 +1,30 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Mermaid from 'react-mermaid2';
+import React, { useState } from 'react';
 import './DivisionDBModal.css';
 import { useCleanDataStore } from '../stores/useCleanDataStore';
 import type { MainDataKey } from '../constants/dataKeys';
 import DataTableEditor from './DataTableEditor';
 
-const CHART = `graph LR
-  weapons["Weapons"]
-  weaponMods["WeaponMods"]
-  talents["Talents"]
-  gearsets["Gearsets"]
-  brandsets["Brandsets"]
-  namedGear["NamedExoticGear"]
-  specializations["Specializations"]
-  weapons --- weaponMods
-  weapons --- talents
-  gearsets --- talents
-  namedGear --- talents
-`;
+/* Cloud bubble positions – hand-tuned percentages so nodes spread organically */
+const CLOUD_NODES: { key: string; label: string; x: number; y: number }[] = [
+  { key: 'weapons', label: 'Weapons', x: 14, y: 12 },
+  { key: 'weaponMods', label: 'Weapon Mods', x: 52, y: 5 },
+  { key: 'weaponAttributes', label: 'Weapon Attributes', x: 82, y: 10 },
+  { key: 'weaponTypeAttributes', label: 'Weapon Type Attrs', x: 4, y: 38 },
+  { key: 'talents', label: 'Talents', x: 35, y: 33 },
+  { key: 'brandsets', label: 'Brandsets', x: 68, y: 30 },
+  { key: 'gearsets', label: 'Gearsets', x: 90, y: 42 },
+  { key: 'namedGear', label: 'Named / Exotic Gear', x: 10, y: 65 },
+  { key: 'gearAttributes', label: 'Gear Attributes', x: 42, y: 60 },
+  { key: 'gearMods', label: 'Gear Mods', x: 74, y: 62 },
+  { key: 'specializations', label: 'Specializations', x: 22, y: 88 },
+  { key: 'keenersWatch', label: "Keener's Watch", x: 62, y: 88 },
+];
 
-const MERMAID_CONFIG = {
-  startOnLoad: true,
-  theme: 'dark' as const,
-  securityLevel: 'loose' as const,
-  flowchart: { htmlLabels: true, curve: 'basis' as const },
-};
-
-const TABLE_NAMES = [
-  'weapons',
-  'weaponMods',
-  'talents',
-  'gearsets',
-  'brandsets',
-  'namedGear',
-  'specializations',
+const CONNECTIONS: [string, string][] = [
+  ['weapons', 'weaponMods'],
+  ['weapons', 'talents'],
+  ['gearsets', 'talents'],
+  ['namedGear', 'talents'],
 ];
 
 interface DivisionDBModalProps {
@@ -42,42 +33,13 @@ interface DivisionDBModalProps {
 }
 
 function DivisionDBModal({ isOpen, onClose }: DivisionDBModalProps) {
-  const diagramRef = useRef<HTMLDivElement>(null);
   const [editingTable, setEditingTable] = useState<string | null>(null);
   const [editMode, setEditMode] = useState<'table' | 'json'>('json');
   const [editedJson, setEditedJson] = useState('');
   const [tableEditorData, setTableEditorData] = useState<any[]>([]);
+  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
 
-  // Tables that support the TanStack Table editor
-  const TABLE_EDITOR_SUPPORTED = [
-    'weapons',
-    'weaponMods',
-    'talents',
-    'gearsets',
-    'brandsets',
-    'namedGear',
-    'specializations',
-  ];
-
-  useEffect(() => {
-    if (!isOpen || !diagramRef.current) return;
-
-    // Wait for mermaid to render, then attach click handlers
-    const timer = setTimeout(() => {
-      const container = diagramRef.current;
-      if (!container) return;
-
-      for (const name of TABLE_NAMES) {
-        const node = container.querySelector(`[id*="flowchart-${name}-"]`);
-        if (node) {
-          (node as HTMLElement).style.cursor = 'pointer';
-          node.addEventListener('click', () => openEditor(name));
-        }
-      }
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [isOpen]);
+  const TABLE_EDITOR_SUPPORTED = CLOUD_NODES.map((n) => n.key);
 
   const openEditor = (tableName: string) => {
     const data = useCleanDataStore.getState().getCleanData(tableName as MainDataKey);
@@ -119,6 +81,18 @@ function DivisionDBModal({ isOpen, onClose }: DivisionDBModalProps) {
 
   if (!isOpen) return null;
 
+  const nodeMap = Object.fromEntries(CLOUD_NODES.map((n) => [n.key, n]));
+
+  const isConnected = (key: string) =>
+    hoveredNode
+      ? CONNECTIONS.some(
+          ([a, b]) =>
+            (a === hoveredNode && b === key) ||
+            (b === hoveredNode && a === key) ||
+            key === hoveredNode,
+        )
+      : false;
+
   return (
     <div className="divisiondb-backdrop" onClick={onClose}>
       <div className="divisiondb-content" onClick={(e) => e.stopPropagation()}>
@@ -129,10 +103,45 @@ function DivisionDBModal({ isOpen, onClose }: DivisionDBModalProps) {
           </button>
         </div>
         <div className="divisiondb-body">
-          <div className="divisiondb-diagram" ref={diagramRef}>
-            <Mermaid name="divisiondb" chart={CHART} config={MERMAID_CONFIG} />
+          <div className="divisiondb-cloud">
+            {/* SVG connection lines */}
+            <svg className="divisiondb-cloud-svg">
+              {CONNECTIONS.map(([a, b]) => {
+                const na = nodeMap[a];
+                const nb = nodeMap[b];
+                if (!na || !nb) return null;
+                const highlighted = hoveredNode === a || hoveredNode === b;
+                return (
+                  <line
+                    key={`${a}-${b}`}
+                    x1={`${na.x + 4}%`}
+                    y1={`${na.y + 3}%`}
+                    x2={`${nb.x + 4}%`}
+                    y2={`${nb.y + 3}%`}
+                    className={`divisiondb-cloud-line${highlighted ? ' highlighted' : ''}`}
+                  />
+                );
+              })}
+            </svg>
+            {/* Bubble nodes */}
+            {CLOUD_NODES.map((node) => {
+              const connected = isConnected(node.key);
+              const dimmed = hoveredNode && !connected;
+              return (
+                <button
+                  key={node.key}
+                  className={`divisiondb-cloud-node${connected ? ' connected' : ''}${dimmed ? ' dimmed' : ''}`}
+                  style={{ left: `${node.x}%`, top: `${node.y}%` }}
+                  onClick={() => openEditor(node.key)}
+                  onMouseEnter={() => setHoveredNode(node.key)}
+                  onMouseLeave={() => setHoveredNode(null)}
+                >
+                  {node.label}
+                </button>
+              );
+            })}
           </div>
-          <p className="divisiondb-hint">Click on a node to view and edit its data</p>
+          <p className="divisiondb-hint">Click a node to view and edit its data</p>
         </div>
       </div>
 

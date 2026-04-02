@@ -1,0 +1,26 @@
+{
+  "offensive": {
+    "weapon damage": 10,
+    "critical hit chance": 10,
+    "critical hit damage": 20,
+    "headshot damage": 20
+  },
+  "defensive": {
+    "total armor": 10,
+    "total health": 10,
+    "explosive resistance": 10,
+    "hazard protection": 10
+  },
+  "utility": {
+    "skill damage": 10,
+    "skill haste": 10,
+    "skill duration": 20,
+    "skill repair": 10
+  },
+  "handling": {
+    "accuracy": 10,
+    "stability": 10,
+    "reload speed": 10,
+    "ammo capacity": 20
+  }
+}
