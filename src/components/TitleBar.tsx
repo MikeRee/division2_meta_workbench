@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import './TitleBar.css';
-import { MdStorage, MdChat } from 'react-icons/md';
+import { MdStorage, MdChat, MdTune } from 'react-icons/md';
 import LoadModal from './LoadModal';
 import DivisionDBModal from './DivisionDBModal';
 import ChatWindow from './ChatWindow';
+import AdjustmentModifiersOverlay from './AdjustmentModifiersOverlay';
 
 interface TitleBarProps {
   onLoadData: (dataType: string, pageName: string, isCSV?: boolean) => Promise<void>;
@@ -13,6 +14,7 @@ function TitleBar({ onLoadData }: TitleBarProps) {
   const [isLoadModalOpen, setIsLoadModalOpen] = useState(false);
   const [isDBModalOpen, setIsDBModalOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isAdjustmentsOpen, setIsAdjustmentsOpen] = useState(false);
 
   return (
     <>
@@ -21,6 +23,13 @@ function TitleBar({ onLoadData }: TitleBarProps) {
         <div className="action-buttons">
           <button className="icon-button" onClick={() => setIsChatOpen(true)} title="Chat">
             <MdChat />
+          </button>
+          <button
+            className="icon-button"
+            onClick={() => setIsAdjustmentsOpen(true)}
+            title="Adjustment Modifiers"
+          >
+            <MdTune />
           </button>
           <button className="icon-button" onClick={() => setIsDBModalOpen(true)} title="DivisionDB">
             <MdStorage />
@@ -36,6 +45,10 @@ function TitleBar({ onLoadData }: TitleBarProps) {
         </div>
       )}
       <DivisionDBModal isOpen={isDBModalOpen} onClose={() => setIsDBModalOpen(false)} />
+      <AdjustmentModifiersOverlay
+        isOpen={isAdjustmentsOpen}
+        onClose={() => setIsAdjustmentsOpen(false)}
+      />
       <LoadModal
         isOpen={isLoadModalOpen}
         onClose={() => setIsLoadModalOpen(false)}

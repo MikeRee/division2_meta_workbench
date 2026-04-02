@@ -7,6 +7,7 @@ import { useFormulaStore } from '../stores/useFormulaStore';
 import { useLookupStore } from '../stores/useLookupStore';
 import { useCleanDataStore } from '../stores/useCleanDataStore';
 import useBuildStore from '../stores/useBuildStore';
+import useAdjustmentStore from '../stores/useAdjustmentStore';
 import { Formula, FormulaType, StatCalculator } from '../models/Formula';
 import FormulaJsonModal from './FormulaJsonModal';
 import Weapon from '../models/Weapon';
@@ -44,6 +45,8 @@ let activeBlocklyWorkspace: Blockly.WorkspaceSvg | null = null;
 let currentEditingFormulaLabel: string = '';
 // Module-level cache of evaluated calculation results (label -> value)
 let calculationResultsCache: Record<string, number> = {};
+// Module-level state for personal modifier values (accuracy, headshot percentage)
+let currentPersonalValues: Record<string, number> = {};
 
 /**
  * BlockValueRef tracks which block fields are bound to which data keys.
@@ -200,6 +203,12 @@ function setBlocklyWeaponValues(values: Record<string, number>) {
   previousWeaponValues = { ...currentWeaponValues };
   currentWeaponValues = values;
   pushChangedLabels();
+  refreshBlocklyDropdowns();
+}
+
+// Function to update the personal modifier values (called from React component)
+function setBlocklyPersonalValues(values: Record<string, number>) {
+  currentPersonalValues = values;
   refreshBlocklyDropdowns();
 }
 
@@ -666,6 +675,36 @@ function registerCustomBlocks() {
     return [`getWeaponTypeDamage()`, 0];
   };
 
+  // --- Personal modifier block ---
+  const personalOptions: [string, string][] = [
+    ['Accuracy', 'accuracy'],
+    ['Headshot Percentage', 'headshot percentage'],
+  ];
+
+  Blockly.Blocks['stat_personal'] = {
+    init(this: Blockly.Block) {
+      this.appendDummyInput()
+        .appendField('personal')
+        .appendField(
+          new Blockly.FieldDropdown(() => {
+            return personalOptions.map(([label, value]) => {
+              const val = currentPersonalValues[value];
+              const suffix = val !== undefined ? ` [${val}]` : '';
+              return [label + suffix, value] as [string, string];
+            });
+          }),
+          'PROP',
+        );
+      this.setOutput(true, 'Number');
+      this.setColour(180);
+      this.setTooltip('Get a personal modifier value (set in Adjustment Modifiers)');
+    },
+  };
+  javascriptGenerator.forBlock['stat_personal'] = function (block: Blockly.Block) {
+    const prop = block.getFieldValue('PROP');
+    return [`getPersonal("${prop}")`, 0];
+  };
+
   // --- Calculation reference block ---
   Blockly.Blocks['stat_calculation'] = {
     init(this: Blockly.Block) {
@@ -710,6 +749,7 @@ const TOOLBOX: Blockly.utils.toolbox.ToolboxDefinition = {
         { kind: 'block', type: 'stat_percent_all' },
         { kind: 'block', type: 'stat_core' },
         { kind: 'block', type: 'weapon_type_damage' },
+        { kind: 'block', type: 'stat_personal' },
         { kind: 'block', type: 'stat_calculation' },
       ],
     },
@@ -979,6 +1019,7 @@ function evaluateFormula(
       return Math.round(value * factor) / factor;
     };
     const getCalculation = (label: string) => calculationResultsCache[label] ?? 0;
+    const getPersonal = (prop: string) => currentPersonalValues[prop.toLowerCase()] ?? 0;
     const fn = new Function(
       'sumAll',
       'getBaseWeapon',
@@ -987,6 +1028,7 @@ function evaluateFormula(
       'getWeaponTypeDamage',
       'round',
       'getCalculation',
+      'getPersonal',
       `return (${cleanCode});`,
     );
     const result = fn(
@@ -997,6 +1039,7 @@ function evaluateFormula(
       getWeaponTypeDamage,
       round,
       getCalculation,
+      getPersonal,
     );
     if (typeof result === 'number' && isFinite(result)) return result;
     return null;
@@ -1074,6 +1117,16 @@ function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
   useEffect(() => {
     setBlocklyWeaponValues(weaponBaseValues);
   }, [weaponBaseValues]);
+
+  // Sync personal modifier values for Blockly dropdown and formula evaluation
+  const personalAccuracy = useAdjustmentStore((s) => s.personalAccuracy);
+  const headshotPercentage = useAdjustmentStore((s) => s.headshotPercentage);
+  useEffect(() => {
+    setBlocklyPersonalValues({
+      accuracy: personalAccuracy / 100,
+      'headshot percentage': headshotPercentage / 100,
+    });
+  }, [personalAccuracy, headshotPercentage]);
 
   // Compute core values (count of each core type across all gear)
   const coreValues = useMemo(() => {

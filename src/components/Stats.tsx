@@ -6,6 +6,7 @@ import { StatCalculator, FormulaType } from '../models/Formula';
 import type { Formula } from '../models/Formula';
 import useBuildStore from '../stores/useBuildStore';
 import { useFormulaStore } from '../stores/useFormulaStore';
+import useAdjustmentStore from '../stores/useAdjustmentStore';
 import { topologicalSort } from '../utils/formulaDeps';
 import FormulaConfigOverlay from './FormulaConfigOverlay';
 import FormulaExplainer from './FormulaExplainer';
@@ -28,6 +29,7 @@ function evaluateFormulaWith(
   weaponBaseValues: Record<string, number>,
   coreValues: Record<string, number>,
   calcCache: Record<string, number> = {},
+  personalValues: Record<string, number> = {},
 ): number | null {
   if (!formula.formula || !formula.formula.trim()) return null;
   try {
@@ -47,6 +49,7 @@ function evaluateFormulaWith(
       return Math.round(value * factor) / factor;
     };
     const getCalculation = (label: string) => calcCache[label] ?? 0;
+    const getPersonal = (prop: string) => personalValues[prop.toLowerCase()] ?? 0;
     const fn = new Function(
       'sumAll',
       'getBaseWeapon',
@@ -55,6 +58,7 @@ function evaluateFormulaWith(
       'getWeaponTypeDamage',
       'round',
       'getCalculation',
+      'getPersonal',
       `return (${cleanCode});`,
     );
     const result = fn(
@@ -65,6 +69,7 @@ function evaluateFormulaWith(
       getWeaponTypeDamage,
       round,
       getCalculation,
+      getPersonal,
     );
     if (typeof result === 'number' && isFinite(result)) return result;
     return null;
@@ -98,12 +103,30 @@ function Stats() {
   const activeBuildIndex = useBuildStore((state) => state.activeBuildIndex);
   const currentBuild = builds[activeBuildIndex];
   const formulas = useFormulaStore((s) => s.formulas);
+  const adjustmentModifiers = useAdjustmentStore((s) => s.modifiers);
+  const personalAccuracy = useAdjustmentStore((s) => s.personalAccuracy);
+  const headshotPercentage = useAdjustmentStore((s) => s.headshotPercentage);
   const [selectedWeaponSlot, setSelectedWeaponSlot] = useState<WeaponSlot>('primaryWeapon');
   const [showFormulaConfig, setShowFormulaConfig] = useState(false);
   const [explainerFormula, setExplainerFormula] = useState<{
     formula: Formula;
     result: number | null;
   } | null>(null);
+
+  const personalValues = useMemo(
+    () => ({
+      accuracy: personalAccuracy / 100,
+      'headshot percentage': headshotPercentage / 100,
+    }),
+    [personalAccuracy, headshotPercentage],
+  );
+
+  // Helper: inject adjustment modifiers into a StatCalculator so they appear in breakdowns
+  const injectModifiers = (calc: StatCalculator): void => {
+    for (const mod of adjustmentModifiers) {
+      calc.add(mod.stat.toLowerCase(), 'Adjustment', mod.label, mod.value);
+    }
+  };
 
   // Compute stats for all builds that have data
   const allBuildResults = useMemo(() => {
@@ -118,6 +141,7 @@ function Stats() {
 
       const slot = pickWeaponSlot(build, selectedWeaponSlot);
       const calc = StatCalculator.forBuild(build, slot);
+      injectModifiers(calc);
 
       const cores: Record<string, number> = {};
       for (const [type, gearTypes] of Object.entries(calc.cores)) {
@@ -146,14 +170,17 @@ function Stats() {
       for (const label of evalOrder) {
         const f = formulaByLabel.get(label);
         if (!f) continue;
-        const result = evaluateFormulaWith(f, agg, wpnBase, cores, calcCache);
+        const result = evaluateFormulaWith(f, agg, wpnBase, cores, calcCache, personalValues);
         formulaResults.set(label, result);
         if (result !== null) calcCache[label] = result;
       }
       // Also evaluate any formulas not in the topo sort (shouldn't happen, but safety)
       allFormulas.forEach((f) => {
         if (!formulaResults.has(f.label)) {
-          formulaResults.set(f.label, evaluateFormulaWith(f, agg, wpnBase, cores, calcCache));
+          formulaResults.set(
+            f.label,
+            evaluateFormulaWith(f, agg, wpnBase, cores, calcCache, personalValues),
+          );
         }
       });
 
@@ -167,12 +194,14 @@ function Stats() {
     });
 
     return results;
-  }, [builds, activeBuildIndex, formulas, selectedWeaponSlot]);
+  }, [builds, activeBuildIndex, formulas, selectedWeaponSlot, adjustmentModifiers, personalValues]);
 
   // Active build calc for core counts and the displayed value
   const calc = useMemo(() => {
-    return StatCalculator.forBuild(currentBuild, selectedWeaponSlot);
-  }, [currentBuild, selectedWeaponSlot]);
+    const c = StatCalculator.forBuild(currentBuild, selectedWeaponSlot);
+    injectModifiers(c);
+    return c;
+  }, [currentBuild, selectedWeaponSlot, adjustmentModifiers]);
 
   const coreValues = useMemo(() => {
     const cores: Record<string, number> = {};
@@ -210,11 +239,18 @@ function Stats() {
     for (const label of evalOrder) {
       const f = formulaByLabel.get(label);
       if (!f) continue;
-      const result = evaluateFormulaWith(f, aggregatedValues, weaponBaseValues, coreValues, cache);
+      const result = evaluateFormulaWith(
+        f,
+        aggregatedValues,
+        weaponBaseValues,
+        coreValues,
+        cache,
+        personalValues,
+      );
       if (result !== null) cache[label] = result;
     }
     return cache;
-  }, [formulas, aggregatedValues, weaponBaseValues, coreValues]);
+  }, [formulas, aggregatedValues, weaponBaseValues, coreValues, personalValues]);
 
   const offenseCount = coreValues[CoreType.WeaponDamage.toLowerCase()] ?? 0;
   const defenseCount = coreValues[CoreType.Armor.toLowerCase()] ?? 0;
@@ -329,6 +365,7 @@ function Stats() {
                     weaponBaseValues,
                     coreValues,
                     activeCalcCache,
+                    personalValues,
                   );
                   const maxVal = formulaMaxValues.get(formula.label) || 1;
 
