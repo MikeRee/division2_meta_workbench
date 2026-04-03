@@ -1,6 +1,7 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import type Talent from '../models/Talent';
 import './TalentPickerModal.css';
+import { useBackButtonClose } from '../hooks/useBackButtonClose';
 
 interface TalentRow {
   talent: Talent;
@@ -47,6 +48,9 @@ function TalentPickerModal({
   onClose,
   title = 'Select Talent',
 }: TalentPickerModalProps) {
+  const stableOnClose = useCallback(() => onClose(), [onClose]);
+  useBackButtonClose(isOpen, stableOnClose);
+
   const [search, setSearch] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 

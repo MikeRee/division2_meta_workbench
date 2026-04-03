@@ -224,11 +224,6 @@
 }
 
 @media (max-width: 768px) {
-  .formula-explainer-content {
-    width: 95%;
-    max-height: 90vh;
-  }
-
   .fe-th-running,
   .fe-td-running {
     width: 80px;

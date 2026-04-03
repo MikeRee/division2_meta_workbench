@@ -3,6 +3,7 @@ import BuildGear, { GearSource } from '../models/BuildGear';
 import { CoreType } from '../models/CoreValue';
 import { useCleanDataStore } from '../stores/useCleanDataStore';
 import './GearEditOverlay.css';
+import { useBackButtonClose } from '../hooks/useBackButtonClose';
 
 interface GearEditOverlayProps {
   buildGear: BuildGear;
@@ -12,6 +13,8 @@ interface GearEditOverlayProps {
 }
 
 function GearEditOverlay({ buildGear, onSave, onRemove, onClose }: GearEditOverlayProps) {
+  useBackButtonClose(true, onClose);
+
   const rawGearAttributes = useCleanDataStore((s) => s.data.gearAttributes);
   const rawGearMods = useCleanDataStore((s) => s.data.gearMods);
 

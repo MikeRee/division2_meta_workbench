@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './TitleBar.css';
 import { MdStorage, MdChat, MdTune } from 'react-icons/md';
 import { FaGithub } from 'react-icons/fa';
@@ -8,6 +8,7 @@ import ChatWindow from './ChatWindow';
 import AdjustmentModifiersOverlay from './AdjustmentModifiersOverlay';
 import VersionCheck from './VersionCheck';
 import { useDataFreshnessStore } from '../stores/useDataFreshnessStore';
+import { useBackButtonClose } from '../hooks/useBackButtonClose';
 
 interface TitleBarProps {
   onLoadData: (dataType: string, pageName: string, isCSV?: boolean) => Promise<void>;
@@ -21,6 +22,9 @@ function TitleBar({ onLoadData }: TitleBarProps) {
 
   const staleCount = useDataFreshnessStore((s) => s.staleKeys.size);
   const checkFreshness = useDataFreshnessStore((s) => s.checkFreshness);
+
+  const closeChat = useCallback(() => setIsChatOpen(false), []);
+  useBackButtonClose(isChatOpen, closeChat);
 
   // Check freshness on mount and every 5 minutes
   useEffect(() => {
@@ -74,6 +78,13 @@ function TitleBar({ onLoadData }: TitleBarProps) {
       {isChatOpen && (
         <div className="chat-overlay" onClick={() => setIsChatOpen(false)}>
           <div className="chat-overlay-window" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="mobile-back-btn"
+              onClick={() => setIsChatOpen(false)}
+              aria-label="Close"
+            >
+              ← Back
+            </button>
             <ChatWindow />
           </div>
         </div>

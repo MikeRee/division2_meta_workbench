@@ -4,6 +4,7 @@ import { useCleanDataStore } from '../stores/useCleanDataStore';
 import WeaponMod from '../models/WeaponMod';
 import Talent from '../models/Talent';
 import './GearEditOverlay.css';
+import { useBackButtonClose } from '../hooks/useBackButtonClose';
 
 interface WeaponEditOverlayProps {
   buildWeapon: BuildWeapon;
@@ -13,6 +14,8 @@ interface WeaponEditOverlayProps {
 }
 
 function WeaponEditOverlay({ buildWeapon, onSave, onRemove, onClose }: WeaponEditOverlayProps) {
+  useBackButtonClose(true, onClose);
+
   // From clean data store — weapon attributes as Record<string, number>
   const weaponAttributesRecord = useCleanDataStore((s) => s.data.weaponAttributes) ?? {};
 

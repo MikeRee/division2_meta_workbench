@@ -3,6 +3,7 @@ import './RecordOverlay.css';
 import TalentPickerModal from './TalentPickerModal';
 import type Talent from '../models/Talent';
 import { useCleanDataStore } from '../stores/useCleanDataStore';
+import { useBackButtonClose } from '../hooks/useBackButtonClose';
 
 interface FixedTalentOverlayProps {
   title: string;
@@ -19,6 +20,8 @@ function FixedTalentOverlay({
   onSave,
   onClose,
 }: FixedTalentOverlayProps) {
+  useBackButtonClose(true, onClose);
+
   const [current, setCurrent] = useState<string[]>(() => [...talents]);
   const [pickerOpen, setPickerOpen] = useState(false);
 

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import useAdjustmentStore from '../stores/useAdjustmentStore';
 import './AdjustmentModifiersOverlay.css';
+import { useBackButtonClose } from '../hooks/useBackButtonClose';
 
 interface AdjustmentModifiersOverlayProps {
   isOpen: boolean;
@@ -8,6 +9,9 @@ interface AdjustmentModifiersOverlayProps {
 }
 
 function AdjustmentModifiersOverlay({ isOpen, onClose }: AdjustmentModifiersOverlayProps) {
+  const stableOnClose = useCallback(() => onClose(), [onClose]);
+  useBackButtonClose(isOpen, stableOnClose);
+
   const {
     personalAccuracy,
     headshotPercentage,

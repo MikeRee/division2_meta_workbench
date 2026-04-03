@@ -1,0 +1,234 @@
+/* ==========================================================
+   Mobile full-screen overrides for modals & overlays
+   Rule: if a modal already occupies ≥75% of the viewport on
+   either axis, snap it to 100% on mobile so it feels native.
+   ========================================================== */
+
+/* Mobile-only back button — hidden on desktop */
+.mobile-back-btn {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* Visible back button for full-screen modals */
+  .mobile-back-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: rgba(0, 0, 0, 0.6);
+    color: #d4af37;
+    border: 1px solid #3a3a3a;
+    border-radius: 2px;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 10;
+  }
+  /* Chat overlay (TitleBar) */
+  .chat-overlay-window {
+    width: 100%;
+    max-width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+
+  /* FloatingChat (unused but covered) */
+  .floating-chat-window {
+    width: 100%;
+    max-width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+
+  /* BuildJsonModal */
+  .build-json-modal-content {
+    width: 100%;
+    max-width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  /* DivisionDBModal */
+  .divisiondb-content {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    max-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  .divisiondb-edit-content {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    max-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  /* FormulaConfigOverlay */
+  .formula-overlay-content {
+    width: 100%;
+    max-width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  /* FormulaExplainer */
+  .formula-explainer-content {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    max-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  /* FormulaJsonModal */
+  .formula-json-content {
+    width: 100%;
+    max-width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  /* GearEditOverlay */
+  .gear-edit-panel {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    max-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  /* LoadModal */
+  .modal-content {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    max-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+    box-sizing: border-box;
+  }
+
+  /* LoadModal JSON viewer */
+  .json-viewer-content {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    max-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  /* LoadModal Rules overlay */
+  .rules-content {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    max-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  /* ModelPickerModal */
+  .model-picker-modal {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    max-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  /* AdjustmentModifiersOverlay */
+  .adj-overlay-content {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    max-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  /* DataTableEditor */
+  .dt-editor-content {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    max-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  .dt-json-content {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    max-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  /* TalentPickerModal */
+  .talent-picker-content {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    max-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  /* RecordOverlay */
+  .record-overlay-content {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    max-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  /* ConfigOverlay / ChatWindow overlay variants */
+  .overlay-content.config-overlay,
+  .overlay-content.prompt-editor-overlay {
+    width: 100%;
+    max-width: 100%;
+    min-width: unset;
+    max-height: 100vh;
+    max-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+    box-sizing: border-box;
+  }
+}

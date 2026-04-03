@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import './ModelPickerModal.css';
+import { useBackButtonClose } from '../hooks/useBackButtonClose';
 
 interface OpenRouterModel {
   id: string;
@@ -28,6 +29,9 @@ function ModelPickerModal({
   selectedModelId,
   onSelectModel,
 }: ModelPickerModalProps) {
+  const stableOnClose = useCallback(() => onClose(), [onClose]);
+  useBackButtonClose(isOpen, stableOnClose);
+
   const [filter, setFilter] = useState('');
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortDir, setSortDir] = useState<SortDir>('asc');

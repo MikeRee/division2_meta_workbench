@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useFormulaStore } from '../stores/useFormulaStore';
 import './FormulaJsonModal.css';
+import { useBackButtonClose } from '../hooks/useBackButtonClose';
 
 interface FormulaJsonModalProps {
   isOpen: boolean;
@@ -8,6 +9,9 @@ interface FormulaJsonModalProps {
 }
 
 function FormulaJsonModal({ isOpen, onClose }: FormulaJsonModalProps) {
+  const stableOnClose = useCallback(() => onClose(), [onClose]);
+  useBackButtonClose(isOpen, stableOnClose);
+
   const formulas = useFormulaStore((s) => s.formulas);
   const setAllFormulas = useFormulaStore((s) => s.setAllFormulas);
   const [editedJson, setEditedJson] = useState('');
@@ -38,7 +42,9 @@ function FormulaJsonModal({ isOpen, onClose }: FormulaJsonModalProps) {
       <div className="formula-json-content" onClick={(e) => e.stopPropagation()}>
         <div className="formula-json-header">
           <h3>Formula JSON</h3>
-          <button className="close-btn" onClick={onClose}>✕</button>
+          <button className="close-btn" onClick={onClose}>
+            ✕
+          </button>
         </div>
         {error && <div className="formula-json-error">{error}</div>}
         <textarea
@@ -48,8 +54,12 @@ function FormulaJsonModal({ isOpen, onClose }: FormulaJsonModalProps) {
           spellCheck={false}
         />
         <div className="formula-json-actions">
-          <button className="save-btn" onClick={handleSave}>Save</button>
-          <button className="cancel-btn" onClick={onClose}>Cancel</button>
+          <button className="save-btn" onClick={handleSave}>
+            Save
+          </button>
+          <button className="cancel-btn" onClick={onClose}>
+            Cancel
+          </button>
         </div>
       </div>
     </div>

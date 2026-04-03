@@ -26,6 +26,7 @@ import {
 } from '../stores/useCleanDataStore';
 import type { MainDataKey } from '../constants/dataKeys';
 import './DataTableEditor.css';
+import { useBackButtonClose } from '../hooks/useBackButtonClose';
 
 interface DataTableEditorProps {
   tableName: string;
@@ -127,6 +128,8 @@ function StringArrayCell({ items }: { items: string[] }) {
 }
 
 function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorProps) {
+  useBackButtonClose(true, onCancel);
+
   const [tableData, setTableData] = useState<any[]>(() =>
     data.map((row, i) => ({ ...row, __rowId: i })),
   );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './LoadModal.css';
 import { useRawDataStore } from '../stores/useRawDataStore';
 import { useCleanDataStore, getModelFields, CLASS_CONSTRUCTORS } from '../stores/useCleanDataStore';
@@ -6,6 +6,7 @@ import { useRulesStore, SYSTEM_RULES } from '../stores/useRulesStore';
 import { MdDownload, MdEditDocument, MdCleaningServices } from 'react-icons/md';
 import { applyBindings } from '../utils/dataNormalizer';
 import { getBasePath } from '../utils/basePath';
+import { useBackButtonClose } from '../hooks/useBackButtonClose';
 
 /**
  * Format a value for display in the Source column.
@@ -24,6 +25,9 @@ interface LoadModalProps {
 }
 
 function LoadModal({ isOpen, onClose, onLoadData }: LoadModalProps) {
+  const stableOnClose = useCallback(() => onClose(), [onClose]);
+  useBackButtonClose(isOpen, stableOnClose);
+
   const [showConfig, setShowConfig] = useState(false);
   const [apiKey, setApiKey] = useState('');
   const [spreadsheetUrl, setSpreadsheetUrl] = useState('');

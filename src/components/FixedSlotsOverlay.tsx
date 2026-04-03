@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { useCleanDataStore } from '../stores/useCleanDataStore';
 import WeaponMod from '../models/WeaponMod';
 import './RecordOverlay.css';
+import { useBackButtonClose } from '../hooks/useBackButtonClose';
 
 interface FixedSlotsOverlayProps {
   title: string;
@@ -13,6 +14,7 @@ interface FixedSlotsOverlayProps {
 type ViewMode = 'list' | 'addExisting' | 'createNew';
 
 function FixedSlotsOverlay({ title, slots, onSave, onClose }: FixedSlotsOverlayProps) {
+  useBackButtonClose(true, onClose);
   // Internal state: array of { slotType, bonuses } for easy editing
   const [entries, setEntries] = useState<{ slotType: string; bonuses: Record<string, number> }[]>(
     () =>

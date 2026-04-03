@@ -24,6 +24,7 @@ import {
 } from 'react-icons/md';
 import { getDependents, getAvailableCalculations } from '../utils/formulaDeps';
 import './FormulaConfigOverlay.css';
+import { useBackButtonClose } from '../hooks/useBackButtonClose';
 
 interface FormulaConfigOverlayProps {
   isOpen: boolean;
@@ -1183,6 +1184,9 @@ function useAggregatedValues(weaponSlot: 'primaryWeapon' | 'secondaryWeapon' | '
 
 // --- Main Overlay Component ---
 function FormulaConfigOverlay({ isOpen, onClose }: FormulaConfigOverlayProps) {
+  const stableOnClose = useCallback(() => onClose(), [onClose]);
+  useBackButtonClose(isOpen, stableOnClose);
+
   const formulas = useFormulaStore((s) => s.formulas);
   const addCategory = useFormulaStore((s) => s.addCategory);
   const renameCategory = useFormulaStore((s) => s.renameCategory);

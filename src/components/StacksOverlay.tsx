@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import './RecordOverlay.css';
+import { useBackButtonClose } from '../hooks/useBackButtonClose';
 
 interface StackEntry {
   size: number;
@@ -105,6 +106,8 @@ function recordToEntries(record: Record<string, number>): [string, number][] {
 }
 
 function StacksOverlay({ title, stacks, onSave, onClose }: StacksOverlayProps) {
+  useBackButtonClose(true, onClose);
+
   const [entries, setEntries] = useState<StackEntry[]>(() =>
     stacks.map((s) => ({ ...s, bonus: { ...s.bonus } })),
   );

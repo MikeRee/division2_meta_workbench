@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import './RecordOverlay.css';
+import { useBackButtonClose } from '../hooks/useBackButtonClose';
 
 interface ModSlotsOverlayProps {
   title: string;
@@ -10,6 +11,8 @@ interface ModSlotsOverlayProps {
 }
 
 function ModSlotsOverlay({ title, slots, availableTypes, onSave, onClose }: ModSlotsOverlayProps) {
+  useBackButtonClose(true, onClose);
+
   const [current, setCurrent] = useState<string[]>(() => [...slots]);
   const [selectedType, setSelectedType] = useState('');
 

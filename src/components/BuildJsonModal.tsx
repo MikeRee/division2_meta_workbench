@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './BuildJsonModal.css';
 import Build from '../models/Build';
+import { useBackButtonClose } from '../hooks/useBackButtonClose';
 
 interface BuildJsonModalProps {
   isOpen: boolean;
@@ -10,6 +11,9 @@ interface BuildJsonModalProps {
 }
 
 function BuildJsonModal({ isOpen, onClose, currentBuild, onSave }: BuildJsonModalProps) {
+  const stableOnClose = useCallback(() => onClose(), [onClose]);
+  useBackButtonClose(isOpen, stableOnClose);
+
   const [editedJson, setEditedJson] = useState('');
   const [error, setError] = useState<string | null>(null);
 

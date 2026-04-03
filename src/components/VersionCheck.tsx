@@ -58,7 +58,7 @@ function VersionCheck() {
       }
     >
       <span className="version-dot" />
-      <span className="version-label">{shortDate}</span>
+      <span className="version-label">Deployed Last @ {shortDate}</span>
       {status === 'stale' && (
         <button className="version-update-btn" onClick={() => window.location.reload()}>
           Update

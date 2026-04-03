@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './ConfigOverlay.css';
+import { useBackButtonClose } from '../hooks/useBackButtonClose';
 
 interface ConfigOverlayProps {
   isOpen: boolean;
@@ -7,6 +8,9 @@ interface ConfigOverlayProps {
 }
 
 function ConfigOverlay({ isOpen, onClose }: ConfigOverlayProps) {
+  const stableOnClose = useCallback(() => onClose(), [onClose]);
+  useBackButtonClose(isOpen, stableOnClose);
+
   const [apiKey, setApiKey] = useState('');
   const [spreadsheetId, setSpreadsheetId] = useState('');
 
@@ -23,14 +27,14 @@ function ConfigOverlay({ isOpen, onClose }: ConfigOverlayProps) {
 
   const handleSave = () => {
     localStorage.setItem('googleApiKey', apiKey);
-    
+
     // Extract spreadsheet ID from URL if full URL is provided
     let cleanSpreadsheetId = spreadsheetId;
     const match = spreadsheetId.match(/\/d\/([a-zA-Z0-9-_]+)/);
     if (match) {
       cleanSpreadsheetId = match[1];
     }
-    
+
     localStorage.setItem('division2GearSpreadsheet', cleanSpreadsheetId);
     onClose();
   };

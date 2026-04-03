@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import './DivisionDBModal.css';
 import { useCleanDataStore } from '../stores/useCleanDataStore';
 import { useDataFreshnessStore } from '../stores/useDataFreshnessStore';
@@ -6,6 +6,7 @@ import { useFormulaStore } from '../stores/useFormulaStore';
 import type { TrackableKey } from '../stores/useDataFreshnessStore';
 import type { MainDataKey } from '../constants/dataKeys';
 import DataTableEditor from './DataTableEditor';
+import { useBackButtonClose } from '../hooks/useBackButtonClose';
 
 /* Cloud bubble positions – hand-tuned percentages so nodes spread organically */
 const CLOUD_NODES: { key: string; label: string; x: number; y: number }[] = [
@@ -44,6 +45,9 @@ function DivisionDBModal({ isOpen, onClose }: DivisionDBModalProps) {
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [promptsData, setPromptsData] = useState<Record<string, string>>({});
   const [editingPromptKey, setEditingPromptKey] = useState<string | null>(null);
+
+  const stableOnClose = useCallback(() => onClose(), [onClose]);
+  useBackButtonClose(isOpen, stableOnClose);
 
   const staleKeys = useDataFreshnessStore((s) => s.staleKeys);
   const checking = useDataFreshnessStore((s) => s.checking);

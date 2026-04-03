@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import './FormulaExplainer.css';
 import type { Formula } from '../models/Formula';
 import { FormulaType, CalculatedData } from '../models/Formula';
 import type { CoreType } from '../models/CoreValue';
+import { useBackButtonClose } from '../hooks/useBackButtonClose';
 
 interface FormulaExplainerProps {
   isOpen: boolean;
@@ -179,6 +180,9 @@ function FormulaExplainer({
   calcValues,
   coreSources,
 }: FormulaExplainerProps) {
+  const stableOnClose = useCallback(() => onClose(), [onClose]);
+  useBackButtonClose(isOpen, stableOnClose);
+
   const inputs = useMemo(() => {
     if (!formula) return [];
     return buildResolvedInputs(

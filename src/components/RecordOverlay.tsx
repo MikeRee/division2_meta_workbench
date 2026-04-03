@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import './RecordOverlay.css';
+import { useBackButtonClose } from '../hooks/useBackButtonClose';
 
 interface RecordOverlayProps {
   title: string;
@@ -10,6 +11,8 @@ interface RecordOverlayProps {
 }
 
 function RecordOverlay({ title, record, nullable, onSave, onClose }: RecordOverlayProps) {
+  useBackButtonClose(true, onClose);
+
   const [entries, setEntries] = useState<[string, number][]>(() =>
     Object.entries(record).map(([k, v]) => [k, v]),
   );
