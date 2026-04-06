@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import './DivisionDBModal.css';
 import { useCleanDataStore } from '../stores/useCleanDataStore';
 import { useDataFreshnessStore } from '../stores/useDataFreshnessStore';
@@ -46,8 +46,7 @@ function DivisionDBModal({ isOpen, onClose }: DivisionDBModalProps) {
   const [promptsData, setPromptsData] = useState<Record<string, string>>({});
   const [editingPromptKey, setEditingPromptKey] = useState<string | null>(null);
 
-  const stableOnClose = useCallback(() => onClose(), [onClose]);
-  useBackButtonClose(isOpen, stableOnClose);
+  useBackButtonClose(isOpen, onClose);
 
   const staleKeys = useDataFreshnessStore((s) => s.staleKeys);
   const checking = useDataFreshnessStore((s) => s.checking);
@@ -245,7 +244,13 @@ function DivisionDBModal({ isOpen, onClose }: DivisionDBModalProps) {
       )}
 
       {editingTable && editMode === 'json' && (
-        <div className="divisiondb-edit-backdrop" onClick={handleCancelEdit}>
+        <div
+          className="divisiondb-edit-backdrop"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleCancelEdit();
+          }}
+        >
           <div className="divisiondb-edit-content" onClick={(e) => e.stopPropagation()}>
             <div className="divisiondb-edit-header">
               <h3>{editingTable}</h3>
@@ -274,7 +279,13 @@ function DivisionDBModal({ isOpen, onClose }: DivisionDBModalProps) {
       )}
 
       {editingTable === 'prompts' && editMode === 'prompts' && (
-        <div className="divisiondb-edit-backdrop" onClick={handleCancelEdit}>
+        <div
+          className="divisiondb-edit-backdrop"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleCancelEdit();
+          }}
+        >
           <div
             className="divisiondb-edit-content divisiondb-prompts-editor"
             onClick={(e) => e.stopPropagation()}

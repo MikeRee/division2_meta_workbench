@@ -706,7 +706,13 @@ function DataTableEditor({ tableName, data, onSave, onCancel }: DataTableEditorP
   }, [tableData, onSave]);
 
   return (
-    <div className="dt-editor-backdrop" onClick={onCancel}>
+    <div
+      className="dt-editor-backdrop"
+      onClick={(e) => {
+        e.stopPropagation();
+        onCancel();
+      }}
+    >
       <div className="dt-editor-content" onClick={(e) => e.stopPropagation()}>
         <div className="dt-editor-header">
           <h3>{tableName}</h3>

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 
 /**
  * Pushes a history entry when a modal opens and intercepts the
@@ -7,6 +7,8 @@ import { useEffect, useRef } from 'react';
  */
 export function useBackButtonClose(isOpen: boolean, onClose: () => void) {
   const closedViaBack = useRef(false);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -18,7 +20,7 @@ export function useBackButtonClose(isOpen: boolean, onClose: () => void) {
 
     const handlePopState = () => {
       closedViaBack.current = true;
-      onClose();
+      onCloseRef.current();
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -32,5 +34,5 @@ export function useBackButtonClose(isOpen: boolean, onClose: () => void) {
         window.history.back();
       }
     };
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 }
